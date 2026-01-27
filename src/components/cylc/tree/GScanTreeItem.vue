@@ -55,12 +55,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="modifier-badge"
             :class="modifier"
           />
-          <TaskStateBadge
+          <template
             v-for="(value, state) in statesInfo.stateTotals"
             :key="state"
-            v-bind="{ state, value }"
-            :latest-tasks="statesInfo.latestTasks[state]"
-          />
+          >
+            <TaskStateBadge
+              v-if="value"
+              v-bind="{ state, value }"
+              :latest-tasks="statesInfo.latestTasks[state]"
+            />
+          </template>
           <WarningIcon
             v-if="workflowWarnings"
             :workflow="node"
@@ -150,12 +154,8 @@ function getStatesInfo (node, stateTotals = {}, modifiers = new Set()) {
           ...(node.node.latestStateTasks?.preparing ?? []),
         ].slice(0, 5) // limit to 5 latest (submitted tasks take priority)
       }
-      if (nodeTotal) {
-        stateTotals[state] = (stateTotals[state] ?? 0) + nodeTotal
-      }
-      if (nodeLatestTasks.length) {
-        latestTasks[state] = nodeLatestTasks
-      }
+      stateTotals[state] = (stateTotals[state] ?? 0) + nodeTotal
+      latestTasks[state] = nodeLatestTasks
     }
   }
   return { stateTotals, latestTasks, modifiers }
