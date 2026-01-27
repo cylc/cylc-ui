@@ -84,7 +84,7 @@ jobs:
           cache: yarn
 
       - name: Test (E2E)
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           BASE_URL: http://localhost:4173/
         with:
@@ -95,7 +95,7 @@ jobs:
           browser: ${{ matrix.browser }}
 
       - name: Test (component)
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           component: true
           browser: ${{ matrix.browser }}
