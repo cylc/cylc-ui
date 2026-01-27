@@ -4513,7 +4513,7 @@ __metadata:
     vitest: "npm:4.0.8"
     vue: "npm:3.5.24"
     vue-i18n: "npm:11.1.12"
-    vue-router: "npm:4.5.1"
+    vue-router: "npm:4.6.4"
     vue-the-mask: "npm:0.11.1"
     vue3-apexcharts: "npm:1.8.0"
     vuetify: "npm:3.10.5"
@@ -11627,14 +11627,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:4.5.1":
-  version: 4.5.1
-  resolution: "vue-router@npm:4.5.1"
+"vue-router@npm:4.6.4":
+  version: 4.6.4
+  resolution: "vue-router@npm:4.6.4"
   dependencies:
     "@vue/devtools-api": "npm:^6.6.4"
   peerDependencies:
-    vue: ^3.2.0
-  checksum: 10c0/89fbc11e46c19a4c4d62b807596a0210726dc09bd9e6a319ded1ac0951e6933e581c56acd1b846d3891673b9bad7348564d28ecd8424126d63578b3b5d291d96
+    vue: ^3.5.0
+  checksum: 10c0/9dcbe1124f1f444ae263ca37914829eea1ebff3feaa182559efee611dfd4436bbebe0ebffdcb60e37fecfb2fbdc691346df00996eeba708485e9ea9b8a7dd193
   languageName: node
   linkType: hard
 
