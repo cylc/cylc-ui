@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="flex-0-0"
       >
         <v-col
-          v-if="results.path"
+          v-if="results.connected != null"
           class="d-flex align-center"
         >
           <v-chip
@@ -158,18 +158,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             {{ results.connected ? 'Connected' : 'Reconnect' }}
           </v-chip>
-          <div
-            data-cy="log-path"
-            class="ml-2 mr-1 d-flex text-medium-emphasis text-pre overflow-x-hidden"
-          >
-            <span>{{ results.host }}:</span>
-            <span class="flex-shrink-1 text-truncate">{{ parentPath }}</span>
-            <span>/{{ file }}</span>
-          </div>
-          <CopyBtn
-            :text="results.path"
-            tooltip="Copy path"
-          />
+          <template v-if="results.path">
+            <div
+              data-cy="log-path"
+              class="ml-2 mr-1 d-flex text-medium-emphasis text-pre overflow-x-hidden"
+            >
+              <span>{{ results.host }}:</span>
+              <span class="flex-shrink-1 text-truncate">{{ parentPath }}</span>
+              <span>/{{ file }}</span>
+            </div>
+            <CopyBtn
+              :text="results.path"
+              tooltip="Copy path"
+            />
+          </template>
         </v-col>
       </v-row>
       <v-alert
