@@ -20,20 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="main pa-2 fill-height position-relative"
   >
     <!-- Lumino box panel gets inserted here -->
-    <Transition appear>
-      <!-- Transition needed to avoid flashing this notice upon navigation -->
-      <v-empty-state
-        v-if="!views.size"
-        title="Workspace is empty"
-        text="To get started, add a view"
-        class="position-absolute top-0 left-0 h-100 w-100 text-medium-emphasis"
-        id="empty-workspace-notice"
-      >
-        <template #text>
-          To get started, add a view using the toolbar above
-        </template>
-      </v-empty-state>
-    </Transition>
+    <v-empty-state
+      v-if="empty"
+      title="Workspace is empty"
+      text="To get started, add a view"
+      class="position-absolute top-0 left-0 h-100 w-100 text-medium-emphasis"
+      id="empty-workspace-notice"
+    >
+      <template #text>
+        To get started, add a view using the toolbar above
+      </template>
+    </v-empty-state>
   </div>
   <!-- Widgets get teleported to box panel -->
   <WidgetComponent
@@ -58,6 +55,7 @@ import {
   onMounted,
   ref,
   useTemplateRef,
+  watch,
 } from 'vue'
 import { startCase, uniqueId } from 'lodash-es'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
@@ -133,6 +131,14 @@ const resizeObserver = new ResizeObserver(() => {
 const layoutsCache = useWorkspaceLayoutsCache()
 const layoutWatcher = watchWithControl(views, saveLayout, { deep: true })
 
+/**
+ * Is the workspace empty?
+ *
+ * Note: we use a ref here rather than a computed property to avoid
+ * flashing of the empty state notice before the layout is restored.
+ */
+const empty = ref(false)
+
 onMounted(async () => {
   // Store any add-view events that occur before the layout is ready
   // (e.g. when opening log view from command menu):
@@ -149,9 +155,21 @@ onMounted(async () => {
 
   eventBus.off('add-view')
   eventBus.on('add-view', addView)
-  bufferedAddViewEvents.forEach((e) => addView(e))
   eventBus.on('lumino:deleted', onWidgetDeleted)
   eventBus.on('reset-workspace-layout', resetToDefault)
+  await Promise.allSettled(
+    bufferedAddViewEvents.map(async (e) => await addView(e))
+  )
+
+  // Now that the layout is ready, watch for empty state:
+  watch(
+    () => !views.value.size,
+    (isEmpty) => {
+      empty.value = isEmpty
+      if (isEmpty) emit('emptied')
+    },
+    { immediate: true }
+  )
 })
 
 onBeforeUnmount(() => {
@@ -273,11 +291,6 @@ async function resetToDefault () {
  * @param {string} id - widget ID
  */
 function onWidgetDeleted (id) {
-  layoutWatcher.ignore(() => {
-    views.value.delete(id)
-    if (!views.value.size) {
-      emit('emptied')
-    }
-  })
+  layoutWatcher.ignore(() => views.value.delete(id))
 }
 </script>
