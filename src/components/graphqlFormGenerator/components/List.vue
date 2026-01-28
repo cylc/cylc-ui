@@ -77,7 +77,9 @@ const props = defineProps({
   }
 })
 
-const model = defineModel({ type: Array, required: true })
+const model = defineModel({ type: Array })
+// Handle cases in the schema where a List is not required/NON_NULL:
+model.value ??= []
 
 const listId = uniqueId('list')
 /** Return unique DOM ID for an input. */
