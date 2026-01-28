@@ -45,7 +45,7 @@ export default {
         return { color: 'grey', variant: 'flat' }
       }
       return { color: 'grey', variant: 'outlined' }
-    }
-  }
+    },
+  },
 }
 </script>

@@ -24,7 +24,7 @@ import {
   WaitingStateModifierNames,
 } from '@/model/TaskState.model'
 import {
-  escapeRegExp
+  escapeRegExp,
 } from 'lodash-es'
 
 /* Convert a glob to a Regex.

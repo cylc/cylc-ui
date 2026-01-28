@@ -47,7 +47,7 @@ import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils/reactivity'
 import {
-  mdiMouseMoveUp
+  mdiMouseMoveUp,
 } from '@mdi/js'
 
 export default {
@@ -56,31 +56,31 @@ export default {
   props: {
     placeholder: {
       type: String,
-      required: false
+      required: false,
     },
     timestamps: {
       type: Boolean,
       required: false,
-      default: true
+      default: true,
     },
     logs: {
       type: Array,
-      required: true
+      required: true,
     },
     wordWrap: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     autoScroll: {
       type: Boolean,
       required: false,
-      default: false
-    }
+      default: false,
+    },
   },
 
   emits: [
-    'update:autoScroll'
+    'update:autoScroll',
   ],
 
   setup (props, { emit }) {
@@ -136,7 +136,7 @@ export default {
     })
 
     return {
-      scrollToTop
+      scrollToTop,
     }
   },
 
@@ -164,13 +164,13 @@ export default {
     stripTimestamp (logLine) {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
       return logLine.match(regex)?.[1] ?? logLine
-    }
+    },
   },
 
   // Misc options
   icons: {
-    mdiMouseMoveUp
-  }
+    mdiMouseMoveUp,
+  },
 }
 
 </script>

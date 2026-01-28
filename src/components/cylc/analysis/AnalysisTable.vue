@@ -60,7 +60,7 @@ import { formatDuration } from '@/utils/tasks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 export default {
@@ -71,11 +71,11 @@ export default {
   props: {
     tasks: {
       type: Array,
-      required: true
+      required: true,
     },
     timingOption: {
       type: String,
-      required: true
+      required: true,
     },
     initialOptions,
   },
@@ -102,7 +102,7 @@ export default {
     return {
       itemsPerPage,
       sortBy,
-      page
+      page,
     }
   },
 
@@ -111,17 +111,17 @@ export default {
       headers: [
         {
           title: 'Task',
-          key: 'name'
+          key: 'name',
         },
         {
           title: 'Platform',
-          key: 'platform'
+          key: 'platform',
         },
         {
           title: 'Count',
-          key: 'count'
-        }
-      ]
+          key: 'count',
+        },
+      ],
     }
   },
 
@@ -133,47 +133,47 @@ export default {
           title: `Mean T-${times}`,
           key: `mean${times}Time`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
         },
         {
           title: `Std Dev T-${times}`,
           key: `stdDev${times}Time`,
           formatter: formatDuration,
-          allowZeros: true
+          allowZeros: true,
         },
         {
           title: `Min T-${times}`,
           key: `min${times}Time`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
         },
         {
           title: `Q1 T-${times}`,
           key: `${times.toLowerCase()}Quartiles.0`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
         },
         {
           title: `Median T-${times}`,
           key: `${times.toLowerCase()}Quartiles.1`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
         },
         {
           title: `Q3 T-${times}`,
           key: `${times.toLowerCase()}Quartiles.2`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
         },
         {
           title: `Max T-${times}`,
           key: `max${times}Time`,
           formatter: formatDuration,
-          allowZeros: false
-        }
+          allowZeros: false,
+        },
       ]
       return this.headers.concat(timingHeaders)
-    }
+    },
   },
 
   methods: {
@@ -189,7 +189,7 @@ export default {
         return header.formatter(value, header)
       }
       return value
-    }
+    },
   },
 
   itemsPerPageOptions: [
@@ -198,7 +198,7 @@ export default {
     { value: 50, title: '50' },
     { value: 100, title: '100' },
     { value: 200, title: '200' },
-    { value: -1, title: 'All' }
+    { value: -1, title: 'All' },
   ],
 }
 </script>

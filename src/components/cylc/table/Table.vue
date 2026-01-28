@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         size="small"
         :style="{
           visibility: (item.task.children || []).length ? null : 'hidden',
-          transform: isExpanded(internalItem) ? 'rotate(180deg)' : null
+          transform: isExpanded(internalItem) ? 'rotate(180deg)' : null,
         }"
       >
         <v-icon
@@ -151,7 +151,7 @@ import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 import {
   initialOptions as initialOptionsProp,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 import EstimatedTime from '@/components/cylc/common/EstimatedTime.vue'
@@ -161,7 +161,7 @@ const emit = defineEmits([updateInitialOptionsEvent])
 const props = defineProps({
   tasks: {
     type: Array,
-    required: true
+    required: true,
   },
   initialOptions: initialOptionsProp,
 })
@@ -174,7 +174,7 @@ const sortBy = useInitialOptions(
   [
     {
       key: 'task.tokens.cycle',
-      order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
+      order: cyclePointsOrderDesc.value ? 'desc' : 'asc',
     },
   ]
 )
@@ -285,7 +285,7 @@ const taskRunTimes = computed(() => new Map(
     {
       actual: getRunTime(latestJob?.node),
       estimate: task.node?.task?.meanElapsedTime,
-    }
+    },
   ])
 ))
 

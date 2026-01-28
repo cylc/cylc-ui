@@ -25,7 +25,7 @@ const jobLogLines = [
   'two\n',
   'three\n',
   'four\n',
-  'five\n'
+  'five\n',
 ]
 
 const workflowLogLines = [
@@ -58,7 +58,7 @@ const LogData = async ({ id, file }) => {
         : undefined,
       path: `my-host:${path}`,
       lines: isJob ? jobLogLines : workflowLogLines,
-    }
+    },
   }
 }
 

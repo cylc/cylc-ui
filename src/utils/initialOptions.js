@@ -31,7 +31,7 @@ import { ref, watch } from 'vue'
 export const initialOptions = {
   type: Object,
   required: false,
-  default: () => ({})
+  default: () => ({}),
 }
 
 export const updateInitialOptionsEvent = 'update:initialOptions'

@@ -28,5 +28,5 @@ const mutations = {
 export const app = {
   namespaced: true,
   state,
-  mutations
+  mutations,
 }

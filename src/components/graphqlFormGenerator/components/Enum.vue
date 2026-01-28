@@ -57,6 +57,6 @@ export default {
         ({ name }) => name === this.modelValue
       )?.description ?? ''
     },
-  }
+  },
 }
 </script>

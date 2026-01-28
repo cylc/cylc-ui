@@ -25,13 +25,13 @@ const NODE_TYPES = [
   'workflow',
   'cycle',
   'task',
-  'job'
+  'job',
 ]
 
 const state = () => ({
   cylcTree: {
     $index: {},
-    children: []
+    children: [],
   },
 })
 
@@ -73,7 +73,7 @@ const getters = {
       }
     }
     return ret
-  }
+  },
 }
 
 /* Initialise the data store. */
@@ -187,11 +187,11 @@ function removeTree (state, node, removeParent = true) {
   let pointer
   const stack = [
     ...node.children || [],
-    ...node.familyTree || []
+    ...node.familyTree || [],
   ]
   const removeIndicies = [
     ...node.$namespaces || [],
-    ...node.$edges || []
+    ...node.$edges || [],
   ]
   const removeNodes = []
   while (stack.length) {
@@ -390,7 +390,7 @@ function getFamilyTree (tokens, node) {
     ret.push([
       'family',
       ancestor.name,
-      lastTokens.clone({ task: ancestor.name })
+      lastTokens.clone({ task: ancestor.name }),
     ])
   }
 
@@ -398,7 +398,7 @@ function getFamilyTree (tokens, node) {
   ret.push([
     'family',
     tokens[tokens.lowestToken()],
-    tokens
+    tokens,
   ])
 
   return ret
@@ -463,7 +463,7 @@ function createTreeNode (state, id, tokens, node) {
           // create a blank node with just the ID in it
           // when this item is added to the store later this node will be
           // updated in place
-          id: partTokens.id
+          id: partTokens.id,
         },
         parent: pointer.id,
         tokens: partTokens,
@@ -586,7 +586,7 @@ const mutations = {
     }
     // console.log('@@')
   },
-  CLEAR: clearTree
+  CLEAR: clearTree,
 }
 
 // NOTE: deltas are applied in the order listed here
@@ -606,5 +606,5 @@ export const workflows = {
   state,
   getters,
   mutations,
-  actions
+  actions,
 }

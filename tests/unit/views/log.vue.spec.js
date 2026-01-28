@@ -46,7 +46,7 @@ describe('Log view', () => {
         file: initialFile,
       },
     },
-    ...options
+    ...options,
   })
 
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe('Log view', () => {
           logFiles: {
             files: ['a.log', 'b.log'],
           },
-        }
+        },
       }),
     }
   })
@@ -82,8 +82,8 @@ describe('Log view', () => {
             jobs: [
               // Query response only includes latest job
               { id: 'w//1/foo/02', state },
-            ]
-          }
+            ],
+          },
         })
         const wrapper = mountFunction()
         wrapper.vm.jobLog = 1

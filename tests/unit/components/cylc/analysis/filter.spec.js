@@ -17,13 +17,13 @@
 
 import {
   matchTask,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/analysis/filter'
 
 describe('matchTask', () => {
   const task = {
     name: 'task_name',
-    platform: 'task_platform'
+    platform: 'task_platform',
   }
 
   it('should match with default or matching filter values', () => {
@@ -31,7 +31,7 @@ describe('matchTask', () => {
       { name: [], platformOption: -1 },
       { name: ['task_name'], platformOption: -1 },
       { name: [], platformOption: 'task_platform' },
-      { name: ['task_name'], platformOption: 'task_platform' }
+      { name: ['task_name'], platformOption: 'task_platform' },
     ]
     filters.forEach(filter => {
       expect(matchTask(task, filter)).to.equal(true)
@@ -42,7 +42,7 @@ describe('matchTask', () => {
     const filters = [
       { name: ['task_name'], platformOption: 'wrong_platform' },
       { name: ['wrong_task'], platformOption: 'task_platform' },
-      { name: ['wrong_task'], platformOption: 'wrong_platform' }
+      { name: ['wrong_task'], platformOption: 'wrong_platform' },
     ]
     filters.forEach(filter => {
       expect(matchTask(task, filter)).to.equal(false)
@@ -55,12 +55,12 @@ describe('platformOptions', () => {
     const tasks = [
       { platform: 'platform_1' },
       { platform: 'platform_1' },
-      { platform: 'platform_2' }
+      { platform: 'platform_2' },
     ]
     const expected = [
       { title: 'All', value: -1 },
       { title: 'platform_1', value: 'platform_1' },
-      { title: 'platform_2', value: 'platform_2' }
+      { title: 'platform_2', value: 'platform_2' },
     ]
     expect(platformOptions([])).to.deep.equal([{ title: 'All', value: -1 }])
     expect(platformOptions(tasks)).to.deep.equal(expected)

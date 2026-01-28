@@ -30,8 +30,8 @@ const NumberFieldProps = {
   is: VTextField,
   type: 'number',
   modelModifiers: {
-    number: true
-  }
+    number: true,
+  },
 }
 
 export const RE = {
@@ -51,7 +51,7 @@ export const RULES = {
   taskID:
     (x) => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid',
   flow:
-    (x) => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
+    (x) => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid',
 }
 
 export const RUNTIME_SETTING = 'RuntimeSetting'
@@ -63,7 +63,7 @@ export const inputDefaults = Object.fromEntries(
     {
       variant: 'filled',
       hideDetails: false,
-    }
+    },
   ])
 )
 
@@ -74,21 +74,21 @@ export default {
     //
     // * GraphQL types *
     String: {
-      is: VTextField
+      is: VTextField,
     },
     Int: {
       ...NumberFieldProps,
       rules: [
-        RULES.integer
-      ]
+        RULES.integer,
+      ],
     },
     Float: {
-      ...NumberFieldProps
+      ...NumberFieldProps,
     },
     Boolean: {
       is: VSwitch,
       color: 'primary',
-      class: 'mx-3'
+      class: 'mx-3',
     },
 
     // * Cylc types *
@@ -96,113 +96,113 @@ export default {
     WorkflowID: {
       is: VTextField,
       rules: [
-        RULES.noSpaces
-      ]
+        RULES.noSpaces,
+      ],
     },
     User: {
       is: VTextField,
       rules: [
-        RULES.noSpaces
-      ]
+        RULES.noSpaces,
+      ],
     },
     CyclePoint: {
       is: VTextField,
       rules: [
         RULES.noSpaces,
         // character whitelist
-        x => Boolean(!x || x.match(String.raw`^${RE.cyclePoint}$`)) || 'Invalid Cycle Point'
-      ]
+        x => Boolean(!x || x.match(String.raw`^${RE.cyclePoint}$`)) || 'Invalid Cycle Point',
+      ],
     },
     CyclePointGlob: {
       is: VTextField,
       rules: [
         RULES.noSpaces,
         // character whitelist
-        x => Boolean(!x || x.match(/^[\dT*]+$/)) || 'Invalid Cycle Point Glob'
-      ]
+        x => Boolean(!x || x.match(/^[\dT*]+$/)) || 'Invalid Cycle Point Glob',
+      ],
     },
     BroadcastSetting: {
-      is: GBroadcastSetting
+      is: GBroadcastSetting,
     },
     BroadcastCyclePoint: {
       is: VTextField,
       rules: [
-        x => Boolean(!x || x.match(String.raw`^(${RE.cyclePoint}|\*)$`)) || 'Must be "*" or a valid cycle point'
-      ]
+        x => Boolean(!x || x.match(String.raw`^(${RE.cyclePoint}|\*)$`)) || 'Must be "*" or a valid cycle point',
+      ],
     },
     // TaskStatus
     // TaskState
     TaskName: {
       is: VTextField,
       rules: [
-        RULES.noSpaces
-      ]
+        RULES.noSpaces,
+      ],
     },
     TaskID: {
       is: VTextField,
       placeholder: 'cycle/task',
       rules: [
         RULES.noSpaces,
-        RULES.taskID
-      ]
+        RULES.taskID,
+      ],
     },
     NamespaceName: {
       is: VTextField,
       rules: [
-        RULES.noSpaces
-      ]
+        RULES.noSpaces,
+      ],
     },
     NamespaceIDGlob: {
       is: VTextField,
       placeholder: 'cycle[/task][:status]',
       rules: [
-        RULES.noSpaces
-      ]
+        RULES.noSpaces,
+      ],
     },
     TimePoint: {
       is: VTextField,
       placeholder: 'yyyy-mm-ddThh:mm:ss',
       mask: '####-##-##T##:##:##',
       rules: [
-        x => Boolean(!x || x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/)) || 'Invalid'
-      ]
+        x => Boolean(!x || x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/)) || 'Invalid',
+      ],
     },
     RuntimeConfiguration: {
       is: VTextField,
       placeholder: '[section]setting',
       rules: [
-        RULES.cylcConfigItem
-      ]
+        RULES.cylcConfigItem,
+      ],
     },
     Flow: {
       is: VTextField,
       placeholder: 'flow number',
       rules: [
-        RULES.flow
-      ]
+        RULES.flow,
+      ],
     },
     [RUNTIME_SETTING]: {
-      is: GMapItem
-    }
+      is: GMapItem,
+    },
   },
 
   kinds: {
     // registry of GraphQL "kinds" (e.g. LIST)
     // { kind: (ofType) => ({ is: ComponentClass, prop1: value, ... }) }
     ENUM: (ofType) => ({
-      is: GEnum
+      is: GEnum,
     }),
     NON_NULL: (ofType) => ({
-      is: GNonNull
+      is: GNonNull,
     }),
     LIST: (ofType) => ({
       is: GList,
-      addAtStart: ofType?.name === RUNTIME_SETTING
+      addAtStart: ofType?.name === RUNTIME_SETTING,
     }),
     OBJECT: (ofType) => ({
-      is: GObject // happy naming coincidence
-    })
-  }
+      is: GObject, // happy naming coincidence
+    }),
+  },
 }
 
 export function getComponentProps (gqlType, namedTypes, kinds) {

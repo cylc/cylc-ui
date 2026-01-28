@@ -94,7 +94,7 @@ const PATH = pathJoin([
   ['L', x2 - sw, y1 + hsw],
   ['L', ((x2 - x1) / 2) + x1, y2 - sw],
   ['L', x1 + sw, y1 + hsw],
-  ['Z', '', '']
+  ['Z', '', ''],
 ])
 
 function nodeJoin (item) {
@@ -120,7 +120,7 @@ export default {
   props: {
     workflow: {
       required: true,
-    }
+    },
   },
 
   methods: {

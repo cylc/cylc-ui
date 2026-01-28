@@ -40,7 +40,7 @@ export default {
   props: {
     workflows: {
       type: Array,
-      required: true
+      required: true,
     },
     treeItemComponent: {
       type: String,
@@ -66,7 +66,7 @@ export default {
     /** List of node types to manually expand. */
     expandAll: {
       type: Array,
-      default: null
+      default: null,
     },
     autoStripTypes: {
       // If there is only one child of the root node and its type is listed in
@@ -77,13 +77,13 @@ export default {
       // root nodes.
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     flat: {
       type: Boolean,
       required: false,
       default: true,
-    }
+    },
   },
 
   components: {

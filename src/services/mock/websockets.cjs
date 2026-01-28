@@ -29,12 +29,12 @@ const graphql = require('./graphql.cjs')
 function wsResponse (id, type, data = null) {
   const response = {
     id,
-    type
+    type,
   }
   // connection ack does not include a payload
   if (data) {
     response.payload = {
-      data
+      data,
     }
   }
   return JSON.stringify(response)

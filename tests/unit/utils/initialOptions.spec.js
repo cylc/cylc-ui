@@ -19,7 +19,7 @@ import { nextTick } from 'vue'
 import { vi } from 'vitest'
 import {
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 describe('useInitialOptions', () => {
@@ -49,7 +49,7 @@ describe('useInitialOptions', () => {
   it('uses the default value when the property is not in initialOptions', () => {
     const ctx = {
       props: {
-        initialOptions: { ship: 'In Amber Clad' }
+        initialOptions: { ship: 'In Amber Clad' },
       },
       emit () {},
     }

@@ -146,7 +146,7 @@ describe('task filtering', () => {
       { glob: '\\w\\d\\s', regex: /\\w\\d\\s/ },
 
       // nasty
-      { glob: 'a*[bc]d[!ef]*g?h.*i(j)', regex: /a.*[bc]d[^ef].*g.h\..*i\(j\)/ }
+      { glob: 'a*[bc]d[!ef]*g?h.*i(j)', regex: /a.*[bc]d[^ef].*g.h\..*i\(j\)/ },
     ])('globToRegex($glob) => $regex', ({ glob, regex }) => {
       expect(String(globToRegex(glob))).toBe(String(regex))
     })
