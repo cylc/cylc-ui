@@ -18,15 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-list density="compact">
     <v-list-item
-      v-for="(item, index) in modelValue"
+      v-for="(item, index) in model"
       :key="index"
     >
       <!-- The input -->
       <FormInput
-        v-model="modelValue[index]"
+        v-model="model[index]"
         :gqlType="gqlType.ofType"
         :types="types"
-        ref="inputs"
+        :id="inputId(index)"
       >
         <template v-slot:append="slotProps">
           <v-btn
@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="remove-btn"
           >
             <v-icon size="x-large">
-              {{ $options.icons.mdiCloseCircle }}
+              {{ mdiCloseCircle }}
             </v-icon>
           </v-btn>
         </template>
@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @click="add()"
         variant="text"
         data-cy="add"
-        :prepend-icon="$options.icons.mdiPlusCircle"
+        :prepend-icon="mdiPlusCircle"
       >
         Add Item
       </v-btn>
@@ -57,57 +57,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </v-list>
 </template>
 
-<script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+<script setup>
+import { nextTick } from 'vue'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
+import { formElementProps } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/aotf'
 import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
+import { uniqueId } from 'lodash-es'
 
-export default {
-  name: 'g-list',
+defineOptions({
+  inheritAttrs: false
+})
 
-  mixins: [
-    formElement
-  ],
+const props = defineProps({
+  ...formElementProps,
+  addAtStart: {
+    type: Boolean,
+    default: false
+  }
+})
 
-  props: {
-    addAtStart: {
-      type: Boolean,
-      default: false
-    }
-  },
+const model = defineModel({ type: Array, required: true })
 
-  inheritAttrs: false,
-
-  methods: {
-    /** Add an item to the list. */
-    add () {
-      const newInput = getNullValue(this.gqlType.ofType, this.types)
-      let index = 0
-      if (this.addAtStart) {
-        this.modelValue.unshift(newInput)
-      } else {
-        index = this.modelValue.length
-        this.modelValue.push(newInput)
-      }
-      // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
-      // the component content is created over the next tick (including the input)
-      this.$nextTick(() => {
-        this.$nextTick(() => {
-          // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
-          this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
-        })
-      })
-    },
-
-    /** Remove the item at `index` from the list. */
-    remove (index) {
-      this.modelValue.splice(index, 1)
-    }
-  },
-
-  icons: {
-    mdiPlusCircle,
-    mdiCloseCircle,
-  },
+const listId = uniqueId('list')
+/** Return unique DOM ID for an input. */
+function inputId (index) {
+  return `${listId}-input${index}`
 }
+
+/** Add an item to the list. */
+async function add () {
+  const newInput = getNullValue(props.gqlType.ofType, props.types)
+  let index = 0
+  if (props.addAtStart) {
+    model.value.unshift(newInput)
+  } else {
+    index = model.value.length
+    model.value.push(newInput)
+  }
+  await nextTick()
+  // get the latest input ref and focus it (if it exists)
+  document.getElementById(inputId(index))?.focus()
+}
+
+/** Remove the item at `index` from the list. */
+function remove (index) {
+  model.value.splice(index, 1)
+}
+
 </script>
