@@ -20,7 +20,9 @@ import {
   matchID,
   matchNode,
   matchState,
+  useTasksFilterState,
 } from '@/components/cylc/common/filter'
+import { ref } from 'vue'
 
 const taskNode = {
   id: '~user/one//20000102T0000Z/succeeded',
@@ -149,6 +151,21 @@ describe('task filtering', () => {
       { glob: 'a*[bc]d[!ef]*g?h.*i(j)', regex: /a.*[bc]d[^ef].*g.h\..*i\(j\)/ }
     ])('globToRegex($glob) => $regex', ({ glob, regex }) => {
       expect(String(globToRegex(glob))).toBe(String(regex))
+    })
+  })
+
+  describe('useTasksFilterState', () => {
+    it.each([
+      { filter: {}, expected: null },
+      { filter: { id: null, states: null }, expected: null },
+      { filter: { id: '   ', states: [] }, expected: null },
+      { filter: { id: null, states: ['succeeded'] }, expected: [null, ['succeeded']] },
+      { filter: { id: 'suc*', states: [] }, expected: ['suc*', []] },
+      { filter: { id: 'suc*', states: ['succeeded'] }, expected: ['suc*', ['succeeded']] },
+    ])('useTasksFilterState($filter) => $expected', ({ filter, expected }) => {
+      expect(
+        useTasksFilterState(ref(filter)).value
+      ).toEqual(expected)
     })
   })
 })

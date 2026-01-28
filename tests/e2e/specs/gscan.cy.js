@@ -47,10 +47,14 @@ describe('GScan component', () => {
         .type('level')
         .get('.c-treeitem:visible')
         .should('have.length', 1)
+        .get('.c-gscan [data-cy=filter-no-results]')
+        .should('not.exist')
       cy.get('#c-gscan-search-workflows')
         .type('abc')
         .get('.c-treeitem:visible')
         .should('have.length', 0)
+        .get('.c-gscan [data-cy=filter-no-results]')
+        .should('be.visible')
     })
 
     it('filters by workflow state', () => {
