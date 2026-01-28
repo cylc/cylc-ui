@@ -4496,7 +4496,7 @@ __metadata:
     lodash-es: "npm:4.17.23"
     markdown-it: "npm:14.1.0"
     mitt: "npm:3.0.1"
-    nodemon: "npm:3.1.10"
+    nodemon: "npm:3.1.11"
     nprogress: "npm:1.0.0-1"
     nyc: "npm:17.1.0"
     preact: "npm:10.27.3"
@@ -8459,9 +8459,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:3.1.10":
-  version: 3.1.10
-  resolution: "nodemon@npm:3.1.10"
+"nodemon@npm:3.1.11":
+  version: 3.1.11
+  resolution: "nodemon@npm:3.1.11"
   dependencies:
     chokidar: "npm:^3.5.2"
     debug: "npm:^4"
@@ -8475,7 +8475,7 @@ __metadata:
     undefsafe: "npm:^2.0.5"
   bin:
     nodemon: bin/nodemon.js
-  checksum: 10c0/95b64d647f2c22e85e375b250517b0a4b32c2d2392ad898444e331f70d6b1ab43b17f53a8a1d68d5879ab8401fc6cd6e26f0d2a8736240984f6b5a8435b407c0
+  checksum: 10c0/f3c17897146f680eaf93f5e1f53b1fd4acbd61e4f7526ec6cbcc993d1c14cee8c722c41b30aa8b101447f672d38e6d7b17c97e77540df191d724826bb16ce474
   languageName: node
   linkType: hard
 
