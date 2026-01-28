@@ -27,36 +27,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   />
 </template>
 
-<script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+<script setup>
+import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
+import { computed } from 'vue'
 
-export default {
-  name: 'g-enum',
-
-  mixins: [formElement],
-
-  props: {
-    /** Specify a subset of the type's enum values that will be displayed. */
-    allowedValues: {
-      type: Array,
-      required: false,
-    },
+const props = defineProps({
+  ...formElementProps,
+  /** Specify a subset of the type's enum values that will be displayed. */
+  allowedValues: {
+    type: Array,
+    required: false,
   },
+})
 
-  computed: {
-    enumValues () {
-      return this.allowedValues?.length
-        ? this.type.enumValues.filter(
-          ({ name }) => this.allowedValues.includes(name)
-        )
-        : this.type.enumValues
-    },
+const model = defineModel({ type: String, required: true })
 
-    itemDesc () {
-      return this.type.enumValues.find(
-        ({ name }) => name === this.modelValue
-      )?.description ?? ''
-    },
-  }
-}
+const { type } = useFormElement(props)
+
+const enumValues = computed(() => {
+  return props.allowedValues?.length
+    ? type.value.enumValues.filter(
+      ({ name }) => props.allowedValues.includes(name)
+    )
+    : type.value.enumValues
+})
+
+const itemDesc = computed(
+  () => type.value.enumValues.find(
+    ({ name }) => name === props.modelValue
+  )?.description ?? ''
+)
 </script>
