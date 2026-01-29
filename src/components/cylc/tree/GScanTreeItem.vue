@@ -185,7 +185,7 @@ const props = defineProps({
 
 const workflowLink = computed(
   () => props.node.type === 'workflow'
-    ? `/workspace/${ props.node.tokens.workflow }`
+    ? `/workspace/${props.node.tokens.workflow}`
     : ''
 )
 
