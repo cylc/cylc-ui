@@ -46,10 +46,10 @@ describe('Analysis view', () => {
           .should('be.empty')
         cy
           .get('input#c-analysis-filter-task-platforms')
-          .should('have.value', '-1')
+          .should('have.value', 'All')
         cy
           .get('input#c-analysis-filter-task-timings')
-          .should('have.value', 'totalTimes')
+          .should('have.value', 'Total times')
       })
 
       it('Should filter by task name', () => {
@@ -500,7 +500,7 @@ describe('Filters and Options save state', () => {
       cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
         .as('itemsPerPage')
         .find('input')
-        .should('not.have.value', -1)
+        .should('not.have.value', 'All')
         .get('@itemsPerPage')
         .click()
         .get('[role="listbox"] .v-list-item')
@@ -509,7 +509,7 @@ describe('Filters and Options save state', () => {
         // Wait for menu to close
         .should('not.exist')
         .get('@itemsPerPage').find('input')
-        .should('have.value', -1)
+        .should('have.value', 'All')
       // Navigate away
       cy.visit('/#/')
         .get('.c-dashboard')
@@ -518,7 +518,7 @@ describe('Filters and Options save state', () => {
       cy.get('@platformCol')
         .should('have.class', sortedClass)
       cy.get('@itemsPerPage').find('input')
-        .should('have.value', -1)
+        .should('have.value', 'All')
     })
 
     it('remembers box and whisker sorting options when switching between workflows', () => {
