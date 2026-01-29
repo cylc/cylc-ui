@@ -31,6 +31,7 @@ import {
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
+import TaskState from '@/model/TaskState.model'
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -154,9 +155,13 @@ describe('GScanTreeItem', () => {
     it('does not combine descendant latest state tasks', () => {
       expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
     })
-    it('combines all descendant task totals', () => {
-      expect(wrapper.vm.statesInfo.stateTotals.submitted).to.equal(5)
-      expect(wrapper.vm.statesInfo.stateTotals.running).to.equal(12)
+    it('combines all descendant task totals in the correct order', () => {
+      expect(Object.entries(wrapper.vm.statesInfo.stateTotals)).toStrictEqual([
+        [TaskState.FAILED.name, 0],
+        [TaskState.SUBMIT_FAILED.name, 0],
+        [TaskState.SUBMITTED.name, 5],
+        [TaskState.RUNNING.name, 12],
+      ])
     })
     it('collapses to the lowest only-child', () => {
       expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')
