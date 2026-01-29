@@ -127,6 +127,7 @@
         "nyc",
         "sinon",
         "/^@?cypress/",
+        "!cypress-vite",
         "/^@?vitest/",
         "/coverage/",
         "/istanbul/"
