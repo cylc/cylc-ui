@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Eslint config for dist directory.
  *
  * Note: we can't keep it in there because it would get wiped by build.
  */
-module.exports = {
-  plugins: ['compat'],
-  extends: ['plugin:compat/recommended'],
-  env: {
-    browser: true,
+
+import { defineConfig } from 'eslint/config'
+import globals from 'globals'
+import compatPlugin from 'eslint-plugin-compat'
+
+export default defineConfig([
+  compatPlugin.configs['flat/recommended'],
+  {
+    linterOptions: {
+      noInlineConfig: true,
+    },
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+      },
+      // Don't need to worry about ECMA syntax as that's handled by Vite/ESBuild:
+      ecmaVersion: 'latest',
+    },
+    settings: {
+      polyfills: [
+        // Used by GraphiQL, shouldn't be a problem:
+        'navigator.userAgentData',
+      ],
+    },
   },
-  parserOptions: {
-    sourceType: 'module',
-    // Don't need to worry about ECMA syntax as that's handled by Vite/ESBuild
-    ecmaVersion: 'latest',
-  },
-  noInlineConfig: true,
-  reportUnusedDisableDirectives: false, // doesn't seem to work
-  settings: {
-    polyfills: [
-      // Used by GraphiQL, shouldn't be a problem:
-      'navigator.userAgentData',
-    ],
-  },
-}
+])
