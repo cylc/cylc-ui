@@ -36,6 +36,6 @@ concurrently(
   args.map((arg) => allCommands[arg]),
   {
     successCondition: 'first',
-    killOthers: ['success', 'failure'],
+    killOthersOn: ['success', 'failure'],
   }
 )
