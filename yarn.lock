@@ -1499,141 +1499,141 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/algorithm@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/algorithm@npm:2.0.3"
-  checksum: 10c0/3664820625cfd7eea8717aaab43e22af132f5ba4d319f6ffb76181b77a7e34dac76d4f636a1a3be12dfcfa0d9e14e62aaa9f8909fdff7a952274c9d16e2cfd04
+"@lumino/algorithm@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/algorithm@npm:2.0.4"
+  checksum: 10c0/68a924227b33830a5e78251d3dcfafe1d3485428e53750132dc63a7bfbb81927662764aa60bb03b245521f6b04e857b9cdf0bc590beae0cbaeef70ec209c2c63
   languageName: node
   linkType: hard
 
-"@lumino/collections@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/collections@npm:2.0.3"
+"@lumino/collections@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/collections@npm:2.0.4"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-  checksum: 10c0/47550f2a1a064544eaf0be27cb31e0e6e63a183403e6d507be464e2d871e357a918c46e5ca95192e3152663e48bdb6ac20b92625e18f7daac33fbf27a393750c
+    "@lumino/algorithm": "npm:^2.0.4"
+  checksum: 10c0/6b5474e8b0d9fbd588f260c4372948140d27c563f8f390112cf41ff7241b7592a29691eb01d4173e0b2f1e7c0629a90474fd90ce67f6e301dfff8fdeca2e1a8b
   languageName: node
   linkType: hard
 
-"@lumino/commands@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "@lumino/commands@npm:2.3.2"
+"@lumino/commands@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "@lumino/commands@npm:2.3.3"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-    "@lumino/coreutils": "npm:^2.2.1"
-    "@lumino/disposable": "npm:^2.1.4"
-    "@lumino/domutils": "npm:^2.0.3"
-    "@lumino/keyboard": "npm:^2.0.3"
-    "@lumino/signaling": "npm:^2.1.4"
-    "@lumino/virtualdom": "npm:^2.0.3"
-  checksum: 10c0/186dfc10cb2caddebeac51965f109f9714c3dcf32aa38805beb880ab2ff175557ca386f60defedb1a25709acb985dff7a0c866cde06fb3fb9a52a5c17dc0cda9
+    "@lumino/algorithm": "npm:^2.0.4"
+    "@lumino/coreutils": "npm:^2.2.2"
+    "@lumino/disposable": "npm:^2.1.5"
+    "@lumino/domutils": "npm:^2.0.4"
+    "@lumino/keyboard": "npm:^2.0.4"
+    "@lumino/signaling": "npm:^2.1.5"
+    "@lumino/virtualdom": "npm:^2.0.4"
+  checksum: 10c0/a2cf37e78d417892709a6ae4b8fc56f941114f47a0b97aef70e110a081b81a8e924730b9fcfe8f1a6bb5e66cce38cac0af2bcaca0c556f0ea2907f657b2a853b
   languageName: node
   linkType: hard
 
-"@lumino/coreutils@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "@lumino/coreutils@npm:2.2.1"
+"@lumino/coreutils@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@lumino/coreutils@npm:2.2.2"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-  checksum: 10c0/85fca6cc7add5f81fc5292f8e74425fb44370d427e3f164e9cb2ba98a08b294bd5c2202ab815bb3dc4055afd6767121194e7bb61831133429440f3b5047a3165
+    "@lumino/algorithm": "npm:^2.0.4"
+  checksum: 10c0/cec0a4363173b69fa3dd2c5b9aff701367c7163e5257fb64ba691f08f1707cb1b3093ab4209ee529d4fe24ee586926f7eadac028f283f5f8290a16132ef1b69e
   languageName: node
   linkType: hard
 
-"@lumino/default-theme@npm:2.1.10":
-  version: 2.1.10
-  resolution: "@lumino/default-theme@npm:2.1.10"
+"@lumino/default-theme@npm:2.1.12":
+  version: 2.1.12
+  resolution: "@lumino/default-theme@npm:2.1.12"
   dependencies:
-    "@lumino/dragdrop": "npm:^2.1.6"
-    "@lumino/widgets": "npm:^2.7.1"
-  checksum: 10c0/041064e08ecfc648af7e8373a724d7ebd913abc310c53e1d6eb4589d0facb95fab8c2ccf342f8eef0eb6d58c3582bc3e455c219bdbb897649a6774a36c029f7a
+    "@lumino/dragdrop": "npm:^2.1.7"
+    "@lumino/widgets": "npm:^2.7.3"
+  checksum: 10c0/e4b7a84da66a812a8c6c2f9bc05792721fa652602bfac41f70fcfa2b3c0cbbb58ba77c7ddaff1642cc5b99795c1779601b779a7e97911da363d8da0d5e3e0f6d
   languageName: node
   linkType: hard
 
-"@lumino/disposable@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@lumino/disposable@npm:2.1.4"
+"@lumino/disposable@npm:^2.1.5":
+  version: 2.1.5
+  resolution: "@lumino/disposable@npm:2.1.5"
   dependencies:
-    "@lumino/signaling": "npm:^2.1.4"
-  checksum: 10c0/5d804dcb9c636e093456cd5184afc1828de27c883acee6cad530518cb56a3cda6ff434227d0ae339566c12481292a387d484e39ae6d1c1d5e879855baf6d1f44
+    "@lumino/signaling": "npm:^2.1.5"
+  checksum: 10c0/34c6e5e7edd427513fc987f853c33b45ef097877cae13465535b31a719832ccddbca66c91ecab17b319a635c94d838dd23603cc456eb561818b1eb5bd2aa69ee
   languageName: node
   linkType: hard
 
-"@lumino/domutils@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/domutils@npm:2.0.3"
-  checksum: 10c0/51288e98d7a075a1142b11a1d7f157e65f7961f0bf26aa3054acdb6cec96d218301365e0306bdea23516c50c906ea37cebd1e9142a35fe2f49dfe1869e44ccd9
+"@lumino/domutils@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/domutils@npm:2.0.4"
+  checksum: 10c0/8130be299fe062e92d2bf7311395f23d7c01beca76539772a693ec9472333dca69194c2f7e6baf1a386c066e70eeec8a1a9d9fba7f5b60daa815ae7643c70db2
   languageName: node
   linkType: hard
 
-"@lumino/dragdrop@npm:^2.1.6":
-  version: 2.1.6
-  resolution: "@lumino/dragdrop@npm:2.1.6"
+"@lumino/dragdrop@npm:^2.1.7":
+  version: 2.1.7
+  resolution: "@lumino/dragdrop@npm:2.1.7"
   dependencies:
-    "@lumino/coreutils": "npm:^2.2.1"
-    "@lumino/disposable": "npm:^2.1.4"
-  checksum: 10c0/6e459ea5b2928e518330aa15f9bd64df3f6f8082eb3a8f9d8f5ffccb4d6c5f6d74bcb41b52cea98137d0868c32ae28b0b71972cd5acdf470db21b47ac58ca26a
+    "@lumino/coreutils": "npm:^2.2.2"
+    "@lumino/disposable": "npm:^2.1.5"
+  checksum: 10c0/c27a5f3a89009b2d0993202a14ab0dd109a3a54bbc5200072973a1bff19ef26f6f12e826b9a49527df06fd21ccae4cc943a668af01ce59bc58231172f107f642
   languageName: node
   linkType: hard
 
-"@lumino/keyboard@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/keyboard@npm:2.0.3"
-  checksum: 10c0/98f72d9d51f6daeab3535d0c0d829b120ce8c462ef11cabf94df99c313c89d8f920b7a9d8fffd7ec77efaef121b49a13318ffe77dfae6c2e37c839510fa270a6
+"@lumino/keyboard@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/keyboard@npm:2.0.4"
+  checksum: 10c0/72ba546ff841e7e7c127508b6808e7f3064567fb2c89e6eaa31ed926a225e6eeb3140a9f74675e2c0b5aa37725cd5ce2c7ee8d06117750007ce55d1477c1eaf3
   languageName: node
   linkType: hard
 
-"@lumino/messaging@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/messaging@npm:2.0.3"
+"@lumino/messaging@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/messaging@npm:2.0.4"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-    "@lumino/collections": "npm:^2.0.3"
-  checksum: 10c0/d02bc775d50add652d3edf5e09795bc9e9101dcb3292b2d95ce213faae962fa005d56f8f3ed747cab83e3a3da3545de15983c8c89e3370326691a0d5e5d97204
+    "@lumino/algorithm": "npm:^2.0.4"
+    "@lumino/collections": "npm:^2.0.4"
+  checksum: 10c0/8fcb11b528bf23dc05abf4c8789572ea12ac76f21c56ca38197d66c9f31e5fea4bb42b0d99888d83b47c0d28f62d40a388227797e8d39592f583bb006a42baf6
   languageName: node
   linkType: hard
 
-"@lumino/properties@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/properties@npm:2.0.3"
-  checksum: 10c0/9e52b2858dee553768616de5ed66b4394fa4ba8c10ad0e66dc803d28555d46f7ba1ac851d6f259453f1f5825a11b87e1ef9bd349d3bec76c0ad435fc8fd951d0
+"@lumino/properties@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/properties@npm:2.0.4"
+  checksum: 10c0/4ebc0b989d2080c5fc02f548ffed6abe2c85b2116901fd731f6b5ecbe5ac375daa14a8ae842226512264da5c188a455e05dd721e4945139ae8602bd278e315de
   languageName: node
   linkType: hard
 
-"@lumino/signaling@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@lumino/signaling@npm:2.1.4"
+"@lumino/signaling@npm:^2.1.5":
+  version: 2.1.5
+  resolution: "@lumino/signaling@npm:2.1.5"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-    "@lumino/coreutils": "npm:^2.2.1"
-  checksum: 10c0/da29a4aaaf6be129ff8d1f8a8f1799c5be0fbc83010c6bc71d3ba6646b18900f006b6c20b35b3273d5aee713e1791c5730862dae64a09e691de6696b1c171190
+    "@lumino/algorithm": "npm:^2.0.4"
+    "@lumino/coreutils": "npm:^2.2.2"
+  checksum: 10c0/6c103e947e5d33cd196ea0c9e29c48b40f713814b206dcc019ea8997462a57a00de06cd345b15bb1f93d8e7e14301abfd3f63fdbe9cb99e04e381d1a2631012b
   languageName: node
   linkType: hard
 
-"@lumino/virtualdom@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@lumino/virtualdom@npm:2.0.3"
+"@lumino/virtualdom@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "@lumino/virtualdom@npm:2.0.4"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-  checksum: 10c0/27100285c29adf39b201078558e475d56f712b5aff22dd41b085b32d846d6473a77fa3c0f58e1ad4b6790dfe654864bbbd8e1c2bde6d9740f63d39df8af3f251
+    "@lumino/algorithm": "npm:^2.0.4"
+  checksum: 10c0/8c5f329edc62befc101794589549ed23c32440e7b46b4b5423629fd2b339200f423f3a7294c2a394bac90ce352ed4eb619b6022086b90079a06124c1a2882a29
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:2.7.1, @lumino/widgets@npm:^2.7.1":
-  version: 2.7.1
-  resolution: "@lumino/widgets@npm:2.7.1"
+"@lumino/widgets@npm:2.7.3, @lumino/widgets@npm:^2.7.3":
+  version: 2.7.3
+  resolution: "@lumino/widgets@npm:2.7.3"
   dependencies:
-    "@lumino/algorithm": "npm:^2.0.3"
-    "@lumino/commands": "npm:^2.3.2"
-    "@lumino/coreutils": "npm:^2.2.1"
-    "@lumino/disposable": "npm:^2.1.4"
-    "@lumino/domutils": "npm:^2.0.3"
-    "@lumino/dragdrop": "npm:^2.1.6"
-    "@lumino/keyboard": "npm:^2.0.3"
-    "@lumino/messaging": "npm:^2.0.3"
-    "@lumino/properties": "npm:^2.0.3"
-    "@lumino/signaling": "npm:^2.1.4"
-    "@lumino/virtualdom": "npm:^2.0.3"
-  checksum: 10c0/071720916a23a0b157261ec2ecee652027a5bccad6e4702e7ff70c9086066955c0a3ea2d2b335e6e6f920ea99f0f48c334cf628b21c60ec86ab74b0aac2a6710
+    "@lumino/algorithm": "npm:^2.0.4"
+    "@lumino/commands": "npm:^2.3.3"
+    "@lumino/coreutils": "npm:^2.2.2"
+    "@lumino/disposable": "npm:^2.1.5"
+    "@lumino/domutils": "npm:^2.0.4"
+    "@lumino/dragdrop": "npm:^2.1.7"
+    "@lumino/keyboard": "npm:^2.0.4"
+    "@lumino/messaging": "npm:^2.0.4"
+    "@lumino/properties": "npm:^2.0.4"
+    "@lumino/signaling": "npm:^2.1.5"
+    "@lumino/virtualdom": "npm:^2.0.4"
+  checksum: 10c0/dba0901730acd115b951e8db630ae34679b715041bb288f08bfcbed32531d6e30b6ce0b6c4406071f9fac0f995a8dd029162473ecaf25d1570bb23214b304ef6
   languageName: node
   linkType: hard
 
@@ -4459,8 +4459,8 @@ __metadata:
     "@apollo/client": "npm:3.14.0"
     "@cypress/code-coverage": "npm:3.14.6"
     "@hpcc-js/wasm": "npm:2.32.3"
-    "@lumino/default-theme": "npm:2.1.10"
-    "@lumino/widgets": "npm:2.7.1"
+    "@lumino/default-theme": "npm:2.1.12"
+    "@lumino/widgets": "npm:2.7.3"
     "@mdi/js": "npm:7.4.47"
     "@vitejs/plugin-react": "npm:5.1.1"
     "@vitejs/plugin-vue": "npm:6.0.1"
