@@ -530,6 +530,38 @@ export function getIntrospectionQuery () {
         types {
           ...FullType
         }
+        # omits:
+        # * subscriptionType
+        # * directives
+        # * locations and args
+      }
+    }
+
+    fragment TypeFields on __Type {
+      kind
+      name
+      description
+
+      fields(includeDeprecated: false) {
+        name
+        description
+        args {
+          ...InputValue
+        }
+        type {
+          ...TypeRef
+        }
+        enumValues(includeDeprecated: true) {
+          name
+          description
+          isDeprecated
+          deprecationReason
+        }
+        # omits:
+        # * isDeprecated
+        # * deprecationReason
+        # * inputFields
+        # * interfaces and possibleTypes
       }
     }
   `)
