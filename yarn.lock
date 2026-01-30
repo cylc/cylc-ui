@@ -4472,7 +4472,7 @@ __metadata:
     concurrently: "npm:9.2.1"
     cross-fetch: "npm:4.1.0"
     cypress: "npm:15.9.0"
-    cypress-vite: "npm:1.7.0"
+    cypress-vite: "npm:1.8.0"
     dedent: "npm:1.7.1"
     enumify: "npm:2.0.0"
     eslint: "npm:8.57.1"
@@ -4526,15 +4526,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"cypress-vite@npm:1.7.0":
-  version: 1.7.0
-  resolution: "cypress-vite@npm:1.7.0"
+"cypress-vite@npm:1.8.0":
+  version: 1.8.0
+  resolution: "cypress-vite@npm:1.8.0"
   dependencies:
     chokidar: "npm:^3.5.3"
     debug: "npm:^4.3.4"
   peerDependencies:
     vite: ^2.9.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
-  checksum: 10c0/7b1cbbbc41cf6c88c2c59ff8758cb93a3dd168e327c6682bbbef0302dedf861c49af250684da733b1f6d7298cb40c48931e6c1bc206744a7ff9d035febda3ae9
+  checksum: 10c0/8b8660ef93e0f1be0cc4af6a852266c760b57c603199ccb726400918f4cb2aa954ec1a6b8905e82e492a24343f49291beed582297ac59089b1afddd1840fbab7
   languageName: node
   linkType: hard
 
