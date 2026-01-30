@@ -46,8 +46,8 @@ export default {
      */
     isOffline: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   icons: {

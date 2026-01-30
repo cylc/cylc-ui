@@ -47,8 +47,8 @@ describe('Estimated Time component', () => {
     const wrapper = mount(EstimatedTime, {
       props,
       global: {
-        plugins: [createVuetify(vuetifyOptions)]
-      }
+        plugins: [createVuetify(vuetifyOptions)],
+      },
     })
     expect(wrapper.text()).toBe(expected)
   })

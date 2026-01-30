@@ -30,7 +30,7 @@ export default {
   inheritAttrs: false,
 
   data: () => ({
-    localValue: null
+    localValue: null,
   }),
 
   methods: {
@@ -108,7 +108,7 @@ export default {
       return nonNullOutcome === true
         ? (this.modelValue != null) || 'Invalid'
         : nonNullOutcome
-    }
+    },
   },
 
   render () {
@@ -121,14 +121,14 @@ export default {
           this.localValue = val
           this.$emit('update:modelValue', this.fromString(val))
         },
-        rules: [this.isValid]
+        rules: [this.isValid],
       },
       {
         'append-inner': () => renderHelpIcon(this.help),
         // pass the "append" slot onto the VTextField component
-        append: (slotProps) => this.$slots.append?.(slotProps)
+        append: (slotProps) => this.$slots.append?.(slotProps),
       }
     )
-  }
+  },
 }
 </script>

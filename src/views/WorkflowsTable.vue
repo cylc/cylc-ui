@@ -123,7 +123,7 @@ export default {
   ],
 
   components: {
-    WorkflowIcon
+    WorkflowIcon,
   },
 
   setup () {
@@ -164,7 +164,7 @@ export default {
     },
     workflowsTable () {
       return Object.values(this.workflows)
-    }
+    },
   },
 
   methods: {
@@ -180,49 +180,49 @@ export default {
       if (timestamp) {
         return humanDuration(new Date(timestamp * 1000))
       }
-    }
+    },
   },
 
   headers: [
     {
       sortable: false,
       title: '',
-      key: 'icon'
+      key: 'icon',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnName'),
-      key: 'tokens.workflow'
+      key: 'tokens.workflow',
     },
     {
       sortable: true,
       title: 'Status',
-      key: 'node.status'
+      key: 'node.status',
     },
     {
       sortable: true,
       title: 'Cylc Version',
-      key: 'node.cylcVersion'
+      key: 'node.cylcVersion',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnOwner'),
-      key: 'node.owner'
+      key: 'node.owner',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnHost'),
-      key: 'node.host'
+      key: 'node.host',
     },
     {
       sortable: false,
       title: i18n.global.t('Workflows.tableColumnPort'),
-      key: 'node.port'
+      key: 'node.port',
     },
     {
       sortable: true,
       title: 'Last Activity',
-      key: 'node.lastUpdated'
+      key: 'node.lastUpdated',
     },
   ],
 }

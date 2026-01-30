@@ -17,7 +17,7 @@
 
 import {
   mutationStatus,
-  processMutations
+  processMutations,
 } from '@/utils/aotf'
 import {
   MUTATIONS,
@@ -36,9 +36,9 @@ function mockApolloClient () {
       return {
         data: {
           [args.mutation.definitions[0].name.value]: {
-            result: []
-          }
-        }
+            result: [],
+          },
+        },
       }
     }
   })
@@ -76,10 +76,10 @@ describe('Api On The Fly', () => {
       service.introspection = Promise.resolve({
         mutations,
         types: [],
-        queries: []
+        queries: [],
       })
       service.primaryMutations = {
-        workflow: ['workflowMutation']
+        workflow: ['workflowMutation'],
       }
     })
   })
@@ -98,32 +98,32 @@ describe('Api On The Fly', () => {
         {
           selector: '.node-data-cycle .c-task:first',
           mutationTitle: 'Cycle Mutation',
-          mutationText: 'cycle'
+          mutationText: 'cycle',
         },
         // family
         {
           selector: '.node-data-family .c-task:first',
           mutationTitle: 'Namespace Mutation',
-          mutationText: 'namespace'
+          mutationText: 'namespace',
         },
         // task
         {
           selector: '.node-data-task .c-task:first',
           mutationTitle: 'Namespace Mutation',
-          mutationText: 'namespace'
+          mutationText: 'namespace',
         },
         // job (in task summary)
         {
           selector: '.node-data-task .node-summary .c-job:first',
           mutationTitle: 'Job Mutation',
-          mutationText: 'job'
+          mutationText: 'job',
         },
         // job (expanded)
         {
           selector: '.node-data-job:visible .c-job',
           mutationTitle: 'Job Mutation',
-          mutationText: 'job'
-        }
+          mutationText: 'job',
+        },
       ]
 
       for (const test of tests) {

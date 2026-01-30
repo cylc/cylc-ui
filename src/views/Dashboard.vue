@@ -171,7 +171,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-icon size="1.6em">{{ $options.icons.mdiGraphql }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
-             GraphiQL
+              GraphiQL
             </v-list-item-title>
             <v-list-item-subtitle>
               Explore the Cylc GraphQL API
@@ -242,7 +242,7 @@ export default {
   name: 'Dashboard',
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -280,7 +280,7 @@ export default {
         .map(state => {
           return {
             text: state.name.charAt(0).toUpperCase() + state.name.slice(1),
-            count: count[state.name] || 0
+            count: count[state.name] || 0,
           }
         })
     },
@@ -296,18 +296,18 @@ export default {
         }
       }
       return events.reverse()
-    }
+    },
   },
 
   workflowsHeader: [
     { value: 'count' },
-    { value: 'text' }
+    { value: 'text' },
   ],
 
   eventsHeader: [
     { value: 'level' },
     { value: 'workflow' },
-    { value: 'message' }
+    { value: 'message' },
   ],
 
   hubUrl: createUrl('/hub/home', false, true),

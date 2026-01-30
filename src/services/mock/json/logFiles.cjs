@@ -44,9 +44,9 @@ const LogFiles = async ({ id }) => {
       logFiles: {
         files: id == null
           ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
+          : id.includes('//') ? jobLogFiles : workflowLogFiles,
+      },
+    },
   }
 }
 
@@ -69,8 +69,8 @@ const Jobs = async ({ id, workflowId }) => {
   await simulatedDelay(500)
   return {
     data: {
-      jobs: node.state ? [{ id, ...node }] : []
-    }
+      jobs: node.state ? [{ id, ...node }] : [],
+    },
   }
 }
 

@@ -40,6 +40,6 @@ export default {
 
   mixins: [formElement],
 
-  nonNullRule
+  nonNullRule,
 }
 </script>

@@ -88,19 +88,19 @@ export default {
     CommandMenu,
     Alert,
     Drawer,
-    Toolbar
+    Toolbar,
   },
 
   props: {
     showSidebar: {
       type: Boolean,
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
 
   computed: {
-    ...mapState(['offline'])
+    ...mapState(['offline']),
   },
 
   errorCaptured (error, vm, info) {
@@ -109,6 +109,6 @@ export default {
     }
     // Stop error propagating further:
     return false
-  }
+  },
 }
 </script>

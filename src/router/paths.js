@@ -33,16 +33,16 @@ export default [
     view: 'Dashboard',
     meta: {
       title: i18n.global.t('App.dashboard'),
-      layout: 'default'
-    }
+      layout: 'default',
+    },
   },
   {
     path: '/workflow-table',
     view: 'WorkflowsTable',
     meta: {
       title: 'Workflow Table',
-      layout: 'default'
-    }
+      layout: 'default',
+    },
   },
   {
     path: '/workspace/:workflowName(.*)',
@@ -50,41 +50,41 @@ export default [
     meta: {
       getTitle: workflowTitle,
       layout: 'default',
-      toolbar: true
+      toolbar: true,
     },
-    props: true
+    props: true,
   },
   {
     path: '/user-profile',
     view: 'UserProfile',
     meta: {
       title: i18n.global.t('App.userProfile'),
-      layout: 'default'
-    }
+      layout: 'default',
+    },
   },
   {
     path: '/guide',
     view: 'Guide',
     meta: {
       title: i18n.global.t('App.guide'),
-      layout: 'default'
-    }
+      layout: 'default',
+    },
   },
   {
     path: '/graphiql',
     view: 'GraphiQL',
     meta: {
       title: 'GraphiQL',
-      layout: 'empty'
-    }
+      layout: 'empty',
+    },
   },
   {
     path: '/:catchAll(.*)',
     view: 'NotFound',
     meta: {
       title: i18n.global.t('App.notFound'),
-      layout: 'empty'
-    }
+      layout: 'empty',
+    },
   },
 
   // the standalone views
@@ -95,8 +95,8 @@ export default [
       title: i18n.global.t('App.workflows'),
       layout: 'default',
       toolbar: false,
-      showSidebar: false
-    }
+      showSidebar: false,
+    },
   },
   {
     path: '/tree/:workflowName(.*)',
@@ -105,9 +105,9 @@ export default [
       getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
-      showSidebar: false
+      showSidebar: false,
     },
-    props: true
+    props: true,
   },
   {
     path: '/table/:workflowName(.*)',
@@ -116,9 +116,9 @@ export default [
       getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
-      showSidebar: false
+      showSidebar: false,
     },
-    props: true
+    props: true,
   },
   {
     path: '/graph/:workflowName(.*)',
@@ -127,9 +127,9 @@ export default [
       getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
-      showSidebar: false
+      showSidebar: false,
     },
-    props: true
+    props: true,
   },
   {
     path: '/log/:workflowName(.*)',
@@ -138,9 +138,9 @@ export default [
       getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
-      showSidebar: false
+      showSidebar: false,
     },
-    props: true
+    props: true,
   },
   {
     path: '/analysis/:workflowName(.*)',
@@ -149,9 +149,9 @@ export default [
       getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
-      showSidebar: false
+      showSidebar: false,
     },
-    props: true
+    props: true,
   },
   {
     path: '/gantt/:workflowName(.*)',
@@ -160,9 +160,9 @@ export default [
       getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
-      showSidebar: false
+      showSidebar: false,
     },
-    props: true
+    props: true,
   },
   {
     path: '/noAuth',

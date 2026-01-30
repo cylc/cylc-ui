@@ -17,7 +17,7 @@
 
 import { GanttCallback } from '@/views/Gantt.vue'
 import {
-  matchTasks
+  matchTasks,
 } from '@/components/cylc/gantt/filter'
 
 const input = {
@@ -28,7 +28,7 @@ const input = {
     startedTime: '2023-02-23T11:37:00Z',
     finishedTime: '2023-02-23T11:37:05Z',
     platform: 'localhost',
-    __typename: 'UISJob'
+    __typename: 'UISJob',
   },
   {
     name: 'b',
@@ -37,7 +37,7 @@ const input = {
     startedTime: '2023-02-23T11:37:33Z',
     finishedTime: '2023-02-23T11:37:35Z',
     platform: 'vld684',
-    __typename: 'UISJob'
+    __typename: 'UISJob',
   },
   {
     name: 'b',
@@ -46,8 +46,8 @@ const input = {
     startedTime: '2023-02-23T11:38:12Z',
     finishedTime: '2023-02-23T11:38:13Z',
     platform: 'vld684',
-    __typename: 'UISJob'
-  }]
+    __typename: 'UISJob',
+  }],
 }
 const expectedJobs = {
   a: [{
@@ -66,7 +66,7 @@ const expectedJobs = {
     name: 'b',
     platform: 'vld684',
     startedTime: '2023-02-23T11:37:33Z',
-    submittedTime: '2023-02-23T11:37:29Z'
+    submittedTime: '2023-02-23T11:37:29Z',
   },
   {
     __typename: 'UISJob',
@@ -75,8 +75,8 @@ const expectedJobs = {
     name: 'b',
     platform: 'vld684',
     startedTime: '2023-02-23T11:38:12Z',
-    submittedTime: '2023-02-23T11:38:07Z'
-  }]
+    submittedTime: '2023-02-23T11:38:07Z',
+  }],
 }
 
 const filteredJobs = {
@@ -87,8 +87,8 @@ const filteredJobs = {
     startedTime: '2023-02-23T11:37:00Z',
     finishedTime: '2023-02-23T11:37:05Z',
     platform: 'localhost',
-    __typename: 'UISJob'
-  }]
+    __typename: 'UISJob',
+  }],
 }
 
 describe('GanttCallback', () => {

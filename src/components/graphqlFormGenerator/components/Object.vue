@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-input>
     <template>
       <FormInput
-       v-for="input in inputs"
-       v-bind:key="input.label"
-       v-model="model[input.label]"
-       :gqlType="input.gqlType"
-       :types="types"
+        v-for="input in inputs"
+        v-bind:key="input.label"
+        v-model="model[input.label]"
+        :gqlType="input.gqlType"
+        :types="types"
       />
     </template>
     <template v-slot:append>
@@ -45,9 +45,9 @@ export default {
     inputs () {
       return this.type.fields.map(field => ({
         gqlType: field.type,
-        label: field.name
+        label: field.name,
       }))
-    }
-  }
+    },
+  },
 }
 </script>

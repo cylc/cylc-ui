@@ -51,10 +51,10 @@ describe('Toolbar Component authenticated user', () => {
         owner: 'user',
         permissions: [
           'read',
-          'write'
+          'write',
         ],
-        mode: 'single user'
-      }
+        mode: 'single user',
+      },
     }).as('test-data-server-owner-input')
     cy.visit('/#/workspace/one')
   })

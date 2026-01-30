@@ -36,13 +36,13 @@ module.exports = defineConfig({
       return config
     },
     specPattern: 'tests/e2e/specs/**/*.cy.{js,jsx,ts,tsx}',
-    supportFile: 'tests/e2e/support/index.js'
+    supportFile: 'tests/e2e/support/index.js',
   },
 
   component: {
     devServer: {
       framework: 'vue',
-      bundler: 'vite'
+      bundler: 'vite',
     },
     setupNodeEvents (on, config) {
       // For test coverage
@@ -51,12 +51,12 @@ module.exports = defineConfig({
     },
     specPattern: 'tests/component/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/component/support/index.js',
-    indexHtmlFile: 'tests/component/support/component-index.html'
+    indexHtmlFile: 'tests/component/support/component-index.html',
   },
 
   env: {
     // eslint-disable-next-line no-unneeded-ternary
-    coverage: process.env.COVERAGE ? true : false
+    coverage: process.env.COVERAGE ? true : false,
   },
 
   morgan: false, // Disable XHR logging as it's very noisy

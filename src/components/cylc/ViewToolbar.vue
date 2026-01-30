@@ -119,11 +119,11 @@ export default {
   name: 'ViewToolbar',
 
   emits: [
-    'setOption'
+    'setOption',
   ],
 
   components: {
-    Task
+    Task,
   },
 
   icons: {
@@ -192,7 +192,7 @@ export default {
     size: {
       type: String,
       default: 'default',
-    }
+    },
   },
 
   computed: {
@@ -210,7 +210,7 @@ export default {
       for (const group of this.groups) {
         iGroup = {
           ...group,
-          iControls: []
+          iControls: [],
         }
         for (const control of group.controls) {
           callback = null
@@ -273,7 +273,7 @@ export default {
             action,
             props,
             callback,
-            disabled
+            disabled,
           }
           iGroup.iControls.push(iControl)
         }
@@ -283,7 +283,7 @@ export default {
     },
     btnProps () {
       return btnProps(this.size)
-    }
+    },
   },
 
   methods: {
@@ -344,8 +344,8 @@ export default {
         return value.length
       }
       return value
-    }
-  }
+    },
+  },
 }
 </script>
 

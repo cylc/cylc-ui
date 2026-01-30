@@ -26,7 +26,7 @@ import {
   stateTotalsTestWorkflowNodes,
   simpleWorkflowNode,
   simpleCyclepointNode,
-  simpleTaskNode
+  simpleTaskNode,
 } from './tree.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
@@ -62,9 +62,9 @@ describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
       plugins: [createVuetify(), CommandMenuPlugin],
-      mock: { $workflowService }
+      mock: { $workflowService },
     },
-    ...options
+    ...options,
   })
 
   it('should display the treeitem with valid data', () => {
@@ -86,8 +86,8 @@ describe('TreeItem component', () => {
         props: {
           node,
           filteredOutNodesCache: new WeakMap(),
-          autoExpandTypes: ['cycle']
-        }
+          autoExpandTypes: ['cycle'],
+        },
       })
       expected
         ? expect(wrapper).to.be.expanded()
@@ -100,7 +100,7 @@ describe('TreeItem component', () => {
       props: {
         node: simpleTaskNode,
         filteredOutNodesCache: new WeakMap(),
-      }
+      },
     })
     expect(wrapper).to.not.be.expanded()
     const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
@@ -140,9 +140,9 @@ describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
       plugins: [createVuetify(), CommandMenuPlugin],
-      mock: { $workflowService }
+      mock: { $workflowService },
     },
-    ...options
+    ...options,
   })
 
   describe('computed properties', () => {
@@ -150,7 +150,7 @@ describe('GScanTreeItem', () => {
       props: {
         node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
         filteredOutNodesCache: new WeakMap(),
-      }
+      },
     })
     it('does not combine descendant latest state tasks', () => {
       expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
@@ -189,7 +189,7 @@ describe('GScanTreeItem', () => {
         props: {
           node: {
             type: 'workflow',
-            tokens: { workflow: 'a/b/c' }
+            tokens: { workflow: 'a/b/c' },
           },
           filteredOutNodesCache: new WeakMap(),
         },

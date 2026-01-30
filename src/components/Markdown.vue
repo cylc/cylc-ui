@@ -34,14 +34,14 @@ export default {
   props: {
     markdown: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   computed: {
     html () {
       return md.render(this.markdown)
-    }
-  }
+    },
+  },
 }
 </script>

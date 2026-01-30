@@ -21,7 +21,7 @@ import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import {
   MEAN_ELAPSED_TIME,
-  getStartTime
+  getStartTime,
 } from './utils/task'
 import { defineComponent, h } from 'vue'
 
@@ -33,10 +33,10 @@ const JobComponent = defineComponent({
       'span',
       { style: 'font-size: 200px;', id: 'app', class: 'job_theme--default' },
       [
-        h(Job, this.$attrs)
+        h(Job, this.$attrs),
       ]
     )
-  }
+  },
 })
 
 // wrap the Task component to allow us to bump up the font-size for a
@@ -47,10 +47,10 @@ const TaskComponent = defineComponent({
       'span',
       { style: 'font-size: 200px; margin-left: 100px; margin-top: 50px; display: inline-block' },
       [
-        h(Task, this.$attrs)
+        h(Task, this.$attrs),
       ]
     )
-  }
+  },
 })
 
 function makeTask (
@@ -73,8 +73,8 @@ function makeTask (
     isWallclock,
     isXtriggered,
     task: {
-      meanElapsedTime: MEAN_ELAPSED_TIME // NOTE time in seconds
-    }
+      meanElapsedTime: MEAN_ELAPSED_TIME, // NOTE time in seconds
+    },
   }
 }
 
@@ -97,8 +97,8 @@ describe('Task component', () => {
         {
           props: {
             task,
-            startTime: getStartTime(percent)
-          }
+            startTime: getStartTime(percent),
+          },
         }
       )
       cy.get('.c8-task').last().parent().screenshot(
@@ -132,7 +132,7 @@ describe('Task component', () => {
       'isQueued',
       'isXtriggered',
       'isRetry',
-      'isWallclock'
+      'isWallclock',
     ]) {
       task = makeTask()
       let filename
@@ -149,7 +149,7 @@ describe('Task component', () => {
         {
           overwrite: true,
           disableTimersAndAnimations: false,
-          padding: [10, 10, 15, 10]
+          padding: [10, 10, 15, 10],
         }
       )
     }
@@ -164,7 +164,7 @@ describe('Task component', () => {
         {
           overwrite: true,
           disableTimersAndAnimations: false,
-          padding: [10, 5, 5, 10]
+          padding: [10, 5, 5, 10],
         }
       )
     }
