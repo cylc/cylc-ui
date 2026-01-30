@@ -60,4 +60,5 @@ module.exports = defineConfig({
   },
 
   morgan: false, // Disable XHR logging as it's very noisy
+  experimentalWebKitSupport: true,
 })
