@@ -1721,13 +1721,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/default-theme@npm:2.1.12":
-  version: 2.1.12
-  resolution: "@lumino/default-theme@npm:2.1.12"
+"@lumino/default-theme@npm:2.1.13":
+  version: 2.1.13
+  resolution: "@lumino/default-theme@npm:2.1.13"
   dependencies:
     "@lumino/dragdrop": "npm:^2.1.7"
-    "@lumino/widgets": "npm:^2.7.3"
-  checksum: 10c0/e4b7a84da66a812a8c6c2f9bc05792721fa652602bfac41f70fcfa2b3c0cbbb58ba77c7ddaff1642cc5b99795c1779601b779a7e97911da363d8da0d5e3e0f6d
+    "@lumino/widgets": "npm:^2.7.4"
+  checksum: 10c0/031cc488a2f47d955cb3c263689ebc7483f17c7ea9246ea38e8fa74cc15e4abeda73a3916b5084c7a2c71671e5d7ef03f625298b21059574e3accec150b61640
   languageName: node
   linkType: hard
 
@@ -1800,9 +1800,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:2.7.3, @lumino/widgets@npm:^2.7.3":
-  version: 2.7.3
-  resolution: "@lumino/widgets@npm:2.7.3"
+"@lumino/widgets@npm:2.7.4, @lumino/widgets@npm:^2.7.4":
+  version: 2.7.4
+  resolution: "@lumino/widgets@npm:2.7.4"
   dependencies:
     "@lumino/algorithm": "npm:^2.0.4"
     "@lumino/commands": "npm:^2.3.3"
@@ -1815,7 +1815,7 @@ __metadata:
     "@lumino/properties": "npm:^2.0.4"
     "@lumino/signaling": "npm:^2.1.5"
     "@lumino/virtualdom": "npm:^2.0.4"
-  checksum: 10c0/dba0901730acd115b951e8db630ae34679b715041bb288f08bfcbed32531d6e30b6ce0b6c4406071f9fac0f995a8dd029162473ecaf25d1570bb23214b304ef6
+  checksum: 10c0/a2d60e258a6ec607825d36bead4971de25a6931cefde1cc75d59056989152a88eda6ac42c74d77a6396c29baee049a680247f77e49e361c27caf4b02b1b0b6d3
   languageName: node
   linkType: hard
 
@@ -4634,8 +4634,8 @@ __metadata:
     "@apollo/client": "npm:3.14.0"
     "@cypress/code-coverage": "npm:3.14.6"
     "@hpcc-js/wasm": "npm:2.32.3"
-    "@lumino/default-theme": "npm:2.1.12"
-    "@lumino/widgets": "npm:2.7.3"
+    "@lumino/default-theme": "npm:2.1.13"
+    "@lumino/widgets": "npm:2.7.4"
     "@mdi/js": "npm:7.4.47"
     "@vitejs/plugin-react": "npm:5.1.2"
     "@vitejs/plugin-vue": "npm:6.0.3"
