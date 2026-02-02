@@ -22,69 +22,66 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-key-val my-1"
     no-gutters
   >
-    <v-col cols="5">
-      <div>
-        <v-text-field
-          placeholder="key"
-          v-model="modelValue.key"
-          :disabled="modelValue.frozenKey"
-          class="c-input-key"
-          v-bind="{ ...$attrs, ...$options.textFieldProps }"
-        />
-        <v-tooltip v-bind="tooltipProps">
-          <span><code>{{ modelValue.key }}</code><br/>(Pre-existing settings cannot be renamed)</span>
-        </v-tooltip>
-      </div>
-    </v-col>
-    <v-col cols="auto" style="display: inline-block; padding-top: 0.5em;">
-      <span>=</span>
-    </v-col>
-    <v-col>
-      <v-textarea
+    <v-defaults-provider :defaults="defaults">
+      <v-col cols="5">
+        <div>
+          <v-text-field
+            placeholder="key"
+            v-model="model.key"
+            :disabled="model.frozenKey"
+            class="c-input-key"
+            v-bind="$attrs"
+          />
+          <v-tooltip v-bind="tooltipProps">
+            <span><code>{{ model.key }}</code><br/>(Pre-existing settings cannot be renamed)</span>
+          </v-tooltip>
+        </div>
+      </v-col>
+      <v-col cols="auto" style="display: inline-block; padding-top: 0.5em;">
+        <span>=</span>
+      </v-col>
+      <v-col>
+        <v-textarea
         rows="1"
         auto-grow
-        placeholder="value"
-        v-model="modelValue.value"
-        class="c-input-val"
-        v-bind="{ ...$attrs, ...$options.textFieldProps }"
-      />
-    </v-col>
-    <v-col cols="auto">
-      <slot
-        name="append"
-        :disabled="modelValue.frozenKey"
-      />
-      <v-tooltip v-bind="tooltipProps">
-        <span>Pre-existing settings cannot be removed</span>
-      </v-tooltip>
-    </v-col>
+          placeholder="value"
+          v-model="model.value"
+          class="c-input-val"
+          v-bind="$attrs"
+        />
+      </v-col>
+      <v-col cols="auto">
+        <slot
+          name="append"
+          :disabled="model.frozenKey"
+        />
+        <v-tooltip v-bind="tooltipProps">
+          <span>Pre-existing settings cannot be removed</span>
+        </v-tooltip>
+      </v-col>
+    </v-defaults-provider>
   </v-row>
 </template>
 
-<script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+<script setup>
+import { computed } from 'vue'
 
-export default {
-  name: 'g-map-item',
-
-  mixins: [
-    formElement
-  ],
-
+defineOptions({
   inheritAttrs: false,
+})
 
-  computed: {
-    tooltipProps () {
-      return {
-        location: 'top',
-        disabled: !this.modelValue.frozenKey,
-        openDelay: 400
-      }
-    }
+const model = defineModel({ required: true })
+
+const tooltipProps = computed(() => ({
+  location: 'top',
+  disabled: !model.value.frozenKey,
+  openDelay: 400
+}))
+
+const defaults = {
+  VTextField: {
+    hideDetails: true,
   },
-
-  textFieldProps: {
-    hideDetails: true
-  }
 }
+
 </script>

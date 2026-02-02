@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <FormInput
     v-model="model"
-    :propOverrides="{ rules: [$options.nonNullRule] }"
+    :propOverrides="{ rules: [RULES.nonNull] }"
     :gqlType="gqlType.ofType"
     :types="types"
   >
@@ -29,17 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </FormInput>
 </template>
 
-<script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+<script setup>
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
+import { formElementProps } from '@/components/graphqlFormGenerator/mixins'
+import { RULES } from '@/components/graphqlFormGenerator/components/vuetify'
 
-/** Disallow empty array/string or nullish */
-export const nonNullRule = (x) => Boolean(x?.length ?? x != null) || 'Required'
+defineProps({
+  ...formElementProps
+})
 
-export default {
-  name: 'g-non-null',
+const model = defineModel({ required: true })
 
-  mixins: [formElement],
-
-  nonNullRule
-}
 </script>
