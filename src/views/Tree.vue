@@ -53,7 +53,7 @@ import {
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
-import { matchID, matchState, groupStateFilters, globToRegex } from '@/components/cylc/common/filter'
+import { matchID, matchState, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -188,11 +188,13 @@ export default {
      * @type {import('vue').Ref<Object>}
      */
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { id: null, states: null })
+    const filterState = useTasksFilterState(tasksFilter)
 
     const flat = useInitialOptions('flat', { props, emit }, false)
 
     return {
       tasksFilter,
+      filterState,
       flat,
     }
   },
@@ -222,12 +224,6 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       )
-    },
-
-    filterState () {
-      return (this.tasksFilter.id?.trim() || this.tasksFilter.states?.length)
-        ? [this.tasksFilter.id, this.tasksFilter.states]
-        : null
     },
 
     controlGroups () {
