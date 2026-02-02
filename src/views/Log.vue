@@ -15,43 +15,50 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<style lang="scss">
-// make the toolbar sit alongside the workflow|job selector
-// and put some space between them
-.c-log .c-view-toolbar {
-  display: inline-block;
-  margin-left: 1em;
-}
-</style>
-
 <template>
   <v-container
     class="c-log h-100 pa-0 d-flex flex-column"
     fluid
   >
-    <v-container fluid>
+    <div class="pa-2">
       <!-- the controls -->
       <v-row
         dense
         class="flex-0-0"
       >
-        <v-col class="pt-0">
-          <v-btn-toggle
-            v-model="jobLog"
-            divided
-            mandatory
-            variant="outlined"
-            color="primary"
-            density="comfortable"
-          >
-            <v-btn data-cy="workflow-toggle">Workflow</v-btn>
-            <v-btn data-cy="job-toggle">Job</v-btn>
-          </v-btn-toggle>
-          <ViewToolbar
-            :groups="controlGroups"
-            @setOption="setOption"
-            :size="toolbarBtnSize"
-          />
+        <v-col>
+          <ViewToolbar>
+            <div class="group">
+              <v-btn-toggle
+                v-model="jobLog"
+                divided
+                mandatory
+                variant="outlined"
+                color="primary"
+                density="comfortable"
+              >
+                <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+                <v-btn data-cy="job-toggle">Job</v-btn>
+              </v-btn-toggle>
+              <ViewToolbarBtn
+                v-model:active.toggle="timestamps"
+                :icon="icons.mdiClockOutline"
+                v-tooltip="'Timestamps'"
+                data-cy="control-timestamps"
+              />
+              <ViewToolbarBtn
+                v-model:active.toggle="wordWrap"
+                :icon="icons.mdiWrap"
+                v-tooltip="'Word wrap'"
+                data-cy="control-wordWrap"
+              />
+              <ViewToolbarBtn
+                v-model:active.toggle="autoScroll"
+                :icon="icons.mdiMouseMoveDown"
+                v-tooltip="'Auto scroll'"
+              />
+            </div>
+          </ViewToolbar>
         </v-col>
       </v-row>
 
@@ -73,13 +80,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template #prepend-inner>
               <v-btn
                 :disabled="!relativeTokens || jobNode === false"
-                v-bind="toolbarBtnProps"
                 size="medium"
                 variant="plain"
                 @click="() => jobNode ?? fetchJobData()"
+                icon
+                density="compact"
                 data-cy="job-info-btn"
               >
-                <v-icon :icon="$options.icons.mdiInformationOutline"/>
+                <v-icon :icon="icons.mdiInformationOutline"/>
                 <v-menu
                   activator="parent"
                   :close-on-content-click="false"
@@ -123,14 +131,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="file"
             :menu-props="{ 'data-cy': 'file-input-menu' }"
           />
-          <v-btn
-            @click="() => this.updateLogFileList()"
-            v-bind="toolbarBtnProps"
+          <ViewToolbarBtn
+            @click="updateLogFileList()"
             data-cy="refresh-files"
-          >
-            <v-icon :icon="$options.icons.mdiFolderRefresh"/>
-            <v-tooltip>Refresh file list</v-tooltip>
-          </v-btn>
+            :icon="icons.mdiFolderRefresh"
+            v-tooltip="'Refresh file list'"
+          />
         </v-col>
       </v-row>
 
@@ -149,10 +155,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="flex-shrink-0"
             v-bind="results.connected ? {
               color: 'success',
-              prependIcon: $options.icons.mdiPowerPlug,
+              prependIcon: icons.mdiPowerPlug,
             } : {
               color: 'error',
-              prependIcon: $options.icons.mdiPowerPlugOff,
+              prependIcon: icons.mdiPowerPlugOff,
               onClick: updateQuery
             }"
           >
@@ -180,19 +186,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         variant="tonal"
         density="compact"
         class="mt-2"
-        :icon="$options.icons.mdiFileAlertOutline"
+        :icon="icons.mdiFileAlertOutline"
       >
         <span class="text-pre-wrap text-break">
           {{ results.error }}
         </span>
       </v-alert>
-    </v-container>
+    </div>
 
     <!-- the log file viewer -->
     <v-skeleton-loader
       v-if="id && file && results.connected == null"
       type="text@5"
-      class="align-content-start"
+      class="align-content-start ml-n2 mt-n2"
     />
     <log-component
       v-else
@@ -201,6 +207,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :timestamps="timestamps"
       :word-wrap="wordWrap"
       v-model:autoScroll="autoScroll"
+      class="pa-2 pt-0"
     />
   </v-container>
 </template>
@@ -219,7 +226,6 @@ import {
   mdiMouseMoveDown,
   mdiInformationOutline,
 } from '@mdi/js'
-import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -231,7 +237,8 @@ import LogComponent from '@/components/cylc/log/Log.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { Tokens } from '@/utils/uid'
 import gql from 'graphql-tag'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
+import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
@@ -352,6 +359,7 @@ export default {
     CopyBtn,
     LogComponent,
     ViewToolbar,
+    ViewToolbarBtn,
     JobDetails,
   },
   emits: [
@@ -442,9 +450,6 @@ export default {
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
-    /** View toolbar button size */
-    const toolbarBtnSize = '40'
-
     return {
       // the log subscription query
       query: ref(null),
@@ -470,9 +475,17 @@ export default {
       wordWrap,
       autoScroll,
       reset,
-      toolbarBtnSize,
-      toolbarBtnProps: btnProps(toolbarBtnSize),
       jobNode: ref(null),
+      icons: {
+        mdiClockOutline,
+        mdiFileAlertOutline,
+        mdiFolderRefresh,
+        mdiInformationOutline,
+        mdiMouseMoveDown,
+        mdiPowerPlugOff,
+        mdiPowerPlug,
+        mdiWrap,
+      }
     }
   },
 
@@ -519,43 +532,9 @@ export default {
       }
       return this.workflowId
     },
-    controlGroups () {
-      return [
-        {
-          title: 'Log',
-          controls: [
-            {
-              title: 'Timestamps',
-              icon: mdiClockOutline,
-              action: 'toggle',
-              value: this.timestamps,
-              key: 'timestamps'
-            },
-            {
-              title: 'Word wrap',
-              icon: mdiWrap,
-              action: 'toggle',
-              value: this.wordWrap,
-              key: 'wordWrap',
-            },
-            {
-              title: 'Auto scroll',
-              icon: mdiMouseMoveDown,
-              action: 'toggle',
-              value: this.autoScroll,
-              key: 'autoScroll',
-            },
-          ]
-        }
-      ]
-    }
   },
 
   methods: {
-    setOption (option, value) {
-      // used by the ViewToolbar to update settings
-      this[option] = value
-    },
     updateQuery () {
       // update the subscription query
       // wipe the log lines from any previous subscription
@@ -694,14 +673,5 @@ export default {
       this.relativeID = val ? this.previousRelativeID : null
     }
   },
-
-  // Misc options
-  icons: {
-    mdiFolderRefresh,
-    mdiPowerPlug,
-    mdiPowerPlugOff,
-    mdiFileAlertOutline,
-    mdiInformationOutline,
-  }
 }
 </script>
