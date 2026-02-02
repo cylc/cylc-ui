@@ -196,7 +196,7 @@ describe('Edit Runtime form', () => {
         cy.get(`#${dropdownID}`)
           .find('[role=option]')
           .then(
-            (items) => Array.from(items, (x) => x.innerText).sort()
+            (items) => Array.from(items, (x) => x.innerText.trim()).sort()
           )
           .should('deep.equal', ['Live', 'Skip'])
       })

@@ -67,10 +67,11 @@ jobs:
       matrix:
         browser: [firefox, chrome, electron]
         os: [ubuntu-latest]
-# TODO: re-enable once macos build is stable #590
-#         include:
-#           - os: macos-latest
-#             browser: edge
+        include:
+          - os: macos-latest
+            browser: webkit
+          - os: windows-latest
+            browser: edge
     env:
       COVERAGE: true
     steps:
@@ -82,6 +83,10 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: yarn
+
+      - name: Install WebKit support
+        if: matrix.browser == 'webkit'
+        run: yarn add playwright-webkit --dev --mode=update-lockfile
 
       - name: Test (E2E)
         uses: cypress-io/github-action@v7
@@ -95,10 +100,14 @@ jobs:
           browser: ${{ matrix.browser }}
 
       - name: Test (component)
+      # Component tests on webkit hang for some reason
+        if: matrix.browser != 'webkit'
         uses: cypress-io/github-action@v7
         with:
           component: true
           browser: ${{ matrix.browser }}
+          # already installed in E2E step
+          install: false
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v6
