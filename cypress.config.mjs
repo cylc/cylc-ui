@@ -1,8 +1,8 @@
-const { defineConfig } = require('cypress')
-const vitePreprocessor = require('cypress-vite')
-const path = require('path')
+import { defineConfig } from 'cypress'
+import vitePreprocessor from 'cypress-vite'
+import path from 'path'
 
-module.exports = defineConfig({
+export default defineConfig({
   video: false,
   defaultCommandTimeout: 10000,
   execTimeout: 60000,
