@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { upperFirst } from 'lodash-es'
 import {
   GenericModifiers,
   TaskModifier,
@@ -21,32 +22,6 @@ import {
   TaskStateNames,
   WaitingStateModifiers,
 } from '@/model/TaskState.model'
-
-/**
- * Scale icon size to button size.
- * https://github.com/vuetifyjs/vuetify/issues/16288
- *
- * @param {string} btnSize - button size
- * @returns {string=} font size
- */
-export function btnIconFontSize (btnSize) {
-  const size = parseInt(btnSize)
-  if (Number.isNaN(size)) {
-    // do nothing for named sizes ('small', 'large', etc.)
-    return undefined
-  }
-  // Round to even px then convert to rem
-  return `${2 * Math.round(0.2 * size) / 16}rem`
-}
-
-export const btnProps = (size) => ({
-  icon: true,
-  variant: 'text',
-  size,
-  style: {
-    fontSize: btnIconFontSize(size)
-  },
-})
 
 function getProps (modifier) {
   const ret = {}
@@ -60,13 +35,13 @@ function getProps (modifier) {
 
 export const taskStateItems = [
   {
-    title: TaskState.WAITING.name,
+    title: upperFirst(TaskState.WAITING.name),
     value: TaskState.WAITING.name,
     taskProps: { state: TaskState.WAITING.name },
     children: WaitingStateModifiers
       .map((modifier) => {
         return {
-          title: modifier.title,
+          title: upperFirst(modifier.title),
           value: modifier.field,
           taskProps: getProps(modifier)
         }
@@ -76,7 +51,7 @@ export const taskStateItems = [
     .filter((name) => name !== TaskState.WAITING.name)
     .map((name) => {
       return {
-        title: name,
+        title: upperFirst(name),
         value: name,
         taskProps: { state: name }
       }
@@ -85,7 +60,7 @@ export const taskStateItems = [
   ...GenericModifiers
     .map((modifier) => {
       return {
-        title: modifier.title,
+        title: upperFirst(modifier.title),
         value: modifier.field,
         taskProps: getProps(modifier)
       }
