@@ -16,85 +16,83 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div>
-    <!-- dropdown menu -->
-    <v-menu
-      v-if="node"
-      :key="target.dataset.cInteractive"
-      v-model="showMenu"
-      :target="target"
-      :close-on-content-click="false"
-      content-class="c-mutation-menu"
-      max-width="600px"
-      theme="dark"
-    >
-      <v-card>
-        <v-card-title class="pb-1 pt-3">
-          {{ title }}
-          <CopyBtn :text="title"/>
-        </v-card-title>
-        <v-card-subtitle class="pt-0 pb-2">
-          {{ typeAndStatusText }}
-        </v-card-subtitle>
-        <v-divider v-if="primaryMutations.length || displayMutations.length" />
-        <v-skeleton-loader
-          v-if="isLoadingMutations && primaryMutations.length"
-          type="list-item-avatar-two-line@3"
-          min-width="400"
-          class="my-2"
-          data-cy="skeleton"
-        />
-        <v-list
-          v-if="displayMutations.length"
-          class="c-mutation-menu-list pt-0"
-          :lines="false"
+  <v-menu
+    v-if="node"
+    :key="target.dataset.cInteractive"
+    v-model="showMenu"
+    :target="target"
+    :close-on-content-click="false"
+    content-class="c-mutation-menu"
+    max-width="600px"
+    theme="dark"
+  >
+    <v-card>
+      <v-card-title class="pb-1 pt-3">
+        {{ title }}
+        <CopyBtn :text="title"/>
+      </v-card-title>
+      <v-card-subtitle class="pt-0 pb-2">
+        {{ typeAndStatusText }}
+      </v-card-subtitle>
+      <v-divider v-if="primaryMutations.length || displayMutations.length" />
+      <v-skeleton-loader
+        v-if="isLoadingMutations && primaryMutations.length"
+        type="list-item-avatar-two-line@3"
+        min-width="400"
+        class="my-2"
+        data-cy="skeleton"
+      />
+      <v-list
+        v-if="displayMutations.length"
+        class="c-mutation-menu-list pt-0"
+        :lines="false"
+      >
+        <v-list-item
+          v-for="{ mutation, requiresInfo, authorised } in displayMutations"
+          :key="mutation.name"
+          :disabled="isDisabled(mutation, authorised)"
+          @click.stop="enact(mutation, requiresInfo)"
+          class="c-mutation-menu-item py-2 pr-2"
+          :title="mutation._title"
+          :subtitle="mutation._shortDescription"
         >
-          <v-list-item
-            v-for="{ mutation, requiresInfo, authorised } in displayMutations"
-            :key="mutation.name"
-            :disabled="isDisabled(mutation, authorised)"
-            @click.stop="enact(mutation, requiresInfo)"
-            class="c-mutation-menu-item py-2 pr-2"
-            :title="mutation._title"
-            :subtitle="mutation._shortDescription"
-          >
-            <template v-slot:prepend>
-              <v-icon
-                :icon="mutation._icon"
-                size="large"
-              />
-            </template>
-            <template v-slot:append>
-              <v-btn
-                icon
-                variant="text"
-                :disabled="!isEditable(mutation, authorised)"
-                @click.stop="openDialog(mutation)"
-                data-cy="mutation-edit"
-                class="ml-2"
-              >
-                <v-icon>{{ icons.mdiPencil }}</v-icon>
-              </v-btn>
-            </template>
-          </v-list-item>
-          <v-list-item v-if="canExpand">
+          <template v-slot:prepend>
+            <v-icon
+              :icon="mutation._icon"
+              size="large"
+            />
+          </template>
+          <template v-slot:append>
             <v-btn
-              id="less-more-button"
-              @click="() => expanded = !expanded"
-              block
-              variant="tonal"
+              icon
+              variant="text"
+              :disabled="!isEditable(mutation, authorised)"
+              @click.stop="openDialog(mutation)"
+              data-cy="mutation-edit"
+              class="ml-2"
             >
-              {{ expanded ? 'See Less' : 'See All' }}
+              <v-icon>{{ icons.mdiPencil }}</v-icon>
             </v-btn>
-          </v-list-item>
-        </v-list>
-      </v-card>
-    </v-menu>
+          </template>
+        </v-list-item>
+        <v-list-item v-if="canExpand">
+          <v-btn
+            id="less-more-button"
+            @click="() => expanded = !expanded"
+            block
+            variant="tonal"
+          >
+            {{ expanded ? 'See Less' : 'See All' }}
+          </v-btn>
+        </v-list-item>
+      </v-list>
+    </v-card>
     <v-dialog
-      v-if="dialog && dialogMutation"
+      v-if="dialogMutation"
       v-model="dialog"
       :width="dialogMutation._dialogWidth ?? '700px'"
       max-width="100%"
+      theme="light"
       content-class="c-mutation-dialog mx-0"
     >
       <Mutation
@@ -107,10 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @close="() => dialog = false"
         @success="() => showMenu = false"
         :key="dialogKey /* Enables re-render of component each time dialog opened */"
-        ref="mutationComponent"
       />
     </v-dialog>
-  </div>
+  </v-menu>
 </template>
 
 <script>

@@ -113,7 +113,14 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')
-    // Should close when clicking on task mutation
+    // Should not close when clicking on dialog opened from menu
+    cy.get('.c-mutation-menu-item:not([aria-disabled]) [data-cy=mutation-edit]:first')
+      .click()
+      .get('.c-mutation-dialog [data-cy=cancel]')
+      .click()
+      .get('.c-mutation-menu')
+      .should('be.visible')
+    // Should close when clicking on task mutation without opening a dialog
     cy.get('.c-mutation-menu-list')
       .find('.c-mutation-menu-item:not([aria-disabled]):first')
       .click()
