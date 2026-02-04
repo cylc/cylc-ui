@@ -30,9 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="model.key"
             :disabled="model.frozenKey"
             class="c-input-key"
-            v-bind="$attrs"
           />
-          <v-tooltip v-bind="tooltipProps">
+          <v-tooltip v-if="model.frozenKey">
             <span><code>{{ model.key }}</code><br/>(Pre-existing settings cannot be renamed)</span>
           </v-tooltip>
         </div>
@@ -42,12 +41,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-col>
       <v-col>
         <v-textarea
-        rows="1"
-        auto-grow
+          rows="1"
+          auto-grow
           placeholder="value"
           v-model="model.value"
           class="c-input-val"
-          v-bind="$attrs"
         />
       </v-col>
       <v-col cols="auto">
@@ -55,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           name="append"
           :disabled="model.frozenKey"
         />
-        <v-tooltip v-bind="tooltipProps">
+        <v-tooltip v-if="model.frozenKey">
           <span>Pre-existing settings cannot be removed</span>
         </v-tooltip>
       </v-col>
@@ -64,7 +62,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { computed } from 'vue'
 
 defineOptions({
   inheritAttrs: false,
@@ -72,14 +69,15 @@ defineOptions({
 
 const model = defineModel({ required: true })
 
-const tooltipProps = computed(() => ({
-  location: 'top',
-  disabled: !model.value.frozenKey,
-  openDelay: 400
-}))
-
 const defaults = {
+  VTooltip: {
+    location: 'top',
+    openDelay: 400
+  },
   VTextField: {
+    hideDetails: true,
+  },
+  VTextarea: {
     hideDetails: true,
   },
 }
