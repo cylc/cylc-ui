@@ -38,7 +38,7 @@
     "graphql": "16.12.0",
     "graphql-tag": "2.12.6",
     "lodash-es": "4.17.23",
-    "markdown-it": "14.1.0",
+    "markdown-it": "14.1.1",
     "mitt": "3.0.1",
     "nprogress": "1.0.0-1",
     "preact": "10.27.3",
