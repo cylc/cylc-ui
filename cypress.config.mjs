@@ -54,9 +54,10 @@ export default defineConfig({
     indexHtmlFile: 'tests/component/support/component-index.html'
   },
 
-  env: {
-    // eslint-disable-next-line no-unneeded-ternary
-    coverage: process.env.COVERAGE ? true : false
+  allowCypressEnv: false,
+
+  expose: {
+    coverage: Boolean(process.env.COVERAGE)
   },
 
   morgan: false, // Disable XHR logging as it's very noisy
