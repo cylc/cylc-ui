@@ -166,16 +166,15 @@ function removeChild (state, node, parentNode = null) {
   } else if (node.type === '$edge') {
     key = '$edges'
   }
+  parentNode ??= getIndex(state, node.parent)
   if (!parentNode) {
-    parentNode = getIndex(state, node.parent)
-    if (!parentNode) {
-      // parent node no longer in the store (this should not happen)
-      return
-    }
+    // parent node no longer in the store (this should not happen)
+    return
   }
-  parentNode[key].splice(
-    parentNode[key].indexOf(node), 1
-  )
+  const index = parentNode[key].indexOf(node)
+  if (index >= 0) {
+    parentNode[key].splice(index, 1)
+  }
 }
 
 /* Recursively remove a node and anything underneath it.
@@ -531,7 +530,7 @@ function remove (state, prunedID) {
     if (treeNode.type === 'task' && treeNode.node.firstParent) {
       // remove task from its primary family
       const familyNode = getIndex(state, treeNode.node.firstParent.id)
-      removeChild(state, treeNode, familyNode)
+      if (familyNode) removeChild(state, treeNode, familyNode)
     }
     // remove ~user[/path/to...]/workflow//cycle/task/job node
     removeTree(state, treeNode)
