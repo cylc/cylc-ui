@@ -93,7 +93,6 @@ fragment UpdatedDelta on Updated {
 
 fragment PrunedDelta on Pruned {
   workflow
-  familyProxies
   taskProxies
   jobs
 }
