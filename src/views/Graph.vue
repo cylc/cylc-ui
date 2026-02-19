@@ -369,6 +369,28 @@ export function getCyclesToNodes (nodes) {
   }, {})
 }
 
+/**
+ * Get the dot code for a subgraph.
+ *
+ * @param {string} id - The id of the object we are grouping.
+ * @param {Node[]} nodes - The nodes to include in the subgraph.
+ * @param {Object} opts
+ * @param {string} opts.label - The subgraph label (defaults to the id).
+ */
+function subgraphDotCode (id, nodes, { label = id } = {}) {
+  return `
+    subgraph "cluster_margin_family_${id}" {
+      margin=100.0
+      label="margin"
+      subgraph "cluster_${id}" {
+        ${nodes.map((n) => `"${n.id}"`).join(',')};
+        label="${label}"
+        fontsize="70px"
+        style=dashed
+        margin=60.0
+  `
+}
+
 export default {
   name: 'Graph',
 
@@ -780,7 +802,7 @@ export default {
     getCollapsedAncestor (id) {
       const { name } = this.cylcTree.$index[id].node.firstParent
       if (name !== 'root') {
-        // TODO: could use Set.intersection if browser support is good enough?
+        // TODO: use Set.intersection when browser support reaches baseline widely available
         return this.collapseFamily.find((family) => (
           name === family || this.allParentLookUp.get(name).includes(family)
         ))
@@ -913,7 +935,7 @@ export default {
      * The pointer child is the family that will be grouped
      * The pointer grandchildren are the nodes that will be included in the grouping
      *
-     * @param {String[]} dotcode - The array of strings that make up the dot code
+     * @param {string[]} dotcode - The array of strings that make up the dot code
      * @param {Node} pointer - Node object pointer used for recursion to navigate graph tree
      */
     addSubgraph (dotcode, pointer) {
@@ -932,17 +954,7 @@ export default {
         // The pointer child has children (grandChildren)
         // These grandChildren are the nodes that will be included in the grouping
         const grandChildren = this.allChildrenLookUp[child.id]
-        if (!grandChildren) { return }
-        // Some of the nodes may have been collapsed
-        // Work out if any have and store for reference later
-        const removedNodes = new Set()
-        for (const grandChild of grandChildren) {
-          if (this.collapseFamily.includes(grandChild.name)) {
-            for (const child of grandChild.children) {
-              removedNodes.add(child.name)
-            }
-          }
-        }
+        if (!grandChildren) return
         let openedBrackets = false
         if (
           // If this pointer has grandchildren
@@ -955,39 +967,25 @@ export default {
           !this.collapseFamily.includes(child.node.name)
         ) {
           // Take our array of grandchildren and remove nodes that we dont want to include
-          // nodeFormattedArray will be an array of string node ids to be included in the grouping
-          const nodeFormattedArray = grandChildren.filter((grandChild) => (
+          const subgraphNodes = grandChildren.filter((grandChild) => (
             // if its not in the list of families (unless its been collapsed)
             (!this.allParentLookUp.has(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
-            // the node has been removed/collapsed
-            !removedNodes.has(grandChild.name) &&
             // the node doesnt have a collapsed ancestor
             !this.getCollapsedAncestor(grandChild.id)
-          )).map(a => `"${a.id}"`)
+          ))
           // if there are any nodes left after the filtering step
           // make a dotcode subgraph string
-          if (nodeFormattedArray.length) {
+          if (subgraphNodes.length) {
             openedBrackets = true
-            dotcode.push(`
-            subgraph cluster_margin_family_${child.name}${child.tokens.cycle}
-              {
-              margin=100.0
-              label="margin"
-              subgraph cluster_${child.name}${child.tokens.cycle}
-                {${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
-                  label = "${child.name}"
-                  fontsize = "70px"
-                  style=dashed
-                  margin=60.0
-            `)
+            dotcode.push(
+              subgraphDotCode(child.tokens.relativeID, subgraphNodes, { label: child.name })
+            )
           }
         }
 
-        // If there the pointer has a child
-        // repeat the process for that child
-        if (child) {
-          this.addSubgraph(dotcode, child)
-        }
+        // repeat the process to add any sub-sub-graphs
+        this.addSubgraph(dotcode, child)
+
         if (openedBrackets) {
           dotcode.push('}}')
         }
@@ -1046,40 +1044,19 @@ export default {
             section.push(`${task.name} [title=${task.name}]`)
           }
           if (this.groupCycle) {
-            const removedNodes = new Set()
-            for (const node of nodesInCycle) {
-              if (this.collapseFamily.includes(node.name)) {
-                for (const child of this.allChildrenLookUp[node.id]) {
-                  removedNodes.add(child.name)
-                }
-              }
-            }
-            const nodeFormattedArray = nodesInCycle.filter((a) => (
+            const subgraphNodes = nodesInCycle.filter((a) => (
               // if its not in the list of families (unless its been collapsed)
               (!this.allParentLookUp.has(a.name) || this.collapseFamily.includes(a.name)) &&
-              // the node has been removed/collapsed
-              (!removedNodes.has(a.name) || this.collapseFamily.includes(a.name)) &&
-              // its not a node representing this cycle
-              a.name !== cycle &&
               // its not the root node
               a.name !== 'root' &&
               // the node doesnt have a collapsed ancestor
               !this.getCollapsedAncestor(a.id)
-            )).map(a => `"${a.id}"`)
-            ret.push(`
-              subgraph cluster_margin_family_${cycle}
-                {
-                margin=100.0
-                label="margin"
-                subgraph cluster_${cycle} {
-                    ${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
-                    label = "${cycle}"
-                    fontsize = "70px"
-                    style=dashed
-                    margin=60.0
-              `)
+            ))
+            ret.push(
+              subgraphDotCode(cycle, subgraphNodes)
+            )
           }
-          this.addSubgraph(ret, this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}/root`])
+          this.addSubgraph(ret, this.cylcTree.$index[`${this.workflowId}//${cycle}/root`])
           if (this.groupCycle) {
             ret.push('}}')
           }
