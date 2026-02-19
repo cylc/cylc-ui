@@ -369,6 +369,28 @@ export function getCyclesToNodes (nodes) {
   }, {})
 }
 
+/**
+ * Get the dot code for a subgraph.
+ *
+ * @param {string} id - The id of the object we are grouping.
+ * @param {Node[]} nodes - The nodes to include in the subgraph.
+ * @param {Object} opts
+ * @param {string} opts.label - The subgraph label (defaults to the id).
+ */
+function subgraphDotCode (id, nodes, { label = id } = {}) {
+  return `
+    subgraph "cluster_margin_family_${id}" {
+      margin=100.0
+      label="margin"
+      subgraph "cluster_${id}" {
+        ${nodes.map((n) => `"${n.id}"`).join(',')};
+        label="${label}"
+        fontsize="70px"
+        style=dashed
+        margin=60.0
+  `
+}
+
 export default {
   name: 'Graph',
 
@@ -955,31 +977,21 @@ export default {
           !this.collapseFamily.includes(child.node.name)
         ) {
           // Take our array of grandchildren and remove nodes that we dont want to include
-          // nodeFormattedArray will be an array of string node ids to be included in the grouping
-          const nodeFormattedArray = grandChildren.filter((grandChild) => (
+          const subgraphNodes = grandChildren.filter((grandChild) => (
             // if its not in the list of families (unless its been collapsed)
             (!this.allParentLookUp.has(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
             // the node has been removed/collapsed
             !removedNodes.has(grandChild.name) &&
             // the node doesnt have a collapsed ancestor
             !this.getCollapsedAncestor(grandChild.id)
-          )).map(a => `"${a.id}"`)
+          ))
           // if there are any nodes left after the filtering step
           // make a dotcode subgraph string
-          if (nodeFormattedArray.length) {
+          if (subgraphNodes.length) {
             openedBrackets = true
-            dotcode.push(`
-            subgraph cluster_margin_family_${child.name}${child.tokens.cycle}
-              {
-              margin=100.0
-              label="margin"
-              subgraph cluster_${child.name}${child.tokens.cycle}
-                {${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
-                  label = "${child.name}"
-                  fontsize = "70px"
-                  style=dashed
-                  margin=60.0
-            `)
+            dotcode.push(
+              subgraphDotCode(child.tokens.relativeID, subgraphNodes, { label: child.name })
+            )
           }
         }
 
@@ -1054,7 +1066,7 @@ export default {
                 }
               }
             }
-            const nodeFormattedArray = nodesInCycle.filter((a) => (
+            const subgraphNodes = nodesInCycle.filter((a) => (
               // if its not in the list of families (unless its been collapsed)
               (!this.allParentLookUp.has(a.name) || this.collapseFamily.includes(a.name)) &&
               // the node has been removed/collapsed
@@ -1065,19 +1077,10 @@ export default {
               a.name !== 'root' &&
               // the node doesnt have a collapsed ancestor
               !this.getCollapsedAncestor(a.id)
-            )).map(a => `"${a.id}"`)
-            ret.push(`
-              subgraph cluster_margin_family_${cycle}
-                {
-                margin=100.0
-                label="margin"
-                subgraph cluster_${cycle} {
-                    ${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
-                    label = "${cycle}"
-                    fontsize = "70px"
-                    style=dashed
-                    margin=60.0
-              `)
+            ))
+            ret.push(
+              subgraphDotCode(cycle, subgraphNodes)
+            )
           }
           this.addSubgraph(ret, this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}/root`])
           if (this.groupCycle) {
