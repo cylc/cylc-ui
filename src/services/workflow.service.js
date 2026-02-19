@@ -432,7 +432,7 @@ class WorkflowService {
       this.stopSubscription(subscription)
     }
     // TODO: recompute, unsubscribe and wipe unwanted store data
-    // see https://github.com/cylc/cylc-ui/issues/1131
+    // see https://github.com/cylc/cylc-ui/issues/2479
     // * The subscription has changed, there may be data we no longer need
     // * Recompute the subscription.
     // * Reload the subscription if needed.
