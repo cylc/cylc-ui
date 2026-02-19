@@ -73,7 +73,7 @@
     "eslint-plugin-promise": "6.6.0",
     "eslint-plugin-vue": "9.33.0",
     "eslint-plugin-vuetify": "2.5.2",
-    "express": "5.1.0",
+    "express": "5.2.1",
     "express-ws": "5.0.2",
     "istanbul-lib-coverage": "3.2.2",
     "jsdom": "27.2.0",
