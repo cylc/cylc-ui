@@ -969,11 +969,11 @@ export default {
           if (nodeFormattedArray.length) {
             openedBrackets = true
             dotcode.push(`
-            subgraph cluster_margin_family_${child.name}${child.tokens.cycle}
+            subgraph "cluster_margin_family_${child.name}${child.tokens.cycle}"
               {
               margin=100.0
               label="margin"
-              subgraph cluster_${child.name}${child.tokens.cycle}
+              subgraph "cluster_${child.name}${child.tokens.cycle}"
                 {${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
                   label = "${child.name}"
                   fontsize = "70px"
@@ -1067,11 +1067,11 @@ export default {
               !this.getCollapsedAncestor(a.id)
             )).map(a => `"${a.id}"`)
             ret.push(`
-              subgraph cluster_margin_family_${cycle}
+              subgraph "cluster_margin_family_${cycle}"
                 {
                 margin=100.0
                 label="margin"
-                subgraph cluster_${cycle} {
+                subgraph "cluster_${cycle}" {
                     ${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
                     label = "${cycle}"
                     fontsize = "70px"
