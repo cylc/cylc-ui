@@ -18,6 +18,7 @@ import pick from 'lodash/pick'
 import isArray from 'lodash/isArray'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
+import { discardFromArray } from '@/utils/general'
 
 const NODE_TYPES = [
   'user',
@@ -157,25 +158,16 @@ function addChild (parentNode, childNode) {
   parentNode[key].splice(index, 0, childNode)
 }
 
-/* Remove a child node from a parent node. */
+/** Remove a child node from a parent node. */
 function removeChild (state, node, parentNode = null) {
   // console.log(`$t -- ${node.id}`)
-  let key = 'children'
-  if (node.type === '$namespace') {
-    key = '$namespaces'
-  } else if (node.type === '$edge') {
-    key = '$edges'
-  }
+  parentNode ??= getIndex(state, node.parent)
   if (!parentNode) {
-    parentNode = getIndex(state, node.parent)
-    if (!parentNode) {
-      // parent node no longer in the store (this should not happen)
-      return
-    }
+    // parent node no longer in the store (this should not happen)
+    return
   }
-  parentNode[key].splice(
-    parentNode[key].indexOf(node), 1
-  )
+  const key = ['$namespace', '$edge'].includes(node.type) ? `${node.type}s` : 'children'
+  discardFromArray(parentNode[key], node)
 }
 
 /* Recursively remove a node and anything underneath it.
@@ -514,15 +506,9 @@ function remove (state, prunedID) {
 
   const parentNode = getIndex(state, treeNode.parent)
   if (treeNode.type === '$edge') {
-    // remove edge node
-    parentNode.$edges.splice(
-      parentNode.$edges.indexOf(treeNode), 1
-    )
+    discardFromArray(parentNode.$edges, treeNode)
   } else if (treeNode.type === '$namespace') {
-    // remove namespace node
-    parentNode.$namespaces.splice(
-      parentNode.$namespaces.indexOf(treeNode), 1
-    )
+    discardFromArray(parentNode.$namespaces, treeNode)
   } else if (treeNode.type === 'family') {
     const firstParent = getIndex(state, treeNode.node.ancestors.slice(-1).id)
     // remove family proxy node
@@ -531,7 +517,7 @@ function remove (state, prunedID) {
     if (treeNode.type === 'task' && treeNode.node.firstParent) {
       // remove task from its primary family
       const familyNode = getIndex(state, treeNode.node.firstParent.id)
-      removeChild(state, treeNode, familyNode)
+      if (familyNode) removeChild(state, treeNode, familyNode)
     }
     // remove ~user[/path/to...]/workflow//cycle/task/job node
     removeTree(state, treeNode)
