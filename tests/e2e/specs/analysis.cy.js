@@ -16,7 +16,6 @@
  */
 
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
-import { clone } from 'lodash'
 
 const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
 
@@ -138,6 +137,20 @@ describe('Analysis view', () => {
         cy
           .get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
+        // Show Max RSS
+        cy
+          .get('#c-analysis-filter-task-timings')
+          .click({ force: true })
+        cy
+          .get('.v-list-item')
+          .contains('Max RSS')
+          .click({ force: true })
+        cy
+          .get('td')
+          .contains('MB')
+        cy
+          .get('.c-analysis table > tbody > tr')
+          .should('have.length', numTasks)
       })
 
       it('Should filter by task name, platform and timings', () => {
@@ -213,6 +226,43 @@ describe('Analysis view', () => {
           .should('have.length', 1)
           .should('be.visible')
       })
+      it('Should show Max RSS', () => {
+        cy
+          .get('#c-analysis-filter-task-timings')
+          .click({ force: true })
+        cy
+          .get('.v-list-item')
+          .contains('Max RSS')
+          .click({ force: true })
+        cy
+          .get('td')
+          .contains('MB')
+          .should('be.visible')
+        cy
+          .get('.c-analysis table > tbody > tr')
+          .should('have.length', numTasks)
+          .should('be.visible')
+        cy
+          .get('.v-chip__content')
+          .should('not.exist')
+      })
+      it('Should show CPU Time', () => {
+        cy
+          .get('#c-analysis-filter-task-timings')
+          .click({ force: true })
+        cy
+          .get('.v-list-item')
+          .contains('CPU Time')
+          .click({ force: true })
+        cy
+          .get('td')
+          .contains('00:00:10')
+          .should('be.visible')
+        cy
+          .get('.v-chip__content')
+          .should('exist')
+          .contains('CPU Time')
+      })
     })
   })
 
@@ -238,6 +288,38 @@ describe('Analysis view', () => {
         .get('.vue-apexcharts')
         .should('not.exist')
     })
+    it('Should show Max RSS', () => {
+      cy
+        .get('#c-analysis-filter-task-timings')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('Max RSS')
+        .click({ force: true })
+      cy
+        .get('.apexcharts-yaxis-label')
+        .should('have.length', numTasks)
+      cy
+        .get('.apexcharts-xaxis-label')
+        .contains('MB')
+        .should('be.visible')
+    })
+    it('Should show CPU Time', () => {
+      cy
+        .get('#c-analysis-filter-task-timings')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('CPU Time')
+        .click({ force: true })
+      cy
+        .get('.apexcharts-yaxis-label')
+        .should('have.length', numTasks)
+      cy
+        .get('.apexcharts-xaxis-label')
+        .contains('00:00:00')
+        .should('be.visible')
+    })
 
     it('refreshes without getting bogus apexcharts error', () => {
       // https://github.com/apexcharts/vue3-apexcharts/issues/79
@@ -258,7 +340,7 @@ describe('Analysis view', () => {
         .then((els) => {
           expect(
             Array.from(els, (i) => i.textContent)
-          ).to.deep.equal(sortedTasks)
+          ).to.deep.equal(['eventually_succeeded', 'succeeded', 'waiting'])
         })
       cy.get('[data-cy=box-plot-sort]')
         .click()
@@ -266,7 +348,7 @@ describe('Analysis view', () => {
         .then((els) => {
           expect(
             Array.from(els, (i) => i.textContent)
-          ).to.deep.equal(clone(sortedTasks).reverse())
+          ).to.deep.equal(['waiting', 'succeeded', 'eventually_succeeded'])
         })
     })
   })
@@ -551,6 +633,30 @@ describe('Filters and Options save state', () => {
         .click()
         .get('[data-cy="box-plot-sort-select"]')
         .should('be.visible')
+    })
+    it('displays correct tooltip content for box plot', () => {
+      cy.get('.c-analysis [data-cy=box-plot-toggle]').click()
+      cy.get('[data-cy=box-plot-chart] .apexcharts-series path')
+        .first()
+        .trigger('mouseover', { force: true })
+        .trigger('mousemove', { force: true })
+
+      // Check tooltip content
+      cy.get('.apexcharts-tooltip')
+        .should('be.visible')
+        .contains('Maximum: 00:00:33')
+      cy.get('.apexcharts-tooltip')
+        .contains('Median')
+      cy.get('.apexcharts-tooltip')
+        .contains('Minimum')
+      // If timingOption is maxRss, check for Memory Allocated
+      cy.get('#c-analysis-filter-task-timings')
+        .invoke('val')
+        .then(val => {
+          if (val === 'Max RSS') {
+            cy.get('.apexcharts-tooltip').contains('Memory Allocated')
+          }
+        })
     })
   })
 })

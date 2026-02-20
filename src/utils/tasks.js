@@ -17,7 +17,9 @@
 
 import TaskState from '@/model/TaskState.model'
 import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
-
+import {
+  upperFirst
+} from 'lodash'
 /**
  * States used when the parent is stopped.
  * @type {TaskState[]}
@@ -97,26 +99,111 @@ export function jobMessageOutputs (jobNode) {
  * 00:00:00, rather than undefined
  * @return {string=} Formatted duration
  */
-export function formatDuration (dur, { allowZeros = false } = {}) {
-  if (dur || (dur === 0 && allowZeros === true)) {
-    const seconds = dur % 60
-    const minutes = ((dur - seconds) / 60) % 60
-    const hours = ((dur - minutes * 60 - seconds) / 3600) % 24
-    const days = (dur - hours * 3600 - minutes * 60 - seconds) / 86400
-
-    let dayss = ''
-    if (days > 0) {
-      dayss = days.toString() + 'd '
-    }
-
-    return dayss +
-      hours.toString().padStart(2, '0') +
-      ':' + minutes.toString().padStart(2, '0') +
-      ':' + Math.round(seconds).toString().padStart(2, '0')
+export function formatDuration (value, allowZeros = false, timingOption = true) {
+  if (timingOption === 'maxRss') {
+    return formatRSS(value)
   }
-  // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
-  // return "undefined" rather than a number for these cases
-  return undefined
+  // Times are formatted as HH:MM:SS
+  if (timingOption === 'queue' || timingOption === 'total' || timingOption === 'run' || timingOption === 'cpuTime' || timingOption === true) {
+    if (value || (value === 0 && allowZeros === true)) {
+      // Convert CPU time to seconds
+      if (timingOption === 'cpuTime') {
+        value = value / 1000
+      }
+      const seconds = value % 60
+      const minutes = ((value - seconds) / 60) % 60
+      const hours = ((value - minutes * 60 - seconds) / 3600) % 24
+      const days = (value - hours * 3600 - minutes * 60 - seconds) / 86400
+
+      let dayss = ''
+      if (days > 0) {
+        dayss = days.toString() + 'd '
+      }
+
+      return dayss +
+        hours.toString().padStart(2, '0') +
+        ':' + minutes.toString().padStart(2, '0') +
+        ':' + Math.round(seconds).toString().padStart(2, '0')
+    }
+    // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
+    // return "undefined" rather than a number for these cases
+    return undefined
+  }
+}
+
+function formatRSS (value) {
+  // Format the max RSS value in a human-readable format
+  if (value === undefined || value === null) {
+    return undefined
+  } else if (value / 1024 < 1000) {
+    const kilobytes = value / 1024
+    return kilobytes.toPrecision(3) + ' KB'
+  } else if (value / 1048576 < 1000) {
+    const megabytes = value / 1048576
+    return megabytes.toPrecision(3) + ' MB'
+  } else {
+    const gigabytes = value / 1073741824
+    return gigabytes.toPrecision(3) + ' GB'
+  }
+}
+
+export function compare (a, b, sortBy, sortDesc) {
+  /**
+   * @param {string|number} a
+   * @param {string|number} b
+   * @returns {number}
+  */
+  let ret = ''
+  // Median values are stored in quartile arrays, so need to access the 2nd element
+  if (sortBy === 'medianRunTime' || sortBy === 'medianQueueTime' || sortBy === 'medianTotalTime' || sortBy === 'medianMaxRss') {
+    sortBy = sortBy.replace('median', '').replace('Time', '')
+    sortBy = sortBy.charAt(0).toLowerCase() + sortBy.slice(1)
+    sortBy = sortBy + 'Quartiles'
+    ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
+  } else if (sortBy === 'medianCpuTime') {
+    sortBy = 'cpuTimeQuartiles'
+    ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
+  } else {
+  // All non median sorts
+    ret = a[sortBy] < b[sortBy] ? -1 : 1
+  }
+  return sortDesc ? -ret : ret
+}
+
+export function formatChartLabels (timingOption) {
+  // Create correct labels for the charts
+  if (timingOption.toLowerCase() === 'maxrss') {
+    return 'Max RSS'
+  } else if (timingOption === 'cpuTime' || timingOption === 'CpuTime') {
+    return 'CPU Time'
+  } else {
+    return upperFirst(timingOption) + ' Time'
+  }
+}
+
+export function getTimingOption (timingOption) {
+  // Create correct timing option for the charts
+  if (timingOption === 'maxRss' || timingOption === 'cpuTime') {
+    return timingOption
+  } else {
+    return timingOption + 'Time'
+  }
+}
+
+export function formatHeader (statistic, timingOption) {
+  if (timingOption === 'MaxRss' || timingOption === 'CpuTime' || timingOption === 'totalCpuTime') {
+    if (statistic === 'quartiles') {
+      return timingOption.charAt(0).toLowerCase() + timingOption.slice(1)
+    } else {
+      return statistic + timingOption
+    }
+  } else {
+    if (statistic === 'quartiles') {
+      return timingOption.toLowerCase()
+    } else {
+      return statistic + timingOption + 'Time'
+    }
+  }
 }
 
 /**
