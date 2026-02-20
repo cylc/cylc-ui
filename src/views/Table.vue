@@ -20,10 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     fluid
     class="c-table pa-2 pb-0 h-100 flex-column d-flex"
   >
-    <ViewToolbar
-      :groups="controlGroups"
-      @setOption="setOption"
-    />
+    <ViewToolbar>
+      <TaskFilter v-model="tasksFilter"/>
+    </ViewToolbar>
     <div class="overflow-hidden">
       <TableComponent
         :tasks="filteredTasks"
@@ -46,10 +45,11 @@ import {
   useInitialOptions
 } from '@/utils/initialOptions'
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
+import TaskFilter from '@/components/cylc/viewToolbar/TaskFilter.vue'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -148,6 +148,7 @@ export default {
 
   components: {
     TableComponent,
+    TaskFilter,
     ViewToolbar,
   },
 
@@ -227,40 +228,6 @@ export default {
         waitingStateModifiers,
         genericModifiers
       ))
-    },
-
-    controlGroups () {
-      return [
-        {
-          title: 'Filter',
-          controls: [
-            {
-              title: 'Filter By ID',
-              action: 'taskIDFilter',
-              key: 'taskIDFilter',
-              value: this.tasksFilter.id
-            },
-            {
-              title: 'Filter By State',
-              action: 'taskStateFilter',
-              key: 'taskStateFilter',
-              value: this.tasksFilter.states,
-            },
-          ],
-        },
-      ]
-    },
-  },
-
-  methods: {
-    setOption (option, value) {
-      if (option === 'taskStateFilter') {
-        this.tasksFilter.states = value
-      } else if (option === 'taskIDFilter') {
-        this.tasksFilter.id = value
-      } else {
-        this[option] = value
-      }
     },
   },
 }
