@@ -18,59 +18,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Controls for filtering tasks in views. -->
 
 <template>
-  <div class="group d-flex align-center">
-    <v-text-field
-      v-model="model.id"
-      class="expandable-input"
-      clearable
-      :prepend-inner-icon="mdiMagnify"
-      @focus="autoResizeInput"
-      @blur="autoResizeInput"
-      placeholder="Search     (globs supported)"
-      data-cy="control-taskIDFilter"
-    />
-    <ViewToolbarBtn
-      :active="taskStates?.length"
-      :icon="mdiFilter"
-      data-cy="control-taskStateFilter"
+  <v-text-field
+    v-model="model.id"
+    class="expandable-input"
+    clearable
+    :prepend-inner-icon="mdiMagnify"
+    @focus="autoResizeInput"
+    @blur="autoResizeInput"
+    placeholder="Search     (globs supported)"
+    data-cy="control-taskIDFilter"
+  />
+  <ViewToolbarBtn
+    :active="taskStates?.length"
+    :icon="mdiFilter"
+    data-cy="control-taskStateFilter"
+    v-tooltip="'Filter by task state'"
+  >
+    <v-menu
+      activator="parent"
+      :close-on-content-click="false"
     >
-      <v-menu
-        activator="parent"
-        :close-on-content-click="false"
-      >
-        <v-card>
-          <v-btn
-            :prepend-icon="mdiUndo"
-            variant="plain"
-            @click="resetTaskStates()"
-            block
-            spaced="end"
-            :data-cy="`control-taskStateFilter-reset`"
-          >
-            Reset
-          </v-btn>
-          <v-divider></v-divider>
+      <v-card>
+        <v-btn
+          :prepend-icon="mdiUndo"
+          variant="plain"
+          @click="resetTaskStates()"
+          block
+          spaced="end"
+          :data-cy="`control-taskStateFilter-reset`"
+        >
+          Reset
+        </v-btn>
+        <v-divider></v-divider>
 
-          <v-treeview
-            :items="taskStateItems"
-            v-model:activated="taskStates"
-            activatable
-            active-strategy="independent"
-            item-value="value"
-            color="blue"
-            indent-lines
-            density="compact"
-            class="pt-0"
-          >
-            <!-- task icons (for task state filters -->
-            <template #prepend="{ item }">
-              <Task :task="item.taskProps" class="mr-2"/>
-            </template>
-          </v-treeview>
-        </v-card>
-      </v-menu>
-    </ViewToolbarBtn>
-  </div>
+        <v-treeview
+          :items="taskStateItems"
+          v-model:activated="taskStates"
+          activatable
+          active-strategy="independent"
+          item-value="value"
+          :color="activeColor"
+          indent-lines
+          density="compact"
+          class="pt-0"
+        >
+          <!-- task icons (for task state filters -->
+          <template #prepend="{ item }">
+            <Task :task="item.taskProps" class="mr-2"/>
+          </template>
+        </v-treeview>
+      </v-card>
+    </v-menu>
+  </ViewToolbarBtn>
 </template>
 
 <script setup>
@@ -78,7 +77,7 @@ import { mdiFilter, mdiMagnify, mdiUndo } from '@mdi/js'
 import { TaskState, WaitingStateModifierNames } from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task.vue'
 import { computed } from 'vue'
-import { taskStateItems } from '@/components/cylc/viewToolbar/util'
+import { activeColor, taskStateItems } from '@/components/cylc/viewToolbar/util'
 import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 
 /** @type {import('vue').Ref<{ id: string?, states: string[]? }>} */

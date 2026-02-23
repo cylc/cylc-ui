@@ -23,6 +23,8 @@ import {
   WaitingStateModifiers,
 } from '@/model/TaskState.model'
 
+export const activeColor = 'primary'
+
 function getProps (modifier) {
   const ret = {}
   if (modifier === TaskModifier.isSkip) {

@@ -20,13 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <ViewToolbar
       class="toolbar"
     >
-      <TaskFilter v-model="tasksFilter"/>
-      <div class="group">
+      <template #filter>
+        <TaskFilter v-model="tasksFilter"/>
+      </template>
+      <template #tree>
         <ViewToolbarBtn
           v-model:active.toggle="flat"
           :icon="icons.mdiFormatAlignRight"
           :active-icon="icons.mdiFormatAlignJustify"
-          :active-color="null"
+          :highlight="false"
           v-tooltip="'Toggle Families'"
           data-cy="control-flat"
         />
@@ -42,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-tooltip="'Collapse All'"
           data-cy="control-CollapseAll"
         />
-      </div>
+      </template>
     </ViewToolbar>
     <TreeComponent
       class="tree"

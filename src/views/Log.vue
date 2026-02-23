@@ -28,36 +28,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <v-col>
           <ViewToolbar>
-            <div class="group">
-              <v-btn-toggle
-                v-model="jobLog"
-                divided
-                mandatory
-                variant="outlined"
-                color="primary"
-                density="comfortable"
-              >
-                <v-btn data-cy="workflow-toggle">Workflow</v-btn>
-                <v-btn data-cy="job-toggle">Job</v-btn>
-              </v-btn-toggle>
-              <ViewToolbarBtn
-                v-model:active.toggle="timestamps"
-                :icon="icons.mdiClockOutline"
-                v-tooltip="'Timestamps'"
-                data-cy="control-timestamps"
-              />
-              <ViewToolbarBtn
-                v-model:active.toggle="wordWrap"
-                :icon="icons.mdiWrap"
-                v-tooltip="'Word wrap'"
-                data-cy="control-wordWrap"
-              />
-              <ViewToolbarBtn
-                v-model:active.toggle="autoScroll"
-                :icon="icons.mdiMouseMoveDown"
-                v-tooltip="'Auto scroll'"
-              />
-            </div>
+            <v-btn-toggle
+              v-model="jobLog"
+              mandatory
+            >
+              <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+              <v-btn data-cy="job-toggle">Job</v-btn>
+            </v-btn-toggle>
+            <ViewToolbarBtn
+              v-model:active.toggle="timestamps"
+              :icon="icons.mdiClockOutline"
+              v-tooltip="'Timestamps'"
+              data-cy="control-timestamps"
+            />
+            <ViewToolbarBtn
+              v-model:active.toggle="wordWrap"
+              :icon="icons.mdiWrap"
+              v-tooltip="'Word wrap'"
+              data-cy="control-wordWrap"
+            />
+            <ViewToolbarBtn
+              v-model:active.toggle="autoScroll"
+              :icon="icons.mdiMouseMoveDown"
+              v-tooltip="'Auto scroll'"
+            />
           </ViewToolbar>
         </v-col>
       </v-row>

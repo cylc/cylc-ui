@@ -25,7 +25,12 @@ describe('View Toolbar Button Component', () => {
   const mountFunc = (props) => {
     cy.vmount(
       ViewToolbarBtn,
-      { props }
+      {
+        props: {
+          variant: 'text',
+          ...props,
+        }
+      }
     ).then((m) => m.wrapper).as('wrapper')
     // add the classes Vuetify requires
     cy.addVuetifyStyles(cy)
@@ -40,17 +45,17 @@ describe('View Toolbar Button Component', () => {
     cy.get('button')
       .should('be.visible')
       .should('not.have.attr', 'role', 'switch')
-      .should('not.have.class', 'text-blue')
+      .should('not.have.class', 'text-primary')
       .click()
     cy.get('@onClickSpy').should('have.been.calledOnce')
     cy.get('button')
-      .should('not.have.class', 'text-blue')
+      .should('not.have.class', 'text-primary')
     cy.get('@wrapper').then((wrapper) => {
       expect(wrapper.vm.active).to.be.false
       wrapper.setProps({ active: true })
     })
     cy.get('button')
-      .should('have.class', 'text-blue')
+      .should('have.class', 'text-primary')
   })
 
   it('can act as a toggle', () => {
@@ -69,32 +74,28 @@ describe('View Toolbar Button Component', () => {
     })
     cy.get('button')
       .should('have.attr', 'role', 'switch')
-      .should('not.have.class', 'text-blue')
+      .should('not.have.class', 'text-primary')
       .should('have.attr', 'aria-checked', 'false')
     cy.get('button').click()
-      .should('have.class', 'text-blue')
+      .should('have.class', 'text-primary')
       .should('have.attr', 'aria-checked', 'true')
       .then(() => {
         expect(wrapper.vm.active).to.be.true
       })
   })
 
-  it('can use a different icon and color when active', () => {
+  it('can use a different icon when active', () => {
     mountFunc({
       icon: mdiGestureTap,
       activeIcon: mdiCog,
-      activeColor: 'red',
     })
     cy.get('button svg path')
       .should('have.attr', 'd', mdiGestureTap)
-      .should('not.have.class', 'text-red')
     cy.get('@wrapper').then((wrapper) => {
       wrapper.setProps({ active: true })
     })
     cy.get('button svg path')
       .should('have.attr', 'd', mdiCog)
-    cy.get('button')
-      .should('have.class', 'text-red')
   })
 
   // TODO: visual regression test

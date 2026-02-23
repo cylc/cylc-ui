@@ -17,9 +17,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="c-view-toolbar">
-    <slot/>
+    <v-defaults-provider :defaults="vuetifyDefaults">
+      <div
+        class="group"
+        v-for="(slot, name) in $slots"
+        :key="name"
+      >
+        <slot :name="name"/>
+      </div>
+    </v-defaults-provider>
   </div>
 </template>
+
+<script setup>
+import { activeColor } from './util'
+
+const vuetifyDefaults = {
+  VBtn: {
+    size: 40,
+    variant: 'text',
+    density: 'compact',
+    rounded: 'lg',
+  },
+  VBtnToggle: {
+    divided: true,
+    variant: 'outlined',
+    color: activeColor,
+    density: 'comfortable',
+    VBtn: {
+      size: 'default',
+      rounded: 'default',
+    },
+  },
+}
+</script>
 
 <style lang="scss">
   .c-view-toolbar {
