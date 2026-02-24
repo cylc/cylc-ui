@@ -12,6 +12,16 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.13.0 (Released 2026-02-24)
+
+### 🚀 Enhancements
+
+[#2373](https://github.com/cylc/cylc-ui/pull/2373) - Family inheritance is now shown in the Info view for tasks.
+
+### 🔧 Fixes
+
+[#2473](https://github.com/cylc/cylc-ui/pull/2473) - Fixed bug where tasks would sometimes disappear from the table view.
+
 ## cylc-ui-2.12.2 (Released 2026-01-12)
 
 ### 🔧 Fixes
