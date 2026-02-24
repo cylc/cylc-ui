@@ -89,6 +89,6 @@ jobs:
           release-url: ${{ steps.create-release.outputs.html_url }}
 
       - name: Bump dev version
-        uses: MetRonnie/release-actions/stage-2/bump-dev-version-js@bump-dev-js
+        uses: cylc/release-actions/stage-2/bump-dev-version-js@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
