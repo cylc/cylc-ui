@@ -23,8 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="expandable-input"
     clearable
     :prepend-inner-icon="mdiMagnify"
-    @focus="autoResizeInput"
-    @blur="autoResizeInput"
     placeholder="Search     (globs supported)"
     data-cy="control-taskIDFilter"
   />
@@ -86,19 +84,6 @@ const model = defineModel({
   required: true,
 })
 
-function autoResizeInput (e) {
-  // enlarge a text input when focused or containing text
-  if (e.type === 'focus') {
-    e.target.classList.add('expanded')
-  } else {
-    if (e.target.value) {
-      e.target.classList.add('expanded')
-    } else {
-      e.target.classList.remove('expanded')
-    }
-  }
-}
-
 function resetTaskStates () {
   model.value.states = []
 }
@@ -126,7 +111,7 @@ const taskStates = computed({
 // auto expand/collapse the search bar
 .expandable-input {
   width: 8em;
-  &:has(.expanded) {
+  &.v-input--dirty, &.v-input--focused {
     width: 20em;
   }
 }
