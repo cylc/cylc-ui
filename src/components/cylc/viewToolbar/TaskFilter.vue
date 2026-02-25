@@ -110,6 +110,7 @@ const taskStates = computed({
 <style lang="scss" scoped>
 // auto expand/collapse the search bar
 .expandable-input {
+  flex: 0 0 auto;
   width: 8em;
   &.v-input--dirty, &.v-input--focused {
     width: 20em;

@@ -22,46 +22,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <div class="pa-2">
       <!-- the controls -->
-      <v-row
-        dense
-        class="flex-0-0"
-      >
-        <v-col>
-          <ViewToolbar>
-            <v-btn-toggle
-              v-model="jobLog"
-              mandatory
-            >
-              <v-btn data-cy="workflow-toggle">Workflow</v-btn>
-              <v-btn data-cy="job-toggle">Job</v-btn>
-            </v-btn-toggle>
-            <ViewToolbarBtn
-              v-model:active.toggle="timestamps"
-              :icon="icons.mdiClockOutline"
-              v-tooltip="'Timestamps'"
-              data-cy="control-timestamps"
-            />
-            <ViewToolbarBtn
-              v-model:active.toggle="wordWrap"
-              :icon="icons.mdiWrap"
-              v-tooltip="'Word wrap'"
-              data-cy="control-wordWrap"
-            />
-            <ViewToolbarBtn
-              v-model:active.toggle="autoScroll"
-              :icon="icons.mdiMouseMoveDown"
-              v-tooltip="'Auto scroll'"
-            />
-          </ViewToolbar>
-        </v-col>
-      </v-row>
+      <ViewToolbar>
+        <v-btn-toggle
+          v-model="jobLog"
+          mandatory
+        >
+          <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+          <v-btn data-cy="job-toggle">Job</v-btn>
+        </v-btn-toggle>
+        <ViewToolbarBtn
+          v-model:active.toggle="timestamps"
+          :icon="icons.mdiClockOutline"
+          v-tooltip="'Timestamps'"
+          data-cy="control-timestamps"
+        />
+        <ViewToolbarBtn
+          v-model:active.toggle="wordWrap"
+          :icon="icons.mdiWrap"
+          v-tooltip="'Word wrap'"
+          data-cy="control-wordWrap"
+        />
+        <ViewToolbarBtn
+          v-model:active.toggle="autoScroll"
+          :icon="icons.mdiMouseMoveDown"
+          v-tooltip="'Auto scroll'"
+        />
+      </ViewToolbar>
 
       <!-- the inputs -->
-      <v-row
-        dense
-        class="flex-0-0"
-      >
-        <v-col cols="8">
+      <ViewToolbar class="my-2">
+        <div class="group" style="flex-basis: 60%;">
           <v-text-field
             v-if="jobLog"
             data-cy="job-id-input"
@@ -112,11 +102,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="workflowId"
             disabled
           />
-        </v-col>
-        <v-col
-          cols="4"
-          class="d-flex align-start col-gap-2"
-        >
+        </div>
+        <div class="group flex-1-0">
+          <div></div>
           <v-select
             data-cy="file-input"
             :label="fileLabel"
@@ -131,8 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :icon="icons.mdiFolderRefresh"
             v-tooltip="'Refresh file list'"
           />
-        </v-col>
-      </v-row>
+        </div>
+      </ViewToolbar>
 
       <!-- the status line -->
       <v-row

@@ -18,13 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-view-toolbar">
     <v-defaults-provider :defaults="vuetifyDefaults">
-      <div
-        class="group"
+      <template
         v-for="(slot, name) in $slots"
         :key="name"
       >
-        <slot :name="name"/>
-      </div>
+        <slot v-if="name === 'default'"/>
+        <div v-else class="group">
+          <slot :name="name"/>
+        </div>
+      </template>
     </v-defaults-provider>
   </div>
 </template>
@@ -32,9 +34,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script setup>
 import { activeColor } from './util'
 
+const height = 40
+
 const vuetifyDefaults = {
   VBtn: {
-    size: 40,
+    size: height,
     variant: 'text',
     density: 'compact',
     rounded: 'lg',
@@ -55,16 +59,19 @@ const vuetifyDefaults = {
 <style lang="scss">
   .c-view-toolbar {
     display: flex;
+    align-items: center;
+
+    $spacing: 0.5rem;
 
     .group {
       display: flex;
+      align-self: stretch;
       align-items: center;
 
-      $spacing: 0.5rem;
-
-      &:not(:first-child):before {
+      &:not(:first-child)::before {
         // place a divider between groups
         content: '';
+        // height: calc(0.7px * v-bind(height))
         height: 70%;
         width: 0.15em;
         border-radius: 0.15em;
@@ -72,9 +79,14 @@ const vuetifyDefaults = {
         // put a bit of space between the groups
         margin: 0 $spacing;
       }
+    }
 
-      > :not(button + button):not(:first-child) {
-        margin-left: $spacing;
+    >, .group > {
+      .v-input, .v-btn-group {
+        // add spacing after certain elements
+        &:not(:last-child) {
+          margin-right: $spacing;
+        }
       }
     }
   }
