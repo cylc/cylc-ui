@@ -378,11 +378,12 @@ function getFamilyTree (tokens, node) {
   }
 
   // add family levels below the cycle point
-  for (const ancestor of node.ancestors.slice().reverse()) {
+  for (let i = node.ancestors?.length ?? 0; i > 0; i--) {
+    const { name } = node.ancestors[i - 1]
     ret.push([
       'family',
-      ancestor.name,
-      lastTokens.clone({ task: ancestor.name })
+      name,
+      lastTokens.clone({ task: name })
     ])
   }
 
