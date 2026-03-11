@@ -385,7 +385,9 @@ function getFamilyTree (tokens, node) {
     }
   }
 
-  // add family levels below the cycle point
+  // Add family levels below the cycle point:
+  // N.B. guarding against node.ancestors being undefined sometimes, which shouldn't really happen -
+  // possibly caused by https://github.com/cylc/cylc-uiserver/issues/767
   for (let i = node.ancestors?.length ?? 0; i > 0; i--) {
     const { name } = node.ancestors[i - 1]
     ret.push([
