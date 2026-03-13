@@ -206,4 +206,38 @@ describe('GScanTreeItem', () => {
       expect(wrapper.vm.workflowLink).to.equal('/workspace/a/b/c')
     })
   })
+
+  describe('Modifier icons', () => {
+    let wrapper
+    it('shows modifiers for non-stopped workflows', async () => {
+      const { id, tokens } = simpleWorkflowNode
+      const node = {
+        type: 'workflow',
+        node: {
+          status: 'running',
+          containsHeld: true,
+          containsRetry: true,
+          stateTotals: {},
+        },
+        id,
+        tokens,
+      }
+      wrapper = mountFunction({
+        global: {
+          stubs: ['WorkflowIcon', 'WarningIcon'],
+        },
+        props: {
+          node,
+        },
+      })
+      function expectModifiers (value) {
+        expect(wrapper.find('[data-test=modifier-held]').exists()).toBe(value)
+        expect(wrapper.find('[data-test=modifier-retrying]').exists()).toBe(value)
+      }
+      expectModifiers(true)
+      node.node.status = 'stopped'
+      await wrapper.setProps({ node })
+      expectModifiers(false)
+    })
+  })
 })
