@@ -16,6 +16,7 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
+import { describe, it, expect, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { Assertion } from 'chai'
 import { createVuetify } from 'vuetify'
@@ -32,6 +33,7 @@ import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 import TaskState from '@/model/TaskState.model'
+import { merge } from 'lodash-es'
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -96,19 +98,17 @@ describe('TreeItem component', () => {
   })
 
   describe('expand/collapse button click', () => {
-    const wrapper = mountFunction({
-      props: {
-        node: simpleTaskNode,
-        filteredOutNodesCache: new WeakMap(),
-      }
-    })
-    expect(wrapper).to.not.be.expanded()
-    const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
-    it('should expand if currently collapsed', async () => {
+    it('expands/collapses', async () => {
+      const wrapper = mountFunction({
+        props: {
+          node: simpleTaskNode,
+          filteredOutNodesCache: new WeakMap(),
+        }
+      })
+      expect(wrapper).to.not.be.expanded()
+      const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
       await expandCollapseBtn.trigger('click')
       expect(wrapper).to.be.expanded()
-    })
-    it('should collapse if currently expanded', async () => {
       await expandCollapseBtn.trigger('click')
       expect(wrapper).to.not.be.expanded()
     })
@@ -137,20 +137,30 @@ describe('TreeItem component', () => {
 })
 
 describe('GScanTreeItem', () => {
-  const mountFunction = (options) => mount(GScanTreeItem, {
-    global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
-      mock: { $workflowService }
-    },
-    ...options
-  })
+  const mountFunction = (options) => mount(
+    GScanTreeItem,
+    merge(
+      {
+        global: {
+          plugins: [createVuetify(), CommandMenuPlugin],
+          mock: { $workflowService },
+        },
+        props: {
+          filteredOutNodesCache: new WeakMap(),
+        },
+      },
+      options
+    )
+  )
 
   describe('computed properties', () => {
-    const wrapper = mountFunction({
-      props: {
-        node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
-        filteredOutNodesCache: new WeakMap(),
-      }
+    let wrapper
+    beforeEach(() => {
+      wrapper = mountFunction({
+        props: {
+          node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        }
+      })
     })
     it('does not combine descendant latest state tasks', () => {
       expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
@@ -178,7 +188,6 @@ describe('GScanTreeItem', () => {
           node: {
             type: 'barbenheimer',
           },
-          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })
@@ -191,11 +200,44 @@ describe('GScanTreeItem', () => {
             type: 'workflow',
             tokens: { workflow: 'a/b/c' }
           },
-          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })
       expect(wrapper.vm.workflowLink).to.equal('/workspace/a/b/c')
+    })
+  })
+
+  describe('Modifier icons', () => {
+    let wrapper
+    it('shows modifiers for non-stopped workflows', async () => {
+      const { id, tokens } = simpleWorkflowNode
+      const node = {
+        type: 'workflow',
+        node: {
+          status: 'running',
+          containsHeld: true,
+          containsRetry: true,
+          stateTotals: {},
+        },
+        id,
+        tokens,
+      }
+      wrapper = mountFunction({
+        global: {
+          stubs: ['WorkflowIcon', 'WarningIcon'],
+        },
+        props: {
+          node,
+        },
+      })
+      function expectModifiers (value) {
+        expect(wrapper.find('[data-test=modifier-held]').exists()).toBe(value)
+        expect(wrapper.find('[data-test=modifier-retrying]').exists()).toBe(value)
+      }
+      expectModifiers(true)
+      node.node.status = 'stopped'
+      await wrapper.setProps({ node })
+      expectModifiers(false)
     })
   })
 })
