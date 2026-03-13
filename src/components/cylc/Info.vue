@@ -72,55 +72,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             Metadata
           </v-expansion-panel-title>
           <v-expansion-panel-text>
+            <!-- Special handling for title field -->
             <dl>
-              <dt>Title</dt>
-              <dd>{{ taskMetadata.title }}</dd>
-            <v-divider />
-            <dt>URL</dt>
-            <dd>
-              <!--
-                  NOTE: for security reasons, always display the full URL
-                  that the link directs to
-              -->
-              <a
-                v-if="taskMetadata.URL"
-                :href="taskMetadata.URL"
-                target="_blank"
-              >
-                {{ taskMetadata.URL }}
-              </a>
-            </dd>
-            <v-divider />
-            <dt>Description</dt>
+              <div v-if="taskMetadata.title">
+                <dt v-if="taskMetadata.title">
+                  <h1>{{ taskMetadata.title }}</h1>
+                </dt>
+              <v-divider />
+            </div>
+
+            <!-- Special handling for url field -->
+            <div v-if="taskMetadata.URL">
+              <dt>URL</dt>
+              <dd>
+                <!--
+                    NOTE: for security reasons, always display the full URL
+                    that the link directs to
+                -->
+                <a
+                  :href="taskMetadata.URL"
+                  target="_blank"
+                >
+                  {{ taskMetadata.URL }}
+                </a>
+              </dd>
+              <v-divider />
+            </div>
+
+            <!-- Special handling for description field -->
             <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
             <v-divider />
+
+            <!-- Handling for custom fields -->
             <template v-for="(value, key) in customMetadata" :key="key">
               <dt>{{ key }}</dt>
               <dd><Markdown :markdown="value"/></dd>
-              <v-divider />
-              <dt>Description</dt>
-              <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
-              <template v-if="taskMetadata.URL">
-                <v-divider />
-                <dt>URL</dt>
-                <dd>
-                  <!--
-                      NOTE: for security reasons, always display the full URL
-                      that the link directs to
-                  -->
-                  <a
-                    :href="taskMetadata.URL"
-                    target="_blank"
-                  >
-                    {{ taskMetadata.URL }}
-                  </a>
-                </dd>
-              </template>
-              <template v-for="(value, key) in customMetadata" :key="key">
-                <v-divider />
-                <dt>{{ key }}</dt>
-                <dd><span class="markup">{{ value }}</span></dd>
-              </template>
             </template>
             </dl>
           </v-expansion-panel-text>
