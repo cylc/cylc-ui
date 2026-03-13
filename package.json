@@ -41,7 +41,6 @@
     "markdown-it": "14.1.1",
     "mitt": "3.0.1",
     "myst-parser": "1.5.12",
-    "myst-theme": "0.0.0",
     "myst-to-html": "1.5.12",
     "nprogress": "1.0.0-1",
     "preact": "10.27.3",

@@ -4286,7 +4286,6 @@ __metadata:
     markdown-it: "npm:14.1.1"
     mitt: "npm:3.0.1"
     myst-parser: "npm:1.5.12"
-    myst-theme: "npm:0.0.0"
     myst-to-html: "npm:1.5.12"
     nodemon: "npm:3.1.14"
     nprogress: "npm:1.0.0-1"
@@ -8782,13 +8781,6 @@ __metadata:
   version: 0.0.5
   resolution: "myst-spec@npm:0.0.5"
   checksum: 10c0/3d324b830fe5fd6103cde65a1b6288f7a27276da27820a31e6acecfa0c4f7476f8cb33db8fd8e64a23c80d93af90ad1d5a340a35791282a52a888fedf82d32c4
-  languageName: node
-  linkType: hard
-
-"myst-theme@npm:0.0.0":
-  version: 0.0.0
-  resolution: "myst-theme@npm:0.0.0"
-  checksum: 10c0/2fca26898e2c91f283e5019354f0185049bba186cb6d66d2e66c8e363424b47b3f59ff0e5b82b6ec5d151711ec0b3992b44f4eb520b1a6c3b96d1d4fdb2e5580
   languageName: node
   linkType: hard
 
