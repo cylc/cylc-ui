@@ -100,8 +100,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
 
             <!-- Special handling for description field -->
-            <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
-            <v-divider />
+            <div v-if="taskMetadata.description">
+              <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
+              <v-divider />
+            </div>
 
             <!-- Handling for custom fields -->
             <template v-for="(value, key) in customMetadata" :key="key">
