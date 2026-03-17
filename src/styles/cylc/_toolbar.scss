@@ -37,7 +37,7 @@
     // make this shrink more than title (can see status in mutation menu if needed):
     flex-shrink: 10;
     // override vuetify .text-* class letter spacing:
-    letter-spacing: normal !important;
+    letter-spacing: normal;
   }
 
   .v-icon {

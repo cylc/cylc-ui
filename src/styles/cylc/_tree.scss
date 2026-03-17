@@ -60,13 +60,10 @@ $icon-width: 1.5rem;
 }
 
 .c-treeitem {
-  display:inline-block;
-  vertical-align:middle;
   width: 100%;
   .node {
     min-height: $node-height;
     line-height: normal;
-    display: block;
 
     .node-expand-collapse-button {
       width: $icon-width;
@@ -108,8 +105,6 @@ $icon-width: 1.5rem;
   $leaf-background-color: map.get(settings.$grey, 'lighten-3');
 
   .leaf {
-    padding: 0;
-    margin: 0;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
