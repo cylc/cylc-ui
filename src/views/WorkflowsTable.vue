@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           prominent
           color="grey-lighten-3"
         >
-          <h3 class="text-h5">{{ $t('Workflows.tableHeader') }}</h3>
+          <h3 class="text-headline-medium">{{ $t('Workflows.tableHeader') }}</h3>
         </v-alert>
         <v-data-table
           :headers="$options.headers"

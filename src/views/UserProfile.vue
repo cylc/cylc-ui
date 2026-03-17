@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           prominent
           color="grey-lighten-3"
         >
-          <h3 class="text-h5">{{ $t('UserProfile.title') }}</h3>
+          <h3 class="text-headline-medium">{{ $t('UserProfile.title') }}</h3>
         </v-alert>
         <v-form>
           <v-defaults-provider :defaults="$options.vuetifyDefaults">
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :model-value="user.username"
                     disabled
                     id="profile-username"
-                    class="text-body-1"
+                    class="text-body-large"
                   />
                 </v-col>
               </v-row>
@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :model-value="Object.keys(user.extensions).join(', ') || 'None'"
                     disabled
                     id="profile-extensions"
-                    class="text-body-1"
+                    class="text-body-large"
                   />
                 </v-col>
               </v-row>
