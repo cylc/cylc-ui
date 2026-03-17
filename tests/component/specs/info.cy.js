@@ -21,6 +21,22 @@ import { Tokens } from '@/utils/uid'
 const DESCRIPTION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+# New Section
+
+H{sub}\`2\`O, and 5{sup}\`th\` of November.
+
+\`\`\`{list-table} A Liszt Table
+:header-rows: 1
+
+* - Piece
+  - Year
+* - Hungarian Rhapsody No. 2
+  - 1847
+* - La Campanella
+  - 1851
+* - Liebestraum No. 3
+  - 1850
 `
 const TOKENS = new Tokens('~user/workflow//1234/foo')
 const TASK = {
@@ -183,15 +199,29 @@ describe('Info component', () => {
         .get('.c-graph-node .c-job .succeeded').should('be.visible')
     })
 
-    it('shows metadata', () => {
-      cy.get('.metadata-panel.v-expansion-panel--active').should('be.visible')
-        .contains('My Foo')
-        .get('.metadata-panel') // the description should be displayed
-        .contains(/Lorem ipsum dolor sit amet.*/)
-        .get('.metadata-panel a:first') // the URL should be an anchor
-        .should('have.attr', 'href', 'https://cylc.org')
-        .contains(/^https:\/\/cylc.org$/)
-    })
+    // the metadata panel
+    cy.get('.metadata-panel.v-expansion-panel--active').should('be.visible')
+      .contains('My Foo')
+      .get('.metadata-panel') // the description should be displayed
+      .contains(/Lorem ipsum dolor sit amet.*/)
+      .get('.metadata-panel a:first') // the URL should be an anchor
+      .should('have.attr', 'href', 'https://cylc.org')
+      .contains(/^https:\/\/cylc.org$/)
+      // Markdonw allows the adding of additional titles:
+      .get('h1').eq(1)
+      .contains('New Section')
+      // Markdown subscripts and superscripts should be rendered:
+      .get('sub')
+      .contains('2')
+      .get('sup')
+      .contains('th')
+      // Markdown tables should be rendered:
+      .get('table')
+      .should('be.visible')
+      .get('table tr')
+      .contains('Hungarian Rhapsody No. 2')
+      .get('table th')
+      .contains('Piece')
 
     it('shows run mode and inheritance', () => {
       cy.get('.run-mode-panel.v-expansion-panel--active').should('be.visible')
@@ -346,6 +376,14 @@ describe('Info component', () => {
         panelExpansion: [0, 1, 2, 3],
       }
     })
+
+    // the metadata panel contains default values where there is no data:
+    cy.get('.metadata-panel.v-expansion-panel--active').should('be.visible')
+      .contains('(Title)')
+      .get('.metadata-panel')
+      .contains('Description')
+      .get('.metadata-panel')
+      .contains('URL')
   })
 
   for (const mode of ['Skip', 'Simulation', 'Dummy']) {

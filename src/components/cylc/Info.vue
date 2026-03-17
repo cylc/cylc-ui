@@ -72,33 +72,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             Metadata
           </v-expansion-panel-title>
           <v-expansion-panel-text>
+            <!-- Special handling for title field -->
             <dl>
-              <dt>Title</dt>
-              <dd>{{ taskMetadata.title }}</dd>
+              <div v-if="taskMetadata.title">
+                <dt v-if="taskMetadata.title">
+                  <h1>{{ taskMetadata.title }}</h1>
+                </dt>
               <v-divider />
-              <dt>Description</dt>
-              <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
-              <template v-if="taskMetadata.URL">
-                <v-divider />
-                <dt>URL</dt>
-                <dd>
-                  <!--
-                      NOTE: for security reasons, always display the full URL
-                      that the link directs to
-                  -->
-                  <a
-                    :href="taskMetadata.URL"
-                    target="_blank"
-                  >
-                    {{ taskMetadata.URL }}
-                  </a>
-                </dd>
-              </template>
-              <template v-for="(value, key) in customMetadata" :key="key">
-                <v-divider />
-                <dt>{{ key }}</dt>
-                <dd><span class="markup">{{ value }}</span></dd>
-              </template>
+            </div>
+
+            <!-- Special handling for url field -->
+            <div v-if="taskMetadata.URL">
+              <dt>URL</dt>
+              <dd>
+                <!--
+                    NOTE: for security reasons, always display the full URL
+                    that the link directs to
+                -->
+                <a
+                  :href="taskMetadata.URL"
+                  target="_blank"
+                >
+                  {{ taskMetadata.URL }}
+                </a>
+              </dd>
+              <v-divider />
+            </div>
+
+            <!-- Special handling for description field -->
+            <div v-if="taskMetadata.description">
+              <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
+              <v-divider />
+            </div>
+
+            <!-- Handling for custom fields -->
+            <template v-for="(value, key) in customMetadata" :key="key">
+              <dt>{{ key }}</dt>
+              <dd><Markdown :markdown="value"/></dd>
+            </template>
             </dl>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -267,6 +278,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { computed } from 'vue'
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
+import Markdown from '@/components/Markdown.vue'
 import { formatCompletion } from '@/utils/outputs'
 import {
   mdiSkipForward,
@@ -285,6 +297,7 @@ export default {
   name: 'InfoComponent',
 
   components: {
+    Markdown,
     GraphNode,
   },
 
