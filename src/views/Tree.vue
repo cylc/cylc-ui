@@ -122,12 +122,6 @@ fragment FamilyProxyData on FamilyProxy {
   }
   childTasks {
     id
-    isHeld
-    isQueued
-    isRunahead
-    isRetry
-    isWallclock
-    isXtriggered
   }
   isHeld
   isQueued
