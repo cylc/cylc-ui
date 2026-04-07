@@ -58,7 +58,7 @@ yarn run build
 # build for development (rebuilds on change)
 yarn run build:watch
 # and launch using
-cylc gui --ui-build-dir=<cylc-ui-path>/dist/
+cylc gui --CylcUIServer.ui_build_dir=<cylc-ui-path>/dist/
 
 # start dev server in offline mode, using the build instead of source files
 yarn run preview
