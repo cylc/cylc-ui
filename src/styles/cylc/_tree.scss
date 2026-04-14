@@ -50,6 +50,9 @@ $icon-width: 1.5rem;
 }
 
 .c-tree {
+  .c-view-toolbar {
+    margin-bottom: 5px;
+  }
   .c-task, .c-job {
     display: flex;
     align-items: center;
