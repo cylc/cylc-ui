@@ -36,7 +36,8 @@ export function formatCompletion (completion, outputs) {
 
   // break the completion expression down into parts and iterate over them
   for (let part of completion.split(/(and|or|\(|\))/)) {
-    part = part.trim()
+    // NOTE: "-"s are replaced by "_"s in the completion expression
+    part = part.trim().replace('_', '-')
 
     if (!part) {
       continue
