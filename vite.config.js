@@ -104,10 +104,6 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: mode !== 'production',
       target: 'baseline-widely-available',
-      rollupOptions: {
-        // Workaround https://github.com/vitejs/vite/issues/19410:
-        maxParallelFileOps: 100,
-      },
     },
     css: {
       preprocessorOptions: {
