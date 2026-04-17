@@ -4118,6 +4118,9 @@ __metadata:
     vue3-apexcharts: "npm:1.8.0"
     vuetify: "npm:3.11.8"
     vuex: "npm:4.1.0"
+  dependenciesMeta:
+    cypress:
+      built: true
   peerDependenciesMeta:
     react:
       optional: true
