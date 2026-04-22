@@ -18,7 +18,7 @@
 import { formatCompletion } from '@/utils/outputs'
 
 describe('Outputs', () => {
-  it('should format completion expressions', () => {
+  it('formats completion expressions containing underscores', () => {
     expect(
       formatCompletion('succeeded or failed or submit_failed', [
         { label: 'succeeded', satisfied: true },
@@ -32,7 +32,9 @@ describe('Outputs', () => {
       // submit-failed in the outputs
       [false, 0, 'or submit-failed'],
     ])
+  })
 
+  it('formats completion expressions containing nested parentheses', () => {
     expect(
       formatCompletion('((a and b) or (c and d)) or e', [
         { label: 'a', satisfied: true },
