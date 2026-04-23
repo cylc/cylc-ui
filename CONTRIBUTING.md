@@ -63,6 +63,7 @@ below.
  - Min RK
  - Harleen Kaur
  - Samuel Denton
+ - Ryan Boult
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
