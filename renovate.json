@@ -154,5 +154,8 @@
   },
   "github-actions": {
     "enabled": false
-  }
+  },
+  "postUpdateOptions": [
+    "yarnDedupeHighest"
+  ]
 }
