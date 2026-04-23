@@ -111,7 +111,8 @@ describe('Table component', () => {
             initialOptions: {
               sortBy: [{ key, order }]
             }
-          }
+          },
+          shallow: true,
         })
         const comparator = (x, y) => {
           return order === 'asc' ? x.localeCompare(y) : y.localeCompare(x)

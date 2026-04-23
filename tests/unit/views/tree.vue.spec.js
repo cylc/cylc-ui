@@ -16,19 +16,15 @@
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
-import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
-import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import { Tokens } from '@/utils/uid'
 import { getIDMap } from '$tests/util'
-import { vuetifyOptions } from '@/plugins/vuetify'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
-const vuetify = createVuetify(vuetifyOptions)
 
 const expandID = (id) => ({
   id,
@@ -87,7 +83,7 @@ describe('Tree view', () => {
     store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
-        plugins: [vuetify, CommandMenuPlugin, store],
+        plugins: [store],
         mocks: {
           $workflowService
         }
@@ -95,6 +91,7 @@ describe('Tree view', () => {
       props: {
         workflowName: 'workflow1',
       },
+      shallow: true,
       ...options
     })
   })

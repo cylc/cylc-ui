@@ -19,13 +19,11 @@ import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
-import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
-import { vuetifyOptions } from '@/plugins/vuetify'
 
 describe('Log view', () => {
   const owner = 'svimes'
@@ -33,12 +31,11 @@ describe('Log view', () => {
   const workflowID = `~${owner}/${workflowName}`
   const initialFile = 'koom-valley.log'
 
-  const vuetify = createVuetify(vuetifyOptions)
   let $workflowService, store
 
   const mountFunction = (options) => mount(Log, {
     global: {
-      plugins: [vuetify, store],
+      plugins: [store],
       mocks: { $workflowService },
     },
     props: {
@@ -47,7 +44,8 @@ describe('Log view', () => {
         file: initialFile,
       },
     },
-    ...options
+    shallow: true,
+    ...options,
   })
 
   beforeEach(() => {
