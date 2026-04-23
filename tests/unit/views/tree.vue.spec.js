@@ -25,9 +25,10 @@ import WorkflowService from '@/services/workflow.service'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import { Tokens } from '@/utils/uid'
 import { getIDMap } from '$tests/util'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 const expandID = (id) => ({
   id,

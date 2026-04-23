@@ -32,6 +32,9 @@ import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 import TaskState from '@/model/TaskState.model'
+import { vuetifyOptions } from '@/plugins/vuetify'
+
+const vuetify = createVuetify(vuetifyOptions)
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -61,7 +64,7 @@ const $workflowService = sinon.createStubInstance(WorkflowService)
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
+      plugins: [vuetify, CommandMenuPlugin],
       mock: { $workflowService }
     },
     ...options
@@ -139,7 +142,7 @@ describe('TreeItem component', () => {
 describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
+      plugins: [vuetify, CommandMenuPlugin],
       mock: { $workflowService }
     },
     ...options

@@ -25,6 +25,7 @@ import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 describe('Log view', () => {
   const owner = 'svimes'
@@ -32,7 +33,7 @@ describe('Log view', () => {
   const workflowID = `~${owner}/${workflowName}`
   const initialFile = 'koom-valley.log'
 
-  const vuetify = createVuetify()
+  const vuetify = createVuetify(vuetifyOptions)
   let $workflowService, store
 
   const mountFunction = (options) => mount(Log, {

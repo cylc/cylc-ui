@@ -19,6 +19,7 @@ import { mount } from '@vue/test-utils'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import { cloneDeep } from 'lodash'
 import { createVuetify } from 'vuetify'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const BASIC_MUTATION = {
   name: 'My Mutation',
@@ -173,7 +174,7 @@ function getModel (wrapper) {
 }
 
 describe('FormGenerator Component', () => {
-  const vuetify = createVuetify()
+  const vuetify = createVuetify(vuetifyOptions)
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}

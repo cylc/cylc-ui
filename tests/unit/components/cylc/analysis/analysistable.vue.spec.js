@@ -21,8 +21,9 @@ import { createVuetify } from 'vuetify'
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
 import WorkflowService from '@/services/workflow.service'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 const analysisTasks = analysisTaskQuery.data.tasks
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
