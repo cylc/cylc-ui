@@ -65,7 +65,7 @@
     "cypress-vite": "1.8.0",
     "eslint": "8.57.1",
     "eslint-config-standard": "17.1.0",
-    "eslint-plugin-compat": "4.2.0",
+    "eslint-plugin-compat": "7.0.1",
     "eslint-plugin-cypress": "2.15.2",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-n": "16.6.2",
