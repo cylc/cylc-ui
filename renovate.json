@@ -143,8 +143,21 @@
         "vue3-apexcharts"
       ],
       "addLabels": [
-        "data workflows team"
-      ]
+        "analysis views"
+      ],
+      "prPriority": -1
+    },
+    {
+      "matchPackageNames": [
+        "apexcharts"
+      ],
+      "allowedVersions": "<5"
+    },
+    {
+      "matchPackageNames": [
+        "vue3-apexcharts"
+      ],
+      "allowedVersions": "<1.9"
     }
   ],
   "vulnerabilityAlerts": {
