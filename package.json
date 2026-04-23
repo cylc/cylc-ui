@@ -30,7 +30,7 @@
     "@lumino/widgets": "2.7.5",
     "@mdi/js": "7.4.47",
     "@vueuse/core": "14.1.0",
-    "apexcharts": "3.54.1",
+    "apexcharts": "5.10.6",
     "axios": "1.15.0",
     "dedent": "1.7.2",
     "enumify": "2.0.0",
