@@ -20,8 +20,9 @@ import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import WorkflowState from '@/model/WorkflowState.model'
 import { createVuetify } from 'vuetify'
 import { mdiHelpCircle } from '@mdi/js'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('WorkflowIcon', () => {
   it.each([

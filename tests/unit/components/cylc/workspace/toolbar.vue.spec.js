@@ -24,8 +24,10 @@ import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
 import WorkflowService from '@/services/workflow.service'
 import { useDrawer } from '@/utils/toolbar'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Workspace toolbar component', () => {
   let store
@@ -41,8 +43,9 @@ describe('Workspace toolbar component', () => {
     // TODO: actually just show nav btn at all times?
     const wrapper = mount(Toolbar, {
       global: {
-        plugins: [store, createVuetify(), CommandMenuPlugin],
+        plugins: [store, vuetify, CommandMenuPlugin],
         mocks: { $workflowService },
+        provide: { versionInfo: null },
       },
       props: {
         views: new Map(),
