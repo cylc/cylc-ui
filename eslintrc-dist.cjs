@@ -37,6 +37,8 @@ module.exports = {
     polyfills: [
       // Used by GraphiQL, shouldn't be a problem:
       'navigator.userAgentData',
+      // Used by @vue/runtime-dom only if available:
+      'trustedTypes',
     ],
   },
 }
