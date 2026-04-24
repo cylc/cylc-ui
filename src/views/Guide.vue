@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col>
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="text-h4 text--primary">Tasks &amp; Jobs</p>
+            <p class="text-headline-large text--primary">Tasks &amp; Jobs</p>
           </v-card-title>
           <v-card-text>
             <p>
@@ -94,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="text-h4 text--primary">Skip Mode?</p>
+            <p class="text-headline-large text--primary">Skip Mode?</p>
           </v-card-title>
           <v-card-text>
             <p>
@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="text-h4 text--primary">Views</p>
+            <p class="text-headline-large text--primary">Views</p>
           </v-card-title>
           <v-card-text>
             Cylc provides lots of views which you can use to monitor and
@@ -159,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="text-h4 text--primary">Tabs</p>
+            <p class="text-headline-large text--primary">Tabs</p>
           </v-card-title>
           <v-card-text>
             <p>
@@ -181,7 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col>
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="text-h4 text--primary">Why Are We Waiting?</p>
+            <p class="text-headline-large text--primary">Why Are We Waiting?</p>
           </v-card-title>
           <v-card-text>
             <p>
@@ -316,7 +316,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="text-h4 text--primary">The n-window</p>
+            <p class="text-headline-large text--primary">The n-window</p>
           </v-card-title>
           <v-card-text>
             <p>

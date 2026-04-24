@@ -23,15 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :icon="$options.icons.settings"
           prominent
           color="grey-lighten-3"
+          class="text-headline-medium"
         >
-          <h3 class="text-h5">{{ $t('UserProfile.title') }}</h3>
+          {{ $t('UserProfile.title') }}
         </v-alert>
         <v-form>
           <v-defaults-provider :defaults="$options.vuetifyDefaults">
             <v-container py-0>
-              <v-row no-gutters>
-                <h3>{{ $t('UserProfile.yourProfile') }}</h3>
-              </v-row>
+
+              <h3>{{ $t('UserProfile.yourProfile') }}</h3>
 
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
@@ -42,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :model-value="user.username"
                     disabled
                     id="profile-username"
-                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
@@ -60,7 +59,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :model-value="Object.keys(user.extensions).join(', ') || 'None'"
                     disabled
                     id="profile-extensions"
-                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
@@ -90,9 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
               </v-row>
 
-              <v-row no-gutters class="mt-4">
-                <h3>Preferences</h3>
-              </v-row>
+              <h3>Preferences</h3>
 
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
@@ -218,7 +214,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <template v-slot:item="{ item, props }">
                     <v-list-item
                       v-bind="props"
-                      :prepend-icon="workflowViews.get(item.value).icon"
+                      :prepend-icon="workflowViews.get(item).icon"
                     />
                   </template>
                 </v-select>

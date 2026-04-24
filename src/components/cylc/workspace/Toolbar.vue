@@ -37,8 +37,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
-      :class="showNavBtn ? 'ml-0' : null"
+      class="c-toolbar-title font-weight-medium text-primary"
+      :class="{
+        'ml-0': showNavBtn,
+        'shrink': mdAndDown, // TODO: use title.length as well
+      }"
     >
       {{ title }}
     </v-toolbar-title>
@@ -156,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-tooltip>
 
       <!-- workflow status message -->
-      <span class="status-msg text-body-2">
+      <span class="status-msg text-body-medium">
         {{ statusMessage }}
         <!-- workflow Cylc version popup on differ with UIS version -->
         <!-- nested within status-msg for style inheritance -->
@@ -267,6 +270,7 @@ import {
   mdiArrowULeftTop,
   mdiInformationOutline,
 } from '@mdi/js'
+import { useDisplay } from 'vuetify'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
 import { useDrawer, useNavBtn, toolbarHeight } from '@/utils/toolbar'
@@ -329,6 +333,7 @@ export default {
   name: 'Toolbar',
 
   setup () {
+    const { mdAndDown } = useDisplay()
     const { showNavBtn } = useNavBtn()
     const { toggleDrawer } = useDrawer()
 
@@ -336,6 +341,7 @@ export default {
     const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
 
     return {
+      mdAndDown,
       eventBus,
       showNavBtn,
       toggleDrawer,
@@ -557,3 +563,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.c-toolbar-title.shrink {
+  font-size: 1rem;
+}
+</style>

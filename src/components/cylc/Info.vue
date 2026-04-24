@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <v-defaults-provider :defaults="{
         VExpansionPanelTitle: {
-          class: 'text-button py-2',
+          class: 'text-title-small py-2',
         },
         VExpansionPanelText: {
           class: 'mt-2',

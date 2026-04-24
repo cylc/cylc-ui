@@ -85,6 +85,7 @@ export const vuetifyOptions = {
     VTooltip: {
       activator: 'parent',
       location: 'bottom',
+      maxWidth: 600,
     },
     VList: {
       slim: true,
