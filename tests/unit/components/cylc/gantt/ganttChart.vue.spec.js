@@ -55,7 +55,7 @@ describe('GanttChart component', () => {
     })
   }
 
-  it('Should deliver apexcharts the correct values', async () => {
+  it('Should deliver the correct values to the chart', async () => {
     const expectedSubmittedTime = 1677150609000
     const expectedStartedTime = 1677150613000
     const expectedFinishedTime = 1677150620000
@@ -65,17 +65,32 @@ describe('GanttChart component', () => {
       }
     })
 
-    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
+    // The component now uses a computed property `barData` which is used by `setOption`
+    // We can't directly access the series data as easily.
+    // Instead, we can check the `barData` computed property.
+    // Note: This is an internal implementation detail and might break if the component is refactored.
+    // A better approach would be to check the rendered output, but that's harder in a unit test.
+    let barData = wrapper.vm.barData
+    expect(barData[0].value).to.deep.equal([
+      1, // y-axis category index
       expectedSubmittedTime,
       expectedFinishedTime
     ])
+
     await wrapper.setProps({ timingOption: 'queue' })
-    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
+    await wrapper.vm.$nextTick() // Wait for computed properties to update
+    barData = wrapper.vm.barData
+    expect(barData[0].value).to.deep.equal([
+      1,
       expectedSubmittedTime,
       expectedStartedTime
     ])
+
     await wrapper.setProps({ timingOption: 'run' })
-    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
+    await wrapper.vm.$nextTick() // Wait for computed properties to update
+    barData = wrapper.vm.barData
+    expect(barData[0].value).to.deep.equal([
+      1,
       expectedStartedTime,
       expectedFinishedTime
     ])

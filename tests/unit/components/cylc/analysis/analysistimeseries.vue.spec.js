@@ -25,6 +25,7 @@ import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 const vuetify = createVuetify()
 const analysisJobs = analysisJobQuery.data.jobs
 const $workflowService = sinon.createStubInstance(WorkflowService)
+$workflowService.query2.resolves({ data: { tasks: [{ name: 'succeeded' }, { name: 'waiting' }, { name: 'eventually_succeeded' }] } })
 
 describe('TimeSeries component', () => {
   const mountFunction = (options) => {

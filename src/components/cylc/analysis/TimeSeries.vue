@@ -65,30 +65,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
   </Teleport>
   <div id="mainTimeSeries">
-    <VueApexCharts
-      type="line"
-      :options="chartOptions"
-      :series="series"
-      :height="450"
-      width="95%"
-      class="d-flex justify-center"
-          />
+    <div ref="mainChart" style="height: 450px; width: 95%;" class="d-flex justify-center" />
   </div>
   <div id="miniTimeSeries">
-    <VueApexCharts
-      type="line"
-      :options="miniChartOptions"
-      :series="series"
-      height="120"
-      width="95%"
-      @selection="zoomMainChart"
-      class="d-flex justify-center"
-    />
+    <div ref="miniChart" style="height: 120px; width: 95%;" class="d-flex justify-center" />
   </div>
   </template>
 
 <script>
-import VueApexCharts from 'vue3-apexcharts'
+import * as echarts from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+  LegendComponent
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 import {
   debounce,
   difference,
@@ -100,7 +94,6 @@ import {
 import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
 import {
-  mdiDownload,
   mdiRefresh,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
@@ -110,6 +103,16 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
+
+echarts.use([
+  LineChart,
+  GridComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+  LegendComponent,
+  CanvasRenderer
+])
 
 /** List of fields to request for task for each task */
 const jobFields = [
@@ -175,9 +178,7 @@ class AnalysisJobCallback extends DeltasCallback {
 export default {
   name: 'TimeSeries',
 
-  components: {
-    VueApexCharts,
-  },
+  components: {},
 
   emits: [updateInitialOptionsEvent],
 
@@ -233,7 +234,15 @@ export default {
   },
 
   mounted () {
+    this.initCharts()
     this.refreshData()
+    window.addEventListener('resize', this.handleResize)
+  },
+
+  beforeUnmount () {
+    window.removeEventListener('resize', this.handleResize)
+    this.mainChart?.dispose()
+    this.miniChart?.dispose()
   },
 
   data () {
@@ -243,7 +252,8 @@ export default {
       /** Object containing all of the jobs added by the callback */
       jobs,
       taskNames: [],
-      xRange: [undefined, undefined],
+      mainChart: null,
+      miniChart: null
     }
   },
 
@@ -253,7 +263,13 @@ export default {
       if (addedTasks.length > 0) {
         this.jobsQuery(newTasks)
       }
-    }
+    },
+    series: {
+      handler: 'updateCharts',
+      deep: true
+    },
+    chartOptions: 'updateCharts',
+    miniChartOptions: 'updateCharts'
   },
 
   computed: {
@@ -305,157 +321,145 @@ export default {
 
     chartOptions () {
       return {
-        chart: {
-          defaultLocale: 'en',
-          locales: [
-            {
-              name: 'en',
-              options: {
-                toolbar: {
-                  exportToSVG: 'Download SVG',
-                  exportToPNG: 'Download PNG',
-                  menu: 'Download',
-                  selection: 'Selection',
-                  selectionZoom: 'Selection Zoom',
-                  zoomIn: 'Zoom In',
-                  zoomOut: 'Zoom Out',
-                  pan: 'Panning',
-                  reset: 'Reset Zoom'
-                }
-              }
-            }
-          ],
-          animations: {
-            enabled: this.animate && !this.reducedAnimation,
-            easing: 'easeinout',
-            speed: 300,
-            animateGradually: {
-              enabled: true,
-              delay: 150,
-            },
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
-          },
-          fontFamily: 'inherit',
-          toolbar: {
-            autoSelected: 'zoom',
-            tools: {
-              download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-              selection: false,
-              zoom: true,
-              zoomin: false,
-              zoomout: false,
-              pan: false,
-              reset: true
-            }
-          },
-          zoom: {
-            type: 'y'
-          }
-        },
-        stroke: {
-          width: 2
-        },
-        markers: {
-          size: 4
+        animation: this.animate && !this.reducedAnimation,
+        grid: {
+          left: '5%',
+          right: '5%',
+          top: '15%',
+          bottom: '15%'
         },
         tooltip: {
-          y: {
-            formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
-              if (!value) {
-                return null
+          trigger: 'axis',
+          formatter: (params) => {
+            let result = `${params[0].axisValueLabel}<br/>`
+            for (const p of params) {
+              if (p.value) {
+                const y = formatDuration(p.value, { allowZeros: true })
+                const platform = this.series.find(s => s.name === p.seriesName).data.find(d => d.x === p.name)?.platform
+                result += `${p.marker} ${p.seriesName}: ${y} (${platform})<br/>`
               }
-              const y = formatDuration(value, { allowZeros: true })
-              const platform = this.series[seriesIndex].data[dataPointIndex].platform
-              return `${y} (${platform})`
             }
+            return result
           }
         },
-        xaxis: {
-          title: {
-            text: 'Cycle point',
-          },
-          categories: this.cyclePoints,
-          min: this.xRange[0],
-          max: this.xRange[1]
+        toolbox: {
+          feature: {
+            saveAsImage: { title: 'Download' },
+            dataZoom: { title: { zoom: 'Selection Zoom', back: 'Reset Zoom' } }
+          }
         },
-        yaxis: {
-          forceNiceScale: true,
+        dataZoom: [
+          {
+            type: 'inside',
+            filterMode: 'weak'
+          }
+        ],
+        xAxis: {
+          type: 'category',
+          data: this.cyclePoints,
+          name: 'Cycle point',
+          nameLocation: 'middle',
+          nameGap: 30
+        },
+        yAxis: {
+          type: 'value',
           min: this.showOrigin ? 0 : undefined,
-          title: {
-            text: upperFirst(this.timingOption) + ' time',
-          },
-          labels: {
+          name: upperFirst(this.timingOption) + ' time',
+          nameLocation: 'middle',
+          nameGap: 50,
+          axisLabel: {
             formatter: (value) => formatDuration(value, { allowZeros: true })
-          },
+          }
         },
+        series: this.series.map(s => ({
+          ...s,
+          type: 'line',
+          symbolSize: 8,
+          data: s.data.map(d => [d.x, d.y])
+        }))
       }
     },
 
     miniChartOptions () {
       return {
-        chart: {
-          animations: {
-            enabled: this.animate && !this.reducedAnimation,
-            easing: 'easeinout',
-            speed: 300,
-            animateGradually: {
-              enabled: true,
-              delay: 150,
-            },
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
-          },
-          selection: {
-            enabled: true,
-            xaxis: {
-              min: 1,
-              max: this.cyclePoints.length,
-            }
-          },
-          toolbar: {
-            autoSelected: 'selection',
-            show: true
-          }
-        },
-        legend: {
+        animation: this.animate && !this.reducedAnimation,
+        tooltip: {
           show: false
         },
-        markers: {
-          size: 3
+        grid: {
+          left: '5%',
+          right: '5%',
+          top: '10%',
+          bottom: '25%'
         },
-        stroke: {
-          width: 2
-        },
-        tooltip: {
-          enabled: false
-        },
-        xaxis: {
-          categories: this.cyclePoints,
-          tickAmount: 4,
-          labels: {
+        dataZoom: [
+          {
+            type: 'slider',
+            showDataShadow: false,
+            bottom: 5,
+            filterMode: 'weak',
+            startValue: 0,
+            endValue: this.cyclePoints.length - 1,
+            labelFormatter: ''
+          }
+        ],
+        xAxis: {
+          type: 'category',
+          data: this.cyclePoints,
+          axisLabel: {
             rotate: 0
           }
         },
-        yaxis: {
-          tickAmount: 3,
-          title: {
-            text: upperFirst(this.timingOption) + ' time',
-          },
-          labels: {
+        yAxis: {
+          type: 'value',
+          min: this.showOrigin ? 0 : undefined,
+          axisLabel: {
             formatter: (value) => formatDuration(value, { allowZeros: true })
-          },
-          min: this.showOrigin ? 0 : undefined
+          }
         },
+        series: this.series.map(s => ({
+          ...s,
+          type: 'line',
+          symbolSize: 4,
+          data: s.data.map(d => [d.x, d.y])
+        }))
       }
-    },
+    }
   },
 
   methods: {
+    initCharts () {
+      this.mainChart = echarts.init(this.$refs.mainChart)
+      this.miniChart = echarts.init(this.$refs.miniChart)
+
+      this.mainChart.on('datazoom', (params) => {
+        this.miniChart.dispatchAction({
+          type: 'dataZoom',
+          start: params.start,
+          end: params.end
+        })
+      })
+
+      this.miniChart.on('datazoom', (params) => {
+        this.mainChart.dispatchAction({
+          type: 'dataZoom',
+          start: params.start,
+          end: params.end
+        })
+      })
+
+      this.updateCharts()
+    },
+    updateCharts () {
+      if (!this.mainChart || !this.miniChart) return
+
+      this.mainChart.setOption(this.chartOptions, true)
+      this.miniChart.setOption(this.miniChartOptions, true)
+    },
+    handleResize () {
+      this.mainChart?.resize()
+      this.miniChart?.resize()
+    },
     selectSearchResults: function () {
       // Do we need a limit to number of tasks that can be added?
       const filteredTasks = this.$refs.selectTasks.filteredItems.map(
@@ -492,9 +496,6 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     ),
-    zoomMainChart: function (context, { xaxis }) {
-      this.xRange = [Math.ceil(xaxis.min), Math.floor(xaxis.max)]
-    },
     refreshData: function () {
       this.taskNamesQuery()
       this.jobsQuery(this.displayedTasks)

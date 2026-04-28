@@ -16,14 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <VueApexCharts
-    type="rangeBar"
-    :options="chartOptions"
-    :series="series"
-    width="100%"
-    height="auto"
-    class="d-flex justify-center"
-  />
+  <div ref="chartContainer" class="gantt-container" />
   <v-pagination
     v-model="page"
     :length="numPages"
@@ -33,12 +26,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import VueApexCharts from 'vue3-apexcharts'
+import * as echarts from 'echarts/core'
 import {
-  mdiDownload,
-} from '@mdi/js'
+  CustomChart,
+} from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+} from 'echarts/components'
+import {
+  CanvasRenderer,
+} from 'echarts/renderers'
 import { useReducedAnimation } from '@/composables/localStorage'
 import { Tokens } from '@/utils/uid'
+
+echarts.use([
+  CustomChart,
+  GridComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+  CanvasRenderer,
+])
 
 const timingOptions = new Map([
   ['total', { start: 'submittedTime', end: 'finishedTime' }],
@@ -56,15 +67,6 @@ const colours = [
 
 export default {
   name: 'GanttChart',
-
-  watch: {
-    tasksPerPage: function () {
-      this.page = 1
-    },
-  },
-  components: {
-    VueApexCharts,
-  },
 
   props: {
     /** @type {Record<string, Object[]>} */
@@ -87,27 +89,33 @@ export default {
   },
 
   setup () {
-    const reducedAnimation = useReducedAnimation()
-    return { reducedAnimation }
+    return { reducedAnimation: useReducedAnimation() }
   },
 
   data () {
     return {
       page: 1,
-      sortBy: 'name',
-      sortDesc: false,
+      chart: null,
     }
   },
 
-  methods: {
-    /**
-     * @param {string|number} a
-     * @param {string|number} b
-     * @returns {number}
-     */
-    compare (a, b) {
-      const ret = a[this.sortBy] < b[this.sortBy] ? -1 : 1
-      return this.sortDesc ? -ret : ret
+  mounted () {
+    this.initChart()
+    window.addEventListener('resize', this.handleResize)
+  },
+
+  beforeUnmount () {
+    window.removeEventListener('resize', this.handleResize)
+    this.chart?.dispose()
+  },
+
+  watch: {
+    jobs: { handler: 'updateChart', deep: true },
+    timingOption: 'updateChart',
+    animate: 'updateChart',
+    displayedJobs: { handler: 'updateChart', deep: true },
+    tasksPerPage () {
+      this.page = 1
     },
   },
 
@@ -121,134 +129,138 @@ export default {
         (jobs) => jobs
       )
     },
-    series () {
-      let data = []
-      if (this.jobs.length !== 0) {
-        const { start, end } = timingOptions.get(this.timingOption)
-        /** Mapping of cycle points to colours */
-        const jobColours = new Map()
-        let colourIndex = 0
-        data = this.displayedJobs.map(
-          (job) => {
-            const { cycle } = new Tokens(job.id)
-            let fillColor = jobColours.get(cycle)
-            if (!fillColor) {
-              fillColor = colours[colourIndex++ % colours.length]
-              jobColours.set(cycle, fillColor)
-            }
-            return {
-              x: job.name,
-              y: [
-                new Date(job[start]).getTime(),
-                new Date(job[end]).getTime()
-              ],
-              fillColor,
-            }
-          }
-        )
-      }
-      return [{ data }]
-    },
     numPages () {
-      if (this.jobs.length !== 0) {
+      if (Object.keys(this.jobs).length !== 0) {
         return Math.ceil(Object.keys(this.jobs).length / this.tasksPerPage)
-      } else {
-        return 1
       }
+      return 1
+    },
+  },
+
+  methods: {
+    initChart () {
+      this.chart = echarts.init(this.$refs.chartContainer)
+      this.updateChart()
     },
 
-    chartOptions () {
-      const { displayedJobs } = this
-      const { start, end } = timingOptions.get(this.timingOption)
-      return {
-        chart: {
-          defaultLocale: 'en',
-          locales: [
-            {
-              name: 'en',
-              options: {
-                toolbar: {
-                  exportToSVG: 'Download SVG',
-                  exportToPNG: 'Download PNG',
-                  menu: 'Download',
-                  selection: 'Selection',
-                  selectionZoom: 'Selection Zoom',
-                  zoomIn: 'Zoom In',
-                  zoomOut: 'Zoom Out',
-                  pan: 'Panning',
-                  reset: 'Reset Zoom'
-                }
-              }
-            }
-          ],
-          animations: {
-            enabled: this.animate && !this.reducedAnimation,
-            easing: 'easeinout',
-            speed: 300,
-            animateGradually: {
-              enabled: true,
-              delay: 150,
-            },
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
-          },
-          fontFamily: 'inherit',
-          toolbar: {
-            tools: {
-              download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-              selection: true,
-              zoom: true,
-              zoomin: true,
-              zoomout: true,
-              pan: true,
-              reset: true
-            },
-          },
-        },
-        tooltip: {
-          custom ({ dataPointIndex }) {
-            const job = displayedJobs[dataPointIndex]
-            const { relativeID } = new Tokens(job.id)
-            return (
-              '<div class="apexcharts-tooltip-candlestick">' +
-              '<div>Job: <span class="value">' +
-              relativeID +
-              '</span></div>' +
-              '<div>Start: <span class="value">' +
-              job[start] +
-              '</span></div>' +
-              '<div>Finish: <span class="value">' +
-              job[end] +
-              '</span></div>' +
-              '</div>'
-            )
-          },
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-          },
-        },
-        xaxis: {
-          labels: {
-            formatter: function (value, timestamp, opts) {
-              return new Date(value).toUTCString().slice(17, -3)
-            }
-          },
-          title: {
-            text: 'Time (UTC)',
-          },
-        },
-        yaxis: {
-          labels: {
-            maxWidth: 280,
-            offsetX: -10,
-          },
-        },
+    updateChart () {
+      if (!this.chart || !this.displayedJobs.length) {
+        this.chart?.clear()
+        return
       }
+
+      const { start, end } = timingOptions.get(this.timingOption)
+      const categories = this.displayedJobs.map(j => j.name).reverse()
+      const jobColours = new Map()
+      let colourIndex = 0
+
+      const barData = this.displayedJobs.map((job, idx) => {
+        const { cycle } = new Tokens(job.id)
+        let color = jobColours.get(cycle)
+        if (!color) {
+          color = colours[colourIndex++ % colours.length]
+          jobColours.set(cycle, color)
+        }
+        return {
+          name: job.name,
+          value: [
+            categories.length - 1 - idx, // y-axis category index
+            new Date(job[start]).getTime(),
+            new Date(job[end]).getTime(),
+          ],
+          itemStyle: { color },
+          job, // Store original job data for tooltip
+        }
+      })
+
+      const option = {
+        animation: this.animate && !this.reducedAnimation,
+        tooltip: {
+          trigger: 'item',
+          formatter: ({ data }) => {
+            const { relativeID } = new Tokens(data.job.id)
+            return `<b>Job:</b> ${relativeID}<br/>` +
+                   `<b>Start:</b> ${data.job[start]}<br/>` +
+                   `<b>Finish:</b> ${data.job[end]}`
+          },
+        },
+        grid: {
+          left: '20%',
+          right: '8%',
+          top: '10%',
+          bottom: '15%',
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: { title: 'Download' },
+            dataZoom: { title: { zoom: 'Selection Zoom', back: 'Reset Zoom' } },
+          },
+        },
+        dataZoom: [
+          { type: 'inside', filterMode: 'weak' },
+          { type: 'slider', yAxisIndex: 0, filterMode: 'weak' },
+        ],
+        xAxis: {
+          type: 'time',
+          axisLabel: {
+            formatter: (value) => {
+              return new Date(value).toUTCString().slice(17, -3)
+            },
+          },
+          name: 'Time (UTC)',
+          nameLocation: 'middle',
+          nameGap: 30,
+        },
+        yAxis: {
+          type: 'category',
+          data: categories,
+          axisLabel: {
+            interval: 0,
+            overflow: 'truncate',
+            width: 280,
+          },
+        },
+        series: [{
+          type: 'custom',
+          renderItem: (params, api) => {
+            const categoryIndex = api.value(0)
+            const startPoint = api.coord([api.value(1), categoryIndex])
+            const endPoint = api.coord([api.value(2), categoryIndex])
+            const height = api.size([0, 1])[1] * 0.6
+
+            if (isNaN(startPoint[0]) || isNaN(endPoint[0])) {
+              return // Don't render if times are invalid
+            }
+
+            return {
+              type: 'rect',
+              shape: {
+                x: startPoint[0],
+                y: startPoint[1] - height / 2,
+                width: endPoint[0] - startPoint[0],
+                height,
+              },
+              style: api.style(),
+            }
+          },
+          encode: { x: [1, 2], y: 0 },
+          data: barData,
+        }],
+      }
+
+      this.chart.setOption(option, true)
+    },
+
+    handleResize () {
+      this.chart?.resize()
     },
   },
 }
 </script>
+
+<style scoped>
+.gantt-container {
+  width: 100%;
+  height: 500px; /* Adjust height as needed */
+}
+</style>

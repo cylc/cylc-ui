@@ -40,14 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
     </div>
   </Teleport>
-  <VueApexCharts
-    type="boxPlot"
-    :options="chartOptions"
-    :series="series"
-    :height="105 + series[0].data.length * 60"
-    width="95%"
-    class="d-flex justify-center"
-  />
+  <div ref="chart" :style="{ height: `${105 + series[0].data.length * 60}px`, width: '95%' }" class="d-flex justify-center" />
   <v-pagination
     v-model="page"
     :length="numPages"
@@ -58,7 +51,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { computed } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
+import * as echarts from 'echarts/core'
+import { BoxplotChart } from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  ToolboxComponent
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 import {
   mdiDownload,
   mdiSortReverseVariant,
@@ -73,12 +73,18 @@ import {
   useInitialOptions
 } from '@/utils/initialOptions'
 
+echarts.use([
+  BoxplotChart,
+  GridComponent,
+  TooltipComponent,
+  ToolboxComponent,
+  CanvasRenderer
+])
+
 export default {
   name: 'BoxPlot',
 
-  components: {
-    VueApexCharts,
-  },
+  components: {},
 
   emits: [updateInitialOptionsEvent],
 
@@ -129,84 +135,94 @@ export default {
     const reducedAnimation = useReducedAnimation()
 
     const chartOptions = computed(() => ({
-      chart: {
-        defaultLocale: 'en',
-        locales: [
-          {
-            name: 'en',
-            options: {
-              toolbar: {
-                exportToSVG: 'Download SVG',
-                exportToPNG: 'Download PNG',
-                menu: 'Download'
-              }
-            }
-          }
-        ],
-        animations: {
-          enabled: reducedAnimation.value ? false : props.animate,
-          easing: 'easeinout',
-          speed: 300,
-          animateGradually: {
-            enabled: true,
-            delay: 150,
-          },
-          dynamicAnimation: {
-            enabled: true,
-            speed: 350,
-          },
-        },
-        fontFamily: 'inherit',
-        toolbar: {
-          tools: {
-            download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-          },
-        },
-      },
+      animation: !reducedAnimation.value && props.animate,
       tooltip: {
-        custom ({ seriesIndex, dataPointIndex, w }) {
-          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], { allowZeros: true })
-          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], { allowZeros: true })
-          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], { allowZeros: true })
-          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], { allowZeros: true })
-          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], { allowZeros: true })
+        trigger: 'item',
+        formatter: (params) => {
+          const [min, q1, med, q3, max] = params.value.slice(1)
           return `
             <div class="pa-2">
-              <div>Maximum: ${max}</div>
-              <div>Q3: ${q3} </div>
-              <div>Median: ${med}</div>
-              <div>Q1: ${q1}</div>
-              <div>Minimum: ${min}</div>
+              <div>Maximum: ${formatDuration(max, { allowZeros: true })}</div>
+              <div>Q3: ${formatDuration(q3, { allowZeros: true })}</div>
+              <div>Median: ${formatDuration(med, { allowZeros: true })}</div>
+              <div>Q1: ${formatDuration(q1, { allowZeros: true })}</div>
+              <div>Minimum: ${formatDuration(min, { allowZeros: true })}</div>
             </div>
           `
-        },
+        }
       },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-        },
-        boxPlot: {
-          colors: {
-            upper: '#6DD5C2',
-            lower: '#6AA4F1',
-          },
-        },
+      grid: {
+        left: '10%',
+        right: '10%',
+        top: '5%',
+        bottom: '10%'
       },
-      xaxis: {
-        title: {
-          text: `${upperFirst(props.timingOption)} time`,
-        },
-        labels: {
+      toolbox: {
+        feature: {
+          saveAsImage: { title: 'Download' }
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: this.series[0].data.map(d => d.x),
+        axisLabel: {
+          show: false
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: `${upperFirst(props.timingOption)} time`,
+        nameLocation: 'middle',
+        nameGap: 50,
+        axisLabel: {
           formatter: (value) => formatDuration(value, { allowZeros: true })
-        },
+        }
       },
+      series: [
+        {
+          type: 'boxplot',
+          data: this.series[0].data.map(d => d.y),
+          itemStyle: {
+            color: '#6AA4F1',
+            borderColor: '#6DD5C2'
+          }
+        }
+      ]
     }))
 
     return {
       sortBy,
       page,
       sortDesc,
-      chartOptions,
+      chartOptions
+    }
+  },
+
+  data () {
+    return {
+      chart: null
+    }
+  },
+
+  mounted () {
+    this.initChart()
+    window.addEventListener('resize', this.handleResize)
+  },
+
+  beforeUnmount () {
+    window.removeEventListener('resize', this.handleResize)
+    this.chart?.dispose()
+  },
+
+  watch: {
+    series: {
+      handler: 'updateChart',
+      deep: true
+    },
+    chartOptions: 'updateChart',
+    numPages () {
+      // Clamp page number
+      this.page = Math.min(this.numPages, this.page)
     }
   },
 
@@ -249,14 +265,18 @@ export default {
     },
   },
 
-  watch: {
-    numPages () {
-      // Clamp page number
-      this.page = Math.min(this.numPages, this.page)
-    }
-  },
-
   methods: {
+    initChart () {
+      this.chart = echarts.init(this.$refs.chart)
+      this.updateChart()
+    },
+    updateChart () {
+      if (!this.chart) return
+      this.chart.setOption(this.chartOptions, true)
+    },
+    handleResize () {
+      this.chart?.resize()
+    },
     /**
      * @param {string|number} a
      * @param {string|number} b
@@ -276,7 +296,7 @@ export default {
 </script>
 
 <style>
-.apexcharts-text {
+.echarts-text {
   font-size: 0.9rem;
 }
 </style>
