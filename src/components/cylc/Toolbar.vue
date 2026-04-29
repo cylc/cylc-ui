@@ -23,7 +23,6 @@ component. Note: this is not used for the workflow view, see
 <template>
   <v-toolbar
     id="core-app-bar"
-    absolute
     :height="toolbarHeight"
     flat
     class="c-toolbar"
@@ -35,7 +34,7 @@ component. Note: this is not used for the workflow view, see
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ $options.icons.mdiViewList }}</v-icon>
+      <v-icon>{{ drawer ? $options.icons.mdiArrowLeft : $options.icons.mdiViewList }}</v-icon>
     </v-btn>
     <v-toolbar-title>
       {{ title }}
@@ -47,13 +46,14 @@ component. Note: this is not used for the workflow view, see
 import { mapState } from 'vuex'
 import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import {
-  mdiViewList
+  mdiViewList,
+  mdiArrowLeft,
 } from '@mdi/js'
 
 export default {
   setup () {
-    const { toggleDrawer } = useDrawer()
-    return { toggleDrawer, toolbarHeight }
+    const { drawer, toggleDrawer } = useDrawer()
+    return { drawer, toggleDrawer, toolbarHeight }
   },
 
   computed: {
@@ -62,6 +62,7 @@ export default {
 
   icons: {
     mdiViewList,
+    mdiArrowLeft,
   },
 }
 </script>
