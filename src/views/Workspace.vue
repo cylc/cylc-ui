@@ -41,7 +41,7 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import Lumino from '@/components/cylc/workspace/Lumino.vue'
-import Toolbar from '@/components/cylc/workspace/Toolbar.vue'
+import Toolbar from '@/components/cylc/Toolbar.vue'
 import { toolbarHeight } from '@/utils/toolbar'
 
 export default {

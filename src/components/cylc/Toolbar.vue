@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- Cylc UI Toolbar. Used to display the type of view in responsive mode
-(narrow viewports), and to display a burger button to hide the drawer
-component. Note: this is not used for the workflow view, see
-./workflow/Toolbar.vue instead. -->
+<!-- Unified Cylc UI Toolbar. Shows burger button and title on all pages.
+     Shows workflow controls when a workflowName prop is provided. -->
 
 <template>
   <v-toolbar
@@ -26,43 +24,530 @@ component. Note: this is not used for the workflow view, see
     :height="toolbarHeight"
     flat
     class="c-toolbar"
+    color="grey-lighten-4"
   >
-    <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
-    <!-- burger button for mobile -->
+    <!-- burger button -->
     <v-btn
       icon
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ drawer ? $options.icons.mdiArrowLeft : $options.icons.mdiViewList }}</v-icon>
+      <v-icon>{{ drawer ? icons.arrowLeft : icons.list }}</v-icon>
     </v-btn>
-    <v-toolbar-title>
+    <!-- title -->
+    <v-toolbar-title
+      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary ml-0"
+    >
       {{ title }}
     </v-toolbar-title>
+
+    <!-- control bar elements displayed only when there is a current workflow in the store -->
+    <template v-if="currentWorkflow">
+      <div class="c-workflow-controls d-flex align-center flex-shrink-0">
+        <WarningIcon
+          :workflow="currentWorkflow"
+          style="font-size: 120%; padding-right: 0.3em;"
+        />
+
+        <v-btn
+          id="workflow-mutate-button"
+          v-command-menu="currentWorkflow"
+          :icon="icons.menu"
+          size="small"
+          density="comfortable"
+        />
+
+        <v-btn
+          id="workflow-play-button"
+          :icon="icons.run"
+          :disabled="!enabled.playToggle"
+          v-if="!isRunning"
+          @click="onClickPlay"
+          size="small"
+          density="comfortable"
+        />
+
+        <v-btn
+          id="workflow-play-pause-button"
+          :icon="isPaused ? icons.run : icons.hold"
+          :disabled="!enabled.pauseToggle"
+          v-if="isRunning"
+          @click="onClickReleaseHold"
+          size="small"
+          density="comfortable"
+        />
+
+        <v-btn
+          id="workflow-stop-button"
+          :icon="icons.stop"
+          :disabled="!enabled.stopToggle"
+          @click="onClickStop"
+          size="small"
+          density="comfortable"
+        />
+      </div>
+
+      <!-- n-window selector -->
+      <v-btn
+        :disabled="isStopped"
+        variant="tonal"
+        rounded
+        size="small"
+        data-cy="n-win-selector"
+      >
+        N={{ nWindow }}
+        <template #append>
+          <v-icon
+            :icon="icons.mdiChevronDown"
+            class="mx-n1"
+          />
+        </template>
+        <v-menu
+          activator="parent"
+          :close-on-content-click="false"
+          max-width="400"
+          data-cy="n-win-popup"
+        >
+          <v-card title="Graph Window Depth">
+            <v-card-text>
+              This changes the number of tasks which are displayed.
+
+              Higher values may impact performance.
+            </v-card-text>
+            <v-card-text>
+              <v-select
+                v-model="nWindow"
+                :items="[0,1,2,3]"
+                :disabled="!user.permissions?.includes('setGraphWindowExtent')"
+              >
+                <template #append-inner>
+                  <v-progress-circular
+                    v-if="changingNWindow"
+                    indeterminate
+                    size="20"
+                    width="2"
+                  />
+                </template>
+              </v-select>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </v-btn>
+
+      <!-- workflow info icon -->
+      <v-icon
+        v-if="isRunning"
+        :icon="icons.info"
+        id="info-icon"
+      />
+      <v-tooltip
+        v-if="isRunning"
+        activator="#info-icon"
+        :eager="false"
+      >
+        <dl>
+          <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
+          <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
+          <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
+          <dt><strong>Run mode:</strong> {{ currentWorkflow.node.runMode }}</dt>
+        </dl>
+      </v-tooltip>
+
+      <!-- workflow status message -->
+      <span class="status-msg text-body-2">
+        {{ statusMessage }}
+        <span v-if="currentWorkflow.node.cylcVersion !== uisFlowVersion">
+          {{ versionPopup }}
+        </span>
+      </span>
+
+      <v-spacer class="mx-0" />
+
+      <v-btn
+        v-if="$route.name === 'Workspace'"
+        class="add-view"
+        color="primary"
+        data-cy="add-view-btn"
+      >
+        <v-icon class="icon">
+          {{ icons.add }}
+        </v-icon>
+        <span class="label">
+          {{ $t('Toolbar.addView') }}
+        </span>
+
+        <v-menu
+          activator="parent"
+          location="bottom"
+        >
+          <v-list>
+            <v-list-item
+              v-for="[name, view] in views"
+              :id="`toolbar-add-${name}-view`"
+              :key="name"
+              @click="eventBus.emit('add-view', { name })"
+            >
+              <template #prepend>
+                <v-icon>{{ view.icon }}</v-icon>
+              </template>
+              <v-list-item-title>{{ startCase(name) }}</v-list-item-title>
+            </v-list-item>
+            <v-divider/>
+            <v-card-actions class="mb-n2">
+              <v-btn
+                @click="eventBus.emit('reset-workspace-layout')"
+                :prepend-icon="icons.mdiArrowULeftTop"
+                class="flex-grow-1"
+                data-cy="reset-layout-btn"
+              >
+                Reset layout
+              </v-btn>
+            </v-card-actions>
+          </v-list>
+        </v-menu>
+      </v-btn>
+      <v-btn
+        icon
+        size="small"
+      >
+        <v-avatar
+          color="primary"
+          size="small"
+        >
+          <div v-if="user.initials">
+            {{ user.initials }}
+          </div>
+          <v-icon
+            v-else
+            :icon="icons.mdiAccount"
+          />
+        </v-avatar>
+        <v-menu activator="parent">
+          <v-card :title="user.username">
+            <v-card-text>
+              <div class="d-flex flex-column row-gap-2">
+                <v-defaults-provider
+                  :defaults="{
+                    VBtn: { variant: 'tonal', spaced: true },
+                  }"
+                >
+                  <v-btn
+                    to="/user-profile"
+                    :prepend-icon="icons.mdiCog"
+                  >
+                    Settings
+                  </v-btn>
+                </v-defaults-provider>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </v-btn>
+    </template>
   </v-toolbar>
 </template>
 
 <script>
+import { inject } from 'vue'
 import { mapState } from 'vuex'
-import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import {
+  mdiCog,
+  mdiMicrosoftXboxControllerMenu,
+  mdiPause,
+  mdiPlay,
+  mdiPlusBoxMultiple,
+  mdiStop,
   mdiViewList,
   mdiArrowLeft,
+  mdiBackburger,
+  mdiAccount,
+  mdiChevronDown,
+  mdiArrowULeftTop,
+  mdiInformationOutline,
 } from '@mdi/js'
+import { startCase } from 'lodash'
+import { until } from '@/utils/reactivity'
+import { useDrawer, toolbarHeight } from '@/utils/toolbar'
+import WorkflowState from '@/model/WorkflowState.model'
+import graphql from '@/mixins/graphql'
+import {
+  mutationStatus
+} from '@/utils/aotf'
+import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import gql from 'graphql-tag'
+import { eventBus } from '@/services/eventBus'
+import { upperFirst } from 'lodash-es'
+import WarningIcon from '@/components/cylc/WarningIcon.vue'
+
+const QUERY = gql(`
+subscription Workflow ($workflowId: ID) {
+  deltas(workflows: [$workflowId]) {
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
+  }
+}
+
+fragment WorkflowData on Workflow {
+  id
+  host
+  owner
+  status
+  statusMsg
+  nEdgeDistance
+  cylcVersion
+  runMode
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment PrunedDelta on Pruned {
+  workflow
+}
+`)
 
 export default {
+  name: 'Toolbar',
+
   setup () {
     const { drawer, toggleDrawer } = useDrawer()
-    return { drawer, toggleDrawer, toolbarHeight }
+
+    const uisVersionInfo = inject('versionInfo')
+    const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
+
+    return {
+      eventBus,
+      drawer,
+      toggleDrawer,
+      toolbarHeight,
+      uisFlowVersion,
+      icons: {
+        add: mdiPlusBoxMultiple,
+        hold: mdiPause,
+        info: mdiInformationOutline,
+        list: mdiViewList,
+        arrowLeft: mdiBackburger,
+        menu: mdiMicrosoftXboxControllerMenu,
+        run: mdiPlay,
+        stop: mdiStop,
+        mdiCog,
+        mdiAccount,
+        mdiChevronDown,
+        mdiArrowULeftTop,
+      },
+    }
   },
+
+  components: {
+    WarningIcon,
+  },
+
+  mixins: [
+    graphql,
+    subscriptionComponentMixin
+  ],
+
+  props: {
+    /**
+     * All possible view component classes that can be rendered
+     *
+     * @type {Map<string, import('@/views/views.js').CylcView>}
+     */
+    views: {
+      type: Map,
+      default: () => new Map()
+    },
+    workflowName: {
+      type: String,
+      default: null
+    }
+  },
+
+  data: () => ({
+    expecting: {
+      play: null,
+      paused: null,
+      stop: null
+    },
+    changingNWindow: false,
+  }),
 
   computed: {
-    ...mapState('app', ['title'])
+    ...mapState('app', ['title']),
+    ...mapState('user', ['user']),
+    ...mapState('workflows', ['cylcTree']),
+    query () {
+      if (!this.workflowName) return null
+      return new SubscriptionQuery(
+        QUERY,
+        this.variables,
+        'workflow',
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
+      )
+    },
+    currentWorkflow () {
+      if (!this.workflowName) return null
+      return this.cylcTree.$index[this.workflowId]
+    },
+    isRunning () {
+      return (
+        this.currentWorkflow &&
+        (
+          this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
+          this.currentWorkflow.node.status === WorkflowState.PAUSED.name ||
+          this.currentWorkflow.node.status === WorkflowState.STOPPING.name
+        )
+      )
+    },
+    isPaused () {
+      return (
+        this.currentWorkflow &&
+        this.currentWorkflow.node.status === WorkflowState.PAUSED.name
+      )
+    },
+    isStopped () {
+      return (
+        !this.currentWorkflow ||
+        this.currentWorkflow.node.status === WorkflowState.STOPPED.name
+      )
+    },
+    statusMessage () {
+      return upperFirst(this.currentWorkflow?.node?.statusMsg || '')
+    },
+    versionPopup () {
+      let ret = ''
+      if (this.currentWorkflow?.node?.cylcVersion) {
+        ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
+      }
+      return ret
+    },
+    enabled () {
+      return {
+        playToggle: (
+          this.user.permissions.includes('play') &&
+          this.isStopped &&
+          (
+            this.expecting.play === null ||
+            this.expecting.play === this.isRunning
+          )
+        ),
+        pauseToggle: (
+          (
+            (this.isPaused && this.user.permissions.includes('resume')) ||
+            (!this.isPaused && this.user.permissions.includes('pause'))
+          ) &&
+          !this.isStopped &&
+          !this.expecting.stop &&
+          this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
+          (
+            this.expecting.paused === null ||
+            this.expecting.paused === this.isPaused
+          )
+        ),
+        stopToggle: (
+          this.user.permissions.includes('stop') &&
+          !this.isStopped &&
+          (
+            this.expecting.stop === null ||
+            this.expecting.stop === this.isStopped
+          )
+        )
+      }
+    },
+    nWindow: {
+      get () {
+        return this.currentWorkflow?.node?.nEdgeDistance ?? 1
+      },
+      async set (val) {
+        if (val == null || this.isStopped) return
+
+        this.changingNWindow = true
+        if (await this.setGraphWindow(val)) {
+          await until(() => this.currentWorkflow?.node?.nEdgeDistance === val)
+        }
+        this.changingNWindow = false
+      },
+    }
   },
 
-  icons: {
-    mdiViewList,
-    mdiArrowLeft,
+  watch: {
+    isRunning () {
+      this.expecting.play = null
+    },
+    isPaused () {
+      this.expecting.paused = null
+    },
+    isStopped () {
+      this.expecting.stop = null
+    },
+    currentWorkflow () {
+      this.expecting = {
+        play: null,
+        paused: null,
+        stop: null,
+      }
+    },
+  },
+
+  methods: {
+    onClickPlay () {
+      this.$workflowService.mutate(
+        'play',
+        this.currentWorkflow.id
+      ).then(ret => {
+        if (ret[0] === mutationStatus.SUCCEEDED) {
+          this.expecting.play = !this.isRunning
+        }
+      })
+    },
+    onClickReleaseHold () {
+      this.$workflowService.mutate(
+        this.isPaused ? 'resume' : 'pause',
+        this.currentWorkflow.id
+      ).then(response => {
+        if (response.status === mutationStatus.SUCCEEDED) {
+          this.expecting.paused = !this.isPaused
+        }
+      })
+    },
+    onClickStop () {
+      this.$workflowService.mutate(
+        'stop',
+        this.currentWorkflow.id
+      ).then(response => {
+        if (response.status === mutationStatus.SUCCEEDED) {
+          this.expecting.stop = WorkflowState.STOPPING
+        }
+      })
+    },
+    async setGraphWindow (nWindow) {
+      const { status } = await this.$workflowService.mutate(
+        'setGraphWindowExtent',
+        this.currentWorkflow.id,
+        { nEdgeDistance: nWindow }
+      )
+      return status === mutationStatus.SUCCEEDED
+    },
+    startCase,
   },
 }
 </script>
