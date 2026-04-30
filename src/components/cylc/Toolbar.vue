@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ drawer ? icons.arrowLeft : icons.list }}</v-icon>
+      <v-icon>{{ drawer ? icons.backBurger : icons.list }}</v-icon>
     </v-btn>
     <!-- title -->
     <v-toolbar-title
@@ -258,7 +258,6 @@ import {
   mdiPlusBoxMultiple,
   mdiStop,
   mdiViewList,
-  mdiArrowLeft,
   mdiBackburger,
   mdiAccount,
   mdiChevronDown,
@@ -343,7 +342,7 @@ export default {
         hold: mdiPause,
         info: mdiInformationOutline,
         list: mdiViewList,
-        arrowLeft: mdiBackburger,
+        backBurger: mdiBackburger,
         menu: mdiMicrosoftXboxControllerMenu,
         run: mdiPlay,
         stop: mdiStop,
