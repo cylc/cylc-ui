@@ -65,10 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
   </Teleport>
   <div id="mainTimeSeries">
-    <div ref="mainChart" style="height: 450px; width: 95%;" class="d-flex justify-center" />
-  </div>
-  <div id="miniTimeSeries">
-    <div ref="miniChart" style="height: 120px; width: 95%;" class="d-flex justify-center" />
+    <div ref="mainChart" style="height: 550px; width: 100%;" class="flex-grow-1" />
   </div>
   </template>
 
@@ -242,7 +239,6 @@ export default {
   beforeUnmount () {
     window.removeEventListener('resize', this.handleResize)
     this.mainChart?.dispose()
-    this.miniChart?.dispose()
   },
 
   data () {
@@ -252,8 +248,7 @@ export default {
       /** Object containing all of the jobs added by the callback */
       jobs,
       taskNames: [],
-      mainChart: null,
-      miniChart: null
+      mainChart: null
     }
   },
 
@@ -268,8 +263,7 @@ export default {
       handler: 'updateCharts',
       deep: true
     },
-    chartOptions: 'updateCharts',
-    miniChartOptions: 'updateCharts'
+    chartOptions: 'updateCharts'
   },
 
   computed: {
@@ -352,6 +346,12 @@ export default {
           {
             type: 'inside',
             filterMode: 'weak'
+          },
+          {
+            type: 'slider',
+            filterMode: 'weak',
+            bottom: 10,
+            showDataShadow: true
           }
         ],
         xAxis: {
@@ -372,56 +372,10 @@ export default {
           }
         },
         series: this.series.map(s => ({
-          ...s,
+          name: s.name,
           type: 'line',
           symbolSize: 8,
-          data: s.data.map(d => [d.x, d.y])
-        }))
-      }
-    },
-
-    miniChartOptions () {
-      return {
-        animation: this.animate && !this.reducedAnimation,
-        tooltip: {
-          show: false
-        },
-        grid: {
-          left: '5%',
-          right: '5%',
-          top: '10%',
-          bottom: '25%'
-        },
-        dataZoom: [
-          {
-            type: 'slider',
-            showDataShadow: false,
-            bottom: 5,
-            filterMode: 'weak',
-            startValue: 0,
-            endValue: this.cyclePoints.length - 1,
-            labelFormatter: ''
-          }
-        ],
-        xAxis: {
-          type: 'category',
-          data: this.cyclePoints,
-          axisLabel: {
-            rotate: 0
-          }
-        },
-        yAxis: {
-          type: 'value',
-          min: this.showOrigin ? 0 : undefined,
-          axisLabel: {
-            formatter: (value) => formatDuration(value, { allowZeros: true })
-          }
-        },
-        series: this.series.map(s => ({
-          ...s,
-          type: 'line',
-          symbolSize: 4,
-          data: s.data.map(d => [d.x, d.y])
+          data: s.data.map(d => d.y)
         }))
       }
     }
@@ -429,36 +383,28 @@ export default {
 
   methods: {
     initCharts () {
+      this._lastSeriesCount = 0
       this.mainChart = echarts.init(this.$refs.mainChart)
-      this.miniChart = echarts.init(this.$refs.miniChart)
-
-      this.mainChart.on('datazoom', (params) => {
-        this.miniChart.dispatchAction({
-          type: 'dataZoom',
-          start: params.start,
-          end: params.end
-        })
-      })
-
-      this.miniChart.on('datazoom', (params) => {
-        this.mainChart.dispatchAction({
-          type: 'dataZoom',
-          start: params.start,
-          end: params.end
-        })
-      })
-
       this.updateCharts()
     },
     updateCharts () {
-      if (!this.mainChart || !this.miniChart) return
+      if (!this.mainChart) return
 
-      this.mainChart.setOption(this.chartOptions, true)
-      this.miniChart.setOption(this.miniChartOptions, true)
+      const opts = this.chartOptions
+      const newCount = opts.series.length
+
+      // Recreate chart when series count changes to cleanly reset
+      if (newCount !== this._lastSeriesCount) {
+        const container = this.$refs.mainChart
+        this.mainChart.dispose()
+        this.mainChart = echarts.init(container)
+      }
+      this._lastSeriesCount = newCount
+
+      this.mainChart.setOption(opts)
     },
     handleResize () {
       this.mainChart?.resize()
-      this.miniChart?.resize()
     },
     selectSearchResults: function () {
       // Do we need a limit to number of tasks that can be added?

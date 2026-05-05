@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div ref="chartContainer" class="gantt-container" />
+  <div ref="chartContainer" class="gantt-container" :style="{ height: `${Math.max(300, 60 + displayedTaskCount * 55)}px` }" />
   <v-pagination
     v-model="page"
     :length="numPages"
@@ -100,11 +100,18 @@ export default {
   },
 
   mounted () {
-    this.initChart()
+    this.$nextTick(() => {
+      this.initChart()
+    })
+    this.resizeObserver = new ResizeObserver(() => {
+      this.chart?.resize()
+    })
+    this.resizeObserver.observe(this.$refs.chartContainer)
     window.addEventListener('resize', this.handleResize)
   },
 
   beforeUnmount () {
+    this.resizeObserver?.disconnect()
     window.removeEventListener('resize', this.handleResize)
     this.chart?.dispose()
   },
@@ -120,6 +127,11 @@ export default {
   },
 
   computed: {
+    displayedTaskCount () {
+      const taskNameList = Object.keys(this.jobs)
+      const firstIndex = Math.max(0, this.tasksPerPage * (this.page - 1))
+      return Math.min(taskNameList.length, firstIndex + this.tasksPerPage) - firstIndex
+    },
     displayedJobs () {
       const taskNameList = Object.keys(this.jobs)
       const firstIndex = Math.max(0, this.tasksPerPage * (this.page - 1))
@@ -150,28 +162,37 @@ export default {
       }
 
       const { start, end } = timingOptions.get(this.timingOption)
-      const categories = this.displayedJobs.map(j => j.name).reverse()
+      const taskNameList = Object.keys(this.jobs)
+      const firstIndex = Math.max(0, this.tasksPerPage * (this.page - 1))
+      const numTasks = Math.min(taskNameList.length, firstIndex + this.tasksPerPage)
+      const displayedTaskNames = taskNameList.slice(firstIndex, numTasks)
+      const categories = [...displayedTaskNames].reverse()
+
       const jobColours = new Map()
       let colourIndex = 0
 
-      const barData = this.displayedJobs.map((job, idx) => {
-        const { cycle } = new Tokens(job.id)
-        let color = jobColours.get(cycle)
-        if (!color) {
-          color = colours[colourIndex++ % colours.length]
-          jobColours.set(cycle, color)
+      const barData = []
+      for (const taskName of displayedTaskNames) {
+        const categoryIdx = categories.indexOf(taskName)
+        for (const job of this.jobs[taskName]) {
+          const { cycle } = new Tokens(job.id)
+          let color = jobColours.get(cycle)
+          if (!color) {
+            color = colours[colourIndex++ % colours.length]
+            jobColours.set(cycle, color)
+          }
+          barData.push({
+            name: taskName,
+            value: [
+              categoryIdx,
+              new Date(job[start]).getTime(),
+              new Date(job[end]).getTime(),
+            ],
+            itemStyle: { color },
+            job,
+          })
         }
-        return {
-          name: job.name,
-          value: [
-            categories.length - 1 - idx, // y-axis category index
-            new Date(job[start]).getTime(),
-            new Date(job[end]).getTime(),
-          ],
-          itemStyle: { color },
-          job, // Store original job data for tooltip
-        }
-      })
+      }
 
       const option = {
         animation: this.animate && !this.reducedAnimation,
@@ -185,20 +206,18 @@ export default {
           },
         },
         grid: {
-          left: '20%',
-          right: '8%',
-          top: '10%',
+          left: '5%',
+          right: '3%',
+          top: '5%',
           bottom: '15%',
         },
         toolbox: {
           feature: {
             saveAsImage: { title: 'Download' },
-            dataZoom: { title: { zoom: 'Selection Zoom', back: 'Reset Zoom' } },
           },
         },
         dataZoom: [
           { type: 'inside', filterMode: 'weak' },
-          { type: 'slider', yAxisIndex: 0, filterMode: 'weak' },
         ],
         xAxis: {
           type: 'time',
@@ -214,10 +233,20 @@ export default {
         yAxis: {
           type: 'category',
           data: categories,
+          axisLine: {
+            show: true,
+          },
           axisLabel: {
             interval: 0,
             overflow: 'truncate',
             width: 280,
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#e0e0e0',
+              type: 'solid',
+            },
           },
         },
         series: [{
@@ -261,6 +290,5 @@ export default {
 <style scoped>
 .gantt-container {
   width: 100%;
-  height: 500px; /* Adjust height as needed */
 }
 </style>

@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
     </div>
   </Teleport>
-  <div ref="chart" :style="{ height: `${105 + series[0].data.length * 60}px`, width: '95%' }" class="d-flex justify-center" />
+  <div ref="chart" :style="{ height: `${100 + series[0].data.length * 50}px`, width: '100%' }" class="flex-grow-1" />
   <v-pagination
     v-model="page"
     :length="numPages"
@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { computed } from 'vue'
 import * as echarts from 'echarts/core'
 import { BoxplotChart } from 'echarts/charts'
 import {
@@ -60,7 +59,6 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import {
-  mdiDownload,
   mdiSortReverseVariant,
   mdiSortVariant,
 } from '@mdi/js'
@@ -134,67 +132,11 @@ export default {
 
     const reducedAnimation = useReducedAnimation()
 
-    const chartOptions = computed(() => ({
-      animation: !reducedAnimation.value && props.animate,
-      tooltip: {
-        trigger: 'item',
-        formatter: (params) => {
-          const [min, q1, med, q3, max] = params.value.slice(1)
-          return `
-            <div class="pa-2">
-              <div>Maximum: ${formatDuration(max, { allowZeros: true })}</div>
-              <div>Q3: ${formatDuration(q3, { allowZeros: true })}</div>
-              <div>Median: ${formatDuration(med, { allowZeros: true })}</div>
-              <div>Q1: ${formatDuration(q1, { allowZeros: true })}</div>
-              <div>Minimum: ${formatDuration(min, { allowZeros: true })}</div>
-            </div>
-          `
-        }
-      },
-      grid: {
-        left: '10%',
-        right: '10%',
-        top: '5%',
-        bottom: '10%'
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: { title: 'Download' }
-        }
-      },
-      xAxis: {
-        type: 'category',
-        data: this.series[0].data.map(d => d.x),
-        axisLabel: {
-          show: false
-        }
-      },
-      yAxis: {
-        type: 'value',
-        name: `${upperFirst(props.timingOption)} time`,
-        nameLocation: 'middle',
-        nameGap: 50,
-        axisLabel: {
-          formatter: (value) => formatDuration(value, { allowZeros: true })
-        }
-      },
-      series: [
-        {
-          type: 'boxplot',
-          data: this.series[0].data.map(d => d.y),
-          itemStyle: {
-            color: '#6AA4F1',
-            borderColor: '#6DD5C2'
-          }
-        }
-      ]
-    }))
-
     return {
       sortBy,
       page,
       sortDesc,
-      chartOptions
+      reducedAnimation,
     }
   },
 
@@ -205,11 +147,19 @@ export default {
   },
 
   mounted () {
-    this.initChart()
+    this.$nextTick(() => {
+      this.initChart()
+    })
+    this.resizeObserver = new ResizeObserver(() => {
+      this.chart?.resize()
+      this.updateChart()
+    })
+    this.resizeObserver.observe(this.$refs.chart)
     window.addEventListener('resize', this.handleResize)
   },
 
   beforeUnmount () {
+    this.resizeObserver?.disconnect()
     window.removeEventListener('resize', this.handleResize)
     this.chart?.dispose()
   },
@@ -227,6 +177,67 @@ export default {
   },
 
   computed: {
+    chartOptions () {
+      return {
+        animation: !this.reducedAnimation && this.animate,
+        tooltip: {
+          trigger: 'item',
+          formatter: (params) => {
+            const [min, q1, med, q3, max] = params.value.slice(1)
+            return `
+              <div class="pa-2">
+                <div>Maximum: ${formatDuration(max, { allowZeros: true })}</div>
+                <div>Q3: ${formatDuration(q3, { allowZeros: true })}</div>
+                <div>Median: ${formatDuration(med, { allowZeros: true })}</div>
+                <div>Q1: ${formatDuration(q1, { allowZeros: true })}</div>
+                <div>Minimum: ${formatDuration(min, { allowZeros: true })}</div>
+              </div>
+            `
+          }
+        },
+        grid: {
+          left: '0%',
+          right: '5%',
+          top: '3%',
+          bottom: '12%',
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: { title: 'Download' }
+          }
+        },
+        xAxis: {
+          type: 'value',
+          name: `${upperFirst(this.timingOption)} time`,
+          nameLocation: 'middle',
+          nameGap: 30,
+          scale: true,
+          axisLabel: {
+            formatter: (value) => formatDuration(value, { allowZeros: true })
+          }
+        },
+        yAxis: {
+          type: 'category',
+          data: this.series[0].data.map(d => d.x),
+          axisLabel: {
+            interval: 0,
+            overflow: 'truncate',
+            width: 150,
+          }
+        },
+        series: [
+          {
+            type: 'boxplot',
+            data: this.series[0].data.map(d => d.y),
+            itemStyle: {
+              color: '#6AA4F1',
+              borderColor: '#6DD5C2'
+            }
+          }
+        ]
+      }
+    },
     series () {
       const sortedTasks = [...this.tasks].sort(this.compare)
       const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
