@@ -17,20 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    fill-height
     fluid
-    grid-list-xl
+    class="pa-0"
   >
-    <v-row class="align-self-start">
+    <v-row no-gutters>
       <v-col>
-        <!-- TODO: this is not really an alert, it's a heading -->
-        <v-alert
-          :icon="icons.mdiTable"
-          prominent
-          color="grey-lighten-3"
-        >
-          <h3 class="text-h5">{{ $t('Workflows.tableHeader') }}</h3>
-        </v-alert>
         <v-data-table
           :headers="$options.headers"
           :items="workflowsTable"
