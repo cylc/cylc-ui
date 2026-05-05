@@ -209,7 +209,8 @@ export default {
           left: '5%',
           right: '3%',
           top: '5%',
-          bottom: '15%',
+          bottom: 50,
+          containLabel: false,
         },
         toolbox: {
           feature: {
