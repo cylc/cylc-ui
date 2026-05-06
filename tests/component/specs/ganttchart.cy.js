@@ -53,7 +53,7 @@ const mountOpts = {
     animate: false
   }
 }
-describe('GanttChart correctly', () => {
+describe('GanttChart  correctly', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(GanttChart, merge(mountOpts, {
