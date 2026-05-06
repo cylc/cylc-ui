@@ -20,6 +20,7 @@ import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.v
 import { IntrospectionQuery, taskProxy } from '@/services/mock/json/index.cjs'
 import { cloneDeep } from 'lodash'
 import { createVuetify } from 'vuetify'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 /** NOTE: update this if updating src/services/mock/json/taskProxy.json */
 const INITIAL_DATA = {
@@ -72,7 +73,7 @@ const $workflowService = {
   }
 }
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('EditRuntimeForm Component', () => {
   const props = {

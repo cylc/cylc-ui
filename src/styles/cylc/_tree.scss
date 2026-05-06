@@ -50,6 +50,10 @@ $icon-width: 1.5rem;
 }
 
 .c-tree {
+  .c-view-toolbar {
+    // Give space to any task icon modifiers at the top of the tree:
+    margin-bottom: 0.3em;
+  }
   .c-task, .c-job {
     display: flex;
     align-items: center;

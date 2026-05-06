@@ -22,10 +22,11 @@ import { simpleTableTasks } from './table.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import WorkflowService from '@/services/workflow.service'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Table component', () => {
   /**
@@ -110,7 +111,8 @@ describe('Table component', () => {
             initialOptions: {
               sortBy: [{ key, order }]
             }
-          }
+          },
+          shallow: true,
         })
         const comparator = (x, y) => {
           return order === 'asc' ? x.localeCompare(y) : y.localeCompare(x)

@@ -24,6 +24,8 @@ import Empty from '@/layouts/Empty.vue'
 import storeOptions from '@/store/options'
 import { vuetifyOptions } from '@/plugins/vuetify'
 
+const vuetify = createVuetify(vuetifyOptions)
+
 vi.mock('vue-router', () => ({
   useRoute: () => ({
     name: 'app',
@@ -38,7 +40,7 @@ describe('App', () => {
     return mount(App, {
       global: {
         plugins: [
-          createVuetify(vuetifyOptions),
+          vuetify,
           createStore(storeOptions),
         ],
         components: {

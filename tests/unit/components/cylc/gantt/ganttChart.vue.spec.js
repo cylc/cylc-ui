@@ -20,6 +20,7 @@ import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
 import WorkflowService from '@/services/workflow.service'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const jobs = {
   test_job: [{
@@ -40,7 +41,7 @@ const jobs = {
   }]
 }
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('GanttChart component', () => {

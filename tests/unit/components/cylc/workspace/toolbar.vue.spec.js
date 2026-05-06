@@ -24,8 +24,10 @@ import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
 import WorkflowService from '@/services/workflow.service'
 import { useDrawer } from '@/utils/toolbar'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Workspace toolbar component', () => {
   let store
@@ -37,12 +39,14 @@ describe('Workspace toolbar component', () => {
     drawerState.value = false
   })
 
-  it('hides/shows nav button according to viewport size & whether drawer is collapsed', async () => {
-    // TODO: actually just show nav btn at all times?
+  it('shows nav button', async () => {
+    // TODO Add test for when workflow toolbar is shown
+    // and when navbar should be hidden
     const wrapper = mount(Toolbar, {
       global: {
-        plugins: [store, createVuetify(), CommandMenuPlugin],
+        plugins: [store, vuetify, CommandMenuPlugin],
         mocks: { $workflowService },
+        provide: { versionInfo: null },
       },
       props: {
         views: new Map(),
@@ -53,10 +57,10 @@ describe('Workspace toolbar component', () => {
     wrapper.vm.$vuetify.display.mobile = false
     await wrapper.vm.$nextTick()
     expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
-    // Btn should not show when drawer is visible on large viewport
+    // Btn should show when drawer is visible on large viewport
     drawerState.value = true
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('#toggle-drawer').exists()).to.equal(false)
+    expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
     // Btn should show when drawer is visible on small viewport
     wrapper.vm.$vuetify.display.mobile = true
     await wrapper.vm.$nextTick()

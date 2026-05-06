@@ -34,8 +34,9 @@ import {
   listTree
 } from './utils'
 import { getIDMap } from '$tests/util'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 /**
  * Helper function to run filtering.
