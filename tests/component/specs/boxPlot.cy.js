@@ -108,6 +108,6 @@ describe('BoxPlot', () => {
       .click()
     // After pagination, there should be 3 tasks displayed
     // The component calculates height based on number of tasks, so we can check that
-    cy.get('[style*="height: 285px"]') // 105 + 3 * 60
+    cy.get('[style*="height: 250px"]') // 100 + 3 * 50
   })
 })
