@@ -28,15 +28,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
     <!-- burger button for mobile -->
     <v-btn
+      v-if="showNavBtn"
       icon
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ drawer ? icons.arrowLeft : icons.list }}</v-icon>
+      <v-icon>{{ icons.list }}</v-icon>
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary ml-0"
+      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
+      :class="showNavBtn ? 'ml-0' : null"
     >
       {{ title }}
     </v-toolbar-title>
@@ -263,7 +265,6 @@ import {
   mdiAccount,
   mdiChevronDown,
   mdiArrowULeftTop,
-  mdiArrowLeft,
   mdiInformationOutline,
 } from '@mdi/js'
 import { startCase } from 'lodash'
@@ -329,14 +330,13 @@ export default {
 
   setup () {
     const { showNavBtn } = useNavBtn()
-    const { drawer, toggleDrawer } = useDrawer()
+    const { toggleDrawer } = useDrawer()
 
     const uisVersionInfo = inject('versionInfo')
     const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
 
     return {
       eventBus,
-      drawer,
       showNavBtn,
       toggleDrawer,
       toolbarHeight,
@@ -346,7 +346,6 @@ export default {
         hold: mdiPause,
         info: mdiInformationOutline,
         list: mdiViewList,
-        arrowLeft: mdiArrowLeft,
         menu: mdiMicrosoftXboxControllerMenu,
         run: mdiPlay,
         stop: mdiStop,
