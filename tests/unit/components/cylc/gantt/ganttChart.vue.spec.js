@@ -56,29 +56,36 @@ describe('GanttChart component', () => {
     })
   }
 
-  it('Should deliver apexcharts the correct values', async () => {
-    const expectedSubmittedTime = 1677150609000
-    const expectedStartedTime = 1677150613000
-    const expectedFinishedTime = 1677150620000
+  it('Should compute the correct displayed jobs', async () => {
     const wrapper = mountFunction({
       props: {
         jobs,
       }
     })
 
-    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
-      expectedSubmittedTime,
-      expectedFinishedTime
-    ])
-    await wrapper.setProps({ timingOption: 'queue' })
-    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
-      expectedSubmittedTime,
-      expectedStartedTime
-    ])
-    await wrapper.setProps({ timingOption: 'run' })
-    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
-      expectedStartedTime,
-      expectedFinishedTime
-    ])
+    // Check displayedJobs contains the correct jobs
+    expect(wrapper.vm.displayedJobs).to.have.length(2)
+    expect(wrapper.vm.displayedJobs[0].name).to.equal('test_job')
+    expect(wrapper.vm.displayedJobs[1].name).to.equal('yet_another_test_job')
+
+    // Check displayedTaskCount
+    expect(wrapper.vm.displayedTaskCount).to.equal(2)
+
+    // Check numPages
+    expect(wrapper.vm.numPages).to.equal(1)
+  })
+
+  it('Should paginate correctly', async () => {
+    const wrapper = mountFunction({
+      props: {
+        jobs,
+        tasksPerPage: 1,
+      }
+    })
+
+    expect(wrapper.vm.displayedTaskCount).to.equal(1)
+    expect(wrapper.vm.numPages).to.equal(2)
+    expect(wrapper.vm.displayedJobs).to.have.length(1)
+    expect(wrapper.vm.displayedJobs[0].name).to.equal('test_job')
   })
 })

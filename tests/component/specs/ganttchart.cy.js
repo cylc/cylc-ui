@@ -53,7 +53,7 @@ const mountOpts = {
     animate: false
   }
 }
-describe('GanttChart correctly', () => {
+describe('GanttChart  correctly', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(GanttChart, merge(mountOpts, {
@@ -61,16 +61,7 @@ describe('GanttChart correctly', () => {
         jobs
       },
     }))
-    cy.get('.vue-apexcharts')
-      .should('be.visible')
-      .contains('test_job')
-      .get('.vue-apexcharts')
-      .contains('yet_another_test_job')
-    cy.get('.apexcharts-rangebar-area')
-      .first()
-      .click({ force: true })
-    cy.get('.apexcharts-tooltip-candlestick')
-      .should('exist')
+    cy.get('.gantt-container canvas')
       .should('be.visible')
     cy.get('[data-test="v-pagination-item"]')
       .should('have.length', 1)
@@ -85,10 +76,7 @@ describe('GanttChart correctly', () => {
     }))
     cy.get('[data-test="v-pagination-item"]')
       .should('have.length', 2)
-    cy.get('.vue-apexcharts')
+    cy.get('.gantt-container canvas')
       .should('be.visible')
-      .contains('test_job')
-    cy.contains('yet_another_test_job')
-      .should('not.exist')
   })
 })

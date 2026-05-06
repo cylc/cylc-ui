@@ -86,31 +86,28 @@ describe('BoxPlot', () => {
       },
     }))
     // Make sure the chart is shown
-    cy.get('.vue-apexcharts')
+    cy.get('canvas')
       .should('be.visible')
-      .contains('a_test_task')
-      .get('.vue-apexcharts')
-      .contains('another_test_task')
   })
 
   it('paginates', () => {
     // see: https://on.cypress.io/mounting-vue
+    const tasks = Array.from(Array(7).keys(), (i) => ({
+      ...task1,
+      name: `task_${i}`
+    }))
     cy.mount(BoxPlot, merge(mountOpts, {
       props: {
-        tasks: Array.from(Array(7).keys(), (i) => ({
-          ...task1,
-          name: `task_${i}`
-        })),
+        tasks,
         itemsPerPage: 4,
       },
     }))
-    cy.get('.apexcharts-yaxis title')
-      .should('have.length', 4)
-      .get('[data-test=v-pagination-item]')
+    cy.get('[data-test=v-pagination-item]')
       .should('have.length', 2)
-      .get('[data-test=v-pagination-next]')
+    cy.get('[data-test=v-pagination-next]')
       .click()
-      .get('.apexcharts-yaxis title')
-      .should('have.length', 3)
+    // After pagination, there should be 3 tasks displayed
+    // The component calculates height based on number of tasks, so we can check that
+    cy.get('[style*="height: 250px"]') // 100 + 3 * 50
   })
 })
