@@ -1,6 +1,6 @@
 {
   "name": "cylc-ui",
-  "version": "2.14.0-0",
+  "version": "2.14.0",
   "private": true,
   "license": "GPL-3.0-only",
   "type": "module",
