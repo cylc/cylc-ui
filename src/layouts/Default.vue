@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <ConnectionStatus :is-offline="offline" />
+    <Toolbar v-if="showToolbar" />
     <Drawer v-if="showSidebar" />
     <CommandMenu/>
 
     <v-main>
-      <Toolbar v-if="showToolbar" />
       <alert />
       <div
         id="core-view"
@@ -45,7 +45,7 @@ import { Alert as AlertModel } from '@/model/Alert.model'
 import Alert from '@/components/core/Alert.vue'
 import Drawer from '@/components/cylc/Drawer.vue'
 import Toolbar from '@/components/cylc/Toolbar.vue'
-import { toolbarHeight } from '@/utils/toolbar'
+import { useNavBtn, toolbarHeight } from '@/utils/toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
 import CommandMenu from '@/components/cylc/commandMenu/Menu.vue'
 
@@ -66,10 +66,11 @@ export default {
       ...allViews.keys(),
       'Workspace',
     ]
+    const { showNavBtn } = useNavBtn()
 
     /** Whether to show app toolbar (not the workspace view toolbar). */
     const showToolbar = computed(
-      () => !workflowViews.includes(route.name)
+      () => showNavBtn.value && !workflowViews.includes(route.name)
     )
     const coreViewStyle = computed(() => ({
       marginTop: showToolbar.value ? `${toolbarHeight}px` : 0,

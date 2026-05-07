@@ -39,9 +39,8 @@ describe('Workspace toolbar component', () => {
     drawerState.value = false
   })
 
-  it('shows nav button', async () => {
-    // TODO Add test for when workflow toolbar is shown
-    // and when navbar should be hidden
+  it('hides/shows nav button according to viewport size & whether drawer is collapsed', async () => {
+    // TODO: actually just show nav btn at all times?
     const wrapper = mount(Toolbar, {
       global: {
         plugins: [store, vuetify, CommandMenuPlugin],
@@ -57,10 +56,10 @@ describe('Workspace toolbar component', () => {
     wrapper.vm.$vuetify.display.mobile = false
     await wrapper.vm.$nextTick()
     expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
-    // Btn should show when drawer is visible on large viewport
+    // Btn should not show when drawer is visible on large viewport
     drawerState.value = true
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
+    expect(wrapper.find('#toggle-drawer').exists()).to.equal(false)
     // Btn should show when drawer is visible on small viewport
     wrapper.vm.$vuetify.display.mobile = true
     await wrapper.vm.$nextTick()
