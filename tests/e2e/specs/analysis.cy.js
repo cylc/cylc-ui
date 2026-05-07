@@ -16,7 +16,6 @@
  */
 
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
-import { clone } from 'lodash'
 
 const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
 
