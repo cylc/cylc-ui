@@ -57,10 +57,10 @@ describe('Toolbar component', () => {
     wrapper.vm.$vuetify.display.mobile = false
     await wrapper.vm.$nextTick()
     expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
-    // Btn should not show when drawer is visible on large viewport
+    // Btn should show when drawer is visible on large viewport
     drawerState.value = true
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('#toggle-drawer').exists()).to.equal(false)
+    expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
     // Btn should show when drawer is visible on small viewport
     wrapper.vm.$vuetify.display.mobile = true
     await wrapper.vm.$nextTick()
