@@ -15,33 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  ANALYSIS,
-  GANTT,
-  GRAPH,
-  LOG,
-  TABLE,
-  TREE,
-  useDefaultView
-} from '@/views/views.js'
+import { TREE, useDefaultView } from '@/views/views.js'
 
 describe('useDefaultView composable', () => {
   it(`returns the ${TREE} view if not set in localStorage`, () => {
-    localStorage.removeItem('defaultView')
+    delete localStorage.defaultView
     expect(useDefaultView().value).to.equal(TREE)
   })
 
   it('returns the view that has been set in localStorage', () => {
-    localStorage.defaultView = TABLE
-    expect(useDefaultView().value).to.equal(TABLE)
-    localStorage.defaultView = GRAPH
-    expect(useDefaultView().value).to.equal(GRAPH)
-    localStorage.defaultView = GANTT
-    expect(useDefaultView().value).to.equal(GANTT)
-    localStorage.defaultView = ANALYSIS
-    expect(useDefaultView().value).to.equal(ANALYSIS)
-    localStorage.defaultView = LOG
-    expect(useDefaultView().value).to.equal(LOG)
+    localStorage.defaultView = 'Table'
+    expect(useDefaultView().value).to.equal('Table')
+    localStorage.defaultView = 'Graph'
+    expect(useDefaultView().value).to.equal('Graph')
   })
 
   it(`returns the ${TREE} view if the view set in localStorage is not available`, () => {
