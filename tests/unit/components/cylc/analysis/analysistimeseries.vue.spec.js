@@ -35,7 +35,6 @@ describe('TimeSeries component', () => {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
-      shallow: true,
       ...options
     })
   }
