@@ -26,6 +26,7 @@ import { vuetifyOptions } from '@/plugins/vuetify'
 const vuetify = createVuetify(vuetifyOptions)
 const analysisJobs = analysisJobQuery.data.jobs
 const $workflowService = sinon.createStubInstance(WorkflowService)
+$workflowService.query2.resolves({ data: { tasks: [{ name: 'succeeded' }, { name: 'waiting' }, { name: 'eventually_succeeded' }] } })
 
 describe('TimeSeries component', () => {
   const mountFunction = (options) => {
@@ -34,7 +35,6 @@ describe('TimeSeries component', () => {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
-      shallow: true,
       ...options
     })
   }

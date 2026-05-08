@@ -22,7 +22,7 @@ describe('Gantt view', () => {
   describe('Gantt view', () => {
     it('Should display the mocked workflow', () => {
       cy
-        .get('.vue-apexcharts')
+        .get('.gantt-container')
         .should('be.visible')
     })
   })
