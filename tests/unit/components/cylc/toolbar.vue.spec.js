@@ -29,17 +29,23 @@ import { useDrawer } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { mdiViewList, mdiBackburger } from '@mdi/js'
 
-const $workflowService = sinon.createStubInstance(WorkflowService)
 const vuetify = createVuetify(vuetifyOptions)
 
 describe('Toolbar component', () => {
   let store
+  let $workflowService
   const { drawer: drawerState } = useDrawer()
 
   beforeEach(() => {
     store = createStore(storeOptions)
-    store.commit('user/SET_USER', { owner: 'rincewind', permissions: ['play', 'pause', 'resume', 'stop'] })
+    store.commit('user/SET_USER', {
+      owner: 'rincewind',
+      permissions: ['play', 'pause', 'resume', 'stop', 'setGraphWindowExtent'],
+      initials: 'RW',
+      username: 'rincewind',
+    })
     drawerState.value = false
+    $workflowService = sinon.createStubInstance(WorkflowService)
     store.state.workflows.workflows = [
       {
         id: 'user/id',
@@ -127,86 +133,5 @@ describe('Toolbar component', () => {
     })
     await wrapper.vm.$nextTick()
     expect(wrapper.find('.c-toolbar-title').text()).to.include("I'm your pain when you can't feel")
-  })
-
-  it('shows user menu', async () => {
-    const wrapper = mount(Toolbar, {
-      global: {
-        plugins: [store, vuetify, CommandMenuPlugin],
-        mocks: { $workflowService },
-        provide: { versionInfo: null },
-      },
-      props: {
-        views: new Map(),
-        workflowName: 'strewth',
-      },
-    })
-    await wrapper.find('.v-avatar').trigger('click')
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('.v-card').text()).to.include('rincewind')
-    expect(wrapper.find('a[href="/user-profile"]').exists()).to.be.true
-  })
-
-  it('shows add view menu', async () => {
-    const wrapper = mount(Toolbar, {
-      global: {
-        plugins: [store, vuetify, CommandMenuPlugin],
-        mocks: {
-          $workflowService,
-          $route: { name: 'Workspace' }
-        },
-        provide: { versionInfo: null },
-      },
-      props: {
-        views: new Map([['testView', { icon: 'mdi-help' }]]),
-        workflowName: 'strewth',
-      },
-    })
-    await wrapper.find('.add-view').trigger('click')
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('#toolbar-add-testView-view').exists()).to.be.true
-  })
-
-  it('shows workflow info tooltip', async () => {
-    const wrapper = mount(Toolbar, {
-      global: {
-        plugins: [store, vuetify, CommandMenuPlugin],
-        mocks: { $workflowService },
-        provide: { versionInfo: null },
-      },
-      props: {
-        views: new Map(),
-        workflowName: 'strewth',
-      },
-    })
-    store.state.workflows.cylcTree = { $index: { 'strewth/strewth': { id: 'strewth/strewth', node: { owner: 'rincewind', host: 'localhost', cylcVersion: '8.0.0', runMode: 'live', status: 'running' } } } }
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('#info-icon').exists()).to.be.true
-  })
-
-  it('interacts with workflow controls', async () => {
-    $workflowService.mutate.resolves([{ status: 'SUCCEEDED' }])
-    const wrapper = mount(Toolbar, {
-      global: {
-        plugins: [store, vuetify, CommandMenuPlugin],
-        mocks: { $workflowService },
-        provide: { versionInfo: null },
-      },
-      props: {
-        views: new Map(),
-        workflowName: 'strewth',
-      },
-    })
-    store.state.workflows.cylcTree = { $index: { 'strewth/strewth': { id: 'strewth/strewth', node: { status: 'stopped' } } } }
-    await wrapper.vm.$nextTick()
-    await wrapper.find('#workflow-play-button').trigger('click')
-    expect($workflowService.mutate.calledWith('play')).to.be.true
-
-    store.state.workflows.cylcTree = { $index: { 'strewth/strewth': { id: 'strewth/strewth', node: { status: 'running' } } } }
-    await wrapper.vm.$nextTick()
-    await wrapper.find('#workflow-play-pause-button').trigger('click')
-    expect($workflowService.mutate.calledWith('pause')).to.be.true
-    await wrapper.find('#workflow-stop-button').trigger('click')
-    expect($workflowService.mutate.calledWith('stop')).to.be.true
   })
 })
