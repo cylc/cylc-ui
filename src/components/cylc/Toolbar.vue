@@ -161,89 +161,91 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </span>
       </span>
 
-      <v-spacer class="mx-0" />
+    </template>
 
-      <v-btn
-        v-if="$route.name === 'Workspace'"
-        class="add-view"
-        color="primary"
-        data-cy="add-view-btn"
+    <v-spacer class="mx-0" />
+
+    <v-btn
+      v-if="currentWorkflow && $route.name === 'Workspace'"
+      class="add-view"
+      color="primary"
+      data-cy="add-view-btn"
+    >
+      <v-icon class="icon">
+        {{ icons.add }}
+      </v-icon>
+      <span class="label">
+        {{ $t('Toolbar.addView') }}
+      </span>
+
+      <v-menu
+        activator="parent"
+        location="bottom"
       >
-        <v-icon class="icon">
-          {{ icons.add }}
-        </v-icon>
-        <span class="label">
-          {{ $t('Toolbar.addView') }}
-        </span>
-
-        <v-menu
-          activator="parent"
-          location="bottom"
-        >
-          <v-list>
-            <v-list-item
-              v-for="[name, view] in views"
-              :id="`toolbar-add-${name}-view`"
-              :key="name"
-              @click="eventBus.emit('add-view', { name })"
+        <v-list>
+          <v-list-item
+            v-for="[name, view] in views"
+            :id="`toolbar-add-${name}-view`"
+            :key="name"
+            @click="eventBus.emit('add-view', { name })"
+          >
+            <template #prepend>
+              <v-icon>{{ view.icon }}</v-icon>
+            </template>
+            <v-list-item-title>{{ startCase(name) }}</v-list-item-title>
+          </v-list-item>
+          <v-divider/>
+          <v-card-actions class="mb-n2">
+            <v-btn
+              @click="eventBus.emit('reset-workspace-layout')"
+              :prepend-icon="icons.mdiArrowULeftTop"
+              class="flex-grow-1"
+              data-cy="reset-layout-btn"
             >
-              <template #prepend>
-                <v-icon>{{ view.icon }}</v-icon>
-              </template>
-              <v-list-item-title>{{ startCase(name) }}</v-list-item-title>
-            </v-list-item>
-            <v-divider/>
-            <v-card-actions class="mb-n2">
-              <v-btn
-                @click="eventBus.emit('reset-workspace-layout')"
-                :prepend-icon="icons.mdiArrowULeftTop"
-                class="flex-grow-1"
-                data-cy="reset-layout-btn"
-              >
-                Reset layout
-              </v-btn>
-            </v-card-actions>
-          </v-list>
-        </v-menu>
-      </v-btn>
-      <v-btn
-        icon
+              Reset layout
+            </v-btn>
+          </v-card-actions>
+        </v-list>
+      </v-menu>
+    </v-btn>
+
+    <v-btn
+      icon
+      size="small"
+    >
+      <v-avatar
+        color="primary"
         size="small"
       >
-        <v-avatar
-          color="primary"
-          size="small"
-        >
-          <div v-if="user.initials">
-            {{ user.initials }}
-          </div>
-          <v-icon
-            v-else
-            :icon="icons.mdiAccount"
-          />
-        </v-avatar>
-        <v-menu activator="parent">
-          <v-card :title="user.username">
-            <v-card-text>
-              <div class="d-flex flex-column row-gap-2">
-                <v-defaults-provider
-                  :defaults="{
-                    VBtn: { variant: 'tonal', spaced: true },
-                  }"
+        <div v-if="user.initials">
+          {{ user.initials }}
+        </div>
+        <v-icon
+          v-else
+          :icon="icons.mdiAccount"
+        />
+      </v-avatar>
+      <v-menu activator="parent">
+        <v-card :title="user.username">
+          <v-card-text>
+            <div class="d-flex flex-column row-gap-2">
+              <v-defaults-provider
+                :defaults="{
+                  VBtn: { variant: 'tonal', spaced: true },
+                }"
+              >
+                <v-btn
+                  to="/user-profile"
+                  :prepend-icon="icons.mdiCog"
                 >
-                  <v-btn
-                    to="/user-profile"
-                    :prepend-icon="icons.mdiCog"
-                  >
-                    Settings
-                  </v-btn>
-                </v-defaults-provider>
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-menu>
-      </v-btn>
-    </template>
+                  Settings
+                </v-btn>
+              </v-defaults-provider>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+    </v-btn>
   </v-toolbar>
 </template>
 
