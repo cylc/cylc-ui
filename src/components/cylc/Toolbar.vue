@@ -381,6 +381,7 @@ export default {
 
   data: () => ({
     expecting: {
+      // store state from mutations in order to compute the "enabled" attrs
       play: null,
       paused: null,
       stop: null
@@ -440,8 +441,12 @@ export default {
       return ret
     },
     enabled () {
+      // object holding the states of controls that are supposed to be enabled
+      // NOTE: this is a temporary solution until we are able to subscribe to
+      // mutations to tell when they have completed
       return {
         playToggle: (
+          // the play button (for the play from stopped scenario)
           this.user.permissions.includes('play') &&
           this.isStopped &&
           (
@@ -450,6 +455,7 @@ export default {
           )
         ),
         pauseToggle: (
+          // the play/pause button
           (
             (this.isPaused && this.user.permissions.includes('resume')) ||
             (!this.isPaused && this.user.permissions.includes('pause'))
@@ -463,6 +469,7 @@ export default {
           )
         ),
         stopToggle: (
+          // the stop button
           this.user.permissions.includes('stop') &&
           !this.isStopped &&
           (
@@ -474,6 +481,7 @@ export default {
     },
     nWindow: {
       get () {
+        // the graph window distance reported by the scheduler
         return this.currentWorkflow?.node?.nEdgeDistance ?? 1
       },
       async set (val) {
@@ -489,6 +497,7 @@ export default {
   },
 
   watch: {
+    // reset the "expecting" state markers when the workflow state changes
     isRunning () {
       this.expecting.play = null
     },
@@ -498,6 +507,7 @@ export default {
     isStopped () {
       this.expecting.stop = null
     },
+    // reset the "expecting" state markers when we switch workflow
     currentWorkflow () {
       this.expecting = {
         play: null,
