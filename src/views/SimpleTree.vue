@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
-import { workflowName, useGraphQL } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 
@@ -191,13 +191,9 @@ export default {
     subscriptionComponentMixin
   ],
 
-  props: {
-    workflowName,
-  },
-
   setup (props) {
     // This is a helper function that provides us with some computed properties.
-    const { workflowIDs, variables } = useGraphQL(props)
+    const { workflowIDs, variables } = useGraphQL()
 
     return {
       workflowIDs,

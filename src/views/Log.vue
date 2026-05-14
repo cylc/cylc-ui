@@ -220,7 +220,7 @@ import {
   mdiInformationOutline,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
-import { workflowName, useGraphQL } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -365,13 +365,12 @@ export default {
       required: false,
       default: null,
     },
-    workflowName,
   },
 
   setup (props, { emit }) {
     const store = useStore()
 
-    const { workflowID, variables } = useGraphQL(props)
+    const { workflowID, variables } = useGraphQL()
 
     /**
      * The task/job ID.

@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import { useJobTheme } from '@/composables/localStorage'
-import { workflowName, useGraphQL } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -240,7 +240,6 @@ export default {
 
   props: {
     initialOptions,
-    workflowName,
   },
 
   setup (props, { emit }) {
@@ -271,7 +270,7 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
-    const { workflowIDs, variables } = useGraphQL(props)
+    const { workflowIDs, variables } = useGraphQL()
 
     return {
       jobTheme: useJobTheme(),

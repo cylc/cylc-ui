@@ -95,7 +95,7 @@ import {
   debounce
 } from 'lodash'
 import gql from 'graphql-tag'
-import { workflowName, useGraphQL } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   useInitialOptions
@@ -167,7 +167,6 @@ export default {
 
   props: {
     initialOptions,
-    workflowName,
   },
 
   setup (props, { emit }) {
@@ -187,7 +186,7 @@ export default {
       platformOption: -1,
     })
 
-    const { workflowIDs } = useGraphQL(props)
+    const { workflowIDs } = useGraphQL()
 
     return {
       tasksPerPage,

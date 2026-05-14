@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { workflowName, useGraphQL } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -153,11 +153,10 @@ export default {
 
   props: {
     initialOptions,
-    workflowName,
   },
 
   setup (props, { emit }) {
-    const { workflowIDs, variables } = useGraphQL(props)
+    const { workflowIDs, variables } = useGraphQL()
 
     /**
      * The job id input and selected task filter state.

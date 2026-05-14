@@ -25,18 +25,18 @@ import WorkflowState from '@/model/WorkflowState.model'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
 import WorkflowService from '@/services/workflow.service'
-import { useDrawer } from '@/utils/toolbar'
+import { __drawer as drawerState } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { mdiViewList, mdiBackburger } from '@mdi/js'
+import { mockRoute } from '$tests/util'
 
 const vuetify = createVuetify(vuetifyOptions)
 
 describe('Toolbar component', () => {
-  let store
-  let $workflowService
-  const { drawer: drawerState } = useDrawer()
+  let store, $workflowService
 
   beforeEach(() => {
+    mockRoute()
     store = createStore(storeOptions)
     store.commit('user/SET_USER', {
       owner: 'rincewind',
@@ -62,10 +62,6 @@ describe('Toolbar component', () => {
         mocks: { $workflowService },
         provide: { versionInfo: null },
       },
-      props: {
-        views: new Map(),
-        workflowName: 'strewth',
-      },
     })
     // Drawer closed -> list icon
     drawerState.value = false
@@ -85,10 +81,6 @@ describe('Toolbar component', () => {
         mocks: { $workflowService },
         provide: { versionInfo: null },
       },
-      props: {
-        views: new Map(),
-        workflowName: 'strewth',
-      },
     })
     expect(drawerState.value).to.equal(false)
     await wrapper.find('#toggle-drawer').trigger('click')
@@ -97,19 +89,30 @@ describe('Toolbar component', () => {
     expect(drawerState.value).to.equal(false)
   })
 
-  it('displays the title from the store', async () => {
-    store.commit('app/setTitle', "I'm your pain when you can't feel")
+  it.each([
+    {
+      route: {
+        params: { workflowName: 'A' },
+        meta: { title: 'B' },
+      },
+      expected: 'A'
+    },
+    {
+      route: {
+        meta: { title: 'B' },
+      },
+      expected: 'B'
+    },
+  ])('displays title $expected from the route', async ({ route, expected }) => {
+    mockRoute(route)
     const wrapper = mount(Toolbar, {
       global: {
         plugins: [store, vuetify, CommandMenuPlugin],
         mocks: { $workflowService },
         provide: { versionInfo: null },
       },
-      props: {
-        views: new Map(),
-      },
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('.c-toolbar-title').text()).to.include("I'm your pain when you can't feel")
+    expect(wrapper.find('.c-toolbar-title').text()).to.include(expected)
   })
 })

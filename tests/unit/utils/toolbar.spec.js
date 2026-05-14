@@ -18,60 +18,22 @@
 import { unref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
-import { useDrawer, useNavBtn } from '@/utils/toolbar'
+import { useDrawer, __drawer as drawerState } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
-
-/**
- * Create a vuetify instance in mobile mode or not.
- * Mobile mode is when viewport is narrower than the mobile breakpoint.
- *
- * @param {boolean} mobile
- */
-const vuetify = (mobile) => createVuetify({
-  display: {
-    mobileBreakpoint: mobile ? 10e3 : 0,
-  }
-})
+import { mockRoute } from '$tests/util'
 
 describe('Toolbar/drawer utils', () => {
-  const { drawer: drawerState } = useDrawer()
-
   beforeEach(() => {
+    mockRoute()
     drawerState.value = false
   })
 
-  describe('useNavBtn()', () => {
-    it.each([
-      { mobile: true, drawer: true, expected: true },
-      { mobile: true, drawer: false, expected: true },
-      { mobile: false, drawer: true, expected: false },
-      { mobile: false, drawer: false, expected: true },
-    ])('{mobile: $mobile, drawer: $drawer} -> $expected', ({ mobile, drawer, expected }) => {
-      const wrapper = mount(
-        {
-          setup () {
-            const { showNavBtn } = useNavBtn()
-            return { showNavBtn }
-          },
-          render () {},
-        },
-        {
-          global: {
-            plugins: [vuetify(mobile)]
-          },
-        }
-      )
-      drawerState.value = drawer
-      expect(wrapper.vm.showNavBtn).to.equal(expected)
-    })
-  })
-
   describe('useDrawer()', () => {
-    const mountFunction = (vuetify) => mount(
+    const vuetify = createVuetify(vuetifyOptions)
+    const mountFunction = () => mount(
       {
         setup () {
-          const { drawer, toggleDrawer } = useDrawer()
-          return { drawer, toggleDrawer }
+          return useDrawer()
         },
         render () {}
       },
@@ -83,12 +45,21 @@ describe('Toolbar/drawer utils', () => {
     )
 
     it('toggles the drawer', () => {
-      const wrapper = mountFunction(createVuetify(vuetifyOptions))
+      const wrapper = mountFunction()
       const initialState = unref(drawerState)
       expect(wrapper.vm.drawer).toEqual(initialState)
       wrapper.vm.toggleDrawer()
       expect(drawerState.value).toEqual(!initialState)
       expect(wrapper.vm.drawer).toEqual(!initialState)
+    })
+
+    it.each([
+      { route: {}, expected: true },
+      { route: { meta: { showSidebar: false } }, expected: false },
+    ])('enables/disables drawer based on route $route', ({ route, expected }) => {
+      mockRoute(route)
+      const wrapper = mountFunction()
+      expect(wrapper.vm.drawerEnabled).toBe(expected)
     })
   })
 })

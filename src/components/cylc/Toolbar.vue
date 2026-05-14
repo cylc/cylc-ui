@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- burger button -->
     <v-btn
+      v-if="drawerEnabled"
       icon
       @click.stop="toggleDrawer"
       id="toggle-drawer"
@@ -36,7 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary ml-0"
+      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
+      :class="drawerEnabled ? 'ml-0' : null"
     >
       {{ title }}
     </v-toolbar-title>
@@ -184,7 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <v-list>
           <v-list-item
-            v-for="[name, view] in views"
+            v-for="[name, view] in workflowViews"
             :id="`toolbar-add-${name}-view`"
             :key="name"
             @click="eventBus.emit('add-view', { name })"
@@ -212,6 +214,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-btn
       icon
       size="small"
+      data-cy="user-avatar-btn"
     >
       <v-avatar
         color="primary"
@@ -250,7 +253,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { mapState } from 'vuex'
 import {
   mdiCog,
@@ -270,7 +274,7 @@ import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
 import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
-import { useGraphQL, workflowName } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   mutationStatus
 } from '@/utils/aotf'
@@ -280,6 +284,7 @@ import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
 import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
+import { workflowViews } from '@/views/views'
 
 const QUERY = gql(`
 subscription Workflow ($workflowId: ID) {
@@ -328,9 +333,16 @@ export default {
   name: 'Toolbar',
 
   setup (props) {
-    const { variables, workflowID } = useGraphQL(props)
+    const route = useRoute()
 
-    const { drawer, toggleDrawer } = useDrawer()
+    const { variables, workflowName, workflowID } = useGraphQL()
+
+    /** Show workflow name as title if we are navigated to one, otherwise the generic route title. */
+    const title = computed(
+      () => workflowName.value || route.meta?.title || route.name
+    )
+
+    const { drawer, drawerEnabled, toggleDrawer } = useDrawer()
 
     const uisVersionInfo = inject('versionInfo')
     const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
@@ -338,11 +350,15 @@ export default {
     return {
       eventBus,
       drawer,
+      drawerEnabled,
       toggleDrawer,
       toolbarHeight,
       variables,
+      title,
+      workflowName,
       workflowID,
       uisFlowVersion,
+      workflowViews,
       icons: {
         add: mdiPlusBoxMultiple,
         hold: mdiPause,
@@ -368,21 +384,6 @@ export default {
     subscriptionComponentMixin
   ],
 
-  props: {
-    /**
-     * All possible view component classes that can be rendered
-     *
-     * @type {import('vue').Prop<
-     *   Map<string, import('@/views/views.js').CylcView>
-     * >}
-     */
-    views: {
-      type: Map,
-      required: true,
-    },
-    workflowName,
-  },
-
   data: () => ({
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
@@ -394,7 +395,6 @@ export default {
   }),
 
   computed: {
-    ...mapState('app', ['title']),
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),
     query () {

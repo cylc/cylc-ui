@@ -16,6 +16,7 @@
  */
 
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
 /*
@@ -26,25 +27,18 @@ import { useStore } from 'vuex'
  * :workflowName param.
  */
 
-/**
- * Workflow name prop, set by vue-router.
- *
- * @type {import('vue').Prop<string>}
- */
-export const workflowName = {
-  type: String,
-  required: true,
-}
-
-export function useGraphQL (props) {
+export function useGraphQL () {
+  const route = useRoute()
   const store = useStore()
+
+  const workflowName = computed(() => route.params?.workflowName)
 
   /**
    * Compute the workflow ID using the Vue route parameter
    * `workflowName` and the user from the store.
    */
   const workflowID = computed(
-    () => `~${store.state.user.user.owner}/${props.workflowName}`
+    () => `~${store.state.user.user.owner}/${workflowName.value}`
   )
 
   /**
@@ -61,6 +55,7 @@ export function useGraphQL (props) {
   }))
 
   return {
+    workflowName,
     workflowID,
     workflowIDs,
     variables,

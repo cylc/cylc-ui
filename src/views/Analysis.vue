@@ -154,7 +154,7 @@ import {
   pick,
 } from 'lodash'
 import gql from 'graphql-tag'
-import { workflowName, useGraphQL } from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   updateInitialOptionsEvent,
@@ -262,7 +262,6 @@ export default {
 
   props: {
     initialOptions,
-    workflowName,
   },
 
   setup (props, { emit }) {
@@ -298,7 +297,7 @@ export default {
      */
     const timeseriesPlotOptions = useInitialOptions('timeseriesPlotOptions', { props, emit })
 
-    const { workflowIDs } = useGraphQL(props)
+    const { workflowIDs } = useGraphQL()
 
     return {
       tasksFilter,

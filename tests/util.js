@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -14,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import { config } from '@vue/test-utils'
+import { routeLocationKey } from 'vue-router'
 
 /**
  * Create a promise that can be manually resolved.
@@ -43,4 +46,15 @@ export function getIDMap (filteredOutNodesCache) {
   return Object.fromEntries(
     Array.from(filteredOutNodesCache.entries(), ([node, val]) => [node.id, val])
   )
+}
+
+/**
+ * Provide a mock route to use in tests.
+ *
+ * NOTE: this applies for the rest of the test suite/file, but can be overriden by subsequent calls.
+ */
+export function mockRoute (route = { params: { workflowName: 'test' } }) {
+  config.global.provide = {
+    [routeLocationKey]: route,
+  }
 }
