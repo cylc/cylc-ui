@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
-import graphqlMixin from '@/mixins/graphql'
+import { workflowName, useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 
@@ -188,9 +188,22 @@ export default {
 
   // These mixins enable various functionalities.
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
+
+  props: {
+    workflowName,
+  },
+
+  setup (props) {
+    // This is a helper function that provides us with some computed properties.
+    const { workflowIDs, variables } = useGraphQL(props)
+
+    return {
+      workflowIDs,
+      variables,
+    }
+  },
 
   computed: {
     // This gives us direct access to the data store if we need it:
@@ -199,13 +212,6 @@ export default {
     // This gives us a convenient way to filter for the nodes we want from the
     // store:
     ...mapGetters('workflows', ['getNodes']),
-
-    // List of workflow IDs we are displaying.
-    // NOTE: Write all views to be multi-workflow capable.
-    // NOTE: workflowId is provided by a mixin.
-    workflowIDs () {
-      return [this.workflowId]
-    },
 
     // Get workflow nodes from the store.
     workflows () {

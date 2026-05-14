@@ -95,7 +95,7 @@ import {
   debounce
 } from 'lodash'
 import gql from 'graphql-tag'
-import graphqlMixin from '@/mixins/graphql'
+import { workflowName, useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   useInitialOptions
@@ -161,16 +161,13 @@ export class GanttCallback extends DeltasCallback {
 export default {
   name: 'Gantt',
 
-  mixins: [
-    graphqlMixin
-  ],
-
   components: {
     GanttChart,
   },
 
   props: {
     initialOptions,
+    workflowName,
   },
 
   setup (props, { emit }) {
@@ -190,9 +187,12 @@ export default {
       platformOption: -1,
     })
 
+    const { workflowIDs } = useGraphQL(props)
+
     return {
       tasksPerPage,
       jobsFilter,
+      workflowIDs,
     }
   },
 
@@ -212,12 +212,6 @@ export default {
   },
 
   computed: {
-    // a list of the workflow IDs this view is "viewing"
-    // NOTE: we plan multi-workflow functionality so we are writing views
-    // to be mult-workflow compatible in advance of this feature arriving
-    workflowIDs () {
-      return [this.workflowId]
-    },
     filteredJobs () {
       return matchTasks(this.callback.jobs, this.jobsFilter)
     },

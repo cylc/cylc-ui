@@ -154,7 +154,7 @@ import {
   pick,
 } from 'lodash'
 import gql from 'graphql-tag'
-import graphqlMixin from '@/mixins/graphql'
+import { workflowName, useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   updateInitialOptionsEvent,
@@ -248,10 +248,6 @@ class AnalysisTaskCallback extends DeltasCallback {
 export default {
   name: 'Analysis',
 
-  mixins: [
-    graphqlMixin
-  ],
-
   components: {
     AnalysisTable,
     BoxPlot,
@@ -264,7 +260,10 @@ export default {
 
   emits: [updateInitialOptionsEvent],
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+    workflowName,
+  },
 
   setup (props, { emit }) {
     /**
@@ -299,6 +298,8 @@ export default {
      */
     const timeseriesPlotOptions = useInitialOptions('timeseriesPlotOptions', { props, emit })
 
+    const { workflowIDs } = useGraphQL(props)
+
     return {
       tasksFilter,
       chartType,
@@ -306,6 +307,7 @@ export default {
       dataTableOptions,
       boxPlotOptions,
       timeseriesPlotOptions,
+      workflowIDs,
     }
   },
 
@@ -319,13 +321,6 @@ export default {
   },
 
   computed: {
-    // a list of the workflow IDs this view is "viewing"
-    // NOTE: we plan multi-workflow functionality so we are writing views
-    // to be mult-workflow compatible in advance of this feature arriving
-    workflowIDs () {
-      return [this.workflowId]
-    },
-
     filteredTasks () {
       return this.tasks.filter(task => matchTask(task, this.tasksFilter))
     },

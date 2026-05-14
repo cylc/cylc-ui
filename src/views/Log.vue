@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-text-field
             v-else
             data-cy="workflow-id-input"
-            v-model="workflowId"
+            v-model="workflowID"
             disabled
           />
         </v-col>
@@ -220,7 +220,7 @@ import {
   mdiInformationOutline,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
-import graphqlMixin from '@/mixins/graphql'
+import { workflowName, useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -344,7 +344,6 @@ export default {
   name: 'Log',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -366,10 +365,13 @@ export default {
       required: false,
       default: null,
     },
+    workflowName,
   },
 
   setup (props, { emit }) {
     const store = useStore()
+
+    const { workflowID, variables } = useGraphQL(props)
 
     /**
      * The task/job ID.
@@ -473,6 +475,8 @@ export default {
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
       jobNode: ref(null),
+      workflowID,
+      variables,
     }
   },
 
@@ -509,7 +513,7 @@ export default {
   computed: {
     workflowTokens () {
       // tokens for the workflow this view was opened for
-      return new Tokens(this.workflowId)
+      return new Tokens(this.workflowID)
     },
     id () {
       // the ID of the workflow/task/job we are subscribed to
@@ -517,7 +521,7 @@ export default {
       if (this.jobLog) {
         return this.relativeTokens?.clone(this.workflowTokens)?.id
       }
-      return this.workflowId
+      return this.workflowID
     },
     controlGroups () {
       return [
