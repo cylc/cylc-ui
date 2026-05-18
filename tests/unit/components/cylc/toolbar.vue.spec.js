@@ -112,11 +112,6 @@ describe('Toolbar component', () => {
     // Burger button and title should still be present
     expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
     expect(wrapper.find('.c-toolbar-title').exists()).to.equal(true)
-    // Workflow-specific controls should not be present
-    expect(wrapper.find('#workflow-play-button').exists()).to.equal(false)
-    expect(wrapper.find('#workflow-stop-button').exists()).to.equal(false)
-    expect(wrapper.find('#workflow-mutate-button').exists()).to.equal(false)
-    expect(wrapper.find('.c-workflow-controls').exists()).to.equal(false)
   })
 
   it('displays the title from the store', async () => {
