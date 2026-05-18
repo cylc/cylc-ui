@@ -28,7 +28,7 @@ describe('Header Component', () => {
 
 describe('Header Component multiuser', () => {
   beforeEach(() => {
-    cy.intercept('/userprofile', {
+    cy.intercept('/cylc/userprofile', {
       body: {
         username: 'userTest',
         permissions: [

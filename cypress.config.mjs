@@ -15,7 +15,7 @@ export default defineConfig({
   videosFolder: 'tests/e2e/videos',
 
   e2e: {
-    baseUrl: 'http://localhost:5173',
+    baseUrl: 'http://localhost:5173/cylc/',
     setupNodeEvents (on, config) {
       registerCodeCoverageTasks(on, config)
 
