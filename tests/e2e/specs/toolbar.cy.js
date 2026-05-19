@@ -26,7 +26,9 @@ describe('Toolbar component', () => {
       .should('exist')
   })
   it('Is NOT displayed when using a standalone view', () => {
-    cy.visit('/#/')
+    cy.visit('/#/gantt/one')
+    // forces cypress to wait for the view to load
+    cy.get('.apexcharts-svg').should('be.visible')
     cy
       .get('#core-app-bar')
       .should('not.exist')
