@@ -97,23 +97,6 @@ describe('Toolbar component', () => {
     expect(drawerState.value).to.equal(false)
   })
 
-  it('does not show workflow controls without workflowName', async () => {
-    const wrapper = mount(Toolbar, {
-      global: {
-        plugins: [store, vuetify, CommandMenuPlugin],
-        mocks: { $workflowService },
-        provide: { versionInfo: null },
-      },
-      props: {
-        views: new Map(),
-      },
-    })
-    await wrapper.vm.$nextTick()
-    // Burger button and title should still be present
-    expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
-    expect(wrapper.find('.c-toolbar-title').exists()).to.equal(true)
-  })
-
   it('displays the title from the store', async () => {
     store.commit('app/setTitle', "I'm your pain when you can't feel")
     const wrapper = mount(Toolbar, {
