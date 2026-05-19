@@ -25,11 +25,30 @@ describe('Toolbar component', () => {
       .get('#core-app-bar')
       .should('exist')
   })
-  it('Is NOT displayed when looking at the dashboard', () => {
-    cy.visit('/#/')
+  it('Is NOT displayed when using a standalone view', () => {
+    cy.visit('/#/gantt/one')
+    // forces cypress to wait for the view to load
+    cy.get('.apexcharts-svg').should('be.visible')
     cy
       .get('#core-app-bar')
       .should('not.exist')
+  })
+  it('displays workflow controls for existing workflows and hidden otherwise', () => {
+    // Start at the dashboard
+    cy.visit('/#/')
+    // The toolbar workflow controls are not visible on the dashboard
+    cy.get('#core-app-bar').should('exist')
+    cy.get('.c-workflow-controls').should('not.exist')
+
+    // Navigate to an existing workflow
+    cy.visit('/#/workspace/one')
+    cy.get('#core-app-bar').should('be.visible')
+    cy.get('.c-workflow-controls').should('be.visible')
+
+    // Navigate to a non-existent workflow
+    cy.visit('/#/workspace/non-exist')
+    cy.get('#core-app-bar').should('be.visible')
+    cy.get('.c-workflow-controls').should('not.exist')
   })
   it('Contains an avatar displaying user icon', () => {
     cy.visit('/#/workspace/one')
