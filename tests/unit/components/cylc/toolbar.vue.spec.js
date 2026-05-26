@@ -27,7 +27,7 @@ import sinon from 'sinon'
 import WorkflowService from '@/services/workflow.service'
 import { __drawer as drawerState } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
-import { mdiViewList, mdiBackburger } from '@mdi/js'
+import { mdiMenuClose, mdiMenuOpen } from '@mdi/js'
 import { mockRoute } from '$tests/util'
 
 const vuetify = createVuetify(vuetifyOptions)
@@ -63,15 +63,15 @@ describe('Toolbar component', () => {
         provide: { versionInfo: null },
       },
     })
-    // Drawer closed -> list icon
+    // Drawer closed: '≡>' icon
     drawerState.value = false
     await wrapper.vm.$nextTick()
     const btn = wrapper.find('#toggle-drawer')
-    expect(btn.find('svg path').attributes('d')).to.equal(mdiViewList)
-    // Drawer open -> backburger icon
+    expect(btn.find('svg path').attributes('d')).to.equal(mdiMenuClose)
+    // Drawer open: '≡<' icon
     drawerState.value = true
     await wrapper.vm.$nextTick()
-    expect(btn.find('svg path').attributes('d')).to.equal(mdiBackburger)
+    expect(btn.find('svg path').attributes('d')).to.equal(mdiMenuOpen)
   })
 
   it('toggles drawer on button click', async () => {

@@ -29,12 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- burger button -->
     <v-btn
       v-if="drawerEnabled"
-      icon
+      :icon="drawer ? icons.mdiMenuOpen : icons.mdiMenuClose"
       @click.stop="toggleDrawer"
       id="toggle-drawer"
-    >
-      <v-icon>{{ drawer ? icons.backBurger : icons.list }}</v-icon>
-    </v-btn>
+    />
     <!-- title -->
     <v-toolbar-title
       class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
@@ -54,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           id="workflow-mutate-button"
           v-command-menu="currentWorkflow"
-          :icon="icons.menu"
+          :icon="icons.mdiMicrosoftXboxControllerMenu"
           size="small"
           density="comfortable"
         />
@@ -263,12 +261,12 @@ import {
   mdiPlay,
   mdiPlusBoxMultiple,
   mdiStop,
-  mdiViewList,
-  mdiBackburger,
   mdiAccount,
   mdiChevronDown,
   mdiArrowULeftTop,
   mdiInformationOutline,
+  mdiMenuOpen,
+  mdiMenuClose,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -363,9 +361,9 @@ export default {
         add: mdiPlusBoxMultiple,
         hold: mdiPause,
         info: mdiInformationOutline,
-        list: mdiViewList,
-        backBurger: mdiBackburger,
-        menu: mdiMicrosoftXboxControllerMenu,
+        mdiMenuOpen,
+        mdiMenuClose,
+        mdiMicrosoftXboxControllerMenu,
         run: mdiPlay,
         stop: mdiStop,
         mdiCog,
