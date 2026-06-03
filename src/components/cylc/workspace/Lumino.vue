@@ -89,7 +89,7 @@ import '@lumino/default-theme/style'
 const props = defineProps({
   workflowName: {
     type: String,
-    required: true
+    required: true,
   },
   /**
    * All possible view component classes that can be rendered
@@ -98,12 +98,12 @@ const props = defineProps({
    */
   allViews: {
     type: Map,
-    required: true
+    required: true,
   },
 })
 
 const emit = defineEmits([
-  'emptied'
+  'emptied',
 ])
 
 const mainDiv = useTemplateRef('mainDiv')

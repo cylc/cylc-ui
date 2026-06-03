@@ -73,7 +73,7 @@ export default {
     )
     const coreViewStyle = computed(() => ({
       marginTop: '0px',
-      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh'
+      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh',
     }))
 
     return {
@@ -87,19 +87,19 @@ export default {
     CommandMenu,
     Alert,
     Drawer,
-    Toolbar
+    Toolbar,
   },
 
   props: {
     showSidebar: {
       type: Boolean,
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
 
   computed: {
-    ...mapState(['offline'])
+    ...mapState(['offline']),
   },
 
   errorCaptured (error, vm, info) {
@@ -108,6 +108,6 @@ export default {
     }
     // Stop error propagating further:
     return false
-  }
+  },
 }
 </script>

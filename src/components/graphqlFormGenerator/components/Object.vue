@@ -39,7 +39,7 @@ import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
 
 const props = defineProps({
-  ...formElementProps
+  ...formElementProps,
 })
 
 const model = defineModel({ required: true })
@@ -49,7 +49,7 @@ const { type } = useFormElement(props)
 const inputs = computed(() => type.value.fields.map(
   (field) => ({
     gqlType: field.type,
-    label: field.name
+    label: field.name,
   })
 ))
 </script>

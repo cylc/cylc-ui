@@ -17,7 +17,7 @@
 
 import {
   TaskState,
-  TaskStateUserOrder
+  TaskStateUserOrder,
 } from '@/model/TaskState.model'
 
 describe('TaskState model', () => {

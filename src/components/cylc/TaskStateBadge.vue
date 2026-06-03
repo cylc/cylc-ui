@@ -43,7 +43,7 @@ import { computed } from 'vue'
 const props = defineProps({
   state: {
     type: String,
-    required: true
+    required: true,
   },
   value: {
     type: Number,

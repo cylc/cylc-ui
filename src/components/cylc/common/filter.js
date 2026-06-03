@@ -24,7 +24,7 @@ import {
   WaitingStateModifierNames,
 } from '@/model/TaskState.model'
 import {
-  escapeRegExp
+  escapeRegExp,
 } from 'lodash-es'
 import { computed } from 'vue'
 
