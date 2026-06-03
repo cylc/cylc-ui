@@ -171,7 +171,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-icon size="1.6em">{{ $options.icons.mdiGraphql }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
-             GraphiQL
+              GraphiQL
             </v-list-item-title>
             <v-list-item-subtitle>
               Explore the Cylc GraphQL API
