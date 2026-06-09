@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import axios from 'axios'
-
 /**
  * Remove double forward-slashes from URL's. It avoids the slashes that
  * are preceded by ':', so that the slashes in the URL protocol are kept.
@@ -97,9 +95,12 @@ export function getXSRFHeaders () {
  * @throws {Error} If the request fails.
  */
 export async function fetchData (path) {
-  const { data } = await axios.get(
+  const response = await fetch(
     createUrl(path),
     { headers: getXSRFHeaders() }
   )
-  return data
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${path}: ${response.status} (${response.statusText})`)
+  }
+  return await response.json()
 }
