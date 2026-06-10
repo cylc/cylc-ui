@@ -63,7 +63,7 @@ export default {
     app.directive('command-menu', {
       beforeMount: bind,
       unmounted: unbind,
-      updated
+      updated,
     })
-  }
+  },
 }

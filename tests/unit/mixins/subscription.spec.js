@@ -36,35 +36,35 @@ describe('Subscription mixin', () => {
     const tests = [
       {
         viewState: ViewState.NO_STATE,
-        expectedIsLoading: false
+        expectedIsLoading: false,
       },
       {
         viewState: ViewState.LOADING,
-        expectedIsLoading: true
+        expectedIsLoading: true,
       },
       {
         viewState: ViewState.COMPLETE,
-        expectedIsLoading: false
+        expectedIsLoading: false,
       },
       {
         viewState: ViewState.ERROR,
-        expectedIsLoading: false
-      }
+        expectedIsLoading: false,
+      },
     ]
     for (const test of tests) {
       const Component = {
         mixins: [subscriptionMixin],
-        render () { }
+        render () { },
       }
       const component = mount(Component, {
         global: {
-          plugins: [store]
+          plugins: [store],
         },
         data () {
           return {
-            viewState: test.viewState
+            viewState: test.viewState,
           }
-        }
+        },
       })
       expect(component.vm.isLoading).to.equal(test.expectedIsLoading)
     }
@@ -73,12 +73,12 @@ describe('Subscription mixin', () => {
     store.state.alert = null
     const Component = {
       mixins: [subscriptionMixin],
-      render () {}
+      render () {},
     }
     const component = mount(Component, {
       global: {
-        plugins: [store]
-      }
+        plugins: [store],
+      },
     })
     const alert = new Alert('text', 'red')
     component.vm.setAlert(alert)

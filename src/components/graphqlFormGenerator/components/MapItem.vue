@@ -72,7 +72,7 @@ const model = defineModel({ required: true })
 const defaults = {
   VTooltip: {
     location: 'top',
-    openDelay: 400
+    openDelay: 400,
   },
   VTextField: {
     hideDetails: true,

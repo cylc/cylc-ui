@@ -34,8 +34,8 @@ export default {
   props: {
     status: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
 
   methods: {
@@ -47,7 +47,7 @@ export default {
     getIcon () {
       const state = WorkflowState.enumValues.find(({ name }) => name === this.status)
       return state?.icon || mdiHelpCircle
-    }
-  }
+    },
+  },
 }
 </script>

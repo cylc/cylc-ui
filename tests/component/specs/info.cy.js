@@ -37,8 +37,8 @@ const TASK = {
         customMeta: {
           answer: '42',
           question: 'mutually exclusive',
-        }
-      }
+        },
+      },
     },
     namespace: [
       'root',
@@ -108,7 +108,7 @@ const TASK = {
         label: 'x',
         message: 'xxx',
         satisfied: true,
-      }
+      },
     ],
     runtime: {
       completion: '(succeeded and x) or failed',
@@ -118,19 +118,19 @@ const TASK = {
       {
         label: 'xtrigger',
         id: 'my-xtrigger(foo=99)',
-        satisfied: false
+        satisfied: false,
       },
       {
         label: 'xtrigger',
         id: 'my-xtrigger(foo=42)',
-        satisfied: false
+        satisfied: false,
       },
       {
         label: 'wallclock-xtrigger',
         id: 'wall_clock(trigger_time=634737600)',
-        satisfied: true
-      }
-    ]
+        satisfied: true,
+      },
+    ],
   },
   children: [
     {
@@ -138,16 +138,16 @@ const TASK = {
       tokens: TOKENS.clone({ job: '02' }),
       name: '02',
       node: {
-        state: 'succeeded'
-      }
+        state: 'succeeded',
+      },
     },
     {
       id: TOKENS.clone({ job: '01' }).id,
       tokens: TOKENS.clone({ job: '01' }),
       name: '01',
       node: {
-        state: 'failed'
-      }
+        state: 'failed',
+      },
     },
   ],
 }
@@ -169,7 +169,7 @@ describe('Info component', () => {
             'outputs',
             'completion',
           ],
-        }
+        },
       })
     })
 
@@ -291,11 +291,11 @@ describe('Info component', () => {
     cy.vmount(InfoComponent, {
       props: {
         task: TASK,
-        class: 'job_theme--default'
+        class: 'job_theme--default',
       },
       listeners: {
         'update:panelExpansion': spy,
-      }
+      },
     }).as('wrapper')
 
     // ONLY the metadata panel should be expanded by default
@@ -327,13 +327,13 @@ describe('Info component', () => {
       node: {
         task: {
           meta: {
-            customMeta: {}
-          }
+            customMeta: {},
+          },
         },
         prerequisites: [],
         outputs: [],
         runtime: {},
-        xtriggers: []
+        xtriggers: [],
       },
       children: [],
     }
@@ -344,7 +344,7 @@ describe('Info component', () => {
         class: 'job_theme--default',
         // NOTE: expand all sections by default
         panelExpansion: [0, 1, 2, 3],
-      }
+      },
     })
   })
 
@@ -358,13 +358,13 @@ describe('Info component', () => {
         node: {
           task: {
             meta: {
-              customMeta: {}
-            }
+              customMeta: {},
+            },
           },
           prerequisites: [],
           outputs: [],
           runtime: { runMode: mode },
-          xtriggers: []
+          xtriggers: [],
         },
         children: [],
       }
@@ -375,7 +375,7 @@ describe('Info component', () => {
           class: 'job_theme--default',
           // Expand just the run mode panel
           panelExpansion: ['runMode'],
-        }
+        },
       })
 
       cy.get('.run-mode-panel.v-expansion-panel--active').should('be.visible')
