@@ -15,50 +15,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { mapState } from 'vuex'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
-/**
+/*
  * A mixin that contains data used for a GraphQL subscription, such as the
  * query variables.
  *
  * To be used in Views that are bound to Vue-Router routes that contain the
  * :workflowName param.
  */
-export default {
-  props: {
-    /** This is set by vue-router */
-    workflowName: {
-      type: String,
-      required: true
-    }
-  },
-  computed: {
-    /**
-     * We use the user from the store to compute the workflow ID. The view
-     * has only the workflow name from the Vue route. We then combine it
-     * with the user name to create the workflow ID.
-     *
-     * @return {import('@/model/User.model').User}
-     */
-    ...mapState('user', ['user']),
-    /**
-     * Compute the workflow ID using the Vue route parameter
-     * `workflowName` and the user from the store.
-     *
-     * @return {string} - the Workflow ID used in this view
-     */
-    workflowId () {
-      return `~${this.user.owner}/${this.workflowName}`
-    },
-    /**
-     * GraphQL query variables.
-     *
-     * @returns {{workflowId: string}}
-     */
-    variables () {
-      return {
-        workflowId: this.workflowId
-      }
-    }
+
+export function useGraphQL () {
+  const route = useRoute()
+  const store = useStore()
+
+  const workflowName = computed(() => route.params?.workflowName)
+
+  /**
+   * Compute the workflow ID using the Vue route parameter
+   * `workflowName` and the user from the store.
+   */
+  const workflowID = computed(
+    () => `~${store.state.user.user.owner}/${workflowName.value}`
+  )
+
+  /**
+   * A list of the workflow IDs this view is "viewing"
+   *
+   * NOTE: we plan multi-workflow functionality so we are writing views
+   * to be mult-workflow compatible in advance of this feature arriving
+   */
+  const workflowIDs = computed(() => [workflowID.value])
+
+  /** GraphQL query variables. */
+  const variables = computed(() => ({
+    workflowId: workflowID.value,
+  }))
+
+  return {
+    workflowName,
+    workflowID,
+    workflowIDs,
+    variables,
   }
 }

@@ -28,15 +28,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- burger button -->
     <v-btn
-      icon
+      v-if="drawerEnabled"
+      :icon="drawer ? icons.mdiMenuOpen : icons.mdiMenuClose"
       @click.stop="toggleDrawer"
       id="toggle-drawer"
-    >
-      <v-icon>{{ drawer ? icons.backBurger : icons.list }}</v-icon>
-    </v-btn>
+    />
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary ml-0"
+      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
+      :class="drawerEnabled ? 'ml-0' : null"
     >
       {{ title }}
     </v-toolbar-title>
@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           id="workflow-mutate-button"
           v-command-menu="currentWorkflow"
-          :icon="icons.menu"
+          :icon="icons.mdiMicrosoftXboxControllerMenu"
           size="small"
           density="comfortable"
         />
@@ -184,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <v-list>
           <v-list-item
-            v-for="[name, view] in views"
+            v-for="[name, view] in workflowViews"
             :id="`toolbar-add-${name}-view`"
             :key="name"
             @click="eventBus.emit('add-view', { name })"
@@ -212,6 +212,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-btn
       icon
       size="small"
+      data-cy="user-avatar-btn"
     >
       <v-avatar
         color="primary"
@@ -250,7 +251,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { inject } from 'vue'
+import { inject, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { mapState } from 'vuex'
 import {
   mdiCog,
@@ -259,18 +261,18 @@ import {
   mdiPlay,
   mdiPlusBoxMultiple,
   mdiStop,
-  mdiViewList,
-  mdiBackburger,
   mdiAccount,
   mdiChevronDown,
   mdiArrowULeftTop,
   mdiInformationOutline,
+  mdiMenuOpen,
+  mdiMenuClose,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
 import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
-import graphql from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   mutationStatus
 } from '@/utils/aotf'
@@ -280,6 +282,7 @@ import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
 import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
+import { workflowViews } from '@/views/views'
 
 const QUERY = gql(`
 subscription Workflow ($workflowId: ID) {
@@ -327,8 +330,17 @@ fragment PrunedDelta on Pruned {
 export default {
   name: 'Toolbar',
 
-  setup () {
-    const { drawer, toggleDrawer } = useDrawer()
+  setup (props) {
+    const route = useRoute()
+
+    const { variables, workflowName, workflowID } = useGraphQL()
+
+    /** Show workflow name as title if we are navigated to one, otherwise the generic route title. */
+    const title = computed(
+      () => workflowName.value || route.meta?.title || route.name
+    )
+
+    const { drawer, drawerEnabled, toggleDrawer } = useDrawer()
 
     const uisVersionInfo = inject('versionInfo')
     const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
@@ -336,16 +348,22 @@ export default {
     return {
       eventBus,
       drawer,
+      drawerEnabled,
       toggleDrawer,
       toolbarHeight,
+      variables,
+      title,
+      workflowName,
+      workflowID,
       uisFlowVersion,
+      workflowViews,
       icons: {
         add: mdiPlusBoxMultiple,
         hold: mdiPause,
         info: mdiInformationOutline,
-        list: mdiViewList,
-        backBurger: mdiBackburger,
-        menu: mdiMicrosoftXboxControllerMenu,
+        mdiMenuOpen,
+        mdiMenuClose,
+        mdiMicrosoftXboxControllerMenu,
         run: mdiPlay,
         stop: mdiStop,
         mdiCog,
@@ -361,25 +379,8 @@ export default {
   },
 
   mixins: [
-    graphql,
     subscriptionComponentMixin
   ],
-
-  props: {
-    /**
-     * All possible view component classes that can be rendered
-     *
-     * @type {Map<string, import('@/views/views.js').CylcView>}
-     */
-    views: {
-      type: Map,
-      default: () => new Map()
-    },
-    workflowName: {
-      type: String,
-      default: null
-    }
-  },
 
   data: () => ({
     expecting: {
@@ -392,7 +393,6 @@ export default {
   }),
 
   computed: {
-    ...mapState('app', ['title']),
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),
     query () {
@@ -408,7 +408,7 @@ export default {
     },
     currentWorkflow () {
       if (!this.workflowName) return null
-      return this.cylcTree.$index[this.workflowId]
+      return this.cylcTree.$index[this.workflowID]
     },
     isRunning () {
       return (

@@ -26,8 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { getPageTitle } from '@/router/index'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import DeltasCallback from '@/services/callbacks'
@@ -197,7 +196,6 @@ export default {
   name: 'InfoView',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -205,23 +203,20 @@ export default {
     InfoComponent,
   },
 
-  head () {
-    return {
-      // This sets the page title.
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
-  },
-
   props: {
     initialOptions,
   },
 
   setup (props, { emit }) {
+    const { variables } = useGraphQL()
+
     const requestedTokens = useInitialOptions('requestedTokens', { props, emit })
     const panelExpansion = useInitialOptions('panelExpansion', { props, emit }, ['metadata'])
+
     return {
       requestedTokens,
       panelExpansion,
+      variables,
     }
   },
 
