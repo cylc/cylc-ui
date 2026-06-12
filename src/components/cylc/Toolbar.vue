@@ -36,7 +36,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary ml-0"
+      class="c-toolbar-title font-weight-medium text-primary ml-0"
+      :class="{
+        'shrink': mdAndDown, // TODO: use title.length as well
+      }"
     >
       {{ title }}
     </v-toolbar-title>
@@ -154,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-tooltip>
 
       <!-- workflow status message -->
-      <span class="status-msg text-body-2">
+      <span class="status-msg text-body-medium">
         {{ statusMessage }}
         <span v-if="currentWorkflow.node.cylcVersion !== uisFlowVersion">
           {{ versionPopup }}
@@ -252,6 +255,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { inject } from 'vue'
 import { mapState } from 'vuex'
+import { useDisplay } from 'vuetify'
 import {
   mdiCog,
   mdiMicrosoftXboxControllerMenu,
@@ -328,12 +332,14 @@ export default {
   name: 'Toolbar',
 
   setup () {
+    const { mdAndDown } = useDisplay()
     const { drawer, toggleDrawer } = useDrawer()
 
     const uisVersionInfo = inject('versionInfo')
     const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
 
     return {
+      mdAndDown,
       eventBus,
       drawer,
       toggleDrawer,
@@ -562,3 +568,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.c-toolbar-title.shrink {
+  font-size: 1rem;
+}
+</style>
