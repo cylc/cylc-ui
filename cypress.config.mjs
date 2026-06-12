@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress'
 import vitePreprocessor from 'cypress-vite'
 import path from 'path'
+import registerCodeCoverageTasks from '@cypress/code-coverage/task'
 
 export default defineConfig({
   video: false,
@@ -17,8 +18,7 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:5173',
     setupNodeEvents (on, config) {
-      // For test coverage
-      require('@cypress/code-coverage/task')(on, config)
+      registerCodeCoverageTasks(on, config)
 
       /* By default, Cypress uses webpack to transform spec files before
       running them. But it makes more sense to use vite instead, using the
@@ -29,7 +29,7 @@ export default defineConfig({
       on(
         'file:preprocessor',
         vitePreprocessor({
-          configFile: path.resolve(__dirname, './vite.config.js'),
+          configFile: path.resolve('./vite.config.js'),
           mode: 'development',
         })
       )
@@ -45,8 +45,7 @@ export default defineConfig({
       bundler: 'vite'
     },
     setupNodeEvents (on, config) {
-      // For test coverage
-      require('@cypress/code-coverage/task')(on, config)
+      registerCodeCoverageTasks(on, config)
       return config
     },
     specPattern: 'tests/component/**/*.cy.{js,jsx,ts,tsx}',
