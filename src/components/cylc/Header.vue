@@ -44,12 +44,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
             <v-list-item
-              :title="item.title"
+              :title="item"
               v-bind="props"
             >
-              <template v-slot:append v-if="item.title !== ownerOnLoad">
+              <template v-slot:append v-if="item !== ownerOnLoad">
                 <v-icon
-                  @click.stop="owners.delete(item.title)"
+                  @click.stop="owners.delete(item)"
                   color="pink-accent-4"
                   :icon="mdiClose"
                 />
@@ -71,12 +71,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
             <v-list-item
-              :title="item.title"
+              :title="item"
               v-bind="props"
             >
-              <template v-slot:append v-if="item.title !== deploymentOnLoad">
+              <template v-slot:append v-if="item !== deploymentOnLoad">
                 <v-icon
-                  @click.stop="deployments.delete(item.title)"
+                  @click.stop="deployments.delete(item)"
                   color="pink-accent-4"
                   :icon="mdiClose"
                 />
@@ -130,5 +130,4 @@ const showGoButton = computed(() => (
   deployment.value &&
   isNewRoute.value
 ))
-
 </script>

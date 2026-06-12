@@ -23,11 +23,11 @@
           <div class="mr-4">
             <Workflowicon
               v-if="type === 'workflow state'"
-              :status="item.raw"
+              :status="item"
             />
             <Task
               v-if="type === 'task state'"
-              :task="{ state: item.raw }"
+              :task="{ state: item }"
             />
           </div>
         </template>
@@ -45,15 +45,15 @@
           <div class="mr-1 ml-n1">
             <Workflowicon
               v-if="type === 'workflow state'"
-              :status="item.raw"
+              :status="item"
             />
             <Task
               v-if="type === 'task state'"
-              :task="{ state: item.raw }"
+              :task="{ state: item }"
             />
           </div>
         </template>
-        {{ item.title }}
+        {{ item }}
       </v-chip>
       <span
         v-if="index === maxVisibleStates"
