@@ -19,13 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-container fluid class="c-user-profile">
     <v-row class="wrap">
       <v-col cols="12">
-        <v-alert
-          :icon="$options.icons.settings"
-          prominent
-          color="grey-lighten-3"
-        >
-          <h3 class="text-h5">{{ $t('UserProfile.title') }}</h3>
-        </v-alert>
         <v-form>
           <v-defaults-provider :defaults="$options.vuetifyDefaults">
             <v-container py-0>

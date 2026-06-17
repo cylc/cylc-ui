@@ -72,8 +72,8 @@ export default {
       () => !workflowViews.includes(route.name)
     )
     const coreViewStyle = computed(() => ({
-      marginTop: showToolbar.value ? `${toolbarHeight}px` : 0,
-      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh',
+      marginTop: '0px',
+      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh'
     }))
 
     return {
