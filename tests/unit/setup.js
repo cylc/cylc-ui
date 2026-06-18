@@ -56,7 +56,8 @@ vi.mock('echarts/core', async () => {
       setOption: () => {},
       resize: () => {},
       on: () => {},
-      dispose: () => {}
+      dispose: () => {},
+      clear: () => {}
     })
   }
 })
