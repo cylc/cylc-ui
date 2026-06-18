@@ -11337,6 +11337,7 @@ __metadata:
   checksum: 10c0/c82cfd6e0d403998c2f393d66fa8f764357f5aa095dec050cbda1b397ad50641b9625409b17a73e1ba22bf89169aeb0ddf53e9791e762f7ca4eefb7102e13bf4
   languageName: node
   linkType: hard
+
 "vue@npm:3.5.38":
   version: 3.5.38
   resolution: "vue@npm:3.5.38"
