@@ -300,8 +300,8 @@ export default {
   },
 
   icons: {
-    sortAsc: mdiSortReverseVariant,
-    sortDesc: mdiSortVariant,
+    sortAsc: mdiSortVariant,
+    sortDesc: mdiSortReverseVariant,
   },
 }
 </script>
