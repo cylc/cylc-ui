@@ -54,7 +54,8 @@ describe('Mutation Component', () => {
     const vuetify = createVuetify(vuetifyOptions)
     return mount(Mutation, {
       global: {
-        plugins: [vuetify]
+        plugins: [vuetify],
+        provide: { workflowService: null }
       },
       ...options
     })
@@ -63,11 +64,8 @@ describe('Mutation Component', () => {
   it('should display mutation name and description', () => {
     const wrapper = mountFunction({
       props: {
-        initialOptions: {
-          cylcObject,
-          mutation: BASIC_MUTATION,
-        },
-        cancel: () => {}
+        cylcObject,
+        mutation: BASIC_MUTATION,
       }
     })
     const html = wrapper.html()
@@ -78,16 +76,13 @@ describe('Mutation Component', () => {
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
       props: {
-        initialOptions: {
-          cylcObject,
-          mutation: {
-            name: 'Darmok',
-            description: desc,
-            args: [],
-            _title: 'Darmok'
-          },
+        cylcObject,
+        mutation: {
+          name: 'Darmok',
+          description: desc,
+          args: [],
+          _title: 'Darmok'
         },
-        cancel: () => {}
       }
     })
     describe('For a single line description', () => {
