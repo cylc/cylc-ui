@@ -45,9 +45,7 @@ function addView (view) {
 }
 
 function checkRememberToolbarSettings (selector, stateBefore, stateAfter) {
-  cy
-    .get(selector)
-    .find('.v-btn')
+  cy.get(selector)
     .should('have.attr', 'aria-checked', String(stateBefore))
     .click()
   // Navigate away
@@ -56,9 +54,7 @@ function checkRememberToolbarSettings (selector, stateBefore, stateAfter) {
   // Navigate back
   cy.visit('/#/workspace/one')
   waitForGraphLayout()
-  cy
-    .get(selector)
-    .find('.v-btn')
+  cy.get(selector)
     .should('have.attr', 'aria-checked', String(stateAfter))
 }
 
@@ -121,7 +117,7 @@ describe('Graph View', () => {
     cy.visit('/#/graph/one')
     waitForGraphLayout()
     cy
-      .get('[data-cy="control-groupCycle"] > .v-btn')
+      .get('[data-cy="control-groupCycle"]')
       .click()
     cy
       .get('.c-graph:first')
