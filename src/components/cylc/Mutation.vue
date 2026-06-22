@@ -25,18 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {{ mutation._title }}
     </template>
 
-    <!-- the open in new tab button -->
-    <template v-slot:append v-if="!isView">
-      <v-icon
-        v-if="!['editRuntime', 'broadcast'].includes(mutation.name)"
-        data-cy="open-in-new-tab"
-        @click="openInTab"
-      >
-        {{ $options.icons.mdiOpenInNew }}
-      </v-icon>
-      <v-tooltip>
-        Open in new tab
-      </v-tooltip>
+    <template v-slot:append>
+      <slot name="append"/>
     </template>
 
     <v-card-text class="card-text py-0 px-4">
@@ -72,7 +62,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-bind="{
             cylcObject,
             types,
-            data,
           }"
           ref="form"
           v-model="isValid"
@@ -81,10 +70,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-else
           v-bind="{
             mutation,
+            cylcObject,
             types,
-            data,
-            initialData,
           }"
+          v-model:data="data"
           ref="form"
           v-model="isValid"
         />
@@ -95,16 +84,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-card-actions class="pa-3">
       <v-spacer></v-spacer>
       <v-btn
+        v-if="onCancel"
+        @click="$emit('cancel')"
         color="grey"
-        @click="close()"
         data-cy="cancel"
-        v-if="!isView"
       >
         Cancel
       </v-btn>
       <v-btn
         color="orange"
-        @click="$refs.form.reset()"
+        @click="form.reset()"
         data-cy="reset"
       >
         Reset
@@ -141,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-cy="snack-close"
         >
           <v-icon>
-            {{ $options.icons.close }}
+            {{ mdiClose }}
           </v-icon>
         </v-btn>
       </template>
@@ -149,7 +138,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </v-card>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, useTemplateRef } from 'vue'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import Markdown from '@/components/Markdown.vue'
@@ -158,165 +148,74 @@ import {
   getMutationExtendedDesc,
   mutationStatus,
 } from '@/utils/aotf'
-import { mdiClose, mdiOpenInNew } from '@mdi/js'
+import { mdiClose } from '@mdi/js'
 import { inputDefaults } from '@/components/graphqlFormGenerator/components/vuetify'
-import { eventBus } from '@/services/eventBus'
-import { store } from '@/store/index'
-import { Alert } from '@/model/Alert.model'
-import { cloneDeep } from 'lodash-es'
 
-export default {
-  name: 'mutation',
+const form = useTemplateRef('form')
 
-  components: {
-    EditRuntimeForm,
-    FormGenerator,
-    Markdown,
+const emit = defineEmits([
+  'cancel',
+  'success',
+])
+
+const props = defineProps({
+  mutation: {
+    // graphql mutation object as returned by introspection query
+    type: Object,
+    required: true,
   },
-
-  emits: [
-    'close',
-    'success',
-  ],
-
-  props: {
-    initialOptions: {
-      type: Object,
-      required: true,
-    },
-    /** ID of widget if the log view is in a Lumino tab. */
-    widgetID: {
-      type: String,
-      required: false,
-      default: null,
-    },
+  cylcObject: {
+    // data store node
+    type: Object,
+    required: true,
   },
+  types: {
+    // list of all graphql types as returned by introspection query
+    // (required for resolving InputType objects
+    type: Array,
+  },
+  // Explicitly include so we can detect if the parent is providing a listener:
+  onCancel: {
+    type: Function,
+  },
+})
 
-  setup (props) {
-    if (props.initialOptions.isView) {
-      // set the tab title to something informative
-      eventBus.emit(
-        `lumino:update-tab:${props.widgetID}`,
-        { title: `Command: ${props.initialOptions.mutation._title}` },
-      )
+const data = defineModel({ type: Object })
+
+const isValid = ref(false)
+const submitting = ref(false)
+const warningMsg = ref()
+
+/* Return the first line of the description. */
+const shortDescription = computed(
+  () => getMutationShortDesc(props.mutation.description)
+)
+/* Return the subsequent lines of the description */
+const extendedDescription = computed(
+  () => getMutationExtendedDesc(props.mutation.description)
+)
+
+const showWarning = computed({
+  get () {
+    return Boolean(warningMsg.value)
+  },
+  set (val) {
+    if (!val) warningMsg.value = null
+  },
+})
+
+/* Execute the GraphQL mutation */
+async function submit () {
+  submitting.value = true
+  form.value.submit().then(async response => {
+    submitting.value = false
+    if (response.status === mutationStatus.SUCCEEDED) {
+      emit('success')
+    } else if (response.status === mutationStatus.WARN) {
+      warningMsg.value = response.message
     }
-
-    return {
-      inputDefaults,
-
-      // properties extracted from initialOptions...
-
-      // graphql mutation object as returned by introspection query
-      mutation: props.initialOptions.mutation,
-
-      // data store node
-      cylcObject: props.initialOptions.cylcObject,
-
-      // list of all graphql types as returned by introspection query
-      // (required for resolving InputType objects
-      types: props.initialOptions.types,
-
-      // the form data
-      data: props.initialOptions.data,
-
-      // make a copy of the form data so we can reset edits on request later
-      initialData: props.initialOptions.initialData || cloneDeep(props.initialOptions.data),
-
-      // true if this view is open in a Lumino tab
-      isView: props.initialOptions.isView || false,
-    }
-  },
-
-  data: () => ({
-    isValid: false,
-    submitting: false,
-    warningMsg: null,
-  }),
-
-  computed: {
-    /* Return the first line of the description. */
-    shortDescription () {
-      return getMutationShortDesc(this.mutation.description)
-    },
-    /* Return the subsequent lines of the description */
-    extendedDescription () {
-      return getMutationExtendedDesc(this.mutation.description)
-    },
-    showWarning: {
-      get () {
-        return Boolean(this.warningMsg)
-      },
-      set (val) {
-        if (!val) this.warningMsg = null
-      },
-    },
-  },
-
-  methods: {
-    close () {
-      this.$emit('close')
-    },
-
-    /* Execute the GraphQL mutation */
-    async submit () {
-      this.submitting = true
-      this.$refs.form.submit().then(async response => {
-        this.submitting = false
-        if (response.status === mutationStatus.SUCCEEDED) {
-          if (this.isView) {
-            // form is open in a tab -> provide an alert to let the user know
-            // the command succeeded
-            await store.dispatch(
-              'setAlert',
-              new Alert('Command succeeded', 'green')
-            )
-          } else {
-            // form is open in a dialogue -> close the form on success
-            this.close()
-            this.$emit('success')
-          }
-        } else if (response.status === mutationStatus.WARN) {
-          this.warningMsg = response.message
-        }
-        // else if error, an alert is generated by AOTF
-      })
-    },
-
-    openInTab () {
-      // Navigate to the corresponding workflow then open the log view
-      // (no nav occurs if already on the correct workflow page)
-      this.$router.push({
-        name: 'Workspace',
-        params: {
-          workflowName: this.cylcObject.tokens.workflow,
-        },
-      }).then(() => {
-        // open the command editor in a new tab
-        // (re-initialises this component preserving state)
-        eventBus.emit(
-          'add-view',
-          {
-            name: 'Command',
-            initialOptions: {
-              ...this.initialOptions,
-              initialData: this.initialData,
-              isView: true,
-            },
-          }
-        )
-
-        // and close this menu
-        this.close()
-        this.$emit('success')
-      })
-    },
-  },
-
-  // Misc options
-  icons: {
-    close: mdiClose,
-    mdiOpenInNew,
-  },
+    // else if error, an alert is generated by AOTF
+  })
 }
 </script>
 
