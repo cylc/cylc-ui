@@ -122,20 +122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.28.6, @babel/generator@npm:^7.29.1":
-  version: 7.29.1
-  resolution: "@babel/generator@npm:7.29.1"
-  dependencies:
-    "@babel/parser": "npm:^7.29.0"
-    "@babel/types": "npm:^7.29.0"
-    "@jridgewell/gen-mapping": "npm:^0.3.12"
-    "@jridgewell/trace-mapping": "npm:^0.3.28"
-    jsesc: "npm:^3.0.2"
-  checksum: 10c0/349086e6876258ef3fb2823030fee0f6c0eb9c3ebe35fc572e16997f8c030d765f636ddc6299edae63e760ea6658f8ee9a2edfa6d6b24c9a80c917916b973551
-  languageName: node
-  linkType: hard
-
-"@babel/generator@npm:^7.29.7":
+"@babel/generator@npm:^7.28.6, @babel/generator@npm:^7.29.1, @babel/generator@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/generator@npm:7.29.7"
   dependencies:
@@ -4140,7 +4127,7 @@ __metadata:
     nyc: "npm:18.0.0"
     preact: "npm:10.27.3"
     sass-embedded: "npm:1.100.0"
-    simple-icons: "npm:16.10.0"
+    simple-icons: "npm:16.24.0"
     sinon: "npm:21.1.2"
     standard: "npm:17.1.2"
     subscriptions-transport-ws: "npm:0.11.0"
@@ -6215,16 +6202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hasown@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "hasown@npm:2.0.2"
-  dependencies:
-    function-bind: "npm:^1.1.2"
-  checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
-  languageName: node
-  linkType: hard
-
-"hasown@npm:^2.0.4":
+"hasown@npm:^2.0.2, hasown@npm:^2.0.4":
   version: 2.0.4
   resolution: "hasown@npm:2.0.4"
   dependencies:
@@ -9959,10 +9937,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-icons@npm:16.10.0":
-  version: 16.10.0
-  resolution: "simple-icons@npm:16.10.0"
-  checksum: 10c0/0fa580c08bcc1e081c29ea28c55d45b323eb9838b0d247dcb473c7846f5ce9c273b162fb318516c9d1ff65e5e535d58f7f3cd16d143cb4196728cb4645104e55
+"simple-icons@npm:16.24.0":
+  version: 16.24.0
+  resolution: "simple-icons@npm:16.24.0"
+  checksum: 10c0/00c26c6fda47c6b5770a86b69e99aa1eefca5325ff3fe2255d434b2c74ebd2f911b872edcccb8525f0fae58c3c37bc85ab4bff751f5c15f206500ae4a8216373
   languageName: node
   linkType: hard
 
