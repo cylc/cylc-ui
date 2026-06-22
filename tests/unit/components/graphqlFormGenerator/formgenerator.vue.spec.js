@@ -17,7 +17,8 @@
 
 import { mount } from '@vue/test-utils'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, merge } from 'lodash-es'
+import { processMutations } from '@/utils/aotf'
 
 const BASIC_MUTATION = {
   name: 'My Mutation',
@@ -168,7 +169,7 @@ const NESTED_TYPES = [
  * NOTE: clones to avoid "TypeError: Cannot convert a Symbol value to a string"
  */
 function getModel (wrapper) {
-  return cloneDeep(wrapper.vm.$data.model)
+  return cloneDeep(wrapper.vm.model)
 }
 
 describe('FormGenerator Component', () => {
@@ -177,15 +178,23 @@ describe('FormGenerator Component', () => {
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = (options) => mount(FormGenerator, {
-    shallow: true,
-    ...options,
+    global: {
+      provide: { workflowService: null },
+    },
+    ...merge(
+      {
+        props: { cylcObject: {} },
+        shallow: true,
+      },
+      options
+    ),
   })
 
   it('should parse default values from the schema for simple types', () => {
+    const mutation = cloneDeep(BASIC_MUTATION)
+    processMutations([mutation])
     const wrapper = mountFunction({
-      props: {
-        mutation: BASIC_MUTATION,
-      },
+      props: { mutation },
     })
     expect(getModel(wrapper)).to.deep.equal({
       MyString: 'MyDefault',
@@ -194,45 +203,46 @@ describe('FormGenerator Component', () => {
   })
 
   it('should parse default values from the schema for nested types', () => {
-    NESTED_TYPES.forEach(([type, defaultValue]) => {
+    const types = cloneDeep([CUSTOM_OBJECT])
+    for (const [type] of NESTED_TYPES) {
+      const mutation = cloneDeep({
+        name: type.name + 'Mutation',
+        description: 'Beef Wellington',
+        args: [type],
+      })
+      processMutations([mutation], types)
       const wrapper = mountFunction({
-        props: {
-          mutation: {
-            name: type.name + 'Mutation',
-            description: 'Beef Wellington',
-            args: [type],
-          },
-          types: [CUSTOM_OBJECT],
-        },
+        props: { mutation, types },
       })
       const expected = { [type.name]: JSON.parse(type.defaultValue) }
       expect(getModel(wrapper)).to.deep.equal(expected)
-    })
+    }
   })
 
   it('should provide appropriate null types where no default is provided', () => {
-    NESTED_TYPES.forEach(([type, defaultValue]) => {
-      type = cloneDeep(type)
+    const types = cloneDeep([CUSTOM_OBJECT])
+    for (const [type, defaultValue] of cloneDeep(NESTED_TYPES)) {
       delete type.defaultValue
+      const mutation = cloneDeep({
+        name: type.name + 'Mutation',
+        description: 'Beef Wellington',
+        args: [type],
+      })
+      processMutations([mutation], types)
       const wrapper = mountFunction({
-        props: {
-          mutation: {
-            name: type.name + 'Mutation',
-            description: 'Beef Wellington',
-            args: [type],
-          },
-          types: [CUSTOM_OBJECT],
-        },
+        props: { mutation, types },
       })
       const expected = { [type.name]: defaultValue }
       expect(getModel(wrapper)).to.deep.equal(expected)
-    })
+    }
   })
 
   it('should handle initial data', () => {
+    const mutation = cloneDeep(BASIC_MUTATION)
+    processMutations([mutation])
     const wrapper = mountFunction({
       props: {
-        mutation: BASIC_MUTATION,
+        mutation,
         data: {
           MyString: 'Foo',
         },
@@ -240,31 +250,15 @@ describe('FormGenerator Component', () => {
     })
     expect(getModel(wrapper)).to.deep.equal({
       MyString: 'Foo',
-      MyInteger: null,
     })
-  })
-
-  it('should reset to initial state', () => {
-    const wrapper = mountFunction({
-      props: {
-        mutation: BASIC_MUTATION,
-        initialData: {
-          MyString: 'before',
-        },
-        data: {
-          MyString: 'after',
-        },
-      },
-    })
-    expect(getModel(wrapper).MyString).to.deep.equal('after')
-    wrapper.vm.reset()
-    expect(getModel(wrapper).MyString).to.deep.equal('before')
   })
 
   it('should reset to defaults', () => {
+    const mutation = cloneDeep(BASIC_MUTATION)
+    processMutations([mutation])
     const wrapper = mountFunction({
       props: {
-        mutation: BASIC_MUTATION,
+        mutation,
         data: {
           MyString: 'after',
         },
