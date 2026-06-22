@@ -292,7 +292,6 @@ export const dummyMutations = [
     _appliesTo: [cylcObjects.Task, cylcObjects.Family, cylcObjects.CyclePoint],
     _requiresInfo: true,
     _validStates: [WorkflowState.RUNNING.name, WorkflowState.PAUSED.name],
-    _dialogWidth: '1200px',
   },
   {
     name: 'log',
