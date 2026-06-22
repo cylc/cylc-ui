@@ -122,20 +122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.28.6, @babel/generator@npm:^7.29.1":
-  version: 7.29.1
-  resolution: "@babel/generator@npm:7.29.1"
-  dependencies:
-    "@babel/parser": "npm:^7.29.0"
-    "@babel/types": "npm:^7.29.0"
-    "@jridgewell/gen-mapping": "npm:^0.3.12"
-    "@jridgewell/trace-mapping": "npm:^0.3.28"
-    jsesc: "npm:^3.0.2"
-  checksum: 10c0/349086e6876258ef3fb2823030fee0f6c0eb9c3ebe35fc572e16997f8c030d765f636ddc6299edae63e760ea6658f8ee9a2edfa6d6b24c9a80c917916b973551
-  languageName: node
-  linkType: hard
-
-"@babel/generator@npm:^7.29.7":
+"@babel/generator@npm:^7.28.6, @babel/generator@npm:^7.29.1, @babel/generator@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/generator@npm:7.29.7"
   dependencies:
@@ -865,14 +852,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hpcc-js/wasm@npm:2.33.2":
-  version: 2.33.2
-  resolution: "@hpcc-js/wasm@npm:2.33.2"
+"@hpcc-js/wasm@npm:2.34.2":
+  version: 2.34.2
+  resolution: "@hpcc-js/wasm@npm:2.34.2"
   dependencies:
     yargs: "npm:18.0.0"
   bin:
     dot-wasm: deprecated/dot-wasm.js
-  checksum: 10c0/b397d70498ef3ec28195727308ca3f034ed98fa6165b822b3d2a0a1f198edc076221d7d9d4b28d909f2d3fd6ad205f9b33d989fa0fc481452d4621da1b5952a2
+  checksum: 10c0/0acfd3b11b328ccb5004d567c13187150463ea0d1b70d025b116c6f41ce19c6ce041156e2518d8f2862462501847ec35211e43cef5f6c1faaa5a7975b9a2697f
   languageName: node
   linkType: hard
 
@@ -4098,7 +4085,7 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:3.14.1"
     "@cypress/code-coverage": "npm:4.0.3"
-    "@hpcc-js/wasm": "npm:2.33.2"
+    "@hpcc-js/wasm": "npm:2.34.2"
     "@lumino/default-theme": "npm:2.1.15"
     "@lumino/widgets": "npm:2.8.0"
     "@mdi/js": "npm:7.4.47"
@@ -6215,16 +6202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hasown@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "hasown@npm:2.0.2"
-  dependencies:
-    function-bind: "npm:^1.1.2"
-  checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
-  languageName: node
-  linkType: hard
-
-"hasown@npm:^2.0.4":
+"hasown@npm:^2.0.2, hasown@npm:^2.0.4":
   version: 2.0.4
   resolution: "hasown@npm:2.0.4"
   dependencies:
