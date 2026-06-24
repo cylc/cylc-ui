@@ -276,8 +276,8 @@ query LogFiles($id: ID!) {
  * @type {DocumentNode}
 */
 const JOB_QUERY = gql`
-query Jobs($id: ID!, $workflowId: ID!) {
-  jobs (live: false, ids: [$id], workflows: [$workflowId]) {
+query Jobs($id: ID!, $workflowID: ID!) {
+  jobs (live: false, ids: [$id], workflows: [$workflowID]) {
     id
     state
     platform
@@ -595,7 +595,7 @@ export default {
             JOB_QUERY,
             {
               id: this.relativeTokens.id,
-              workflowId: this.workflowTokens.workflow
+              workflowID: this.workflowTokens.workflow
             }
           )
         }

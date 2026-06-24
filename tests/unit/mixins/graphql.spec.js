@@ -47,7 +47,7 @@ describe('GraphQL composables', () => {
     expect(component.vm.workflowID).to.equal(expectedID)
     expect(component.vm.workflowIDs).to.deep.equal([expectedID])
     expect(component.vm.variables).to.deep.equal({
-      workflowId: expectedID,
+      workflowID: expectedID,
     })
   })
 })

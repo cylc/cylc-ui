@@ -136,8 +136,8 @@ import { isFlowNone } from '@/utils/tasks'
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }

@@ -40,8 +40,8 @@ import InfoComponent from '@/components/cylc/Info.vue'
 
 // NOTE: This query is run outside of the central data store
 const QUERY = gql`
-subscription InfoViewSubscription ($workflowId: ID, $taskID: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription InfoViewSubscription ($workflowID: ID, $taskID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }

@@ -115,8 +115,8 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // Most of this is just boilerplate the important thing is the three declarations
 // at the end.
 const QUERY = gql`
-subscription SimpleTreeSubscription ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription SimpleTreeSubscription ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }

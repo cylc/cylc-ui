@@ -285,8 +285,8 @@ import WarningIcon from '@/components/cylc/WarningIcon.vue'
 import { workflowViews } from '@/views/views'
 
 const QUERY = gql(`
-subscription Workflow ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }

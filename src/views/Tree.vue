@@ -57,8 +57,8 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import { matchID, matchState, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas (workflows: [$workflowID]) {
     id
     added {
       ...AddedDelta

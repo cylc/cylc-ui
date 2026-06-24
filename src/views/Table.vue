@@ -51,8 +51,8 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas (workflows: [$workflowID]) {
     id
     added {
       ...AddedDelta

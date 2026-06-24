@@ -51,7 +51,7 @@ export function useGraphQL () {
 
   /** GraphQL query variables. */
   const variables = computed(() => ({
-    workflowId: workflowID.value,
+    workflowID: workflowID.value,
   }))
 
   return {
