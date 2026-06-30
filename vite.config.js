@@ -104,6 +104,26 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: mode !== 'production',
       target: 'baseline-widely-available',
+      rolldownOptions: {
+        output: {
+          // Disable code splitting (apart from GraphiQL) if desired by the developer
+          // (can speed up build when using a slow disk, e.g. network drive):
+          codeSplitting: process.env.DISABLE_CODE_SPLITTING
+            ? {
+                groups: [
+                  {
+                    test: /node_modules[\\/]graphiql/,
+                    name: 'graphiql',
+                  },
+                  {
+                    test: /.*/,
+                    name: 'main',
+                  },
+                ]
+              }
+            : true,
+        }
+      }
     },
     css: {
       preprocessorOptions: {
