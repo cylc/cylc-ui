@@ -1,7 +1,6 @@
 import { defineConfig } from 'cypress'
-import vitePreprocessor from 'cypress-vite'
-import path from 'path'
 import registerCodeCoverageTasks from '@cypress/code-coverage/task'
+import { vitePreprocessor } from './tests/e2e/support/preprocessor.js'
 
 export default defineConfig({
   video: false,
@@ -20,19 +19,7 @@ export default defineConfig({
     setupNodeEvents (on, config) {
       registerCodeCoverageTasks(on, config)
 
-      /* By default, Cypress uses webpack to transform spec files before
-      running them. But it makes more sense to use vite instead, using the
-      same config as the project.
-      Note: Set NODE_ENV to prevent vite eslint plugin linting errors failing
-      the transform (e.g. no-only-tests rule) */
-      process.env.NODE_ENV = 'development'
-      on(
-        'file:preprocessor',
-        vitePreprocessor({
-          configFile: path.resolve('./vite.config.js'),
-          mode: 'development',
-        })
-      )
+      on('file:preprocessor', vitePreprocessor)
       return config
     },
     specPattern: 'tests/e2e/specs/**/*.cy.{js,jsx,ts,tsx}',
@@ -56,6 +43,7 @@ export default defineConfig({
   allowCypressEnv: false,
 
   expose: {
+    // Cypress uses this to detect whether to collect coverage
     coverage: Boolean(process.env.COVERAGE)
   },
 

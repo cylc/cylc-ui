@@ -3972,7 +3972,6 @@ __metadata:
     concurrently: "npm:9.2.1"
     cross-fetch: "npm:4.1.0"
     cypress: "npm:15.18.0"
-    cypress-vite: "npm:1.10.2"
     dedent: "npm:1.7.2"
     enumify: "npm:2.0.0"
     eslint: "npm:8.57.1"
@@ -4028,17 +4027,6 @@ __metadata:
       optional: true
   languageName: unknown
   linkType: soft
-
-"cypress-vite@npm:1.10.2":
-  version: 1.10.2
-  resolution: "cypress-vite@npm:1.10.2"
-  peerDependencies:
-    chokidar: ^2 || ^3 || ^4 || ^5
-    debug: ^2 || ^3 || ^4
-    vite: ^2.9 || ^3 || ^4 || ^5 || ^6 || ^7 || ^8
-  checksum: 10c0/41cb798e6f3e467032e6d286892ec0e83997fbbac767584931ecf268a2a2df6bf5d2995d00ccd9b860a6269ecd6870bc137b59c44537e4589be04588d52b84a4
-  languageName: node
-  linkType: hard
 
 "cypress@npm:15.18.0":
   version: 15.18.0
@@ -5662,10 +5650,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.3.1, get-east-asian-width@npm:^1.5.0":
+"get-east-asian-width@npm:^1.0.0":
   version: 1.6.0
   resolution: "get-east-asian-width@npm:1.6.0"
   checksum: 10c0/7e72e9550fd49ca5b246f9af6bb2afc129c96412845ff6556b3274fd44817a381702ca17028efe9866b261a3d44254cbf21e6c90cf05b4b61675630af776d431
+  languageName: node
+  linkType: hard
+
+"get-east-asian-width@npm:^1.3.1, get-east-asian-width@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "get-east-asian-width@npm:1.5.0"
+  checksum: 10c0/bff8bbc8d81790b9477f7aa55b1806b9f082a8dc1359fff7bd8b96939622c86b729685afc2bfeb22def1fc6ef1e5228e4d87dd4e6da60bc43a5edfb03c4ee167
   languageName: node
   linkType: hard
 
