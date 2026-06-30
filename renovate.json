@@ -137,6 +137,12 @@
       ]
     },
     {
+      "matchPackageNames": [
+        "simple-icons"
+      ],
+      "prPriority": -1
+    },
+    {
       "groupName": "analysis view packages",
       "matchPackageNames": [
         "apexcharts",
