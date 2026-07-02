@@ -64,6 +64,7 @@ below.
  - Harleen Kaur
  - Samuel Denton
  - Ryan Boult
+ - Scott Owen James
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
