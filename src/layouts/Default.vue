@@ -103,7 +103,7 @@ export default {
   },
 
   errorCaptured (error, vm, info) {
-    store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
+    store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
     // Stop error propagating further:
     return false
   }
