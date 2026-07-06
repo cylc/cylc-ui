@@ -103,9 +103,7 @@ export default {
   },
 
   errorCaptured (error, vm, info) {
-    if (import.meta.env.MODE !== 'production') {
-      store.dispatch('setAlert', new AlertModel(error, 'error'))
-    }
+    store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
     // Stop error propagating further:
     return false
   }
