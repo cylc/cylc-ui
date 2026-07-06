@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <v-row wrap>
       <v-col md="4" lg="3">
-        <p class="text-headline-large mb-2">Workflows</p>
+        <p class="text-headline-large my-2">Workflows</p>
         <v-data-table
           :headers="$options.workflowsHeader"
           :items="workflowsTable"
@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-data-table>
       </v-col>
       <v-col md="8" lg="9">
-        <p class="text-headline-large mb-2">Events</p>
+        <p class="text-headline-large my-2">Events</p>
         <v-data-table
           :headers="$options.eventsHeader"
           :items="events"
@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           <!-- Special template if there are no events to display -->
           <template v-slot:no-data>
-            <td class="text-headline-small text-disabled">No events</td>
+            <td class="text-title-large text-disabled">No events</td>
           </template>
 
           <template v-slot:item.level="{ item }">
@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon size="1.6em">{{ $options.icons.table }}</v-icon>
             </template>
-            <v-list-item-title class="text-headline-small font-weight-light">
+            <v-list-item-title>
               Workflows Table
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon size="1.6em">{{ $options.icons.settings }}</v-icon>
             </template>
-            <v-list-item-title class="text-headline-small font-weight-light">
+            <v-list-item-title>
               Settings
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -95,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <template v-slot:prepend>
                 <v-icon size="1.6em">{{ $options.icons.hub }}</v-icon>
               </template>
-              <v-list-item-title class="text-headline-small font-weight-light">
+              <v-list-item-title>
                 Cylc Hub
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -116,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <template v-slot:prepend>
                 <v-icon size="1.6em">{{ $options.icons.jupyterLogo }}</v-icon>
               </template>
-              <v-list-item-title class="text-headline-small font-weight-light">
+              <v-list-item-title>
                 Jupyter Lab
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -135,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon size="1.6em">{{ $options.icons.quickstart }}</v-icon>
             </template>
-            <v-list-item-title class="text-headline-small font-weight-light">
+            <v-list-item-title>
               Cylc UI Quickstart
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon size="1.6em">{{ $options.icons.workflow }}</v-icon>
             </template>
-            <v-list-item-title class="text-headline-small font-weight-light">
+            <v-list-item-title>
               Workflow Design Guide
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -157,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon size="1.6em">{{ $options.icons.documentation }}</v-icon>
             </template>
-            <v-list-item-title class="text-headline-small font-weight-light">
+            <v-list-item-title>
               Documentation
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -170,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon size="1.6em">{{ $options.icons.mdiGraphql }}</v-icon>
             </template>
-            <v-list-item-title class="text-headline-small font-weight-light">
+            <v-list-item-title>
              GraphiQL
             </v-list-item-title>
             <v-list-item-subtitle>
