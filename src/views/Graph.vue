@@ -174,6 +174,7 @@ fragment TaskProxyData on TaskProxy {
   task {
     meanElapsedTime
   }
+  flowNums
   graphDepth
   runtime {
     runMode
