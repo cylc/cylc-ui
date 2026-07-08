@@ -68,7 +68,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div
             v-else-if="node.type === 'task'"
             class="d-flex align-center"
-            :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
           >
             <!-- Task summary -->
             <Task
@@ -179,7 +178,7 @@ import JobLeaf from '@/components/cylc/tree/JobLeaf.vue'
 import {
   jobMessageOutputs,
   latestJob,
-  isFlowNone,
+  isN0,
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 import { once } from '@/utils/reactivity'
@@ -251,7 +250,6 @@ export default {
 
     return {
       isExpanded,
-      isFlowNone,
       latestJob,
       renderChildren,
       toggleExpandCollapse,
@@ -285,7 +283,12 @@ export default {
       }
     },
     nodeDataClass () {
-      return ['node-data', `node-data-${this.node.type}`]
+      return {
+        'node-data': true,
+        [`node-data-${this.node.type}`]: true,
+        // dim nodes (tasks & families) that are outside the n=0 window
+        dimmed: !isN0(this.node.node?.graphDepth),
+      }
     },
     expandCollapseBtnStyle () {
       return {

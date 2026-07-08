@@ -419,7 +419,7 @@ describe('Tree view', () => {
   })
 
   describe('Flow nums', () => {
-    it('Only shows flow nums when not 1, and flow=None is dimmed', () => {
+    it('Only shows flow nums when not 1, and n!=0 tasks are dimmed', () => {
       cy.visit('/#/tree/one')
       cy.get('[data-node-name=failed]')
         .find('[data-cy=flow-num-chip]')
@@ -427,21 +427,21 @@ describe('Tree view', () => {
       cy.get('[data-node-name=checkpoint]')
         .find('[data-cy=flow-num-chip]')
         .should('not.exist')
-      cy.get('[data-node-name=sleepy] .flow-none')
+      cy.get('[data-node-name=sleepy] .dimmed')
         .should('have.css', 'opacity')
         .then((opacity) => {
           expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
         })
       cy.get('[data-node-name=sleepy] .node-expand-collapse-button').click()
         // node expand/collapse button should not be dimmed
-        .parents('.flow-none')
+        .parents('.dimmed')
         .should('not.exist')
         // task icon should be dimmed
         .get('[data-node-name=sleepy] .c-task')
-        .parents('.flow-none')
+        .parents('.dimmed')
         // children should not be dimmed
         .get('[data-node-name=sleepy] .c-treeitem')
-        .parents('.flow-none')
+        .parents('.dimmed')
         .should('not.exist')
     })
   })

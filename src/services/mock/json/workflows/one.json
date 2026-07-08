@@ -101,6 +101,7 @@
           "id": "~user/one//20000102T0000Z/SUCCEEDED",
           "name": "SUCCEEDED",
           "state": "succeeded",
+          "graphDepth": 0,
           "cyclePoint": "20000102T0000Z",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/GOOD",
@@ -266,6 +267,7 @@
         {
           "id": "~user/one//20000102T0000Z/waiting",
           "name": "waiting",
+          "graphDepth": 0,
           "state": "waiting",
           "isHeld": false,
           "isQueued": false,

@@ -137,13 +137,20 @@ export function formatFlowNums (flowNums) {
 }
 
 /**
- * Return whether a task is in the None flow.
+ * Return whether a node is in the n=0 window (i.e. is an "active" node).
  *
- * @param {string=} flowNums
+ * The nodes the scheduler is currently operating on are said to be "n=0".
+ * See https://cylc.github.io/cylc-doc/stable/html/glossary.html#term-active-task
+ *
+ * Nodes without a graphDepth (e.g. before their data has loaded, or grouping
+ * nodes such as cycle points) are treated as being in the n=0 window so that
+ * they are not dimmed.
+ *
+ * @param {number=} graphDepth
  * @returns {boolean}
  */
-export function isFlowNone (flowNums) {
-  return Boolean(flowNums && !JSON.parse(flowNums).length)
+export function isN0 (graphDepth) {
+  return graphDepth == null || graphDepth === 0
 }
 
 export function isTruthyOrZero (value) {
