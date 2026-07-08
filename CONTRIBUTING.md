@@ -95,7 +95,7 @@ By making a contribution to this project, I certify that:
     the copyright and may be redistributed consistent with this project
     or the licence(s) involved.
 
-(e) I, or my employer, grant to NIWA and all recipients of
+(e) I, or my employer, grant to Earth Sciences New Zealand and all recipients of
     this software a perpetual, worldwide, non-exclusive, no-charge,
     royalty-free, irrevocable copyright licence to reproduce, modify,
     prepare derivative works of, publicly display, publicly perform,
@@ -106,7 +106,7 @@ By making a contribution to this project, I certify that:
     [Open Source Initiative (OSI)](http://www.opensource.org/).
 
 (f) If I become aware of anything that would make any of the above
-    inaccurate, in any way, I will let NIWA know as soon as
+    inaccurate, in any way, I will let Earth Sciences New Zealand know as soon as
     I become aware.
 
 (The Cylc Contributor Licence Agreement and Certificate of Origin is
