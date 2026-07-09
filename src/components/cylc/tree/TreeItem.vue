@@ -178,7 +178,6 @@ import JobLeaf from '@/components/cylc/tree/JobLeaf.vue'
 import {
   jobMessageOutputs,
   latestJob,
-  isN0,
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 import { once } from '@/utils/reactivity'
@@ -287,7 +286,7 @@ export default {
         'node-data': true,
         [`node-data-${this.node.type}`]: true,
         // dim nodes (tasks & families) that are outside the n=0 window
-        dimmed: !isN0(this.node.node?.graphDepth),
+        dimmed: this.node.node?.graphDepth,
       }
     },
     expandCollapseBtnStyle () {

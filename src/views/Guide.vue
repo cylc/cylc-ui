@@ -373,7 +373,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <GraphNode
                       v-bind="task"
                       :transform="`translate(0, ${ 240 * index })`"
-                      :class="{ 'dimmed': !isN0(task.task.node.graphDepth) }"
+                      :class="{ 'dimmed': task.task.node.graphDepth }"
                       v-on:click.stop.capture
                     />
                     <text
@@ -430,7 +430,6 @@ import { workflowViews } from '@/views/views'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { Tokens } from '@/utils/uid'
 import { uniqueId } from 'lodash-es'
-import { isN0 } from '@/utils/tasks'
 
 export default {
   name: 'Guide',
@@ -492,10 +491,6 @@ export default {
       },
     ]
   }),
-
-  methods: {
-    isN0,
-  },
 }
 </script>
 

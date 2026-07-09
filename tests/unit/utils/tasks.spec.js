@@ -22,7 +22,6 @@ import {
   formatDuration,
   jobMessageOutputs,
   formatFlowNums,
-  isN0,
   getRunTime,
   isTruthyOrZero,
 } from '@/utils/tasks'
@@ -174,18 +173,6 @@ describe('tasks', () => {
       ['[]', 'None'],
     ])('formatFlowNums(%o) -> %o', (input, expected) => {
       expect(formatFlowNums(input)).toEqual(expected)
-    })
-  })
-
-  describe('isN0', () => {
-    it.each([
-      [undefined, true],
-      [null, true],
-      [0, true],
-      [1, false],
-      [2, false],
-    ])('isN0(%o) -> %o', (input, expected) => {
-      expect(isN0(input)).toEqual(expected)
     })
   })
 

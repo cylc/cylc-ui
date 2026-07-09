@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template #item.task.name="{ item }">
       <div
         class="d-flex align-center flex-nowrap"
-        :class="{ 'dimmed': !isN0(item.task.node.graphDepth) }"
+        :class="{ 'dimmed': item.task.node.graphDepth }"
         :data-cy-task-name="item.task.name"
       >
         <div v-bind="jobIconParentProps">
@@ -147,7 +147,6 @@ import {
 import {
   getRunTime,
   formatDuration,
-  isN0,
   isTruthyOrZero,
 } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
