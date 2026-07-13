@@ -40,7 +40,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
     </div>
   </Teleport>
-  <div ref="chart" :style="{ height: `${100 + series[0].data.length * 50}px`, width: '100%' }" class="flex-grow-1" />
+  <div
+    ref="chart"
+    :style="{
+      height: `${100 + series[0].data.length * 50}px`,
+      width: '100%'
+    }"
+    class="flex-grow-1"
+  />
   <v-pagination
     v-model="page"
     :length="numPages"

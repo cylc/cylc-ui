@@ -16,7 +16,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div ref="chartContainer" class="gantt-container" :style="{ height: `${Math.max(300, 60 + displayedTaskCount * 55)}px` }" />
+  <div
+    ref="chartContainer"
+    class="gantt-container"
+    :style="{
+      height: `${Math.max(300, 60 + displayedTaskCount * 55)}px`
+    }"
+  />
   <v-pagination
     v-model="page"
     :length="numPages"

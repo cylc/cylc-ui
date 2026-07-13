@@ -65,7 +65,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
   </Teleport>
   <div id="mainTimeSeries">
-    <div ref="mainChart" style="height: 550px; width: 100%;" class="flex-grow-1" />
+    <div
+      ref="mainChart"
+      style="{
+        height: 550px;
+        width: 100%;
+      }"
+      class="flex-grow-1"
+    />
   </div>
   </template>
 
