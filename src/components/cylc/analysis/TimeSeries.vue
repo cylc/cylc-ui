@@ -67,10 +67,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div id="mainTimeSeries">
     <div
       ref="mainChart"
-      style="{
+      style="
         height: 550px;
-        width: 100%;
-      }"
+        width: 100%;"
       class="flex-grow-1"
     />
   </div>
