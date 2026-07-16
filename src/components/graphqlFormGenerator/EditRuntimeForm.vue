@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <v-card-subtitle class="text-subtitle-1 font-weight-medium mt-4">
+    <v-card-subtitle class="text-body-large font-weight-medium mt-4">
       {{ this.tokens.id }}
     </v-card-subtitle>
     <v-skeleton-loader

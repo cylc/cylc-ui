@@ -27,11 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     theme="dark"
   >
     <v-card>
-      <v-card-title class="pb-1 pt-3">
+      <v-card-title class="text-title-medium pb-1 pt-3">
         {{ title }}
         <CopyBtn :text="title"/>
       </v-card-title>
-      <v-card-subtitle class="pt-0 pb-2">
+      <v-card-subtitle class="pb-2">
         {{ typeAndStatusText }}
       </v-card-subtitle>
       <v-divider v-if="primaryMutations.length || displayMutations.length" />
