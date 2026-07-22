@@ -46,6 +46,13 @@ module.exports = {
       'error',
       commaDangle,
     ],
+    'vue/html-indent': [
+      'error',
+      2,
+      {
+        alignAttributesVertically: false,
+      },
+    ],
     'no-console': [
       'error',
       {
