@@ -39,19 +39,19 @@ export default {
   name: 'Task',
   props: {
     task: {
-      required: true
+      required: true,
     },
     startTime: {
-      required: false
+      required: false,
     },
     modifierSize: {
       // Scale the size of the task state modifier
       type: Number,
-      default: 0.7
+      default: 0.7,
     },
   },
   components: {
-    SVGTask
+    SVGTask,
   },
 }
 </script>

@@ -29,7 +29,7 @@ const mountOpts = {
       createVuetify(vuetifyOptions),
     ],
   },
-  props: {}
+  props: {},
 }
 
 function logLines (length) {
@@ -66,7 +66,7 @@ describe('Log Component', () => {
     // turn autoscroll on
     cy.get('@component').then(({ wrapper }) => {
       wrapper.setProps({
-        autoScroll: true
+        autoScroll: true,
       })
     })
     cy.get('span').contains('Line 30')
@@ -75,7 +75,7 @@ describe('Log Component', () => {
     // update the log
     cy.get('@component').then(({ wrapper }) => {
       wrapper.setProps({
-        logs: logLines(50)
+        logs: logLines(50),
       })
     })
     // log file should now have scrolled to the bottom

@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-input>
     <template>
       <FormInput
-       v-for="input in inputs"
-       v-bind:key="input.label"
-       v-model="model[input.label]"
-       :gqlType="input.gqlType"
-       :types="types"
+        v-for="input in inputs"
+        v-bind:key="input.label"
+        v-model="model[input.label]"
+        :gqlType="input.gqlType"
+        :types="types"
       />
     </template>
     <template v-slot:append>
@@ -39,7 +39,7 @@ import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
 
 const props = defineProps({
-  ...formElementProps
+  ...formElementProps,
 })
 
 const model = defineModel({ required: true })
@@ -49,7 +49,7 @@ const { type } = useFormElement(props)
 const inputs = computed(() => type.value.fields.map(
   (field) => ({
     gqlType: field.type,
-    label: field.name
+    label: field.name,
   })
 ))
 </script>

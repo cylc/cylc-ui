@@ -50,8 +50,8 @@ describe('Toolbar component', () => {
       {
         id: 'user/id',
         name: 'test',
-        status: WorkflowState.RUNNING.name
-      }
+        status: WorkflowState.RUNNING.name,
+      },
     ]
   })
 

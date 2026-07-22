@@ -140,7 +140,7 @@ export default {
               x: job.name,
               y: [
                 new Date(job[start]).getTime(),
-                new Date(job[end]).getTime()
+                new Date(job[end]).getTime(),
               ],
               fillColor,
             }
@@ -176,10 +176,10 @@ export default {
                   zoomIn: 'Zoom In',
                   zoomOut: 'Zoom Out',
                   pan: 'Panning',
-                  reset: 'Reset Zoom'
-                }
-              }
-            }
+                  reset: 'Reset Zoom',
+                },
+              },
+            },
           ],
           animations: {
             enabled: this.animate && !this.reducedAnimation,
@@ -203,7 +203,7 @@ export default {
               zoomin: true,
               zoomout: true,
               pan: true,
-              reset: true
+              reset: true,
             },
           },
         },
@@ -235,7 +235,7 @@ export default {
           labels: {
             formatter: function (value, timestamp, opts) {
               return new Date(value).toUTCString().slice(17, -3)
-            }
+            },
           },
           title: {
             text: 'Time (UTC)',

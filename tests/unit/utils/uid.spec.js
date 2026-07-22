@@ -33,7 +33,7 @@ describe('Universal ID (UID)', () => {
         workflowID: '~user/workflow',
         relativeID: 'cycle/task/01',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // workflow ID fragment
@@ -49,7 +49,7 @@ describe('Universal ID (UID)', () => {
         workflowID: '~user',
         relativeID: '',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // relative ID fragment
@@ -65,7 +65,7 @@ describe('Universal ID (UID)', () => {
         workflowID: '',
         relativeID: 'cycle',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
     })
 
@@ -83,7 +83,7 @@ describe('Universal ID (UID)', () => {
         workflowID: '',
         relativeID: '',
         namespace: 'foo',
-        edge: undefined
+        edge: undefined,
       })
 
       // edges
@@ -99,7 +99,7 @@ describe('Universal ID (UID)', () => {
         workflowID: '',
         relativeID: '',
         namespace: undefined,
-        edge: [new Tokens('1/a', true), new Tokens('1/b', true)]
+        edge: [new Tokens('1/a', true), new Tokens('1/b', true)],
       })
     })
 
@@ -130,7 +130,7 @@ describe('Universal ID (UID)', () => {
         workflowID: 'w',
         relativeID: 'c',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // "b" should be updated
@@ -146,7 +146,7 @@ describe('Universal ID (UID)', () => {
         workflowID: 'x',
         relativeID: 'c/t',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // should be able to wipe tokens using "undefined"
@@ -168,7 +168,7 @@ describe('Universal ID (UID)', () => {
           workflowID: 'w',
           relativeID: 'd/t',
           namespace: undefined,
-          edge: undefined
+          edge: undefined,
         })
       })
 
@@ -212,7 +212,7 @@ describe('Universal ID (UID)', () => {
         ['a', new Tokens('~u/a')],
         ['b', new Tokens('~u/a/b')],
         ['c', new Tokens('~u/a/b/c')],
-        ['d', new Tokens('~u/a/b/c/d')]
+        ['d', new Tokens('~u/a/b/c/d')],
       ])
     })
 
@@ -252,38 +252,38 @@ describe('Universal ID (UID)', () => {
         [
           'user',
           'u',
-          new Tokens('~u')
+          new Tokens('~u'),
         ],
         [
           'workflow-part',
           'w1',
-          new Tokens('~u/w1')
+          new Tokens('~u/w1'),
         ],
         [
           'workflow-part',
           'w2',
-          new Tokens('~u/w1/w2')
+          new Tokens('~u/w1/w2'),
         ],
         [
           'workflow',
           'w3',
-          new Tokens('~u/w1/w2/w3')
+          new Tokens('~u/w1/w2/w3'),
         ],
         [
           'cycle',
           'c',
-          new Tokens('~u/w1/w2/w3//c')
+          new Tokens('~u/w1/w2/w3//c'),
         ],
         [
           'task',
           't',
-          new Tokens('~u/w1/w2/w3//c/t')
+          new Tokens('~u/w1/w2/w3//c/t'),
         ],
         [
           'job',
           '01',
-          new Tokens('~u/w1/w2/w3//c/t/01')
-        ]
+          new Tokens('~u/w1/w2/w3//c/t/01'),
+        ],
       ])
 
       expect(
@@ -292,18 +292,18 @@ describe('Universal ID (UID)', () => {
         [
           'user',
           'u',
-          new Tokens('~u')
+          new Tokens('~u'),
         ],
         [
           'workflow',
           'w',
-          new Tokens('~u/w')
+          new Tokens('~u/w'),
         ],
         [
           'cycle',
           'c',
-          new Tokens('~u/w//c')
-        ]
+          new Tokens('~u/w//c'),
+        ],
       ])
 
       expect(
@@ -312,8 +312,8 @@ describe('Universal ID (UID)', () => {
         [
           'user',
           'u',
-          new Tokens('~u')
-        ]
+          new Tokens('~u'),
+        ],
       ])
     })
 

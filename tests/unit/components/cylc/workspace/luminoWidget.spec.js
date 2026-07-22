@@ -20,7 +20,7 @@ import { LuminoWidget } from '@/components/cylc/workspace/luminoWidget'
 describe('LuminoWidget', () => {
   it('stringifies to JSON and revives to new instance', () => {
     const layout = {
-      widgets: [new LuminoWidget('widget71', 'Treadstone')]
+      widgets: [new LuminoWidget('widget71', 'Treadstone')],
     }
     const stringified = JSON.stringify(layout)
     expect(JSON.parse(stringified).widgets[0]).toEqual({

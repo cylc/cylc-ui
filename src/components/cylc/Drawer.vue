@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-tooltip
           activator="#version-chip"
           location="top"
-          >
+        >
           <div
             class="d-flex flex-column align-center"
             style="pointer-events: visible;"
@@ -96,7 +96,7 @@ export const minWidth = 150
 export default {
   components: {
     Workflows,
-    'c-header': Header
+    'c-header': Header,
   },
 
   setup () {
@@ -148,7 +148,7 @@ export default {
     const versionChipProps = computed(() => import.meta.env.MODE === 'production'
       ? {
           text: `Cylc ${cylcVersionInfo.value?.['cylc-flow'] ?? ''}`,
-          variant: 'text'
+          variant: 'text',
         }
       : {
           text: import.meta.env.MODE.toUpperCase(),

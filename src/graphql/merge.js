@@ -68,7 +68,7 @@ function mergeQueries (queryA, queryB) {
   // Finally return the merged definitions and fragments (loc in the AST nodes is not important).
   queryA.definitions = [
     definition,
-    ...fragments
+    ...fragments,
   ]
   return queryA
 }

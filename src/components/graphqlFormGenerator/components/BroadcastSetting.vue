@@ -86,12 +86,12 @@ const renderHelpIcon = (helpText) => h(
       {
         ...props,
         style: {
-          cursor: 'default'
-        }
+          cursor: 'default',
+        },
       },
       () => mdiHelpCircleOutline
     ),
-    default: () => h(Markdown, { markdown: helpText })
+    default: () => h(Markdown, { markdown: helpText }),
   }
 )
 
@@ -105,7 +105,7 @@ export default {
     modelValue: {
       type: Object,
       required: false,
-    }
+    },
   },
 
   emits: ['update:modelValue'],
@@ -125,7 +125,7 @@ export default {
       return nonNullOutcome === true
         ? (this.modelValue != null) || 'Invalid'
         : nonNullOutcome
-    }
+    },
   },
 
   render () {
@@ -138,14 +138,14 @@ export default {
           this.localValue = val
           this.$emit('update:modelValue', fromString(val))
         },
-        rules: [this.isValid]
+        rules: [this.isValid],
       },
       {
         'append-inner': () => renderHelpIcon(this.help),
         // pass the "append" slot onto the VTextField component
-        append: (slotProps) => this.$slots.append?.(slotProps)
+        append: (slotProps) => this.$slots.append?.(slotProps),
       }
     )
-  }
+  },
 }
 </script>
