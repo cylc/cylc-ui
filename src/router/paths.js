@@ -169,7 +169,7 @@ export default [
     view: 'NoAuth',
     meta: {
       title: 'Unauthorized',
-      layout: 'noAuth',
+      layout: 'empty',
     },
   },
 ]

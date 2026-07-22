@@ -16,7 +16,7 @@
  */
 
 import { computed, ref } from 'vue'
-import { useDisplay } from 'vuetify'
+import { useRoute } from 'vue-router'
 
 /** Height in px */
 export const toolbarHeight = 48
@@ -30,19 +30,19 @@ function toggleDrawer () {
 
 /** Composable that provides the global state of the navigation drawer visibility. */
 export function useDrawer () {
+  const route = useRoute()
+
+  /** Should the drawer be enabled at all? (Set by the route - false for standalone views) */
+  const drawerEnabled = computed(() => route.meta?.showSidebar ?? true)
+
   return {
     drawer,
     toggleDrawer,
+    drawerEnabled,
   }
 }
 
-/**
- * Composable that returns a computed property for whether we should show
- * the hamburger nav drawer button.
- */
-export function useNavBtn () {
-  const { mobile } = useDisplay()
-  return {
-    showNavBtn: computed(() => mobile.value || !drawer.value),
-  }
+// For tests:
+export {
+  drawer as __drawer,
 }

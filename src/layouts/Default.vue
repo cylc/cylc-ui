@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <ConnectionStatus :is-offline="offline" />
-    <Drawer v-if="showSidebar" />
+    <Drawer v-if="drawerEnabled" />
     <CommandMenu/>
 
     <v-main>
-      <Toolbar v-if="showToolbar" />
+      <Toolbar />
       <alert />
       <div
         id="core-view"
@@ -35,77 +35,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </div>
 </template>
 
-<script>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { mapState } from 'vuex'
+<script setup>
+import { computed, onErrorCaptured } from 'vue'
 import { store } from '@/store/index'
-import { allViews } from '@/views/views'
 import { Alert as AlertModel } from '@/model/Alert.model'
 import Alert from '@/components/core/Alert.vue'
 import Drawer from '@/components/cylc/Drawer.vue'
 import Toolbar from '@/components/cylc/Toolbar.vue'
-import { toolbarHeight } from '@/utils/toolbar'
+import { toolbarHeight, useDrawer } from '@/utils/toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
 import CommandMenu from '@/components/cylc/commandMenu/Menu.vue'
 
-export default {
-  name: 'Default',
+const { drawerEnabled } = useDrawer()
 
-  setup () {
-    const route = useRoute()
-    /**
-     * Views that display workflows. For these views, we do not
-     * want to display the default Toolbar—the Workspace view
-     * has its own Toolbar that communicates with the Workflow
-     * component (e.g. the Workflow Toolbar owns a button that
-     * triggers the action to add a new Tree or Table View, so the events
-     * are passed down from the parent Workflow View).
-     */
-    const workflowViews = [
-      ...allViews.keys(),
-      'Workspace',
-    ]
-
-    /** Whether to show app toolbar (not the workspace view toolbar). */
-    const showToolbar = computed(
-      () => !workflowViews.includes(route.name)
-    )
-    const coreViewStyle = computed(() => ({
-      marginTop: '0px',
-      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh'
-    }))
-
-    return {
-      showToolbar,
-      coreViewStyle,
-    }
-  },
-
-  components: {
-    ConnectionStatus,
-    CommandMenu,
-    Alert,
-    Drawer,
-    Toolbar
-  },
-
-  props: {
-    showSidebar: {
-      type: Boolean,
-      required: false,
-      default: true
-    }
-  },
-
-  computed: {
-    ...mapState(['offline'])
-  },
-
-  errorCaptured (error, vm, info) {
-    store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
-    // Stop error propagating further:
-    return false
-  }
+const coreViewStyle = {
+  height: `calc(100vh - ${toolbarHeight}px)`
 }
+
+const offline = computed(() => store.state.offline)
+
+onErrorCaptured((error, vm, info) => {
+  store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
+  // Stop error propagating further:
+  return false
+})
 </script>
