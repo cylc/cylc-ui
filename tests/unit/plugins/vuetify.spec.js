@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { btnIconFontSize } from '@/utils/viewToolbar'
+import { btnIconFontSize } from '@/plugins/vuetify'
 
 describe('btnIconFontSize', () => {
   it.each([
