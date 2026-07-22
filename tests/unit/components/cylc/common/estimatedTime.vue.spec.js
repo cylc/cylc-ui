@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ import EstimatedTime from '@/components/cylc/common/EstimatedTime.vue'
 import { createVuetify } from 'vuetify'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { formatDuration } from '@/utils/tasks'
+
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Estimated Time component', () => {
   it.each([
@@ -47,7 +49,7 @@ describe('Estimated Time component', () => {
     const wrapper = mount(EstimatedTime, {
       props,
       global: {
-        plugins: [createVuetify(vuetifyOptions)]
+        plugins: [vuetify],
       }
     })
     expect(wrapper.text()).toBe(expected)

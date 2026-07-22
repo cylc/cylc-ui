@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <ConnectionStatus :is-offline="offline" />
-    <Toolbar v-if="showToolbar" />
     <Drawer v-if="showSidebar" />
     <CommandMenu/>
 
     <v-main>
+      <Toolbar v-if="showToolbar" />
       <alert />
       <div
         id="core-view"
@@ -45,7 +45,7 @@ import { Alert as AlertModel } from '@/model/Alert.model'
 import Alert from '@/components/core/Alert.vue'
 import Drawer from '@/components/cylc/Drawer.vue'
 import Toolbar from '@/components/cylc/Toolbar.vue'
-import { useNavBtn, toolbarHeight } from '@/utils/toolbar'
+import { toolbarHeight } from '@/utils/toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
 import CommandMenu from '@/components/cylc/commandMenu/Menu.vue'
 
@@ -66,15 +66,14 @@ export default {
       ...allViews.keys(),
       'Workspace',
     ]
-    const { showNavBtn } = useNavBtn()
 
     /** Whether to show app toolbar (not the workspace view toolbar). */
     const showToolbar = computed(
-      () => showNavBtn.value && !workflowViews.includes(route.name)
+      () => !workflowViews.includes(route.name)
     )
     const coreViewStyle = computed(() => ({
-      marginTop: showToolbar.value ? `${toolbarHeight}px` : 0,
-      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh',
+      marginTop: '0px',
+      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh'
     }))
 
     return {
@@ -104,9 +103,7 @@ export default {
   },
 
   errorCaptured (error, vm, info) {
-    if (import.meta.env.MODE !== 'production') {
-      store.dispatch('setAlert', new AlertModel(error, 'error'))
-    }
+    store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
     // Stop error propagating further:
     return false
   }

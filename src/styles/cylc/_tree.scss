@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,10 @@ $icon-width: 1.5rem;
 }
 
 .c-tree {
+  .c-view-toolbar {
+    // Give space to any task icon modifiers at the top of the tree:
+    margin-bottom: 0.3em;
+  }
   .c-task, .c-job {
     display: flex;
     align-items: center;

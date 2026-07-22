@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ import { unref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import { useDrawer, useNavBtn } from '@/utils/toolbar'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 /**
  * Create a vuetify instance in mobile mode or not.
@@ -82,7 +83,7 @@ describe('Toolbar/drawer utils', () => {
     )
 
     it('toggles the drawer', () => {
-      const wrapper = mountFunction(createVuetify())
+      const wrapper = mountFunction(createVuetify(vuetifyOptions))
       const initialState = unref(drawerState)
       expect(wrapper.vm.drawer).toEqual(initialState)
       wrapper.vm.toggleDrawer()

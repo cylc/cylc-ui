@@ -11,7 +11,7 @@ the UI.
 
 ## Copyright and Terms of Use
 
-Copyright (C) 2018-<span actions:bind='current-year'>2026</span> NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) 2018-<span actions:bind='current-year'>2026</span> Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 Cylc is free software: you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation,
@@ -58,7 +58,7 @@ yarn run build
 # build for development (rebuilds on change)
 yarn run build:watch
 # and launch using
-cylc gui --ui-build-dir=<cylc-ui-path>/dist/
+cylc gui --CylcUIServer.ui_build_dir=<cylc-ui-path>/dist/
 
 # start dev server in offline mode, using the build instead of source files
 yarn run preview
