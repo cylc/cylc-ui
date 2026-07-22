@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
     </div>
   </Teleport>
-  <div id="mainTimeSeries">
+  <div id="mainTimeSeries" style="position: relative;">
     <div
       ref="mainChart"
       style="
@@ -72,6 +72,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         width: 100%;"
       class="flex-grow-1"
     />
+    <Transition name="fade">
+      <div
+        v-if="noTasksSelected"
+        class="time-series-empty-state d-flex flex-column align-center justify-center text-center"
+        data-cy="time-series-empty-state"
+      >
+        <v-icon
+          :icon="$options.icons.mdiChartLine"
+          size="64"
+          class="mb-4 time-series-empty-icon"
+        />
+        <div class="text-h6 mb-1">No tasks selected</div>
+        <div class="text-body-2 text-medium-emphasis mb-4" style="max-width: 340px;">
+          Use the <strong>“Select tasks”</strong> box above to choose one or
+          more tasks and plot their timings over cycle points.
+        </div>
+        <v-btn
+          color="primary"
+          variant="tonal"
+          :prepend-icon="$options.icons.mdiMagnify"
+          @click="focusTaskSelect"
+          data-cy="time-series-empty-state-btn"
+        >
+          Select tasks
+        </v-btn>
+      </div>
+    </Transition>
   </div>
   </template>
 
@@ -97,6 +124,8 @@ import {
 import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
 import {
+  mdiChartLine,
+  mdiMagnify,
   mdiRefresh,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
@@ -273,6 +302,9 @@ export default {
   },
 
   computed: {
+    noTasksSelected () {
+      return this.displayedTasks.length === 0
+    },
     cyclePoints () {
       // Only plot cycles that have visible data points
       const cycles = uniq(this.jobs.flatMap(
@@ -412,6 +444,13 @@ export default {
     handleResize () {
       this.mainChart?.resize()
     },
+    focusTaskSelect () {
+      // Focus (and open) the task selection combobox
+      this.$refs.selectTasks?.focus?.()
+      this.$refs.selectTasks?.$el
+        ?.querySelector('input')
+        ?.focus()
+    },
     selectSearchResults: function () {
       // Do we need a limit to number of tasks that can be added?
       const filteredTasks = this.$refs.selectTasks.filteredItems.map(
@@ -455,7 +494,37 @@ export default {
   },
 
   icons: {
+    mdiChartLine,
+    mdiMagnify,
     mdiRefresh,
   },
 }
 </script>
+
+<style scoped>
+.time-series-empty-state {
+  position: absolute;
+  inset: 0;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+/* Only the button should be clickable, so the chart stays interactive */
+.time-series-empty-state :deep(.v-btn) {
+  pointer-events: auto;
+}
+
+.time-series-empty-icon {
+  opacity: 0.5;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

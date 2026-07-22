@@ -292,6 +292,30 @@ describe('Analysis view', () => {
         .should('not.exist')
     })
 
+    it('Should show empty-state prompt when no tasks are selected', () => {
+      // With no tasks selected the empty-state overlay should be visible
+      cy
+        .get('[data-cy=time-series-empty-state]')
+        .should('be.visible')
+        .contains('No tasks selected')
+      // Clicking the prompt button should focus the task select input
+      cy
+        .get('[data-cy=time-series-empty-state-btn]')
+        .click()
+        .get('[data-cy=time-series-task-select] input')
+        .should('be.focused')
+      // Selecting a task should hide the empty-state overlay
+      cy
+        .get('[data-cy=time-series-task-select]')
+        .click()
+        .get('.v-list-item')
+        .contains('waiting')
+        .click()
+      cy
+        .get('[data-cy=time-series-empty-state]')
+        .should('not.exist')
+    })
+
     it('Should select tasks from the autocomplete drop down list', () => {
       // Add waiting task and check only two cycles visible on both graphs
       cy
