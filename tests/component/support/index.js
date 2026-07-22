@@ -23,7 +23,21 @@ import '@/styles/index.scss'
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import { vuetifyOptions } from '@/plugins/vuetify'
-import { enableBrowserPermissions } from '$tests/util'
+
+/**
+ * Enable any browser permissions needed for Cypress E2E & Component testing.
+ */
+export function enableBrowserPermissions () {
+  if (Cypress.browser.family === 'chromium') {
+    Cypress.automation('remote:debugger:protocol', {
+      command: 'Browser.grantPermissions',
+      params: {
+        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+        origin: window.location.origin,
+      },
+    })
+  }
+}
 
 enableBrowserPermissions()
 

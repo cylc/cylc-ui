@@ -36,7 +36,7 @@ import '@cypress/code-coverage/support'
 // Import commands.js using ES2015 syntax:
 import './commands'
 
-import { enableBrowserPermissions } from '$tests/util'
+import { enableBrowserPermissions } from '$tests/component/support/index.js'
 
 enableBrowserPermissions()
 
