@@ -51,9 +51,9 @@ describe('flattenWorkflowParts()', () => {
           type: 'workflow-part',
           name: 'dark/place',
           parent: '~awake/dark',
-          children: [run1, run2]
-        }
-      ]
+          children: [run1, run2],
+        },
+      ],
     }
     expect(flattenWorkflowParts(node)).toStrictEqual({
       ...node.children[0],
@@ -73,9 +73,9 @@ describe('flattenWorkflowParts()', () => {
           type: 'workflow-part',
           name: 'dark/place',
           parent: '~awake/dark',
-          children: [run1]
-        }
-      ]
+          children: [run1],
+        },
+      ],
     })).toStrictEqual({
       ...run1,
       parent: '~awake',
@@ -94,7 +94,7 @@ describe('flattenWorkflowParts()', () => {
           type: 'workflow-part',
           name: 'dark/place',
           parent: '~awake/dark',
-          children: [run1]
+          children: [run1],
         },
         {
           id: '~awake/dark/presence',
@@ -104,9 +104,9 @@ describe('flattenWorkflowParts()', () => {
           children: [
             { type: 'workflow', id: 'barry' },
             { type: 'workflow', id: 'stucky' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     }
     const result = flattenWorkflowParts(node)
     expect(result).toStrictEqual({
@@ -120,8 +120,8 @@ describe('flattenWorkflowParts()', () => {
           name: 'place/run1',
           parent: '~awake/dark',
         },
-        node.children[1]
-      ]
+        node.children[1],
+      ],
     })
   })
 

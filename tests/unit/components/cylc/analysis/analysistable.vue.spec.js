@@ -38,7 +38,7 @@ describe('AnalysisTable component', () => {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
-      ...options
+      ...options,
     })
   }
 
@@ -46,15 +46,15 @@ describe('AnalysisTable component', () => {
     const wrapper = mountFunction({
       props: {
         tasks: analysisTasks,
-        timingOption: 'total'
-      }
+        timingOption: 'total',
+      },
     })
 
     // check the the raw task data doesn't have the names in order
     expect(wrapper.vm.tasks.map((task) => task.name)).to.deep.equal([
       'succeeded',
       'eventually_succeeded',
-      'waiting'
+      'waiting',
     ])
 
     // check that the html have the names in alphabetical order
@@ -68,8 +68,8 @@ describe('AnalysisTable component', () => {
     const wrapper = mountFunction({
       props: {
         tasks: analysisTasks,
-        timingOption: 'total'
-      }
+        timingOption: 'total',
+      },
     })
     expect(wrapper.props().tasks[0].name).to.equal('succeeded')
     expect(wrapper.find('div')).to.not.equal(null)
@@ -80,8 +80,8 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'total'
-        }
+          timingOption: 'total',
+        },
       })
       expect(wrapper.vm.timingOption).to.equal('total')
       expect(wrapper.vm.tasks.length).to.equal(3)
@@ -96,8 +96,8 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'run'
-        }
+          timingOption: 'run',
+        },
       })
       expect(wrapper.vm.timingOption).to.equal('run')
       expect(wrapper.vm.tasks.length).to.equal(3)
@@ -112,8 +112,8 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'queue'
-        }
+          timingOption: 'queue',
+        },
       })
       expect(wrapper.vm.timingOption).to.equal('queue')
       expect(wrapper.vm.tasks.length).to.equal(3)

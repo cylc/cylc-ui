@@ -386,13 +386,13 @@ export default {
         return a.label > b.label ? 1 : -1
       })
       return xtriggers
-    }
+    },
 
   },
 
   methods: {
     formatCompletion,
-  }
+  },
 
 }
 </script>

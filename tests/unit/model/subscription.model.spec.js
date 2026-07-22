@@ -24,7 +24,7 @@ import ViewState from '@/model/ViewState.model'
 describe('SubscriptionQuery model', () => {
   const query = gql`query { workflow { id } }`
   const variables = {
-    workflowId: '~cylc/cylc'
+    workflowId: '~cylc/cylc',
   }
   const name = 'root'
   const callbacks = []
@@ -63,37 +63,37 @@ describe('SubscriptionQuery model', () => {
           viewState: ViewState.ERROR,
           debug: true,
           context: {
-            message: 'test'
-          }
+            message: 'test',
+          },
         },
         {
           viewState: ViewState.NO_STATE,
           debug: true,
           context: {
-            message: 'test'
-          }
+            message: 'test',
+          },
         },
         {
           viewState: ViewState.LOADING,
           debug: true,
           context: {
-            message: 'test'
-          }
+            message: 'test',
+          },
         },
         {
           viewState: ViewState.COMPLETE,
           debug: true,
           context: {
-            message: 'test'
-          }
-        }
+            message: 'test',
+          },
+        },
       ]
       for (const test of tests) {
         const subscription = new Subscription(subscriptionQuery, test.debug)
         subscription.subscribers[1] = {
           viewState: null,
           setAlert: () => {
-          }
+          },
         }
         subscription.handleViewState(test.viewState, test.context)
         Object.values(subscription.subscribers).forEach(subscriber => {

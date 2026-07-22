@@ -266,7 +266,7 @@ import TaskState from '@/model/TaskState.model'
 
 const props = defineProps({
   task: {
-    required: true
+    required: true,
   },
   startTime: {
     // The start time as an ISO8601 date-time string in expanded format
@@ -274,12 +274,12 @@ const props = defineProps({
     // TODO: aim to remove this in due course
     // (we should be able to obtain this directly from the task)
     type: String,
-    required: false
+    required: false,
   },
   modifierSize: {
     // Scale the size of the task state modifier
     type: Number,
-    default: 0.7
+    default: 0.7,
   },
 })
 

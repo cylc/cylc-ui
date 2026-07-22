@@ -54,7 +54,7 @@ export function platformOptions (tasks) {
         platforms.push(jobs[i].platform)
         platformOptions.push({
           value: jobs[i].platform,
-          title: jobs[i].platform
+          title: jobs[i].platform,
         })
       }
     }

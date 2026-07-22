@@ -35,7 +35,7 @@ import { formElementProps } from '@/components/graphqlFormGenerator/mixins'
 import { RULES } from '@/components/graphqlFormGenerator/components/vuetify'
 
 defineProps({
-  ...formElementProps
+  ...formElementProps,
 })
 
 const model = defineModel({ required: true })

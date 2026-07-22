@@ -168,11 +168,11 @@ const compactMode = useCompactMode()
 const props = defineProps({
   node: {
     type: Object,
-    required: true
+    required: true,
   },
   depth: {
     type: Number,
-    default: 0
+    default: 0,
   },
   filteredOutNodesCache: {
     type: WeakMap,

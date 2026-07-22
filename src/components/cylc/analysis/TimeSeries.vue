@@ -95,7 +95,7 @@ import {
   pick,
   union,
   uniq,
-  upperFirst
+  upperFirst,
 } from 'lodash'
 import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
@@ -108,7 +108,7 @@ import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 /** List of fields to request for task for each task */
@@ -120,7 +120,7 @@ const jobFields = [
   'totalTime',
   'queueTime',
   'runTime',
-  'startedTime'
+  'startedTime',
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -224,7 +224,7 @@ export default {
     return {
       reducedAnimation,
       displayedTasks,
-      showOrigin
+      showOrigin,
     }
   },
 
@@ -253,7 +253,7 @@ export default {
       if (addedTasks.length > 0) {
         this.jobsQuery(newTasks)
       }
-    }
+    },
   },
 
   computed: {
@@ -275,7 +275,7 @@ export default {
         }
         seriesData[task] = {
           name: task,
-          data
+          data,
         }
       }
 
@@ -290,7 +290,7 @@ export default {
                 x: job.cyclePoint,
                 y: time,
                 platform: job.platform,
-                startedTime: job.startedTime
+                startedTime: job.startedTime,
               })
             }
           }
@@ -320,10 +320,10 @@ export default {
                   zoomIn: 'Zoom In',
                   zoomOut: 'Zoom Out',
                   pan: 'Panning',
-                  reset: 'Reset Zoom'
-                }
-              }
-            }
+                  reset: 'Reset Zoom',
+                },
+              },
+            },
           ],
           animations: {
             enabled: this.animate && !this.reducedAnimation,
@@ -348,18 +348,18 @@ export default {
               zoomin: false,
               zoomout: false,
               pan: false,
-              reset: true
-            }
+              reset: true,
+            },
           },
           zoom: {
-            type: 'y'
-          }
+            type: 'y',
+          },
         },
         stroke: {
-          width: 2
+          width: 2,
         },
         markers: {
-          size: 4
+          size: 4,
         },
         tooltip: {
           y: {
@@ -370,8 +370,8 @@ export default {
               const y = formatDuration(value, { allowZeros: true })
               const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
-            }
-          }
+            },
+          },
         },
         xaxis: {
           title: {
@@ -379,7 +379,7 @@ export default {
           },
           categories: this.cyclePoints,
           min: this.xRange[0],
-          max: this.xRange[1]
+          max: this.xRange[1],
         },
         yaxis: {
           forceNiceScale: true,
@@ -388,7 +388,7 @@ export default {
             text: upperFirst(this.timingOption) + ' time',
           },
           labels: {
-            formatter: (value) => formatDuration(value, { allowZeros: true })
+            formatter: (value) => formatDuration(value, { allowZeros: true }),
           },
         },
       }
@@ -415,31 +415,31 @@ export default {
             xaxis: {
               min: 1,
               max: this.cyclePoints.length,
-            }
+            },
           },
           toolbar: {
             autoSelected: 'selection',
-            show: true
-          }
+            show: true,
+          },
         },
         legend: {
-          show: false
+          show: false,
         },
         markers: {
-          size: 3
+          size: 3,
         },
         stroke: {
-          width: 2
+          width: 2,
         },
         tooltip: {
-          enabled: false
+          enabled: false,
         },
         xaxis: {
           categories: this.cyclePoints,
           tickAmount: 4,
           labels: {
-            rotate: 0
-          }
+            rotate: 0,
+          },
         },
         yaxis: {
           tickAmount: 3,
@@ -447,9 +447,9 @@ export default {
             text: upperFirst(this.timingOption) + ' time',
           },
           labels: {
-            formatter: (value) => formatDuration(value, { allowZeros: true })
+            formatter: (value) => formatDuration(value, { allowZeros: true }),
           },
-          min: this.showOrigin ? 0 : undefined
+          min: this.showOrigin ? 0 : undefined,
         },
       }
     },
@@ -498,7 +498,7 @@ export default {
     refreshData: function () {
       this.taskNamesQuery()
       this.jobsQuery(this.displayedTasks)
-    }
+    },
   },
 
   icons: {
