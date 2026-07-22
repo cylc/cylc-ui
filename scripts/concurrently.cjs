@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const concurrently = require('concurrently')
 
 const args = process.argv.slice(2)

@@ -85,7 +85,7 @@ const props = defineProps({
   // dictionary of props for overriding default values
   propOverrides: {
     type: Object,
-    default: () => ({})
+    default: () => ({ })
   }
 })
 
