@@ -98,7 +98,8 @@ html {
 }
 
 .c-tree, .c-table, .c-graph {
-  .flow-none {
-    opacity: 0.6;
+  // Dim nodes that are outside the n=0 (active) window, i.e. n != 0.
+  .dimmed {
+    opacity: 0.5;
   }
 }
