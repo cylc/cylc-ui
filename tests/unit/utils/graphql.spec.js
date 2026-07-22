@@ -15,82 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
-import 'cross-fetch/polyfill'
-import * as graphql from '@/graphql'
-import { store } from '@/store/index'
-import storeOptions from '@/store/options'
+import { describe, it, expect } from 'vitest'
+import {
+  createApolloClient,
+  createGraphQLUrls,
+  createSubscriptionClient
+} from '@/graphql'
 
-describe('utils', () => {
-  describe('graphql', () => {
-    describe('ApolloClient', () => {
-      it('should create an apollo client', () => {
-        const apolloClient = graphql.createApolloClient('http://localhost:12345', null)
-        expect(apolloClient.link !== null).to.equal(true)
-        expect(apolloClient.cache !== null).to.equal(true)
-      })
+describe('graphql', () => {
+  describe('ApolloClient', () => {
+    it('should create an apollo client', () => {
+      const apolloClient = createApolloClient('http://localhost:12345', null)
+      expect(apolloClient.link).toBeTruthy()
+      expect(apolloClient.cache).toBeTruthy()
     })
+  })
 
-    describe('SubscriptionClient', () => {
-      beforeEach(() => {
-        store.replaceState(storeOptions.state())
-        expect(store.state.offline).to.be.false
-      })
-      it('should create a subscription client', () => {
-        const subscriptionClient = graphql.createSubscriptionClient(
-          'ws://localhost:12345',
-          {
-            reconnect: false,
-            lazy: true
-          },
-          {})
-        expect(typeof subscriptionClient.request).to.equal('function')
-      })
-      it('should call the subscription client callbacks', () => {
-        const subscriptionClient = graphql.createSubscriptionClient(
-          'ws://localhost:12345',
-          {
-            reconnect: false,
-            lazy: true
-          },
-          {})
-        expect(store.state.offline).to.equal(false)
-
-        let eventName, expectedOffline
-        for ({ eventName, expectedOffline } of [
-          {
-            eventName: 'connecting',
-            expectedOffline: true
-          },
-          {
-            eventName: 'connected',
-            expectedOffline: false
-          },
-          {
-            eventName: 'reconnecting',
-            expectedOffline: true
-          },
-          {
-            eventName: 'reconnected',
-            expectedOffline: false
-          },
-          {
-            eventName: 'disconnected',
-            expectedOffline: true
-          }
-        ]) {
-          subscriptionClient.eventEmitter.emit(eventName)
-          expect(store.state.offline).to.equal(expectedOffline)
-        }
-      })
+  describe('SubscriptionClient', () => {
+    it('creates a subscription client', () => {
+      const subscriptionClient = createSubscriptionClient('ws://localhost:12345')
+      expect(subscriptionClient.on).toBeTypeOf('function')
     })
+  })
 
-    describe('GraphQL URLs', () => {
-      it('should create the correct URLs', () => {
-        const graphQLUrls = graphql.createGraphQLUrls()
-        expect(graphQLUrls.httpUrl.slice(0, 4)).to.equal('http')
-        expect(graphQLUrls.wsUrl.slice(0, 2)).to.equal('ws')
-      })
+  describe('GraphQL URLs', () => {
+    it('should create the correct URLs', () => {
+      const graphQLUrls = createGraphQLUrls()
+      expect(graphQLUrls.httpUrl.slice(0, 4)).to.equal('http')
+      expect(graphQLUrls.wsUrl.slice(0, 2)).to.equal('ws')
     })
   })
 })

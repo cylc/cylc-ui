@@ -41,7 +41,7 @@ import CylcTreeCallback from '@/services/treeCallback'
 
 /** @typedef {import('graphql').DocumentNode} DocumentNode */
 /** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType */
-/** @typedef {import('subscriptions-transport-ws').SubscriptionClient} SubscriptionClient */
+/** @typedef {import('graphql-ws').Client} SubscriptionClient */
 /** @typedef {import('@/utils/aotf').Mutation} Mutation */
 /** @typedef {import('@/utils/aotf').MutationResponse} MutationResponse */
 /** @typedef {import('@/utils/aotf').Query} Query */

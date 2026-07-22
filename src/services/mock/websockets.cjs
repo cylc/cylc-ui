@@ -15,55 +15,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { MessageType } = require('graphql-ws')
 const { isArray } = require('lodash')
 const graphql = require('./graphql.cjs')
 
 /**
- * Create a WebSockets response.
- *
- * @param {string} id - Subscription ID
- * @param {string} type - Message type (e.g. data, connection_init, etc, see GraphQL spec)
- * @param {Object} [data] - Response data, optional
- * @returns {string}
- */
-function wsResponse (id, type, data = null) {
-  const response = {
-    id,
-    type
-  }
-  // connection ack does not include a payload
-  if (data) {
-    response.payload = {
-      data
-    }
-  }
-  return JSON.stringify(response)
-}
-
-/**
  * Send a WebSockets reply message(s), given the query message (received from client).
+ *
+ * @see https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md
  *
  * @param {WebSocket} ws
  * @param {string} msg - JSON encoded client message
  */
 async function sendWSResponse (ws, msg) {
+  /** @type {import('graphql-ws').Message} */
   const parsed = JSON.parse(msg)
   if (parsed) {
-    if (parsed.type === 'connection_init') {
-      return ws.send(wsResponse(parsed.id, 'connection_ack'))
-    } else if (parsed.type === 'stop') {
-      return ws.send(wsResponse(parsed.id, 'complete'))
-    } else if (parsed.type === 'start') {
-      const operationName = (
-        parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
-      )
-      const responseData = await graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
-      for (const item of isArray(responseData) ? responseData : [responseData]) {
-        ws.send(wsResponse(parsed.id, 'data', item))
+    switch (parsed.type) {
+      case MessageType.ConnectionInit:
+        return ws.send(JSON.stringify({ type: MessageType.ConnectionAck }))
+      case MessageType.Ping:
+        return ws.send(JSON.stringify({ type: MessageType.Pong }))
+      case MessageType.Pong:
+      case MessageType.Complete:
+        return
+      case MessageType.Subscribe: {
+        const operationName = (
+          parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
+        )
+        const responseData = await graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
+        for (const item of isArray(responseData) ? responseData : [responseData]) {
+          ws.send(JSON.stringify({
+            id: parsed.id,
+            type: MessageType.Next,
+            payload: { data: item },
+          }))
+        }
+        return
       }
-      return
+      default: {
+        throw new Error(`Invalid message type for graphql-transport-ws: ${parsed.type}`)
+      }
     }
-    throw new Error(`Unknown message type ${parsed.type}`)
   }
   throw new Error(`Failed to parse msg: ${msg}`)
 }
