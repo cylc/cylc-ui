@@ -230,7 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         Circular arrow representing a retry.
       -->
-       <g class="retry">
+      <g class="retry">
         <!-- An arc describing the arrow -->
         <path d="m25, 50 a30 30 1 1 1 25 30 "/>
         <!-- The arrowhead -->
