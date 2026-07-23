@@ -43,22 +43,6 @@ describe('Table component', () => {
     ...options
   })
 
-  it('should sort cycle point column descending by default', async () => {
-    const wrapper = mountFunction({
-      props: {
-        tasks: simpleTableTasks
-      }
-    })
-    // check the the raw task data has the cycle points from lowest to highest
-    expect(wrapper.vm.tasks[wrapper.vm.tasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
-    expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
-
-    // check that the html have the cycle points from high to low
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal('20000103T0000Z')
-    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.tasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
-  })
-
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
       props: {
@@ -71,18 +55,25 @@ describe('Table component', () => {
 
   describe('Sort', () => {
     it.each([
-      { cyclePointsOrderDesc: true, expected: 'desc' },
-      { cyclePointsOrderDesc: false, expected: 'asc' },
-    ])('sorts cycle point $expected from localStorage by default', ({ cyclePointsOrderDesc, expected }) => {
-      localStorage.setItem('cyclePointsOrderDesc', cyclePointsOrderDesc)
+      { order: 'desc' },
+      { order: 'asc' },
+    ])('sorts cycle point $order', async ({ order }) => {
       const wrapper = mountFunction({
         props: {
-          tasks: simpleTableTasks
+          tasks: simpleTableTasks,
+          sortBy: [{ key: 'task.tokens.cycle', order }]
         }
       })
-      expect(wrapper.vm.sortBy).toMatchObject([
-        { order: expected }
-      ])
+      const min = '20000101T0000Z'
+      const max = '20000103T0000Z'
+      // check the the raw task data has the cycle points from lowest to highest
+      expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal(min)
+      expect(wrapper.vm.tasks[wrapper.vm.tasks.length - 1].task.tokens.cycle).to.equal(max)
+
+      // check that the html have the cycle points in the right order
+      await wrapper.vm.$nextTick()
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal(order === 'asc' ? min : max)
+      expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.tasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal(order === 'asc' ? max : min)
     })
 
     describe('nullSorter', () => {
@@ -108,9 +99,7 @@ describe('Table component', () => {
         const wrapper = mountFunction({
           props: {
             tasks: [],
-            initialOptions: {
-              sortBy: [{ key, order }]
-            }
+            sortBy: [{ key, order }]
           },
           shallow: true,
         })

@@ -27,7 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div class="overflow-hidden">
       <TableComponent
         :tasks="filteredTasks"
-        v-model:initial-options="dataTableOptions"
+        v-model:sort-by="sortBy"
+        v-model:page="page"
+        v-model:items-per-page="itemsPerPage"
         v-bind="{ filterState }"
         class="mh-100"
       />
@@ -49,6 +51,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
+import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
 const QUERY = gql`
 subscription Workflow ($workflowID: ID) {
@@ -166,14 +169,27 @@ export default {
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, {})
     const filterState = useTasksFilterState(tasksFilter)
 
-    /**
-     * The Vuetify data table options (sortBy, page etc).
-     * @type {import('vue').Ref<object>}
-     */
-    const dataTableOptions = useInitialOptions('dataTableOptions', { props, emit })
+    const cyclePointsOrderDesc = useCyclePointsOrderDesc()
+
+    const sortBy = useInitialOptions(
+      'sortBy',
+      { props, emit },
+      [
+        {
+          key: 'task.tokens.cycle',
+          order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
+        },
+      ]
+    )
+
+    const page = useInitialOptions('page', { props, emit }, 1)
+
+    const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
 
     return {
-      dataTableOptions,
+      sortBy,
+      page,
+      itemsPerPage,
       tasksFilter,
       filterState,
       workflowIDs,

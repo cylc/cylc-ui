@@ -149,45 +149,23 @@ import {
   formatDuration,
   isTruthyOrZero,
 } from '@/utils/tasks'
-import { useCyclePointsOrderDesc } from '@/composables/localStorage'
-import {
-  initialOptions as initialOptionsProp,
-  updateInitialOptionsEvent,
-  useInitialOptions
-} from '@/utils/initialOptions'
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 import EstimatedTime from '@/components/cylc/common/EstimatedTime.vue'
-
-const emit = defineEmits([updateInitialOptionsEvent])
 
 const props = defineProps({
   tasks: {
     type: Array,
     required: true
   },
-  initialOptions: initialOptionsProp,
   filterState: {
     type: [Object, null],
     default: null,
   },
 })
 
-const cyclePointsOrderDesc = useCyclePointsOrderDesc()
-
-const sortBy = useInitialOptions(
-  'sortBy',
-  { props, emit },
-  [
-    {
-      key: 'task.tokens.cycle',
-      order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
-    },
-  ]
-)
-
-const page = useInitialOptions('page', { props, emit }, 1)
-
-const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
+const sortBy = defineModel('sortBy')
+const page = defineModel('page')
+const itemsPerPage = defineModel('itemsPerPage')
 
 const headers = ref([
   {
