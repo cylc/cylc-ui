@@ -30,8 +30,8 @@
     "@lumino/widgets": "2.9.0",
     "@mdi/js": "7.4.47",
     "@vueuse/core": "14.1.0",
-    "apexcharts": "3.54.1",
     "dedent": "1.7.2",
+    "echarts": "^6.0.0",
     "enumify": "2.0.0",
     "graphiql": "4.1.2",
     "graphql": "16.14.2",
@@ -48,7 +48,6 @@
     "vue-i18n": "11.4.6",
     "vue-router": "5.1.0",
     "vue-the-mask": "0.11.1",
-    "vue3-apexcharts": "1.8.0",
     "vuetify": "3.11.8",
     "vuex": "4.1.0"
   },

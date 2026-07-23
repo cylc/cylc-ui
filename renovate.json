@@ -145,25 +145,12 @@
     {
       "groupName": "analysis view packages",
       "matchPackageNames": [
-        "apexcharts",
-        "vue3-apexcharts"
+        "echarts"
       ],
       "addLabels": [
         "analysis views"
       ],
       "prPriority": -1
-    },
-    {
-      "matchPackageNames": [
-        "apexcharts"
-      ],
-      "allowedVersions": "<5"
-    },
-    {
-      "matchPackageNames": [
-        "vue3-apexcharts"
-      ],
-      "allowedVersions": "<1.9"
     }
   ],
   "vulnerabilityAlerts": {
