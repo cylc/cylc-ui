@@ -70,7 +70,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { computedWithControl } from '@vueuse/core'
 import { mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
 import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -197,6 +199,8 @@ export default {
   },
 
   setup (props, { emit }) {
+    const store = useStore()
+
     const { workflowIDs, variables } = useGraphQL()
 
     /**
@@ -226,7 +230,49 @@ export default {
     const enableSelect = useInitialOptions('enableSelect', { props, emit }, false)
     const selection = useInitialOptions('selection', { props, emit }, [])
 
+    // const cylcTree = computed(() => store.state.workflows.cylcTree)
+    const getNodes = store.getters['workflows/getNodes']
+
+    const workflows = computed(
+      () => getNodes('workflow', workflowIDs.value)
+    )
+
+    const tasks = computedWithControl(
+      // Freeze the list of tasks when selection is enabled, to stop selected tasks disappearing
+      () => !enableSelect.value && workflows.value,
+      () => {
+        const ret = []
+        for (const workflow of workflows.value) {
+          for (const cycle of workflow.children) {
+            for (const task of cycle.children) {
+              ret.push({
+                task,
+                latestJob: task.children[0],
+                previousJob: task.children[1],
+              })
+            }
+          }
+        }
+        return ret
+      },
+      { deep: true }
+    )
+
+    const filteredTasks = computed(() => {
+      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
+        tasksFilter.value.states?.length ? tasksFilter.value.states : []
+      )
+      return tasks.value.filter(({ task }) => matchNode(
+        task,
+        globToRegex(tasksFilter.value.id),
+        states,
+        waitingStateModifiers,
+        genericModifiers
+      ))
+    })
+
     return {
+      filteredTasks,
       sortBy,
       page,
       itemsPerPage,
@@ -243,26 +289,6 @@ export default {
   },
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
-    ...mapGetters('workflows', ['getNodes']),
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
-    },
-    tasks () {
-      const ret = []
-      for (const workflow of this.workflows) {
-        for (const cycle of workflow.children) {
-          for (const task of cycle.children) {
-            ret.push({
-              task,
-              latestJob: task.children[0],
-              previousJob: task.children[1],
-            })
-          }
-        }
-      }
-      return ret
-    },
 
     query () {
       return new SubscriptionQuery(
@@ -277,18 +303,6 @@ export default {
       )
     },
 
-    filteredTasks () {
-      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
-        this.tasksFilter.states?.length ? this.tasksFilter.states : []
-      )
-      return this.tasks.filter(({ task }) => matchNode(
-        task,
-        globToRegex(this.tasksFilter.id),
-        states,
-        waitingStateModifiers,
-        genericModifiers
-      ))
-    },
   },
 }
 </script>
