@@ -578,6 +578,10 @@ export function filterAssociations (nodes, mutations, permissions) {
       // Don't show 'play' on cycle points as the cycle point options that get auto-filled don't apply for restarting a workflow.
       continue
     }
+    if (nodes.length > 1 && ['editRuntime', 'log', 'info'].includes(mutation.name)) {
+      // Some commands can't accept multiple nodes
+      continue
+    }
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
     let applies = mutation._appliesTo

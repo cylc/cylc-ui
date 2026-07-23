@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-card>
       <v-card-title class="text-title-medium pb-1 pt-3">
         {{ title }}
-        <CopyBtn :text="title"/>
+        <CopyBtn v-if="singleNode" :text="title"/>
       </v-card-title>
       <v-card-subtitle class="pb-2">
         {{ typeAndStatusText }}
