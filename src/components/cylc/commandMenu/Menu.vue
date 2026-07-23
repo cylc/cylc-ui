@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               data-cy="mutation-edit"
               class="ml-2"
             >
-              <v-icon>{{ icons.mdiPencil }}</v-icon>
+              <v-icon>{{ mdiPencil }}</v-icon>
             </v-btn>
           </template>
         </v-list-item>
@@ -110,8 +110,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </v-menu>
 </template>
 
-<script>
-import { nextTick, ref } from 'vue'
+<script setup>
+import { nextTick, onBeforeUnmount, onMounted, ref, computed, inject } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
@@ -121,241 +123,210 @@ import Mutation from '@/components/cylc/Mutation.vue'
 import {
   mdiPencil,
 } from '@mdi/js'
-import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 import { eventBus } from '@/services/eventBus'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { upperFirst } from 'lodash-es'
 import { formatFlowNums } from '@/utils/tasks'
-import { getJobLogFileFromState } from '@/model/JobState.model'
+import { getLogFileForNode } from '@/model/JobState.model'
+import { useUserService } from '@/services/user.service'
 
-/**
- * Return the appropriate log file for a job or task node, or nothing for other nodes.
- *
- * @param {Object} node - Cylc object node (i.e. workflow, cycle, family, task or job)
- */
-export function getLogFileForNode (node) {
-  let jobState
-  if (node.type === 'job') {
-    jobState = node.node.state
-  } else if (node.type === 'task') {
-    // Choose latest job (jobs are sorted by submit num descending in the store)
-    jobState = node.children[0]?.node.state
-  } else {
+const router = useRouter()
+const store = useStore()
+const workflowService = inject('workflowService')
+
+const { user } = useUserService()
+
+const dialog = ref(false)
+const dialogMutation = ref(null)
+const dialogKey = ref(false)
+const expanded = ref(false)
+const node = ref(null)
+const mutations = ref([])
+const isLoadingMutations = ref(true)
+const showMenu = ref(false)
+const types = ref([])
+const target = ref(null)
+
+onMounted(() => {
+  eventBus.on('show-mutations-menu', showMutationsMenu)
+})
+
+onBeforeUnmount(() => {
+  eventBus.off('show-mutations-menu', showMutationsMenu)
+})
+
+const getNodes = store.getters['workflows/getNodes']
+
+const primaryMutations = computed(() => {
+  return workflowService.primaryMutations[node.value.type] || []
+})
+
+const canExpand = computed(() => {
+  return primaryMutations.value.length && mutations.value.length > primaryMutations.value.length
+})
+
+const displayMutations = computed(() => {
+  if (!mutations.value.length) {
+    return []
+  }
+  const shortList = primaryMutations.value
+  if (!expanded.value && shortList.length) {
+    return mutations.value
+      .filter(x => shortList.includes(x.mutation.name) && !isDisabled(x.mutation, true))
+    // sort by definition order
+      .sort(
+        (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
+      )
+  }
+  return mutations.value
+})
+
+const title = computed(() => {
+  return node.value.tokens.clone({ user: undefined }).id
+})
+
+const typeAndStatusText = computed(() => {
+  if (!node.value) {
+    // can happen briefly when switching workflows
     return
   }
-  return getJobLogFileFromState(jobState)
+  let ret = upperFirst(node.value.type)
+  if (node.value.type !== 'cycle') {
+    // NOTE: cycle point nodes don't have associated node data at present
+    ret += ' • '
+    if (node.value.type === 'workflow') {
+      ret += upperFirst(node.value.node.statusMsg || node.value.node.status || 'state unknown')
+      if (node.value.node.cylcVersion) {
+        ret += ` • Cylc ${node.value.node.cylcVersion}`
+      }
+    } else {
+      ret += upperFirst(node.value.node.state || 'state unknown')
+      if (node.value.node.isHeld) ret += ' (held)'
+      if (node.value.node.isRunahead) ret += ' (beyond runahead limit)'
+      if (node.value.node.runtime?.runMode === 'Skip') ret += ' (skip mode)'
+      if (node.value.node.isQueued) ret += ' (queued)'
+      if (node.value.node.isRetry) ret += ' (awaiting retry)'
+      else if (node.value.node.isWallclock) ret += ' (awaiting wallclock)'
+      else if (node.value.node.isXtriggered) ret += ' (awaiting xtrigger)'
+      if (node.value.node.flowNums) {
+        ret += ` • Flows: ${formatFlowNums(node.value.node.flowNums)}`
+      }
+    }
+  }
+  return ret
+})
+
+function isEditable (mutation, authorised) {
+  return mutation.name !== 'log' && mutation.name !== 'info' && !isDisabled(mutation, authorised)
 }
 
-export default {
-  name: 'CommandMenu',
+function isDisabled (mutation, authorised) {
+  if (!authorised) {
+    return true
+  }
+  let status = node.value.node?.status
+  if (node.value.type !== 'workflow') {
+    const nodeReturned = getNodes('workflow', [node.value.tokens.workflowID])
+    status = nodeReturned.length
+      ? nodeReturned[0].node.status
+      : WorkflowState.RUNNING.name
+  }
+  return !mutation._validStates.includes(status)
+}
 
-  components: {
-    CopyBtn,
-    Mutation,
-  },
+function openDialog (mutation) {
+  dialog.value = true
+  dialogMutation.value = mutation
+  // Tell Vue to re-render the dialog component:
+  dialogKey.value = !dialogKey.value
+}
 
-  setup () {
-    return {
-      dialog: ref(false),
-      dialogMutation: ref(null),
-      dialogKey: ref(false),
-      expanded: ref(false),
-      node: ref(null),
-      mutations: ref([]),
-      isLoadingMutations: ref(true),
-      showMenu: ref(false),
-      types: ref([]),
-      target: ref(null),
-      icons: {
-        mdiPencil,
+/* Call a mutation using only the tokens for args. */
+function callMutationFromContext (mutation) {
+  showMenu.value = false
+  // eslint-disable-next-line no-console
+  console.debug(`mutation: ${mutation._title} ${node.value.id}`)
+
+  if (mutation.name === 'log') {
+    // Navigate to the corresponding workflow then open the log view
+    // (no nav occurs if already on the correct workflow page)
+    router.push({
+      name: 'Workspace',
+      params: {
+        workflowName: node.value.tokens.workflow,
       },
-    }
-  },
-
-  mounted () {
-    eventBus.on('show-mutations-menu', this.showMutationsMenu)
-  },
-
-  beforeUnmount () {
-    eventBus.off('show-mutations-menu', this.showMutationsMenu)
-  },
-
-  computed: {
-    ...mapGetters('workflows', ['getNodes']),
-
-    primaryMutations () {
-      return this.$workflowService.primaryMutations[this.node.type] || []
-    },
-
-    canExpand () {
-      return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
-    },
-
-    ...mapState('user', ['user']),
-
-    displayMutations () {
-      if (!this.mutations.length) {
-        return []
-      }
-      const shortList = this.primaryMutations
-      if (!this.expanded && shortList.length) {
-        return this.mutations
-          .filter(x => shortList.includes(x.mutation.name) && !this.isDisabled(x.mutation, true))
-          // sort by definition order
-          .sort(
-            (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
-          )
-      }
-      return this.mutations
-    },
-
-    title () {
-      return this.node.tokens.clone({ user: undefined }).id
-    },
-
-    typeAndStatusText () {
-      if (!this.node) {
-        // can happen briefly when switching workflows
-        return
-      }
-      let ret = upperFirst(this.node.type)
-      if (this.node.type !== 'cycle') {
-        // NOTE: cycle point nodes don't have associated node data at present
-        ret += ' • '
-        if (this.node.type === 'workflow') {
-          ret += upperFirst(this.node.node.statusMsg || this.node.node.status || 'state unknown')
-          if (this.node.node.cylcVersion) {
-            ret += ` • Cylc ${this.node.node.cylcVersion}`
-          }
-        } else {
-          ret += upperFirst(this.node.node.state || 'state unknown')
-          if (this.node.node.isHeld) ret += ' (held)'
-          if (this.node.node.isRunahead) ret += ' (beyond runahead limit)'
-          if (this.node.node.runtime?.runMode === 'Skip') ret += ' (skip mode)'
-          if (this.node.node.isQueued) ret += ' (queued)'
-          if (this.node.node.isRetry) ret += ' (awaiting retry)'
-          else if (this.node.node.isWallclock) ret += ' (awaiting wallclock)'
-          else if (this.node.node.isXtriggered) ret += ' (awaiting xtrigger)'
-          if (this.node.node.flowNums) {
-            ret += ` • Flows: ${formatFlowNums(this.node.node.flowNums)}`
-          }
+    }).then(() => {
+      eventBus.emit(
+        'add-view',
+        {
+          name: 'Log',
+          initialOptions: {
+            relativeID: node.value.tokens.relativeID || null,
+            file: getLogFileForNode(node.value),
+          },
         }
-      }
-      return ret
-    },
-  },
-
-  methods: {
-    isEditable (mutation, authorised) {
-      return mutation.name !== 'log' && mutation.name !== 'info' && !this.isDisabled(mutation, authorised)
-    },
-    isDisabled (mutation, authorised) {
-      if (!authorised) {
-        return true
-      }
-      let status = this.node.node?.status
-      if (this.node.type !== 'workflow') {
-        const nodeReturned = this.getNodes('workflow', [this.node.tokens.workflowID])
-        status = nodeReturned.length
-          ? nodeReturned[0].node.status
-          : WorkflowState.RUNNING.name
-      }
-      return !mutation._validStates.includes(status)
-    },
-    openDialog (mutation) {
-      this.dialog = true
-      this.dialogMutation = mutation
-      // Tell Vue to re-render the dialog component:
-      this.dialogKey = !this.dialogKey
-    },
-
-    /* Call a mutation using only the tokens for args. */
-    callMutationFromContext (mutation) {
-      this.showMenu = false
-      // eslint-disable-next-line no-console
-      console.debug(`mutation: ${mutation._title} ${this.node.id}`)
-
-      if (mutation.name === 'log') {
-        // Navigate to the corresponding workflow then open the log view
-        // (no nav occurs if already on the correct workflow page)
-        this.$router.push({
-          name: 'Workspace',
-          params: {
-            workflowName: this.node.tokens.workflow,
-          },
-        }).then(() => {
-          eventBus.emit(
-            'add-view',
-            {
-              name: 'Log',
-              initialOptions: {
-                relativeID: this.node.tokens.relativeID || null,
-                file: getLogFileForNode(this.node),
-              },
-            }
-          )
-        })
-      } else if (mutation.name === 'info') {
-        this.$router.push({
-          name: 'Workspace',
-          params: {
-            workflowName: this.node.tokens.workflow,
-          },
-        }).then(() => {
-          eventBus.emit(
-            'add-view',
-            {
-              name: 'Info',
-              initialOptions: {
-                requestedTokens: this.node.tokens || undefined,
-              },
-            }
-          )
-        })
-      } else {
-        mutate(
-          mutation,
-          getMutationArgsFromTokens(mutation, this.node.tokens),
-          this.$workflowService.apolloClient
-        )
-      }
-    },
-
-    async showMutationsMenu ({ node, target }) {
-      this.target = target
-      this.node = node
-      this.expanded = false
-      // show the menu after it's rendered to ensure animation works properly
-      await nextTick()
-      this.showMenu = true
-      // ensure graphql query to get mutations has completed
-      const { mutations, types } = await this.$workflowService.introspection
-      // if mutations are slow to load then there will be a delay before they are reactively
-      // displayed in the menu (this is what the skeleton-loader is for)
-      this.isLoadingMutations = false
-      this.types = types
-      this.mutations = filterAssociations(
-        this.node.type,
-        this.node.tokens,
-        mutations,
-        this.user.permissions
-      ).sort(
-        (a, b) => a.mutation.name.localeCompare(b.mutation.name)
       )
-    },
+    })
+  } else if (mutation.name === 'info') {
+    router.push({
+      name: 'Workspace',
+      params: {
+        workflowName: node.value.tokens.workflow,
+      },
+    }).then(() => {
+      eventBus.emit(
+        'add-view',
+        {
+          name: 'Info',
+          initialOptions: {
+            requestedTokens: node.value.tokens || undefined,
+          },
+        }
+      )
+    })
+  } else {
+    mutate(
+      mutation,
+      getMutationArgsFromTokens(mutation, node.value.tokens),
+      workflowService.apolloClient
+    )
+  }
+}
 
-    initialData (mutation, tokens) {
-      return getMutationArgsFromTokens(mutation, tokens)
-    },
+async function showMutationsMenu (e) {
+  target.value = e.target
+  node.value = e.node
+  expanded.value = false
+  // show the menu after it's rendered to ensure animation works properly
+  await nextTick()
+  showMenu.value = true
+  // ensure graphql query to get mutations has completed
+  // const i = await workflowService.introspection
+  const introspection = await workflowService.introspection
+  // if mutations are slow to load then there will be a delay before they are reactively
+  // displayed in the menu (this is what the skeleton-loader is for)
+  isLoadingMutations.value = false
+  types.value = introspection.types
+  mutations.value = filterAssociations(
+    node.value.type,
+    node.value.tokens,
+    introspection.mutations,
+    user.permissions
+  ).sort(
+    (a, b) => a.mutation.name.localeCompare(b.mutation.name)
+  )
+}
 
-    enact (mutation, requiresInfo) {
-      if (requiresInfo) {
-        this.openDialog(mutation)
-      } else {
-        this.callMutationFromContext(mutation)
-      }
-    },
-  },
+function initialData (mutation, tokens) {
+  return getMutationArgsFromTokens(mutation, tokens)
+}
+
+function enact (mutation, requiresInfo) {
+  if (requiresInfo) {
+    openDialog(mutation)
+  } else {
+    callMutationFromContext(mutation)
+  }
 }
 </script>
