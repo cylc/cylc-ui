@@ -16,7 +16,7 @@
  */
 
 import { config } from '@vue/test-utils'
-import { routeLocationKey } from 'vue-router'
+import { routeLocationKey, routerKey } from 'vue-router'
 
 /**
  * Create a promise that can be manually resolved.
@@ -55,6 +55,15 @@ export function getIDMap (filteredOutNodesCache) {
  */
 export function mockRoute (route = { params: { workflowName: 'test' } }) {
   config.global.provide[routeLocationKey] = route
+}
+
+/**
+ * Provide a mock router object for components that use useRouter().
+ *
+ * NOTE: this applies for the rest of the test suite/file, but can be overriden by subsequent calls.
+ */
+export function mockRouter (router) {
+  config.global.provide[routerKey] = router
 }
 
 /**

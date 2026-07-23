@@ -15,7 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { getJobLogFileFromState } from '@/model/JobState.model'
+import { getJobLogFileFromState, getLogFileForNode } from '@/model/JobState.model'
+import {
+  simpleTaskNode,
+  simpleJobNode,
+  simpleWorkflowNode,
+} from '$tests/unit/components/cylc/tree/tree.data'
 
 describe('Job state', () => {
   it.each([
@@ -28,5 +33,27 @@ describe('Job state', () => {
     [undefined, undefined],
   ])('getJobLogFileFromState(%s) -> %s', (state, expected) => {
     expect(getJobLogFileFromState(state)).toEqual(expected)
+  })
+
+  describe('getLogFileForNode()', () => {
+    it.for([
+      {
+        testID: 'job node',
+        node: simpleJobNode,
+        expected: 'job.err',
+      },
+      {
+        testID: 'task node with multiple jobs (picks latest)',
+        node: simpleTaskNode,
+        expected: 'job-activity.log',
+      },
+      {
+        testID: 'workflow node',
+        node: simpleWorkflowNode,
+        expected: undefined,
+      },
+    ])('$testID', ({ node, expected }) => {
+      expect(getLogFileForNode(node)).toEqual(expected)
+    })
   })
 })
