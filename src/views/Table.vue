@@ -21,15 +21,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-table pa-2 pb-0 h-100 flex-column d-flex"
   >
     <ViewToolbar>
-      <TaskFilter v-model="tasksFilter"/>
+      <template #filters>
+        <TaskFilter v-model="tasksFilter"/>
+      </template>
+      <template #select>
+        <v-btn
+          v-if="!enableSelect"
+          text="Select"
+          @click="() => enableSelect = true"
+          :prepend-icon="mdiSelect"
+        />
+        <template v-else>
+          <v-btn
+            text="Enact"
+            v-command-menu="[]"
+            :prepend-icon="mdiPencilBoxMultiple"
+            :disabled="!selection.length"
+          >
+            <template #append>
+              <v-badge
+                v-if="selection.length"
+                :content="selection.length"
+                inline
+              />
+            </template>
+          </v-btn>
+          <v-btn
+            text="Cancel"
+            @click="() => { enableSelect = false; selection = [] }"
+            :prepend-icon="mdiSelectOff"
+          />
+        </template>
+      </template>
     </ViewToolbar>
     <div class="overflow-hidden">
       <TableComponent
         :tasks="filteredTasks"
+        v-model:selection="selection"
         v-model:sort-by="sortBy"
         v-model:page="page"
         v-model:items-per-page="itemsPerPage"
         v-bind="{ filterState }"
+        :show-select="enableSelect"
         class="mh-100"
       />
     </div>
@@ -38,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
 import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -47,6 +81,7 @@ import {
 } from '@/utils/initialOptions'
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
+import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
@@ -152,6 +187,7 @@ export default {
     TableComponent,
     TaskFilter,
     ViewToolbar,
+    ViewToolbarBtn,
   },
 
   emits: [updateInitialOptionsEvent],
@@ -187,6 +223,9 @@ export default {
 
     const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
 
+    const enableSelect = useInitialOptions('enableSelect', { props, emit }, false)
+    const selection = useInitialOptions('selection', { props, emit }, [])
+
     return {
       sortBy,
       page,
@@ -195,6 +234,11 @@ export default {
       filterState,
       workflowIDs,
       variables,
+      enableSelect,
+      selection,
+      mdiSelect,
+      mdiSelectOff,
+      mdiPencilBoxMultiple,
     }
   },
 

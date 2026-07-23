@@ -17,15 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-data-table
+    v-model="selection"
+    v-model:sort-by="sortBy"
+    v-model:page="page"
+    v-model:items-per-page="itemsPerPage"
     :headers="headers"
     :items="tasks"
     item-value="task.id"
     multi-sort
-    v-model:sort-by="sortBy"
     show-expand
     density="compact"
-    v-model:page="page"
-    v-model:items-per-page="itemsPerPage"
     fixed-header
   >
     <template #item.task.name="{ item }">
@@ -163,6 +164,7 @@ const props = defineProps({
   },
 })
 
+const selection = defineModel('selection')
 const sortBy = defineModel('sortBy')
 const page = defineModel('page')
 const itemsPerPage = defineModel('itemsPerPage')

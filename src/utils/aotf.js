@@ -798,11 +798,11 @@ export function constructQueryStr (query) {
  * information we can from the context tokens.
  *
  * @param {Mutation} mutation
- * @param {Object} tokens
+ * @param {...Tokens} tokensList
  *
  * @returns {Object}
  * */
-export function getMutationArgsFromTokens (mutation, tokens) {
+export function getMutationArgsFromTokens (mutation, ...tokensList) {
   const argspec = {}
   for (const arg of mutation.args) {
     if (
@@ -814,18 +814,24 @@ export function getMutationArgsFromTokens (mutation, tokens) {
       // the schema without creating a compatibility issue with the UIS.
       arg.name !== 'cutoff'
     ) {
-      let value
-      if (arg._cylcType in compoundFields) {
-        value = compoundFields[arg._cylcType](tokens)
-      } else {
-        const alternate = alternateFields[arg._cylcType]
-        const token = arg._cylcObjects.includes(alternate)
-          ? alternate
-          : arg._cylcObjects.find((t) => tokens[t])
-        value = tokens[token]
-      }
-      if (value) {
-        argspec[arg.name] = arg._multiple ? [value] : value
+      const value = new Set()
+      for (const tokens of tokensList) {
+        if (arg._cylcType in compoundFields) {
+          value.add(compoundFields[arg._cylcType](tokens))
+        } else {
+          const alternate = alternateFields[arg._cylcType]
+          const token = arg._cylcObjects.includes(alternate)
+            ? alternate
+            : arg._cylcObjects.find((t) => tokens[t])
+          value.add(tokens[token])
+        }
+        if (value.size) {
+          if (arg._multiple) {
+            argspec[arg.name] = Array.from(value)
+            break
+          }
+          argspec[arg.name] = value.values().next().value
+        }
       }
     }
     argspec[arg.name] ||= arg._default

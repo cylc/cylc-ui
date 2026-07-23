@@ -35,12 +35,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { activeColor } from './util'
 
 const height = 40
+const heightPx = `${height}px`
 
 const vuetifyDefaults = {
   VBtn: {
-    size: height,
     variant: 'text',
-    density: 'compact',
     rounded: 'lg',
   },
   VBtnToggle: {
@@ -82,6 +81,13 @@ const vuetifyDefaults = {
     }
 
     >, .group > {
+      .v-btn {
+        height: v-bind(heightPx);
+        &.v-btn--icon {
+          width: v-bind(heightPx);
+        }
+      }
+
       .v-input, .v-btn-group {
         // add spacing after certain elements
         &:not(:last-child) {

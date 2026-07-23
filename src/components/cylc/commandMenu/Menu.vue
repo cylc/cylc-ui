@@ -309,8 +309,8 @@ async function showMutationsMenu (e) {
   isLoadingMutations.value = false
   types.value = introspection.types
   mutations.value = filterAssociations(
-    node.value.type,
-    node.value.tokens,
+    e.node.type,
+    e.node.tokens,
     introspection.mutations,
     user.permissions
   ).sort(
