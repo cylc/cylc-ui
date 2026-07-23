@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-menu
-    v-if="node"
+    v-if="target"
     :key="target.dataset.cInteractive"
     v-model="showMenu"
     :target="target"
@@ -98,8 +98,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <Mutation
         :initialOptions="{
           mutation: dialogMutation,
-          cylcObject: node,
-          data: initialData(dialogMutation, node.tokens),
+          cylcObject: nodes,
+          data: initialData(dialogMutation),
           types: types,
         }"
         @close="() => dialog = false"
@@ -141,7 +141,7 @@ const dialog = ref(false)
 const dialogMutation = ref(null)
 const dialogKey = ref(false)
 const expanded = ref(false)
-const node = ref(null)
+const nodes = ref([])
 const mutations = ref([])
 const isLoadingMutations = ref(true)
 const showMenu = ref(false)
@@ -158,9 +158,21 @@ onBeforeUnmount(() => {
 
 const getNodes = store.getters['workflows/getNodes']
 
-const primaryMutations = computed(() => {
-  return workflowService.primaryMutations[node.value.type] || []
-})
+const singleNode = computed(
+  () => nodes.value.length === 1 ? nodes.value[0] : null
+)
+
+const homogenousNodeType = computed(
+  () => singleNode.value?.type ?? (
+    nodes.value.every((n) => n.type === nodes.value[0].type)
+      ? nodes.value[0].type
+      : undefined
+  )
+)
+
+const primaryMutations = computed(
+  () => workflowService.primaryMutations[singleNode.value?.type] || []
+)
 
 const canExpand = computed(() => {
   return primaryMutations.value.length && mutations.value.length > primaryMutations.value.length
@@ -182,35 +194,36 @@ const displayMutations = computed(() => {
   return mutations.value
 })
 
-const title = computed(() => {
-  return node.value.tokens.clone({ user: undefined }).id
-})
+const title = computed(
+  () => singleNode.value?.tokens.clone({ user: undefined }).id ??
+    `${nodes.value.length} nodes selected`
+)
 
 const typeAndStatusText = computed(() => {
-  if (!node.value) {
-    // can happen briefly when switching workflows
+  if (!singleNode.value) {
     return
   }
-  let ret = upperFirst(node.value.type)
-  if (node.value.type !== 'cycle') {
+  let ret = upperFirst(singleNode.value.type)
+  if (singleNode.value.type !== 'cycle') {
     // NOTE: cycle point nodes don't have associated node data at present
     ret += ' • '
-    if (node.value.type === 'workflow') {
-      ret += upperFirst(node.value.node.statusMsg || node.value.node.status || 'state unknown')
-      if (node.value.node.cylcVersion) {
-        ret += ` • Cylc ${node.value.node.cylcVersion}`
+    const n = singleNode.value.node
+    if (singleNode.value.type === 'workflow') {
+      ret += upperFirst(n.statusMsg || n.status || 'state unknown')
+      if (n.cylcVersion) {
+        ret += ` • Cylc ${n.cylcVersion}`
       }
     } else {
-      ret += upperFirst(node.value.node.state || 'state unknown')
-      if (node.value.node.isHeld) ret += ' (held)'
-      if (node.value.node.isRunahead) ret += ' (beyond runahead limit)'
-      if (node.value.node.runtime?.runMode === 'Skip') ret += ' (skip mode)'
-      if (node.value.node.isQueued) ret += ' (queued)'
-      if (node.value.node.isRetry) ret += ' (awaiting retry)'
-      else if (node.value.node.isWallclock) ret += ' (awaiting wallclock)'
-      else if (node.value.node.isXtriggered) ret += ' (awaiting xtrigger)'
-      if (node.value.node.flowNums) {
-        ret += ` • Flows: ${formatFlowNums(node.value.node.flowNums)}`
+      ret += upperFirst(n.state || 'state unknown')
+      if (n.isHeld) ret += ' (held)'
+      if (n.isRunahead) ret += ' (beyond runahead limit)'
+      if (n.runtime?.runMode === 'Skip') ret += ' (skip mode)'
+      if (n.isQueued) ret += ' (queued)'
+      if (n.isRetry) ret += ' (awaiting retry)'
+      else if (n.isWallclock) ret += ' (awaiting wallclock)'
+      else if (n.isXtriggered) ret += ' (awaiting xtrigger)'
+      if (n.flowNums) {
+        ret += ` • Flows: ${formatFlowNums(n.flowNums)}`
       }
     }
   }
@@ -225,14 +238,16 @@ function isDisabled (mutation, authorised) {
   if (!authorised) {
     return true
   }
-  let status = node.value.node?.status
-  if (node.value.type !== 'workflow') {
-    const nodeReturned = getNodes('workflow', [node.value.tokens.workflowID])
-    status = nodeReturned.length
-      ? nodeReturned[0].node.status
-      : WorkflowState.RUNNING.name
-  }
-  return !mutation._validStates.includes(status)
+  // let status = singleNode.value?.status
+  // if (homogenousNodeType.value !== 'workflow') {
+  //   const workflow = getNodes('workflow', [nodes.value[0].tokens.workflowID])?.[0]
+  //   status = workflow?.node.status ?? WorkflowState.RUNNING.name
+  // }
+  // return !mutation._validStates.includes(status)
+  const wflowNodes = getNodes('workflow', nodes.value.map((n) => n.tokens.workflowID))
+  return wflowNodes.some(
+    ({ node }) => !mutation._validStates.includes(node.status ?? WorkflowState.RUNNING.name)
+  )
 }
 
 function openDialog (mutation) {
@@ -245,16 +260,13 @@ function openDialog (mutation) {
 /* Call a mutation using only the tokens for args. */
 function callMutationFromContext (mutation) {
   showMenu.value = false
-  // eslint-disable-next-line no-console
-  console.debug(`mutation: ${mutation._title} ${node.value.id}`)
-
   if (mutation.name === 'log') {
     // Navigate to the corresponding workflow then open the log view
     // (no nav occurs if already on the correct workflow page)
     router.push({
       name: 'Workspace',
       params: {
-        workflowName: node.value.tokens.workflow,
+        workflowName: singleNode.value.tokens.workflow,
       },
     }).then(() => {
       eventBus.emit(
@@ -262,8 +274,8 @@ function callMutationFromContext (mutation) {
         {
           name: 'Log',
           initialOptions: {
-            relativeID: node.value.tokens.relativeID || null,
-            file: getLogFileForNode(node.value),
+            relativeID: singleNode.value.tokens.relativeID || null,
+            file: getLogFileForNode(singleNode.value),
           },
         }
       )
@@ -272,7 +284,7 @@ function callMutationFromContext (mutation) {
     router.push({
       name: 'Workspace',
       params: {
-        workflowName: node.value.tokens.workflow,
+        workflowName: singleNode.value.tokens.workflow,
       },
     }).then(() => {
       eventBus.emit(
@@ -280,7 +292,7 @@ function callMutationFromContext (mutation) {
         {
           name: 'Info',
           initialOptions: {
-            requestedTokens: node.value.tokens || undefined,
+            requestedTokens: singleNode.value.tokens || undefined,
           },
         }
       )
@@ -288,7 +300,7 @@ function callMutationFromContext (mutation) {
   } else {
     mutate(
       mutation,
-      getMutationArgsFromTokens(mutation, node.value.tokens),
+      initialData(mutation),
       workflowService.apolloClient
     )
   }
@@ -296,7 +308,7 @@ function callMutationFromContext (mutation) {
 
 async function showMutationsMenu (e) {
   target.value = e.target
-  node.value = e.node
+  nodes.value = e.nodes
   expanded.value = false
   // show the menu after it's rendered to ensure animation works properly
   await nextTick()
@@ -309,8 +321,7 @@ async function showMutationsMenu (e) {
   isLoadingMutations.value = false
   types.value = introspection.types
   mutations.value = filterAssociations(
-    e.node.type,
-    e.node.tokens,
+    e.nodes,
     introspection.mutations,
     user.permissions
   ).sort(
@@ -318,8 +329,8 @@ async function showMutationsMenu (e) {
   )
 }
 
-function initialData (mutation, tokens) {
-  return getMutationArgsFromTokens(mutation, tokens)
+function initialData (mutation) {
+  return getMutationArgsFromTokens(mutation, ...nodes.value.map((n) => n.tokens))
 }
 
 function enact (mutation, requiresInfo) {

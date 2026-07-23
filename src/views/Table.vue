@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <template v-else>
           <v-btn
             text="Enact"
-            v-command-menu="[]"
+            v-command-menu="selection"
             :prepend-icon="mdiPencilBoxMultiple"
             :disabled="!selection.length"
           >

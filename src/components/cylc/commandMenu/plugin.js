@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { uniqueId } from 'lodash-es'
+import { isArray, uniqueId } from 'lodash-es'
 import { eventBus } from '@/services/eventBus'
+import { store } from '@/store'
 
 /** Reference to closure listeners (needed as we are using variables from another scope) */
 const listeners = new WeakMap()
@@ -28,7 +29,9 @@ function bind (el, binding, vnode) {
   const listener = function (e) {
     e.stopPropagation() // prevents click event from bubbling up to parents
     eventBus.emit('show-mutations-menu', {
-      node: binding.value,
+      nodes: isArray(binding.value)
+        ? binding.value.map((id) => store.state.workflows.cylcTree.$index[id])
+        : [binding.value],
       target: el,
     })
   }
