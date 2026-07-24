@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-model:sort-by="sortBy"
     v-model:page="page"
     v-model:items-per-page="itemsPerPage"
-    :headers="headers"
     :items="tasks"
+    v-bind="{ headers, showSelect }"
     item-value="task.id"
     multi-sort
     show-expand
@@ -93,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="(job, index) in item.task.children"
         class="expanded-row bg-grey-lighten-5"
       >
+        <td v-if="showSelect"></td> <!-- Empty cell for select column -->
         <td :colspan="3">
           <div class="d-flex align-content-center flex-nowrap">
             <div v-bind="jobIconParentProps" :style="{ marginLeft: jobIconParentProps.style.width }">
@@ -161,6 +162,10 @@ const props = defineProps({
   filterState: {
     type: [Object, null],
     default: null,
+  },
+  showSelect: {
+    type: Boolean,
+    default: false,
   },
 })
 

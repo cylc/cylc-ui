@@ -196,7 +196,7 @@ const displayMutations = computed(() => {
 
 const title = computed(
   () => singleNode.value?.tokens.clone({ user: undefined }).id ??
-    `${nodes.value.length} nodes selected`
+    `${nodes.value.length} items selected`
 )
 
 const typeAndStatusText = computed(() => {

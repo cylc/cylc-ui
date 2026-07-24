@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </ViewToolbar>
     <div class="overflow-hidden">
       <TableComponent
-        :tasks="filteredTasks"
+        :tasks="filteredItems"
         v-model:selection="selection"
         v-model:sort-by="sortBy"
         v-model:page="page"
@@ -240,29 +240,27 @@ export default {
     const tasks = computedWithControl(
       // Freeze the list of tasks when selection is enabled, to stop selected tasks disappearing
       () => !enableSelect.value && workflows.value,
-      () => {
-        const ret = []
-        for (const workflow of workflows.value) {
-          for (const cycle of workflow.children) {
-            for (const task of cycle.children) {
-              ret.push({
-                task,
-                latestJob: task.children[0],
-                previousJob: task.children[1],
-              })
-            }
-          }
-        }
-        return ret
-      },
+      () => workflows.value.flatMap(
+        (workflow) => workflow.children.flatMap(
+          (cycle) => cycle.children
+        )
+      ),
       { deep: true }
     )
 
-    const filteredTasks = computed(() => {
+    const items = computed(
+      () => tasks.value.map((task) => ({
+        task,
+        latestJob: task.children[0],
+        previousJob: task.children[1],
+      }))
+    )
+
+    const filteredItems = computed(() => {
       const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
         tasksFilter.value.states?.length ? tasksFilter.value.states : []
       )
-      return tasks.value.filter(({ task }) => matchNode(
+      return items.value.filter(({ task }) => matchNode(
         task,
         globToRegex(tasksFilter.value.id),
         states,
@@ -272,7 +270,7 @@ export default {
     })
 
     return {
-      filteredTasks,
+      filteredItems,
       sortBy,
       page,
       itemsPerPage,
