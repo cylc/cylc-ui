@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-card-text>
             <p>
               Tasks can be configured to skip rather than run. These tasks are
-              marked with a special icon proving they are not otherwise held
+              marked with a special icon providing they are not otherwise held
               back from running by some other factor (e.g, if they are held).
             </p>
             <v-list
