@@ -98,9 +98,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-card-title>
           <v-card-text>
             <p>
-              Tasks can be configured to skip rather than run. These tasks are
-              marked with a special icon providing they are not otherwise held
-              back from running by some other factor (e.g, if they are held).
+              Tasks can be configured to run in skip mode, which automatically sets
+              their required outputs to complete without running a job. These tasks
+              are marked with a special "fast forward" icon providing they are not
+              otherwise held back from running (e.g, if they are held).
             </p>
             <v-list
                lines="three"
