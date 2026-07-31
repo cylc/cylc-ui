@@ -690,14 +690,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hpcc-js/wasm@npm:2.33.2":
-  version: 2.33.2
-  resolution: "@hpcc-js/wasm@npm:2.33.2"
+"@hpcc-js/wasm@npm:2.35.0":
+  version: 2.35.0
+  resolution: "@hpcc-js/wasm@npm:2.35.0"
   dependencies:
     yargs: "npm:18.0.0"
   bin:
     dot-wasm: deprecated/dot-wasm.js
-  checksum: 10c0/b397d70498ef3ec28195727308ca3f034ed98fa6165b822b3d2a0a1f198edc076221d7d9d4b28d909f2d3fd6ad205f9b33d989fa0fc481452d4621da1b5952a2
+  checksum: 10c0/2b0c9e7630ccf14b398375f0084cf10fa5151e9c321a71086b852374632d1744364e6b0663080bbca850f9b1a0de37b23a4531684056968a4c62c53f96efb3fe
   languageName: node
   linkType: hard
 
@@ -3757,7 +3757,7 @@ __metadata:
   dependencies:
     "@apollo/client": "npm:3.14.1"
     "@cypress/code-coverage": "npm:4.0.3"
-    "@hpcc-js/wasm": "npm:2.33.2"
+    "@hpcc-js/wasm": "npm:2.35.0"
     "@lumino/default-theme": "npm:2.1.16"
     "@lumino/widgets": "npm:2.9.0"
     "@mdi/js": "npm:7.4.47"
