@@ -73,7 +73,7 @@ export default {
     )
     const coreViewStyle = computed(() => ({
       marginTop: '0px',
-      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh'
+      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh',
     }))
 
     return {
@@ -87,25 +87,25 @@ export default {
     CommandMenu,
     Alert,
     Drawer,
-    Toolbar
+    Toolbar,
   },
 
   props: {
     showSidebar: {
       type: Boolean,
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
 
   computed: {
-    ...mapState(['offline'])
+    ...mapState(['offline']),
   },
 
   errorCaptured (error, vm, info) {
     store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
     // Stop error propagating further:
     return false
-  }
+  },
 }
 </script>

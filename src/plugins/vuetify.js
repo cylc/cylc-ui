@@ -45,7 +45,7 @@ const inputDefaults = Object.fromEntries(
       variant: 'outlined',
       clearIcon: mdiClose,
       hideDetails: 'auto',
-    }
+    },
   ])
 )
 
@@ -62,20 +62,20 @@ export const vuetifyOptions = {
           primary: colors.lightBlue.accent4,
           'primary-darken-1': colors.lightBlue.darken4,
           secondary: colors.teal.accent4,
-          'secondary-darken-1': colors.teal.darken3
-        }
-      }
-    }
+          'secondary-darken-1': colors.teal.darken3,
+        },
+      },
+    },
   },
   display: {
-    mobileBreakpoint: 991
+    mobileBreakpoint: 991,
   },
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi
-    }
+      mdi,
+    },
   },
   aliases: {
     VSelectActions: VCardActions,
@@ -90,14 +90,14 @@ export const vuetifyOptions = {
       slim: true,
     },
     VSelectActions: {
-      class: 'mt-n2'
+      class: 'mt-n2',
     },
     VFilterEmptyState: {
       title: 'No results',
       text: 'Try adjusting your filters above',
       class: 'text-medium-emphasis',
     },
-    ...inputDefaults
+    ...inputDefaults,
   },
 }
 

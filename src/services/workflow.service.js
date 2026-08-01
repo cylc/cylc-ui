@@ -30,7 +30,7 @@ import {
   primaryMutations,
   processMutations,
   query,
-  tokenise
+  tokenise,
 } from '@/utils/aotf'
 import { store } from '@/store/index'
 import { createApolloClient } from '@/graphql/index'
@@ -118,7 +118,7 @@ class WorkflowService {
           mutation,
           tokenise(id),
         ),
-        ...args
+        ...args,
       },
       this.apolloClient
     )
@@ -146,7 +146,7 @@ class WorkflowService {
     const response = await this.apolloClient.query({
       query,
       variables,
-      fetchPolicy: 'no-cache'
+      fetchPolicy: 'no-cache',
     })
     return response
   }
@@ -163,7 +163,7 @@ class WorkflowService {
     try {
       response = await this.apolloClient.query({
         query: getIntrospectionQuery(),
-        fetchPolicy: 'no-cache'
+        fetchPolicy: 'no-cache',
       })
     } catch (err) {
       console.error(err)
@@ -208,7 +208,7 @@ class WorkflowService {
     return {
       name: queryName,
       args: queryObj.args.filter(({ name }) => argNames.includes(name)),
-      fields: extractFields(type, fields, types)
+      fields: extractFields(type, fields, types),
     }
   }
 
@@ -306,7 +306,7 @@ class WorkflowService {
             },
             error: function error (err) {
               subscription.handleViewState(ViewState.ERROR, err)
-            }
+            },
           }
         )
         this.subscriptions[subscription.query.name] = subscription
@@ -363,7 +363,7 @@ class WorkflowService {
             },
             error: function error (err) {
               subscription.handleViewState(ViewState.ERROR, err)
-            }
+            },
           }
         )
         this.subscriptions[subscription.query.name] = subscription
@@ -402,14 +402,14 @@ class WorkflowService {
     return this.apolloClient.subscribe({
       query,
       variables,
-      fetchPolicy: 'no-cache'
+      fetchPolicy: 'no-cache',
     }).subscribe({
       next (value) {
         subscriptionOptions.next(value)
       },
       error (errorValue) {
         subscriptionOptions.error(errorValue)
-      }
+      },
     })
   }
 

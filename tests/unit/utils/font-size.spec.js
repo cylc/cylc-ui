@@ -16,7 +16,7 @@
  */
 
 import {
-  decreaseFontSize, getCurrentFontSize, increaseFontSize, INCREMENT, resetFontSize
+  decreaseFontSize, getCurrentFontSize, increaseFontSize, INCREMENT, resetFontSize,
 } from '@/utils/font-size'
 
 describe('Font Size', () => {
