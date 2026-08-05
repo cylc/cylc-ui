@@ -58,7 +58,7 @@
     "@vitejs/plugin-vue": "6.0.8",
     "@vitest/coverage-istanbul": "4.1.10",
     "@vue/test-utils": "2.4.11",
-    "concurrently": "9.2.4",
+    "concurrently": "10.0.4",
     "cross-fetch": "4.1.0",
     "cypress": "15.19.0",
     "eslint": "8.57.1",
