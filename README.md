@@ -147,7 +147,7 @@ Its configuration is defined in [`src/plugins/vuetify.js`](src/plugins/vuetify.j
 
 We use [concurrently](https://github.com/open-cli-tools/concurrently) for
 concurrently running the mock data json-server and the Vite dev server, and
-also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.cjs).
+also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.js).
 
 ### Browser compatibility
 
