@@ -146,7 +146,9 @@
       "matchPackageNames": [
         "simple-icons"
       ],
-      "prPriority": -1
+      "schedule": [
+        "* * * 1,6 *"
+      ]
     },
     {
       "groupName": "analysis view packages",
