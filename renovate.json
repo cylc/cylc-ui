@@ -8,6 +8,12 @@
   ],
   "platformAutomerge": true,
   "automergeStrategy": "squash",
+   "github-actions": {
+    "enabled": false
+  },
+  "minimumReleaseAge": "4 days",
+  "internalChecksFilter": "strict",
+  "prCreation": "not-pending",
   "packageRules": [
     {
       "matchDepNames": [
@@ -170,9 +176,6 @@
     "addLabels": [
       "security"
     ]
-  },
-  "github-actions": {
-    "enabled": false
   },
   "postUpdateOptions": [
     "yarnDedupeHighest"
