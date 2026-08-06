@@ -140,7 +140,7 @@
       "matchPackageNames": [
         "simple-icons"
       ],
-      "prPriority": -1
+      "dependencyDashboardApproval": true
     },
     {
       "groupName": "analysis view packages",
