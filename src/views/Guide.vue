@@ -52,32 +52,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
          </v-card-text>
             <table id="task-job-state-table">
-              <tr>
-                <td>Task</td>
-                <td></td>
-                <td>Job</td>
-              </tr>
-              <tr
-                v-bind:key="state.name.name"
-                v-for="state of states"
-              >
-                <td style="font-size: 2em;">
-                  <!-- set times to make the progress change -->
-                  <task
-                    :task="{
-                      state: state.name,
-                      task: {meanElapsedTime: 30}
-                    }"
-                    :startTime="String(Date.now())"
-                  />
-                </td>
-                <td>
-                  <span>{{ state.name }}</span>
-                </td>
-                <td style="font-size: 2em;">
-                  <job :status="state.name" />
-                </td>
-              </tr>
+              <thead style="font-size: 2em;">
+                <tr>
+                  <td>Task</td>
+                  <td></td>
+                  <td>Job</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-bind:key="state.name.name"
+                  v-for="state of states"
+                >
+                  <td style="font-size: 2em;">
+                    <!-- set times to make the progress change -->
+                    <Task
+                      :task="{
+                        state: state.name,
+                        task: {meanElapsedTime: 30}
+                      }"
+                      :startTime="String(Date.now())"
+                    />
+                  </td>
+                  <td>
+                    <span>{{ state.name }}</span>
+                  </td>
+                  <td style="font-size: 2em;">
+                    <Job :status="state.name" />
+                  </td>
+                </tr>
+              </tbody>
             </table>
           <v-card-text>
             <p>
@@ -107,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <v-list-item>
                 <template v-slot:prepend>
-                  <task
+                  <Task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
                     class="mr-4"
@@ -434,8 +438,8 @@ import { isFlowNone } from '@/utils/tasks'
 export default {
   name: 'Guide',
   components: {
-    task: Task,
-    job: Job,
+    Task,
+    Job,
     GraphNode,
   },
 
@@ -524,24 +528,12 @@ export default {
       line-height: 1.2em;
     }
 
-    tr:nth-child(1) {
-      font-size: 2em;
-    }
-
-    tr > td:nth-child(2) {
-      font-size: 1em;
-    }
-
     tr > td:nth-child(1), tr > td:nth-child(3) {
       width: 5em;
     }
 
     td {
       padding: 0.1em 0 0.1em 0;
-    }
-
-    td > * {
-      background-color: white;
     }
   }
 </style>
