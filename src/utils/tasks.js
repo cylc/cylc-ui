@@ -136,16 +136,6 @@ export function formatFlowNums (flowNums) {
   return JSON.parse(flowNums).join(', ') || 'None'
 }
 
-/**
- * Return whether a task is in the None flow.
- *
- * @param {string=} flowNums
- * @returns {boolean}
- */
-export function isFlowNone (flowNums) {
-  return Boolean(flowNums && !JSON.parse(flowNums).length)
-}
-
 export function isTruthyOrZero (value) {
   return value === 0 || Boolean(value)
 }
