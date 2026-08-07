@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- Filters -->
       <v-row no-gutters>
         <v-col
+          v-if="chartType !== 'timeSeries'"
           cols="12"
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
@@ -38,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="tasksFilter.name"
             ref="filterNameInput"
             :items="this.tasks.map(task => task.name)"
-            :disabled="chartType === 'timeSeries'"
           />
         </v-col>
         <v-col
