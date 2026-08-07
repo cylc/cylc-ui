@@ -522,7 +522,13 @@ export default {
     )
 
     // re-subscribe when the log view mode (TAIL/HEAD) is toggled
-    this.$watch(() => this.tailMode, () => this.updateQuery())
+    this.$watch(() => this.tailMode, (tailMode) => {
+      if (tailMode) {
+        // in TAIL mode jump to the end of the file and follow new lines
+        this.autoScroll = true
+      }
+      this.updateQuery()
+    })
   },
 
   computed: {
