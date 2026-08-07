@@ -218,6 +218,8 @@ import {
   mdiFileAlertOutline,
   mdiMouseMoveDown,
   mdiInformationOutline,
+  mdiFormatVerticalAlignBottom,
+  mdiFormatVerticalAlignTop,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -242,13 +244,23 @@ import { useLogWordWrapDefault } from '@/composables/localStorage'
 import { eventBus } from '@/services/eventBus'
 
 /**
+ * Log view modes.
+ *
+ * These map to the `--mode` values of `cylc cat-log`. "HEAD" is presented to
+ * the user but corresponds to the "tail-from-start" cat-log mode (follow the
+ * file from the start); "TAIL" follows from the end.
+ */
+const LOG_MODE_TAIL = 'tail'
+const LOG_MODE_HEAD = 'tail-from-start'
+
+/**
  * Query used to retrieve data for the Log view.
  *
  * @type {DocumentNode}
 */
 const LOGS_SUBSCRIPTION = gql`
-subscription LogData ($id: ID!, $file: String!) {
-  logs (id: $id, file: $file) {
+subscription LogData ($id: ID!, $file: String!, $mode: String) {
+  logs (id: $id, file: $file, mode: $mode) {
     lines
     connected
     path
@@ -442,6 +454,9 @@ export default {
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
+    /** Tail mode? (true = TAIL, follow the end; false = HEAD, follow the start) */
+    const tailMode = useInitialOptions('tailMode', { props, emit }, true)
+
     /** View toolbar button size */
     const toolbarBtnSize = '40'
 
@@ -469,6 +484,7 @@ export default {
       timestamps,
       wordWrap,
       autoScroll,
+      tailMode,
       reset,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
@@ -504,6 +520,15 @@ export default {
       },
       { immediate: true }
     )
+
+    // re-subscribe when the log view mode (TAIL/HEAD) is toggled
+    this.$watch(() => this.tailMode, (tailMode) => {
+      if (tailMode) {
+        // in TAIL mode jump to the end of the file and follow new lines
+        this.autoScroll = true
+      }
+      this.updateQuery()
+    })
   },
 
   computed: {
@@ -545,6 +570,18 @@ export default {
               value: this.autoScroll,
               key: 'autoScroll',
             },
+            {
+              title: this.tailMode
+                ? 'TAIL: showing the end of the file'
+                : 'HEAD: showing the start of the file',
+              icon: {
+                true: mdiFormatVerticalAlignBottom,
+                false: mdiFormatVerticalAlignTop,
+              },
+              action: 'toggle',
+              value: this.tailMode,
+              key: 'tailMode',
+            },
           ]
         }
       ]
@@ -568,7 +605,11 @@ export default {
       // update the subscription
       this.query = new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
-        { id: this.id, file: this.file },
+        {
+          id: this.id,
+          file: this.file,
+          mode: this.tailMode ? LOG_MODE_TAIL : LOG_MODE_HEAD,
+        },
         `log-query-${this._uid}`,
         [
           new LogsCallback(this.results)
