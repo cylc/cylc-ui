@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             size="1em"
             class="modifier-badge"
             :class="modifier"
+            :data-test="`modifier-${modifier}`"
           />
           <template
             v-for="(value, state) in statesInfo.stateTotals"
@@ -136,11 +137,14 @@ function getStatesInfo (node, stateTotals = {}, modifiers = new Set()) {
   } else if (node.type === 'workflow' && node.node.stateTotals) {
     // if we hit a workflow node, stop and merge state
 
-    if (node.node.containsHeld) {
-      modifiers.add('held')
-    }
-    if (node.node.containsRetry) {
-      modifiers.add('retrying')
+    if (node.node.status !== WorkflowState.STOPPED.name) {
+      // Don't show modifiers for stopped workflows
+      if (node.node.containsHeld) {
+        modifiers.add('held')
+      }
+      if (node.node.containsRetry) {
+        modifiers.add('retrying')
+      }
     }
 
     // the non-zero state totals from this node with all the others from the tree
