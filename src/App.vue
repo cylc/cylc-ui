@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-defaults-provider :defaults="vuetifyDefaults">
     <v-app :class="`job_theme--${jobTheme}`">
-      <component :is="layout" :showSidebar="showSidebar">
+      <component :is="layout">
         <router-view/>
       </component>
     </v-app>
@@ -35,8 +35,6 @@ const DEFAULT_LAYOUT = 'empty'
 const route = useRoute()
 
 const layout = computed(() => `${route.meta.layout || DEFAULT_LAYOUT}-layout`)
-
-const showSidebar = computed(() => route.meta.showSidebar ?? true)
 
 const jobTheme = useJobTheme()
 

@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import { useJobTheme } from '@/composables/localStorage'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -136,8 +136,8 @@ import { isFlowNone } from '@/utils/tasks'
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }
@@ -229,7 +229,6 @@ export default {
   name: 'Graph',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -239,7 +238,9 @@ export default {
     ViewToolbar
   },
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
     /**
@@ -269,6 +270,8 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
+    const { workflowIDs, variables } = useGraphQL()
+
     return {
       jobTheme: useJobTheme(),
       transpose,
@@ -276,6 +279,8 @@ export default {
       spacing,
       groupCycle,
       isFlowNone,
+      workflowIDs,
+      variables,
     }
   },
 
@@ -332,9 +337,6 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       )
-    },
-    workflowIDs () {
-      return [this.workflowId]
     },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)

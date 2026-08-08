@@ -16,7 +16,6 @@
  */
 
 // Modules
-import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
 
@@ -69,7 +68,6 @@ const mutations = {
 // Create a new store
 export default {
   modules: {
-    app,
     workflows,
     user
   },
