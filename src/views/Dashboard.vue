@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :items="workflowsTable"
           :loading="isLoading"
           id="dashboard-workflows"
-          items-per-page="-1"
+          :items-per-page="-1"
           style="font-size: 1rem;"
           density="compact"
         >
@@ -43,23 +43,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-data-table
           :headers="$options.eventsHeader"
           :items="events"
-          :items-per-page="8"
+          v-model:items-per-page="eventsItemsPerPage"
+          :items-per-page-options="eventsItemsPerPageOptions"
           density="compact"
           data-cy="events-table"
         >
           <!-- Hide header: -->
-          <template v-slot:headers></template>
+          <template #headers></template>
 
           <!-- Hide footer if no events: -->
-          <template v-if="!events.length" v-slot:bottom></template>
+          <template v-if="!events.length" #bottom></template>
 
           <!-- Special template if there are no events to display -->
-          <template v-slot:no-data>
-            <td class="text-h6 text-disabled">No events</td>
+          <template #no-data>
+            <span class="text-h6 text-disabled">No events</span>
           </template>
 
-          <template v-slot:item.level="{ item }">
+          <template #item.level="{ item }">
             <EventChip :level="item.level" />
+          </template>
+          <template #item.message="{ item }">
+            <div class="truncated-message py-1">
+              {{ item.message }}
+            </div>
           </template>
         </v-data-table>
       </v-col>
@@ -185,6 +191,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { useLocalStorage } from '@vueuse/core'
 import {
   mdiBook,
   mdiBookMultiple,
@@ -247,6 +254,22 @@ export default {
 
   components: {
     EventChip,
+  },
+
+  setup () {
+    const eventsItemsPerPage = useLocalStorage('dashboardEventsItemsPerPage', 8)
+    const eventsItemsPerPageOptions = [
+      { value: 5, title: '5' },
+      { value: 8, title: '8' },
+      { value: 10, title: '10' },
+      { value: 20, title: '20' },
+      { value: -1, title: 'All' },
+    ]
+
+    return {
+      eventsItemsPerPage,
+      eventsItemsPerPageOptions,
+    }
   },
 
   data () {
@@ -324,3 +347,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+@use "/src/styles/util";
+
+.truncated-message {
+  @include util.line-clamp(4);
+}
+</style>
