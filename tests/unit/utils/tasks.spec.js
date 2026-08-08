@@ -111,8 +111,8 @@ describe('tasks', () => {
       expect(formatDuration(0)).to.equal(undefined)
     })
     it('should change format of 0 seconds based on value of allowZeros', () => {
-      expect(formatDuration(0, { allowZeros: false })).to.equal(undefined)
-      expect(formatDuration(0, { allowZeros: true })).to.equal('00:00:00')
+      expect(formatDuration(0, false)).to.equal(undefined)
+      expect(formatDuration(0, true)).to.equal('00:00:00')
     })
     it('should not change format of non-zero values based on allowZeros', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
