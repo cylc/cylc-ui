@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
+      class="c-toolbar-title text-md-headline-small text-body-large font-weight-medium text-primary"
       :class="drawerEnabled ? 'ml-0' : null"
     >
       {{ title }}
@@ -154,7 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-tooltip>
 
       <!-- workflow status message -->
-      <span class="status-msg text-body-2">
+      <span class="status-msg text-body-medium">
         {{ statusMessage }}
         <span v-if="currentWorkflow.node.cylcVersion !== uisFlowVersion">
           {{ versionPopup }}
