@@ -35,8 +35,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-headline-small text-body-large font-weight-medium text-primary"
-      :class="drawerEnabled ? 'ml-0' : null"
+      class="c-toolbar-title font-weight-medium text-primary"
+      :class="{
+        'ml-0': drawerEnabled,
+        'shrink': mdAndDown, // TODO: use title.length as well
+      }"
     >
       {{ title }}
     </v-toolbar-title>
@@ -254,6 +257,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { inject, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { mapState } from 'vuex'
+import { useDisplay } from 'vuetify'
 import {
   mdiCog,
   mdiMicrosoftXboxControllerMenu,
@@ -340,12 +344,14 @@ export default {
       () => workflowName.value || route.meta?.title || route.name
     )
 
+    const { mdAndDown } = useDisplay()
     const { drawer, drawerEnabled, toggleDrawer } = useDrawer()
 
     const uisVersionInfo = inject('versionInfo')
     const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
 
     return {
+      mdAndDown,
       eventBus,
       drawer,
       drawerEnabled,
@@ -562,3 +568,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.c-toolbar-title.shrink {
+  font-size: 1rem;
+}
+</style>
