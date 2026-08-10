@@ -121,6 +121,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {

@@ -129,6 +129,7 @@ fragment FamilyProxyData on FamilyProxy {
   isRetry
   isWallclock
   isXtriggered
+  graphDepth
 }
 
 fragment TaskProxyData on TaskProxy {
@@ -150,6 +151,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {

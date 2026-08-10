@@ -377,7 +377,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <GraphNode
                       v-bind="task"
                       :transform="`translate(0, ${ 240 * index })`"
-                      :class="{ 'flow-none': isFlowNone(task.task.node.flowNums) }"
+                      :class="{ 'dimmed': task.task.node.graphDepth }"
                       v-on:click.stop.capture
                     />
                     <text
@@ -414,8 +414,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
 
             <p>
-              Note that the "future" tasks (the ones ahead of the workflow) are
-              grey. This indicates that are are not yet being managed by Cylc.
+              Note that the tasks outside of the active window (i.e. the ones
+              that are not n=0) are greyed out. This highlights the tasks that
+              Cylc is currently managing.
             </p>
           </v-card-text>
         </v-card>
@@ -433,7 +434,6 @@ import { workflowViews } from '@/views/views'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { Tokens } from '@/utils/uid'
 import { uniqueId } from 'lodash-es'
-import { isFlowNone } from '@/utils/tasks'
 
 export default {
   name: 'Guide',
@@ -457,7 +457,7 @@ export default {
         task: {
           name: 'a',
           tokens: new Tokens('2000/a', true),
-          node: { state: 'succeeded' },
+          node: { state: 'succeeded', graphDepth: 1 },
         },
         jobs: [{
           name: '01',
@@ -469,7 +469,7 @@ export default {
         task: {
           name: 'b',
           tokens: new Tokens('2000/b', true),
-          node: { state: 'running' },
+          node: { state: 'running', graphDepth: 0 },
         },
         jobs: [{
           name: '01',
@@ -481,7 +481,7 @@ export default {
         task: {
           name: 'c',
           tokens: new Tokens('2000/c', true),
-          node: { state: 'waiting', flowNums: '[]' },
+          node: { state: 'waiting', graphDepth: 1 },
         },
         jobs: [],
       },
@@ -489,16 +489,12 @@ export default {
         task: {
           name: 'd',
           tokens: new Tokens('2000/d', true),
-          node: { state: 'waiting', flowNums: '[]' },
+          node: { state: 'waiting', graphDepth: 2 },
         },
         jobs: [],
       },
     ]
   }),
-
-  methods: {
-    isFlowNone,
-  },
 }
 </script>
 
