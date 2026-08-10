@@ -57,7 +57,7 @@
       </v-chip>
       <span
         v-if="index === maxVisibleStates"
-        class="text-grey text-caption"
+        class="text-grey text-body-small"
       >
         (+{{ model.length - maxVisibleStates }})
       </span>
