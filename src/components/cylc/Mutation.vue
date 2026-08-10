@@ -99,7 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-btn
         color="grey"
         @click="close()"
-        variant="text"
         data-cy="cancel"
         v-if="!isView"
       >
@@ -108,13 +107,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-btn
         color="orange"
         @click="$refs.form.reset()"
-        variant="text"
         data-cy="reset"
       >
         Reset
       </v-btn>
       <v-btn
-        variant="text"
         :color="isValid ? 'primary' : 'error'"
         @click="submit"
         :loading="submitting"
