@@ -37,6 +37,9 @@ module.exports = {
     polyfills: [
       // Used by GraphiQL, shouldn't be a problem:
       'navigator.userAgentData',
+      'navigator.keyboard',
+      'Intl.Segmenter',
+      'ClipboardItem',
       // Used by @vue/runtime-dom only if available:
       'trustedTypes',
     ],
