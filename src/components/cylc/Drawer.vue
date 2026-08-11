@@ -147,7 +147,7 @@ export default {
     const cylcVersionInfo = inject('versionInfo')
     const versionChipProps = computed(() => import.meta.env.MODE === 'production'
       ? {
-          text: `Cylc ${cylcVersionInfo.value?.['cylc-flow'] ?? ''}`,
+          text: `Cylc ${cylcVersionInfo.value['cylc-flow'] ?? ''}`,
           variant: 'text',
         }
       : {

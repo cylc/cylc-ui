@@ -20,20 +20,16 @@ import 'nprogress/css/nprogress.css'
 import '@/styles/index.scss'
 
 import { createApp } from 'vue'
-
-// Plugins
+import { createVuetify } from 'vuetify'
 import { vuetifyOptions } from '@/plugins/vuetify'
-import ServicesPlugin from '@/services/plugin'
+import { servicesPlugin } from '@/services/plugin'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import Default from '@/layouts/Default.vue'
 import Empty from '@/layouts/Empty.vue'
-
-// Application imports
 import App from '@/App.vue'
 import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
-import { createVuetify } from 'vuetify'
 
 if (location.search) {
   /* Remove token from the querystring - we only need it on first load.
@@ -55,14 +51,11 @@ if (location.search) {
   app.use(router)
   app.use(createVuetify(vuetifyOptions))
   app.use(i18n)
-  app.use(ServicesPlugin)
+  app.use(servicesPlugin, { router })
   app.use(CommandMenuPlugin)
 
   app.component('default-layout', Default)
   app.component('empty-layout', Empty)
-
-  // https://router.vuejs.org/guide/migration/#removal-of-router-app
-  router.app = app
 
   router.isReady().then(() => app.mount('#app'))
 

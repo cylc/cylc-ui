@@ -39,7 +39,7 @@ import { createUrl, getXSRFHeaders } from '@/utils/urls'
  */
 export function createGraphQLUrls () {
   const httpUrl = createUrl('graphql')
-  const wsUrl = createUrl('subscriptions', true)
+  const wsUrl = createUrl('subscriptions', { websockets: true })
   return {
     httpUrl,
     wsUrl,
