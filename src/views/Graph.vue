@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :task="node"
             :jobs="node.children"
             :jobTheme="jobTheme"
-            :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
+            :class="{ 'dimmed': node.node.graphDepth }"
           />
         </g>
         <!-- the edges
@@ -129,7 +129,6 @@ import {
   mdiFileRotateRight,
   mdiVectorSelection
 } from '@mdi/js'
-import { isFlowNone } from '@/utils/tasks'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
@@ -175,6 +174,7 @@ fragment TaskProxyData on TaskProxy {
     meanElapsedTime
   }
   flowNums
+  graphDepth
   runtime {
     runMode
   }
@@ -278,7 +278,6 @@ export default {
       autoRefresh,
       spacing,
       groupCycle,
-      isFlowNone,
       workflowIDs,
       variables,
     }

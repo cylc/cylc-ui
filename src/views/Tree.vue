@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -130,6 +130,7 @@ fragment FamilyProxyData on FamilyProxy {
   isRetry
   isWallclock
   isXtriggered
+  graphDepth
 }
 
 fragment TaskProxyData on TaskProxy {
@@ -151,6 +152,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ describe('State saving', () => {
   })
 
   describe('Flow nums', () => {
-    it('Only shows flow nums when not 1, and flow=None is dimmed', () => {
+    it('Only shows flow nums when not 1, and n!=0 tasks are dimmed', () => {
       cy.visit('/#/table/one')
       cy.get('[data-cy-task-name=failed]')
         .find('[data-cy=flow-num-chip]')
@@ -267,7 +267,7 @@ describe('State saving', () => {
       cy.get('[data-cy-task-name=checkpoint]')
         .find('[data-cy=flow-num-chip]')
         .should('not.exist')
-      cy.get('[data-cy-task-name=sleepy].flow-none')
+      cy.get('[data-cy-task-name=sleepy].dimmed')
         .should('have.css', 'opacity')
         .then((opacity) => {
           expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)

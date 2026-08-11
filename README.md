@@ -11,7 +11,7 @@ the UI.
 
 ## Copyright and Terms of Use
 
-Copyright (C) 2018-<span actions:bind='current-year'>2026</span> NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) 2018-<span actions:bind='current-year'>2026</span> Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 Cylc is free software: you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation,
@@ -147,7 +147,7 @@ Its configuration is defined in [`src/plugins/vuetify.js`](src/plugins/vuetify.j
 
 We use [concurrently](https://github.com/open-cli-tools/concurrently) for
 concurrently running the mock data json-server and the Vite dev server, and
-also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.cjs).
+also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.js).
 
 ### Browser compatibility
 

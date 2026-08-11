@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template #item.task.name="{ item }">
       <div
         class="d-flex align-center flex-nowrap"
-        :class="{ 'flow-none': isFlowNone(item.task.node.flowNums) }"
+        :class="{ 'dimmed': item.task.node.graphDepth }"
         :data-cy-task-name="item.task.name"
       >
         <div v-bind="jobIconParentProps">
@@ -147,7 +147,6 @@ import {
 import {
   getRunTime,
   formatDuration,
-  isFlowNone,
   isTruthyOrZero,
 } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'

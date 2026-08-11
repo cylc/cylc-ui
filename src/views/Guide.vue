@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,32 +52,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
          </v-card-text>
             <table id="task-job-state-table">
-              <tr>
-                <td>Task</td>
-                <td></td>
-                <td>Job</td>
-              </tr>
-              <tr
-                v-bind:key="state.name.name"
-                v-for="state of states"
-              >
-                <td style="font-size: 2em;">
-                  <!-- set times to make the progress change -->
-                  <task
-                    :task="{
-                      state: state.name,
-                      task: {meanElapsedTime: 30}
-                    }"
-                    :startTime="String(Date.now())"
-                  />
-                </td>
-                <td>
-                  <span>{{ state.name }}</span>
-                </td>
-                <td style="font-size: 2em;">
-                  <job :status="state.name" />
-                </td>
-              </tr>
+              <thead style="font-size: 2em;">
+                <tr>
+                  <td>Task</td>
+                  <td></td>
+                  <td>Job</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-bind:key="state.name.name"
+                  v-for="state of states"
+                >
+                  <td style="font-size: 2em;">
+                    <!-- set times to make the progress change -->
+                    <Task
+                      :task="{
+                        state: state.name,
+                        task: {meanElapsedTime: 30}
+                      }"
+                      :startTime="String(Date.now())"
+                    />
+                  </td>
+                  <td>
+                    <span>{{ state.name }}</span>
+                  </td>
+                  <td style="font-size: 2em;">
+                    <Job :status="state.name" />
+                  </td>
+                </tr>
+              </tbody>
             </table>
           <v-card-text>
             <p>
@@ -107,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <v-list-item>
                 <template v-slot:prepend>
-                  <task
+                  <Task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
                     class="mr-4"
@@ -373,7 +377,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <GraphNode
                       v-bind="task"
                       :transform="`translate(0, ${ 240 * index })`"
-                      :class="{ 'flow-none': isFlowNone(task.task.node.flowNums) }"
+                      :class="{ 'dimmed': task.task.node.graphDepth }"
                       v-on:click.stop.capture
                     />
                     <text
@@ -410,8 +414,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
 
             <p>
-              Note that the "future" tasks (the ones ahead of the workflow) are
-              grey. This indicates that are are not yet being managed by Cylc.
+              Note that the tasks outside of the active window (i.e. the ones
+              that are not n=0) are greyed out. This highlights the tasks that
+              Cylc is currently managing.
             </p>
           </v-card-text>
         </v-card>
@@ -429,13 +434,12 @@ import { workflowViews } from '@/views/views'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { Tokens } from '@/utils/uid'
 import { uniqueId } from 'lodash-es'
-import { isFlowNone } from '@/utils/tasks'
 
 export default {
   name: 'Guide',
   components: {
-    task: Task,
-    job: Job,
+    Task,
+    Job,
     GraphNode,
   },
 
@@ -453,7 +457,7 @@ export default {
         task: {
           name: 'a',
           tokens: new Tokens('2000/a', true),
-          node: { state: 'succeeded' },
+          node: { state: 'succeeded', graphDepth: 1 },
         },
         jobs: [{
           name: '01',
@@ -465,7 +469,7 @@ export default {
         task: {
           name: 'b',
           tokens: new Tokens('2000/b', true),
-          node: { state: 'running' },
+          node: { state: 'running', graphDepth: 0 },
         },
         jobs: [{
           name: '01',
@@ -477,7 +481,7 @@ export default {
         task: {
           name: 'c',
           tokens: new Tokens('2000/c', true),
-          node: { state: 'waiting', flowNums: '[]' },
+          node: { state: 'waiting', graphDepth: 1 },
         },
         jobs: [],
       },
@@ -485,16 +489,12 @@ export default {
         task: {
           name: 'd',
           tokens: new Tokens('2000/d', true),
-          node: { state: 'waiting', flowNums: '[]' },
+          node: { state: 'waiting', graphDepth: 2 },
         },
         jobs: [],
       },
     ]
   }),
-
-  methods: {
-    isFlowNone,
-  },
 }
 </script>
 
@@ -524,24 +524,12 @@ export default {
       line-height: 1.2em;
     }
 
-    tr:nth-child(1) {
-      font-size: 2em;
-    }
-
-    tr > td:nth-child(2) {
-      font-size: 1em;
-    }
-
     tr > td:nth-child(1), tr > td:nth-child(3) {
       width: 5em;
     }
 
     td {
       padding: 0.1em 0 0.1em 0;
-    }
-
-    td > * {
-      background-color: white;
     }
   }
 </style>

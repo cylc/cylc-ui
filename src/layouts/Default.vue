@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,9 +55,7 @@ const coreViewStyle = {
 const offline = computed(() => store.state.offline)
 
 onErrorCaptured((error, vm, info) => {
-  if (import.meta.env.MODE !== 'production') {
-    store.dispatch('setAlert', new AlertModel(error, 'error'))
-  }
+  store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))
   // Stop error propagating further:
   return false
 })

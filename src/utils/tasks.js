@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,16 +134,6 @@ export function getRunTime (jobNode) {
  */
 export function formatFlowNums (flowNums) {
   return JSON.parse(flowNums).join(', ') || 'None'
-}
-
-/**
- * Return whether a task is in the None flow.
- *
- * @param {string=} flowNums
- * @returns {boolean}
- */
-export function isFlowNone (flowNums) {
-  return Boolean(flowNums && !JSON.parse(flowNums).length)
 }
 
 export function isTruthyOrZero (value) {

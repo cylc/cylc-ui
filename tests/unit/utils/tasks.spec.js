@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ import {
   formatDuration,
   jobMessageOutputs,
   formatFlowNums,
-  isFlowNone,
   getRunTime,
   isTruthyOrZero,
 } from '@/utils/tasks'
@@ -174,17 +173,6 @@ describe('tasks', () => {
       ['[]', 'None'],
     ])('formatFlowNums(%o) -> %o', (input, expected) => {
       expect(formatFlowNums(input)).toEqual(expected)
-    })
-  })
-
-  describe('isFlowNone', () => {
-    it.each([
-      [undefined, false],
-      ['[]', true],
-      ['[ ]', true],
-      ['[1]', false],
-    ])('isFlowNone(%o) -> %o', (input, expected) => {
-      expect(isFlowNone(input)).toEqual(expected)
     })
   })
 

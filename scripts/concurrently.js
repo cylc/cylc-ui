@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const concurrently = require('concurrently')
+import concurrently from 'concurrently'
 
 const args = process.argv.slice(2)
 const { VITE_OPTIONS } = process.env
