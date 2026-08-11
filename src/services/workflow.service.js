@@ -471,7 +471,7 @@ class WorkflowService {
       // stopped.
       store.commit(
         'workflows/REMOVE_CHILDREN',
-        subscription.query.variables.workflowId
+        subscription.query.variables.workflowID
       )
     }
     delete this.subscriptions[subscription.query.name]

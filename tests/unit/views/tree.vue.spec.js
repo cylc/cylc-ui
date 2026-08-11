@@ -22,7 +22,7 @@ import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
-import { getIDMap } from '$tests/util'
+import { getIDMap, mockRoute } from '$tests/util'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
@@ -76,6 +76,7 @@ const workflowNode = {
 }
 
 describe('Tree view', () => {
+  mockRoute({ params: { workflowName: 'workflow1' } })
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
@@ -87,9 +88,6 @@ describe('Tree view', () => {
         mocks: {
           $workflowService
         }
-      },
-      props: {
-        workflowName: 'workflow1',
       },
       shallow: true,
       ...options

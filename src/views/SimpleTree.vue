@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 
@@ -115,8 +115,8 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // Most of this is just boilerplate the important thing is the three declarations
 // at the end.
 const QUERY = gql`
-subscription SimpleTreeSubscription ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription SimpleTreeSubscription ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }
@@ -188,9 +188,18 @@ export default {
 
   // These mixins enable various functionalities.
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
+
+  setup (props) {
+    // This is a helper function that provides us with some computed properties.
+    const { workflowIDs, variables } = useGraphQL()
+
+    return {
+      workflowIDs,
+      variables,
+    }
+  },
 
   computed: {
     // This gives us direct access to the data store if we need it:
@@ -199,13 +208,6 @@ export default {
     // This gives us a convenient way to filter for the nodes we want from the
     // store:
     ...mapGetters('workflows', ['getNodes']),
-
-    // List of workflow IDs we are displaying.
-    // NOTE: Write all views to be multi-workflow capable.
-    // NOTE: workflowId is provided by a mixin.
-    workflowIDs () {
-      return [this.workflowId]
-    },
 
     // Get workflow nodes from the store.
     workflows () {

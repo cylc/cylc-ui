@@ -25,6 +25,7 @@ import User from '@/model/User.model'
 import { nextTick } from 'vue'
 import { simpleTableTasks } from '@/../tests/unit/components/cylc/table/table.data'
 import TaskState from '@/model/TaskState.model'
+import { mockRoute } from '$tests/util'
 
 chai.config.truncateThreshold = 0
 
@@ -68,6 +69,7 @@ const workflows = [
 ]
 
 describe('Table view', () => {
+  mockRoute({ params: { workflowName: 'one' } })
   let store, $workflowService
   beforeEach(() => {
     store = createStore(storeOptions)
@@ -82,9 +84,6 @@ describe('Table view', () => {
       global: {
         plugins: [store],
         mocks: { $workflowService }
-      },
-      props: {
-        workflowName: 'one',
       },
     })
 
@@ -111,9 +110,6 @@ describe('Table view', () => {
         global: {
           plugins: [store],
           mocks: { $workflowService }
-        },
-        props: {
-          workflowName: 'one',
         },
       })
       await wrapper.setData({ tasks: simpleTableTasks })
