@@ -17,7 +17,6 @@
 
 // Modules
 import { workflows } from './workflows.module'
-import { user } from './user.module'
 
 // State
 const state = () => ({
@@ -69,7 +68,6 @@ const mutations = {
 export default {
   modules: {
     workflows,
-    user
   },
   actions,
   mutations,

@@ -30,7 +30,6 @@ describe('GraphQL composables', () => {
 
   it('creates the GraphQL Query variables and computed properties', () => {
     const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
-    store.commit('user/SET_USER', user)
     const Component = defineComponent({
       setup () {
         return useGraphQL()
@@ -40,6 +39,7 @@ describe('GraphQL composables', () => {
     const component = shallowMount(Component, {
       global: {
         plugins: [store],
+        provide: { user },
       },
     })
     const expectedID = `~${user.owner}/${workflowName}`
