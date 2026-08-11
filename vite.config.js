@@ -112,7 +112,7 @@ export default defineConfig(({ mode }) => {
             ? {
                 groups: [
                   {
-                    test: /node_modules[\\/]graphiql/,
+                    test: /node_modules[\\/](graphiql|monaco-*)/,
                     name: 'graphiql',
                   },
                   {
