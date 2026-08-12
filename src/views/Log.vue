@@ -220,6 +220,9 @@ import {
   mdiInformationOutline,
   mdiFormatVerticalAlignBottom,
   mdiFormatVerticalAlignTop,
+  mdiFormatVerticalAlignCenter,
+  mdiPlaylistRemove,
+  mdiFormatListNumbered,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -248,10 +251,68 @@ import { eventBus } from '@/services/eventBus'
  *
  * These map to the `--mode` values of `cylc cat-log`. "HEAD" is presented to
  * the user but corresponds to the "tail-from-start" cat-log mode (follow the
- * file from the start); "TAIL" follows from the end.
+ * file from the start); "TAIL" follows from the end; "MIXED" shows the start
+ * and the end of the file, following the end.
  */
 const LOG_MODE_TAIL = 'tail'
 const LOG_MODE_HEAD = 'tail-from-start'
+const LOG_MODE_MIXED = 'mixed'
+
+/** The ordered list of modes the toolbar control cycles through. */
+const LOG_MODES = [LOG_MODE_HEAD, LOG_MODE_TAIL, LOG_MODE_MIXED]
+
+/**
+ * Build a prominent multi-line divider shown where the log has been truncated.
+ *
+ * The block is a single log "line" (with embedded newlines) so it counts as one
+ * entry for the pop/freeze logic. It has a trailing blank line so the following
+ * log line starts fresh rather than appending to the marker.
+ *
+ * @param {string} message
+ * @returns {string}
+ */
+function truncationMarker (message) {
+  const rule = '-'.repeat(56)
+  return `\n${rule}\n  ${message}\n${rule}\n\n`
+}
+
+/**
+ * Dividers shown where the log file has been truncated.
+ *
+ * The uiserver sends a structured `truncated` value ("start", "middle" or
+ * "end"); these are the human-readable blocks shown in its place.
+ */
+const LOG_TRUNCATION_MARKERS = {
+  start: truncationMarker('earlier lines omitted (file truncated)'),
+  middle: truncationMarker('lines omitted here (file truncated)'),
+  end: truncationMarker('later lines omitted (file truncated)'),
+}
+
+/**
+ * The default maximum number of log lines to fetch/display.
+ *
+ * This mirrors the uiserver's MAX_LINES default.
+ */
+const LOG_MAX_LINES_DEFAULT = 5000
+
+/** The maximum value allowed for the maxLines option (memory guardrail). */
+const LOG_MAX_LINES_MAX = 50000
+
+/**
+ * Coerce a user-provided maxLines value into a valid integer.
+ *
+ * Falls back to the default for invalid/empty input and caps at the maximum.
+ *
+ * @param {*} value
+ * @returns {number}
+ */
+function normalizeMaxLines (value) {
+  const n = parseInt(value, 10)
+  if (!Number.isFinite(n) || n < 1) {
+    return LOG_MAX_LINES_DEFAULT
+  }
+  return Math.min(n, LOG_MAX_LINES_MAX)
+}
 
 /**
  * Query used to retrieve data for the Log view.
@@ -259,12 +320,13 @@ const LOG_MODE_HEAD = 'tail-from-start'
  * @type {DocumentNode}
 */
 const LOGS_SUBSCRIPTION = gql`
-subscription LogData ($id: ID!, $file: String!, $mode: String) {
-  logs (id: $id, file: $file, mode: $mode) {
+subscription LogData ($id: ID!, $file: String!, $mode: String, $maxLines: Int) {
+  logs (id: $id, file: $file, mode: $mode, maxLines: $maxLines) {
     lines
     connected
     path
     error
+    truncated
   }
 }
 `
@@ -319,6 +381,12 @@ class Results {
     this.connected = null
     /** @type {?string} */
     this.error = null
+    /**
+     * Number of leading lines that must not be discarded in "pop" mode
+     * (the frozen head block + marker when the middle is truncated).
+     * @type {number}
+     */
+    this.frozenLength = 0
   }
 }
 
@@ -326,19 +394,42 @@ class Results {
 class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
+   * @param {() => (?number)} getMaxLines
+   *   Returns the maximum number of lines to keep (discarding the oldest as
+   *   new lines arrive), or null/undefined to keep all lines.
    */
-  constructor (results) {
+  constructor (results, getMaxLines) {
     super()
     this.results = results
+    this.getMaxLines = getMaxLines
   }
 
   onAdded (added, store, errors) {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
       this.results.lines = []
+      this.results.frozenLength = 0
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
+      this.trim()
+    }
+    if (added.truncated != null) {
+      // insert a marker line where the file has been truncated
+      const marker = LOG_TRUNCATION_MARKERS[added.truncated]
+      if (added.truncated === 'start') {
+        // the *start* of the file is omitted -> pin the marker to the top
+        this.results.lines.unshift(marker)
+        this.results.frozenLength = Math.max(this.results.frozenLength, 1)
+      } else {
+        // "middle" (mixed-mode boundary) or "end" of the file omitted
+        this.results.lines.push(marker)
+        if (added.truncated === 'middle') {
+          // freeze the head block + marker so "pop" mode only rolls the tail
+          this.results.frozenLength = this.results.lines.length
+        }
+      }
+      this.trim()
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -348,6 +439,20 @@ class LogsCallback extends DeltasCallback {
     }
     if (added.path != null) {
       [this.results.host, this.results.path] = added.path.split(':', 2)
+    }
+  }
+
+  /**
+   * In "pop" mode, discard the oldest non-frozen lines to stay within the
+   * limit (the frozen leading lines are never discarded).
+   */
+  trim () {
+    const maxLines = this.getMaxLines?.()
+    if (maxLines != null && this.results.lines.length > maxLines) {
+      this.results.lines.splice(
+        this.results.frozenLength,
+        this.results.lines.length - maxLines
+      )
     }
   }
 }
@@ -454,8 +559,46 @@ export default {
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
-    /** Tail mode? (true = TAIL, follow the end; false = HEAD, follow the start) */
-    const tailMode = useInitialOptions('tailMode', { props, emit }, true)
+    /**
+     * The log view mode (one of LOG_MODES).
+     * HEAD (tail-from-start) shows the start of the file, TAIL the end, and
+     * MIXED both ends. Defaults to HEAD to preserve the original behaviour.
+     */
+    const logMode = useInitialOptions('logMode', { props, emit }, LOG_MODE_HEAD)
+
+    /**
+     * Pop mode? (true = only keep the most recent LOG_MAX_LINES lines,
+     * discarding the oldest as new lines arrive; false = keep all lines).
+     * UI-only, so changing it does not require re-subscribing.
+     */
+    const popMode = useInitialOptions('popMode', { props, emit }, false)
+
+    /**
+     * The maximum number of log lines to fetch/display.
+     * Changing this re-subscribes (raising it needs the backend). It also
+     * acts as the cap for "pop" mode.
+     * @type {import('vue').Ref<number>}
+     */
+    const maxLines = useInitialOptions(
+      'maxLines', { props, emit }, LOG_MAX_LINES_DEFAULT
+    )
+
+    /**
+     * The user input for maxLines.
+     * Commits the normalized value to maxLines at most every 0.5 seconds so
+     * that typing does not repeatedly re-subscribe.
+     */
+    const maxLinesInput = refWithControl(maxLines.value, {
+      onChanged: debounce((value) => {
+        maxLines.value = normalizeMaxLines(value)
+      }, 500)
+    })
+    watch(maxLines, (value) => {
+      // reflect the committed/normalised value back into the input field
+      if (parseInt(maxLinesInput.value, 10) !== value) {
+        maxLinesInput.set(value)
+      }
+    })
 
     /** View toolbar button size */
     const toolbarBtnSize = '40'
@@ -484,7 +627,10 @@ export default {
       timestamps,
       wordWrap,
       autoScroll,
-      tailMode,
+      logMode,
+      popMode,
+      maxLines,
+      maxLinesInput,
       reset,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
@@ -521,12 +667,29 @@ export default {
       { immediate: true }
     )
 
-    // re-subscribe when the log view mode (TAIL/HEAD) is toggled
-    this.$watch(() => this.tailMode, (tailMode) => {
-      if (tailMode) {
-        // in TAIL mode jump to the end of the file and follow new lines
+    // re-subscribe when the log view mode is changed
+    this.$watch(() => this.logMode, (logMode) => {
+      if (logMode === LOG_MODE_TAIL || logMode === LOG_MODE_MIXED) {
+        // these modes follow the end of the file, so jump to the end and
+        // follow new lines
         this.autoScroll = true
       }
+      this.updateQuery()
+    })
+
+    // apply the pop limit immediately when it is enabled (otherwise it only
+    // takes effect as new lines arrive)
+    this.$watch(() => this.popMode, (popMode) => {
+      if (popMode && this.results.lines.length > this.maxLines) {
+        this.results.lines.splice(
+          this.results.frozenLength,
+          this.results.lines.length - this.maxLines
+        )
+      }
+    })
+
+    // re-subscribe when the maximum number of lines is changed
+    this.$watch(() => this.maxLines, () => {
       this.updateQuery()
     })
   },
@@ -571,16 +734,45 @@ export default {
               key: 'autoScroll',
             },
             {
-              title: this.tailMode
-                ? 'TAIL: showing the end of the file'
-                : 'HEAD: showing the start of the file',
+              title: {
+                [LOG_MODE_HEAD]: 'HEAD: showing the start of the file',
+                [LOG_MODE_TAIL]: 'TAIL: showing the end of the file',
+                [LOG_MODE_MIXED]: 'MIXED: showing the start and end of the file',
+              }[this.logMode],
               icon: {
-                true: mdiFormatVerticalAlignBottom,
-                false: mdiFormatVerticalAlignTop,
+                [LOG_MODE_HEAD]: mdiFormatVerticalAlignTop,
+                [LOG_MODE_TAIL]: mdiFormatVerticalAlignBottom,
+                [LOG_MODE_MIXED]: mdiFormatVerticalAlignCenter,
               },
+              action: 'cycle',
+              values: LOG_MODES,
+              value: this.logMode,
+              key: 'logMode',
+            },
+            {
+              title: this.popMode
+                ? `Popping: only keeping the most recent ${this.maxLines} lines`
+                : 'Keeping all lines',
+              icon: mdiPlaylistRemove,
               action: 'toggle',
-              value: this.tailMode,
-              key: 'tailMode',
+              value: this.popMode,
+              key: 'popMode',
+            },
+            {
+              title: 'Maximum number of lines to fetch/display',
+              icon: mdiFormatListNumbered,
+              action: 'input',
+              wide: true,
+              value: this.maxLinesInput,
+              key: 'maxLinesInput',
+              props: {
+                type: 'number',
+                min: 1,
+                max: LOG_MAX_LINES_MAX,
+                step: 1000,
+                label: 'Max lines',
+                'hide-details': true,
+              },
             },
           ]
         }
@@ -608,11 +800,12 @@ export default {
         {
           id: this.id,
           file: this.file,
-          mode: this.tailMode ? LOG_MODE_TAIL : LOG_MODE_HEAD,
+          mode: this.logMode,
+          maxLines: this.maxLines,
         },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results)
+          new LogsCallback(this.results, () => this.popMode ? this.maxLines : null)
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false

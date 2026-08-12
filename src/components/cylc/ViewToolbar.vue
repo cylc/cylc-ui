@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-if="iControl.action === 'input'"
               v-model="iControl.value"
               class="input"
+              :class="{ wide: iControl.wide }"
               v-bind="iControl.props"
               clearable
               :prepend-inner-icon="iControl.icon"
@@ -160,6 +161,7 @@ export default {
                 // action to perform when clicked:
                 // Generic actions:
                 // * toggle - toggle true/false
+                // * cycle - cycle through the provided `values` list
                 // * callback - call the provided callback
                 // * menu - open a menu (provide props: {items} in v-treeview format)
                 // Specialised actions:
@@ -222,6 +224,9 @@ export default {
           switch (action) {
             case 'toggle': // toggle button
               callback = (e) => this.toggle(control, e)
+              break
+            case 'cycle': // button which cycles through a list of values
+              callback = (e) => this.cycle(control, e)
               break
             case 'callback': // button which actions a callback
               callback = (e) => this.call(control, e)
@@ -291,6 +296,14 @@ export default {
       // toggle a boolean value
       // NOTE: undefined is falsy
       control.value = !control.value
+      this.$emit('setOption', control.key, control.value)
+      e.currentTarget.blur()
+    },
+    cycle (control, e) {
+      // cycle to the next value in the control's `values` list
+      const values = control.values || []
+      const index = values.indexOf(control.value)
+      control.value = values[(index + 1) % values.length]
       this.$emit('setOption', control.key, control.value)
       e.currentTarget.blur()
     },
@@ -381,6 +394,12 @@ export default {
       }
       .input:has(input.expanded) {
         width: 20em;
+      }
+      // inputs that should always be shown at full width (e.g. numeric
+      // inputs that always contain a value, so have nothing to collapse to)
+      .input.wide,
+      .input.wide:has(input.expanded) {
+        width: 14em;
       }
     }
   }
