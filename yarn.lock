@@ -3750,7 +3750,7 @@ __metadata:
     nodemon: "npm:3.1.14"
     nprogress: "npm:1.0.0-1"
     nyc: "npm:18.0.0"
-    preact: "npm:10.27.3"
+    preact: "npm:10.29.8"
     sass-embedded: "npm:1.100.0"
     simple-icons: "npm:16.27.1"
     sinon: "npm:21.1.2"
@@ -8294,10 +8294,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:10.27.3":
-  version: 10.27.3
-  resolution: "preact@npm:10.27.3"
-  checksum: 10c0/3055ba2fda206303483f7e4be6d839b0dadc36701c505da8d9f131b4c2828bb084593e1efcc1b8b049084cca3dd50c16ced2f01d1ad86162c4081cdd2a5010f1
+"preact@npm:10.29.8":
+  version: 10.29.8
+  resolution: "preact@npm:10.29.8"
+  peerDependencies:
+    preact-render-to-string: ">=5"
+  peerDependenciesMeta:
+    preact-render-to-string:
+      optional: true
+  checksum: 10c0/505460352139e0ce5b9c971b69d8d9f3b73ea0f316e3ff1c0b3db9a1abe206c9dff6ba385eb796253c38fcc08b5ade70cd8da3d9d6c9e9aec1a2fd59348253ae
   languageName: node
   linkType: hard
 
