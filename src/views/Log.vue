@@ -223,6 +223,7 @@ import {
   mdiFormatVerticalAlignCenter,
   mdiPlaylistRemove,
   mdiFormatListNumbered,
+  mdiRefresh,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -585,20 +586,31 @@ export default {
 
     /**
      * The user input for maxLines.
-     * Commits the normalized value to maxLines at most every 0.5 seconds so
-     * that typing does not repeatedly re-subscribe.
+     *
+     * This holds the *uncommitted* value shown in the toolbar. It is only
+     * applied to `maxLines` (which re-subscribes) when the user clicks the
+     * apply button or presses Enter — see `applyMaxLines`. This avoids
+     * re-streaming on every keystroke, which would add server load and make
+     * the view flicker as lines are repeatedly removed and re-added.
+     * @type {import('vue').Ref<number>}
      */
-    const maxLinesInput = refWithControl(maxLines.value, {
-      onChanged: debounce((value) => {
-        maxLines.value = normalizeMaxLines(value)
-      }, 500)
-    })
+    const maxLinesInput = ref(maxLines.value)
     watch(maxLines, (value) => {
       // reflect the committed/normalised value back into the input field
-      if (parseInt(maxLinesInput.value, 10) !== value) {
-        maxLinesInput.set(value)
-      }
+      // (e.g. after clamping or when restoring a saved view)
+      maxLinesInput.value = value
     })
+
+    /**
+     * Commit the edited maxLines value, re-subscribing with the new limit.
+     * Snaps the input to the normalised value so the user sees any clamping.
+     * @param {*} value
+     */
+    function applyMaxLines (value) {
+      const normalized = normalizeMaxLines(value)
+      maxLinesInput.value = normalized
+      maxLines.value = normalized
+    }
 
     /** View toolbar button size */
     const toolbarBtnSize = '40'
@@ -631,6 +643,7 @@ export default {
       popMode,
       maxLines,
       maxLinesInput,
+      applyMaxLines,
       reset,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
@@ -765,11 +778,15 @@ export default {
               wide: true,
               value: this.maxLinesInput,
               key: 'maxLinesInput',
+              appendButton: {
+                icon: mdiRefresh,
+                title: 'Apply — re-fetch this many lines',
+                callback: (value) => this.applyMaxLines(value),
+              },
               props: {
                 type: 'number',
                 min: 1,
                 max: LOG_MAX_LINES_MAX,
-                step: 1000,
                 label: 'Max lines',
                 'hide-details': true,
               },
