@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,10 @@ import {
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
+import TaskState from '@/model/TaskState.model'
+import { vuetifyOptions } from '@/plugins/vuetify'
+
+const vuetify = createVuetify(vuetifyOptions)
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -60,7 +64,7 @@ const $workflowService = sinon.createStubInstance(WorkflowService)
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
+      plugins: [vuetify, CommandMenuPlugin],
       mock: { $workflowService }
     },
     ...options
@@ -138,7 +142,7 @@ describe('TreeItem component', () => {
 describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
+      plugins: [vuetify, CommandMenuPlugin],
       mock: { $workflowService }
     },
     ...options
@@ -151,13 +155,16 @@ describe('GScanTreeItem', () => {
         filteredOutNodesCache: new WeakMap(),
       }
     })
-    it('combines all descendant tasks', () => {
-      expect(wrapper.vm.descendantTaskInfo.latestTasks.submitted.length).to.equal(10)
-      expect(wrapper.vm.descendantTaskInfo.latestTasks.running.length).to.equal(10)
+    it('does not combine descendant latest state tasks', () => {
+      expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
     })
-    it('combines all descendant task totals', () => {
-      expect(wrapper.vm.descendantTaskInfo.stateTotals.submitted).to.equal(5)
-      expect(wrapper.vm.descendantTaskInfo.stateTotals.running).to.equal(12)
+    it('combines all descendant task totals in the correct order', () => {
+      expect(Object.entries(wrapper.vm.statesInfo.stateTotals)).toStrictEqual([
+        [TaskState.FAILED.name, 0],
+        [TaskState.SUBMIT_FAILED.name, 0],
+        [TaskState.SUBMITTED.name, 5],
+        [TaskState.RUNNING.name, 12],
+      ])
     })
     it('collapses to the lowest only-child', () => {
       expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ describe('Mutations component', () => {
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
   const openMutationsForm = (nodeName) => {
-    cy.get('[data-cy=tree-view]').as('treeView')
+    cy.get('.c-tree').as('treeView')
       .find('.c-treeitem')
       .find('.c-task')
       .should('be.visible')

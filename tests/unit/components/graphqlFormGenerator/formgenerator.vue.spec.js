@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 import { mount } from '@vue/test-utils'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import { cloneDeep } from 'lodash'
-import { createVuetify } from 'vuetify'
 
 const BASIC_MUTATION = {
   name: 'My Mutation',
@@ -173,15 +172,12 @@ function getModel (wrapper) {
 }
 
 describe('FormGenerator Component', () => {
-  const vuetify = createVuetify()
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = (options) => mount(FormGenerator, {
-    global: {
-      plugins: [vuetify]
-    },
+    shallow: true,
     ...options
   })
 
@@ -237,7 +233,7 @@ describe('FormGenerator Component', () => {
     const wrapper = mountFunction({
       props: {
         mutation: BASIC_MUTATION,
-        initialData: {
+        data: {
           MyString: 'Foo'
         }
       }
@@ -248,17 +244,34 @@ describe('FormGenerator Component', () => {
     })
   })
 
-  it('should reset to initial conditions', () => {
+  it('should reset to initial state', () => {
     const wrapper = mountFunction({
       props: {
         mutation: BASIC_MUTATION,
         initialData: {
-          MyString: 'Foo'
-        }
+          MyString: 'before'
+        },
+        data: {
+          MyString: 'after'
+        },
       }
     })
-    const before = getModel(wrapper)
+    expect(getModel(wrapper).MyString).to.deep.equal('after')
     wrapper.vm.reset()
-    expect(getModel(wrapper)).to.deep.equal(before)
+    expect(getModel(wrapper).MyString).to.deep.equal('before')
+  })
+
+  it('should reset to defaults', () => {
+    const wrapper = mountFunction({
+      props: {
+        mutation: BASIC_MUTATION,
+        data: {
+          MyString: 'after'
+        },
+      }
+    })
+    expect(getModel(wrapper).MyString).to.deep.equal('after')
+    wrapper.vm.reset()
+    expect(getModel(wrapper).MyString).to.deep.equal('MyDefault')
   })
 })

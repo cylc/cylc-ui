@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ import {
   formatDuration,
   jobMessageOutputs,
   formatFlowNums,
-  isFlowNone,
-  formatDatetime,
   getRunTime,
   isTruthyOrZero,
 } from '@/utils/tasks'
@@ -122,17 +120,6 @@ describe('tasks', () => {
     })
   })
 
-  describe('formatDatetime', () => {
-    it.each([
-      ['2022-10-05T11:56:00.000Z', '2022-10-05T11:56:00Z'],
-      ['2023-05-20T14:48-04:30', '2023-05-20T19:18:00Z'],
-      ['2023-12-04T11:38+13:25', '2023-12-03T22:13:00Z'],
-      ['2024-01-15T09:30:45.123Z', '2024-01-15T09:30:45Z'],
-    ])('%s -> %s', (input, expected) => {
-      expect(formatDatetime(new Date(input))).toEqual(expected)
-    })
-  })
-
   describe('getRunTime', () => {
     it.each([
       [{ startedTime: '2024-10-01T23:59:40Z', finishedTime: '2024-10-02T00:00:10Z' }, 30],
@@ -186,17 +173,6 @@ describe('tasks', () => {
       ['[]', 'None'],
     ])('formatFlowNums(%o) -> %o', (input, expected) => {
       expect(formatFlowNums(input)).toEqual(expected)
-    })
-  })
-
-  describe('isFlowNone', () => {
-    it.each([
-      [undefined, false],
-      ['[]', true],
-      ['[ ]', true],
-      ['[1]', false],
-    ])('isFlowNone(%o) -> %o', (input, expected) => {
-      expect(isFlowNone(input)).toEqual(expected)
     })
   })
 

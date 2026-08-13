@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ import { VSwitch } from 'vuetify/components/VSwitch'
 import { VTextField } from 'vuetify/components/VTextField'
 
 import GEnum from '@/components/graphqlFormGenerator/components/Enum.vue'
-import GNonNull, { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull.vue'
+import GNonNull from '@/components/graphqlFormGenerator/components/NonNull.vue'
 import GList from '@/components/graphqlFormGenerator/components/List.vue'
 import GObject from '@/components/graphqlFormGenerator/components/Object.vue'
 import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting.vue'
@@ -39,7 +39,9 @@ export const RE = {
 }
 
 export const RULES = {
-  required: nonNullRule,
+  /** Disallow empty array/string or nullish */
+  nonNull:
+    (x) => Boolean(x?.length ?? x != null) || 'Required',
   integer:
     (x) => (!x || Number.isInteger(x)) || 'Must be integer',
   noSpaces:

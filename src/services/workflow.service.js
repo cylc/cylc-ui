@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -432,7 +432,7 @@ class WorkflowService {
       this.stopSubscription(subscription)
     }
     // TODO: recompute, unsubscribe and wipe unwanted store data
-    // see https://github.com/cylc/cylc-ui/issues/1131
+    // see https://github.com/cylc/cylc-ui/issues/2479
     // * The subscription has changed, there may be data we no longer need
     // * Recompute the subscription.
     // * Reload the subscription if needed.
@@ -471,7 +471,7 @@ class WorkflowService {
       // stopped.
       store.commit(
         'workflows/REMOVE_CHILDREN',
-        subscription.query.variables.workflowId
+        subscription.query.variables.workflowID
       )
     }
     delete this.subscriptions[subscription.query.name]

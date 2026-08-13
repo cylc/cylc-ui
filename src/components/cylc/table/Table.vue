@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,21 +26,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     density="compact"
     v-model:page="page"
     v-model:items-per-page="itemsPerPage"
+    fixed-header
   >
-    <template v-slot:item.task.name="{ item }">
+    <template #item.task.name="{ item }">
       <div
         class="d-flex align-center flex-nowrap"
-        :class="{ 'flow-none': isFlowNone(item.task.node.flowNums) }"
+        :class="{ 'dimmed': item.task.node.graphDepth }"
         :data-cy-task-name="item.task.name"
       >
-        <div style="width: 2em;">
+        <div v-bind="jobIconParentProps">
           <Task
             v-command-menu="item.task"
             :task="item.task.node"
             :startTime="item.latestJob?.node?.startedTime"
           />
         </div>
-        <div style="width: 2em;">
+        <div v-bind="jobIconParentProps">
           <Job
             v-if="item.latestJob"
             v-command-menu="item.latestJob"
@@ -55,20 +56,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </div>
     </template>
-    <template v-slot:item.latestJob.node.finishedTime="{ item, value }">
+    <template #item.latestJob.node.finishedTime="{ item, value }">
       <EstimatedTime
         :actual="value"
         :estimate="item.latestJob?.node.estimatedFinishTime"
       />
     </template>
-    <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
+    <template #item.task.node.task.meanElapsedTime="{ item }">
       <EstimatedTime
         v-bind="taskRunTimes.get(item.task.id)"
         :formatter="(x) => formatDuration(x, { allowZeros: true })"
         tooltip="Mean for this task"
       />
     </template>
-    <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
+    <template #item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
       <v-btn
         @click="toggleExpand(internalItem)"
         icon
@@ -85,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </v-btn>
     </template>
-    <template v-slot:expanded-row="{ item }">
+    <template #expanded-row="{ item }">
       <tr
         v-bind:key="job.id"
         v-for="(job, index) in item.task.children"
@@ -93,14 +94,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <td :colspan="3">
           <div class="d-flex align-content-center flex-nowrap">
-            <div class="d-flex" style="margin-left: 2em;">
+            <div v-bind="jobIconParentProps" :style="{ marginLeft: jobIconParentProps.style.width }">
               <Job
                 v-command-menu="job"
                 :key="`${job.id}-summary-${index}`"
                 :status="job.node.state"
               />
-              <span class="ml-2">#{{ job.node.submitNum }}</span>
             </div>
+            <span>#{{ job.node.submitNum }}</span>
           </div>
         </td>
         <td>{{ job.node.platform }}</td>
@@ -124,8 +125,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </td>
       </tr>
     </template>
-    <template v-slot:bottom>
+    <template #bottom>
       <v-data-table-footer :itemsPerPageOptions="itemsPerPageOptions" />
+    </template>
+    <template #no-data v-if="filterState">
+      <v-filter-empty-state data-cy="filter-no-results"/>
     </template>
   </v-data-table>
 </template>
@@ -143,7 +147,6 @@ import {
 import {
   getRunTime,
   formatDuration,
-  isFlowNone,
   isTruthyOrZero,
 } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
@@ -163,6 +166,10 @@ const props = defineProps({
     required: true
   },
   initialOptions: initialOptionsProp,
+  filterState: {
+    type: [Object, null],
+    default: null,
+  },
 })
 
 const cyclePointsOrderDesc = useCyclePointsOrderDesc()
@@ -287,6 +294,11 @@ const taskRunTimes = computed(() => new Map(
     }
   ])
 ))
+
+const jobIconParentProps = {
+  class: ['d-flex', 'align-center'],
+  style: { width: '2em' },
+}
 
 const itemsPerPageOptions = [
   { value: 10, title: '10' },

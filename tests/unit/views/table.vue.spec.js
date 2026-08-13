@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import User from '@/model/User.model'
 import { nextTick } from 'vue'
 import { simpleTableTasks } from '@/../tests/unit/components/cylc/table/table.data'
 import TaskState from '@/model/TaskState.model'
+import { mockRoute } from '$tests/util'
 
 chai.config.truncateThreshold = 0
 
@@ -68,6 +69,7 @@ const workflows = [
 ]
 
 describe('Table view', () => {
+  mockRoute({ params: { workflowName: 'one' } })
   let store, $workflowService
   beforeEach(() => {
     store = createStore(storeOptions)
@@ -82,9 +84,6 @@ describe('Table view', () => {
       global: {
         plugins: [store],
         mocks: { $workflowService }
-      },
-      props: {
-        workflowName: 'one',
       },
     })
 
@@ -112,9 +111,6 @@ describe('Table view', () => {
           plugins: [store],
           mocks: { $workflowService }
         },
-        props: {
-          workflowName: 'one',
-        },
       })
       await wrapper.setData({ tasks: simpleTableTasks })
     })
@@ -124,8 +120,16 @@ describe('Table view', () => {
     })
 
     it('should filter by ID', async () => {
+      // plain ID
       wrapper.vm.tasksFilter = {
         id: 'taskA'
+      }
+      await nextTick()
+      expect(wrapper.vm.filteredTasks.length).to.equal(1)
+
+      // glob ID
+      wrapper.vm.tasksFilter = {
+        id: 'task[A]'
       }
       await nextTick()
       expect(wrapper.vm.filteredTasks.length).to.equal(1)

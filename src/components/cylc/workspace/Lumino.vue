@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,16 +15,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-  <div ref="mainDiv" class="main pa-2 fill-height">
+  <div
+    ref="mainDiv"
+    class="main pa-2 fill-height position-relative"
+  >
     <!-- Lumino box panel gets inserted here -->
+    <v-empty-state
+      v-if="empty"
+      title="Workspace is empty"
+      text="To get started, add a view"
+      class="position-absolute top-0 left-0 h-100 w-100 text-medium-emphasis"
+      id="empty-workspace-notice"
+    >
+      <template #text>
+        To get started, add a view using the toolbar above
+      </template>
+    </v-empty-state>
   </div>
+  <!-- Widgets get teleported to box panel -->
   <WidgetComponent
     v-for="[id, { name }] in views"
     :key="id"
     :id="id"
   >
     <component
-      :is="props.allViews.get(name).component"
+      :is="allViews.get(name).component"
       :workflow-name="workflowName"
       v-model:initial-options="views.get(id).initialOptions"
       :widgetID="id"
@@ -39,6 +54,8 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  useTemplateRef,
+  watch,
 } from 'vue'
 import { startCase, uniqueId } from 'lodash-es'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
@@ -46,7 +63,7 @@ import { LuminoWidget } from '@/components/cylc/workspace/luminoWidget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
 import { watchWithControl } from '@/utils/reactivity'
 import { replacer, reviver } from '@/utils/json'
-import { useDefaultView } from '@/views/views'
+import { allViews, useDefaultView } from '@/views/views'
 import { eventBus } from '@/services/eventBus'
 import { useWorkspaceLayoutsCache } from '@/composables/cacheStorage'
 
@@ -74,26 +91,13 @@ const props = defineProps({
     type: String,
     required: true
   },
-  /**
-   * All possible view component classes that can be rendered
-   *
-   * @type {Map<string, import('@/views/views.js').CylcView>}
-   */
-  allViews: {
-    type: Map,
-    required: true
-  },
 })
 
 const emit = defineEmits([
   'emptied'
 ])
 
-/**
- * Template ref
- * @type {import('vue').Ref<HTMLElement>}
- */
-const mainDiv = ref(null)
+const mainDiv = useTemplateRef('mainDiv')
 
 /**
  * Mapping of widget ID to the name of view component and its initialOptions prop.
@@ -118,6 +122,14 @@ const resizeObserver = new ResizeObserver(() => {
 const layoutsCache = useWorkspaceLayoutsCache()
 const layoutWatcher = watchWithControl(views, saveLayout, { deep: true })
 
+/**
+ * Is the workspace empty?
+ *
+ * Note: we use a ref here rather than a computed property to avoid
+ * flashing of the empty state notice before the layout is restored.
+ */
+const empty = ref(false)
+
 onMounted(async () => {
   // Store any add-view events that occur before the layout is ready
   // (e.g. when opening log view from command menu):
@@ -134,9 +146,21 @@ onMounted(async () => {
 
   eventBus.off('add-view')
   eventBus.on('add-view', addView)
-  bufferedAddViewEvents.forEach((e) => addView(e))
   eventBus.on('lumino:deleted', onWidgetDeleted)
   eventBus.on('reset-workspace-layout', resetToDefault)
+  await Promise.allSettled(
+    bufferedAddViewEvents.map(async (e) => await addView(e))
+  )
+
+  // Now that the layout is ready, watch for empty state:
+  watch(
+    () => !views.value.size,
+    (isEmpty) => {
+      empty.value = isEmpty
+      if (isEmpty) emit('emptied')
+    },
+    { immediate: true }
+  )
 })
 
 onBeforeUnmount(() => {
@@ -144,6 +168,7 @@ onBeforeUnmount(() => {
   eventBus.off('add-view', addView)
   eventBus.off('lumino:deleted', onWidgetDeleted)
   eventBus.off('reset-workspace-layout', resetToDefault)
+  layoutWatcher.pause()
   // Register with Lumino that the dock panel is no longer used,
   // otherwise uncaught errors can occur when restoring layout
   dockPanel.dispose()
@@ -257,11 +282,6 @@ async function resetToDefault () {
  * @param {string} id - widget ID
  */
 function onWidgetDeleted (id) {
-  layoutWatcher.ignore(() => {
-    views.value.delete(id)
-    if (!views.value.size) {
-      emit('emptied')
-    }
-  })
+  layoutWatcher.ignore(() => views.value.delete(id))
 }
 </script>

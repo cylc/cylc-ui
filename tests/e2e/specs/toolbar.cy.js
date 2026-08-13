@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +19,34 @@ import { mutationStatus } from '@/utils/aotf'
 import { Deferred } from '$tests/util'
 
 describe('Toolbar component', () => {
-  it('Is displayed when we are looking at a workflow', () => {
-    cy.visit('/#/workspace/one')
-    cy
-      .get('#core-app-bar')
-      .should('exist')
-  })
-  it('Is NOT displayed when looking at the dashboard', () => {
+  it('displays workflow controls for existing workflows and hidden otherwise', () => {
+    // Start at the dashboard
     cy.visit('/#/')
-    cy
-      .get('#core-app-bar')
-      .should('not.exist')
-  })
-  it('Contains an avatar displaying user icon', () => {
+    cy.get('#core-app-bar').should('exist')
+    // The toolbar workflow controls are not visible on the dashboard
+    cy.get('.c-workflow-controls').should('not.exist')
+    // User avatar visible
+    cy.get('#core-app-bar [data-cy=user-avatar-btn]').as('avatar')
+      .should('be.visible')
+
+    // Navigate to an existing workflow
     cy.visit('/#/workspace/one')
-    cy
-      .get('#core-app-bar')
-      .get('.v-avatar')
-      .get('.v-icon')
-      .should('exist')
+    cy.get('#core-app-bar').should('be.visible')
+    cy.get('.c-workflow-controls').should('be.visible')
+    cy.get('@avatar').should('be.visible')
+
+    // Navigate to a non-existent workflow
+    cy.visit('/#/workspace/non-exist')
+    cy.get('#core-app-bar').should('be.visible')
+    cy.get('.c-workflow-controls').should('not.exist')
+    cy.get('@avatar').should('be.visible')
+  })
+
+  it('Does NOT display nav button when using a standalone view', () => {
+    cy.visit('/#/gantt/one')
+    // forces cypress to wait for the toolbar to load
+    cy.get('#core-app-bar [data-cy=user-avatar-btn]').should('be.visible')
+    cy.get('#core-app-bar #toggle-drawer').should('not.exist')
   })
 })
 

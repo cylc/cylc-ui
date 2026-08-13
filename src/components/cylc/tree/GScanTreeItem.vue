@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <TreeItem
     v-bind="{ node, depth, filteredOutNodesCache, hoverable }"
-    :auto-expand-types="$options.nodeTypes"
+    :auto-expand-types="nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     ref="treeItem"
+    :class="{compact: compactMode}"
   >
     <WorkflowIcon
       v-if="node.type === 'workflow'"
@@ -33,50 +34,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :to="workflowLink"
       :class="nodeClass"
       class="flex-grow-1 flex-shrink-1 px-2 ml-1"
+      :density="compactMode ? 'compact' : 'comfortable'"
     >
       <div class="d-flex align-center align-content-center flex-nowrap">
         <div class="c-gscan-workflow-name flex-grow-1">
           <span>
             {{ node.name || node.id }}
-            <v-tooltip
-              location="top"
-              style="overflow-wrap: anywhere;"
-            >
+            <v-tooltip style="overflow-wrap: anywhere;">
               {{ node.id }}
             </v-tooltip>
           </span>
         </div>
-        <div class="d-flex text-right c-gscan-workflow-states flex-grow-0">
-          <!-- task summary tooltips -->
-          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
-          <div
-            class="ma-0 pa-0"
-            min-width="0"
-            min-height="0"
-            style="font-size: 120%; width: auto;"
+        <div class="d-flex c-gscan-workflow-states flex-grow-0 align-center">
+          <v-icon
+            v-for="modifier in statesInfo.modifiers"
+            :key="modifier"
+            :icon="modifierIcons[modifier]"
+            v-tooltip="`Has ${modifier} tasks.`"
+            size="1em"
+            class="modifier-badge"
+            :class="modifier"
+          />
+          <template
+            v-for="(value, state) in statesInfo.stateTotals"
+            :key="state"
           >
-            <WarningIcon v-if="workflowWarnings" :workflow="node" />
-          </div>
-          <div
-            v-for="[state, tasks] in Object.entries(descendantTaskInfo.latestTasks)"
-            :key="`${node.id}-${state}`"
-            :class="getTaskStateClass(descendantTaskInfo.stateTotals, state)"
-            class="ma-0 pa-0"
-            min-width="0"
-            min-height="0"
-            style="font-size: 120%; width: auto;"
-          >
-            <Job :status="state" />
-            <v-tooltip location="top">
-              <!-- tooltip text -->
-              <div class="text-grey-lighten-1">
-                {{ descendantTaskInfo.stateTotals[state] ?? 0 }} {{ state }}. Recent {{ state }} tasks:
-              </div>
-              <div v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
-                {{ task }}<br v-if="index !== tasks.length - 1" />
-              </div>
-            </v-tooltip>
-          </div>
+            <TaskStateBadge
+              v-if="value"
+              v-bind="{ state, value }"
+              :latest-tasks="statesInfo.latestTasks[state]"
+            />
+          </template>
+          <WarningIcon
+            v-if="workflowWarnings"
+            :workflow="node"
+            class="ml-1"
+            style="font-size: 120%;"
+          />
         </div>
       </div>
     </v-list-item>
@@ -94,119 +88,115 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </TreeItem>
 </template>
 
-<script>
-import Job from '@/components/cylc/Job.vue'
+<script setup>
+import { computed } from 'vue'
+import TaskStateBadge from '@/components/cylc/TaskStateBadge.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
-import { JobStateNames } from '@/model/JobState.model'
+import TaskState from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import { useWorkflowWarnings } from '@/composables/localStorage'
+import { taskHeld, taskRetry } from '@/utils/icons'
+import { useCompactMode, useWorkflowWarnings } from '@/composables/localStorage'
+
+const nodeTypes = ['workflow-part', 'workflow']
+
+/** Display order in sidebar */
+const taskStatesOrdered = [
+  TaskState.FAILED.name,
+  TaskState.SUBMIT_FAILED.name,
+  TaskState.SUBMITTED.name,
+  TaskState.RUNNING.name,
+]
+
+const modifierIcons = {
+  held: taskHeld,
+  retrying: taskRetry,
+}
 
 /**
- * Get aggregated task state totals and latest task states for all descendents of a node.
+ * Get aggregated task state totals for all descendents of a node.
+ *
+ * Also get latest state tasks for workflow nodes.
  *
  * @param {Object} node
- * @param {Record<string, number>} stateTotals
- * @param {Record<string, string[]>} latestTasks
+ * @param {Record<string, number>} stateTotals - Accumulator for state totals.
+ * @param {Set<string>} modifiers - Accumulator for modifier states.
  */
-function traverseChildren (node, stateTotals = {}, latestTasks = {}) {
+function getStatesInfo (node, stateTotals = {}, modifiers = new Set()) {
+  const latestTasks = {}
   // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
   if (node.type === 'workflow-part' && node.children) {
-    // at every branch, recurse all child nodes
+    // at every branch, recurse all child nodes except stopped workflows
     for (const child of node.children) {
-      traverseChildren(child, stateTotals, latestTasks)
+      if (child.node.status !== WorkflowState.STOPPED.name) {
+        getStatesInfo(child, stateTotals, modifiers)
+      }
     }
   } else if (node.type === 'workflow' && node.node.stateTotals) {
-    // if we are at the end of a node (or at least, hit a workflow node), stop and merge state
+    // if we hit a workflow node, stop and merge state
 
-    // the latest state tasks from this node with all the others from the tree
-    for (const [state, totals] of Object.entries(node.node.stateTotals)) {
-      if (JobStateNames.includes(state)) { // filter only valid states
-        // (cast as numbers so they dont get concatenated as strings)
-        stateTotals[state] = (stateTotals[state] ?? 0) + parseInt(totals)
-      }
+    if (node.node.containsHeld) {
+      modifiers.add('held')
     }
-    for (const [state, taskNames] of Object.entries(node.node.latestStateTasks)) {
-      if (JobStateNames.includes(state)) {
-        // concat the new tasks in where they don't already exist
-        latestTasks[state] = [
-          ...(latestTasks[state] ?? []),
-          ...taskNames,
-        ].sort().reverse() // cycle point descending order
+    if (node.node.containsRetry) {
+      modifiers.add('retrying')
+    }
+
+    // the non-zero state totals from this node with all the others from the tree
+    for (const state of taskStatesOrdered) {
+      let nodeTotal = node.node.stateTotals[state]
+      let nodeLatestTasks = node.node.latestStateTasks?.[state] ?? []
+      if (state === TaskState.SUBMITTED.name) { // include preparing tasks
+        nodeTotal += node.node.stateTotals.preparing
+        nodeLatestTasks = [
+          ...nodeLatestTasks,
+          ...(node.node.latestStateTasks?.preparing ?? []),
+        ].slice(0, 5) // limit to 5 latest (submitted tasks take priority)
       }
+      stateTotals[state] = (stateTotals[state] ?? 0) + nodeTotal
+      latestTasks[state] = nodeLatestTasks
     }
   }
-  return { stateTotals, latestTasks }
+  return { stateTotals, latestTasks, modifiers }
 }
 
-export default {
-  name: 'GScanTreeItem',
+const workflowWarnings = useWorkflowWarnings()
 
-  components: {
-    Job,
-    TreeItem,
-    WarningIcon,
-    WorkflowIcon,
+const compactMode = useCompactMode()
+
+const props = defineProps({
+  node: {
+    type: Object,
+    required: true
   },
-
-  data: () => ({
-    workflowWarnings: useWorkflowWarnings()
-  }),
-
-  props: {
-    node: {
-      type: Object,
-      required: true
-    },
-    depth: {
-      type: Number,
-      default: 0
-    },
-    filteredOutNodesCache: {
-      type: WeakMap,
-      required: true,
-    },
-    hoverable: {
-      type: Boolean,
-    },
+  depth: {
+    type: Number,
+    default: 0
   },
-
-  computed: {
-    workflowLink () {
-      return this.node.type === 'workflow'
-        ? `/workspace/${ this.node.tokens.workflow }`
-        : ''
-    },
-
-    /** Task state totals and latest states for all descendents of this node. */
-    descendantTaskInfo () {
-      return traverseChildren(this.node)
-    },
-
-    nodeChildren () {
-      return this.node.type === 'workflow'
-        ? []
-        : this.node.children
-    },
-
-    nodeClass () {
-      return {
-        'c-workflow-stopped': this.node.node?.status === WorkflowState.STOPPED.name,
-      }
-    }
+  filteredOutNodesCache: {
+    type: WeakMap,
+    required: true,
   },
-
-  methods: {
-    getTaskStateClass (stateTotals, state) {
-      return {
-        'empty-state': !stateTotals[state]
-      }
-    },
+  hoverable: {
+    type: Boolean,
   },
+})
 
-  nodeTypes: ['workflow-part', 'workflow'],
-  maxTasksDisplayed: 5,
-  WorkflowState,
-}
+const workflowLink = computed(
+  () => props.node.type === 'workflow'
+    ? `/workspace/${ props.node.tokens.workflow }`
+    : ''
+)
+
+/** Task state totals for all descendents of this node. */
+const statesInfo = computed(() => getStatesInfo(props.node))
+
+const nodeChildren = computed(
+  () => props.node.type === 'workflow' ? [] : props.node.children
+)
+
+const nodeClass = computed(() => ({
+  'c-workflow-stopped': props.node.node?.status === WorkflowState.STOPPED.name,
+}))
 </script>

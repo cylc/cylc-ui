@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,29 +18,34 @@
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import { createStore } from 'vuex'
+import storeOptions from '@/store/options'
 import Toolbar from '@/components/cylc/Toolbar.vue'
 import WorkflowState from '@/model/WorkflowState.model'
-import storeOptions from '@/store/options'
+
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
+import sinon from 'sinon'
+import WorkflowService from '@/services/workflow.service'
+import { __drawer as drawerState } from '@/utils/toolbar'
+import { vuetifyOptions } from '@/plugins/vuetify'
+import { mdiMenuClose, mdiMenuOpen } from '@mdi/js'
+import { mockRoute } from '$tests/util'
+
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Toolbar component', () => {
-  const vuetify = createVuetify({
-    display: {}
-  })
-  const $route = {
-    name: 'testRoute'
-  }
-  let store
-  let mountFunction
+  let store, $workflowService
 
   beforeEach(() => {
+    mockRoute()
     store = createStore(storeOptions)
-    mountFunction = () => mount(Toolbar, {
-      global: {
-        plugins: [vuetify, store],
-        mocks: { $route }
-      }
+    store.commit('user/SET_USER', {
+      owner: 'rincewind',
+      permissions: ['play', 'pause', 'resume', 'stop', 'setGraphWindowExtent'],
+      initials: 'RW',
+      username: 'rincewind',
     })
-
+    drawerState.value = false
+    $workflowService = sinon.createStubInstance(WorkflowService)
     store.state.workflows.workflows = [
       {
         id: 'user/id',
@@ -50,9 +55,64 @@ describe('Toolbar component', () => {
     ]
   })
 
-  it('should mount the component', async () => {
-    const wrapper = mountFunction()
+  it('shows backburger icon when drawer is open and list icon when closed', async () => {
+    const wrapper = mount(Toolbar, {
+      global: {
+        plugins: [store, vuetify, CommandMenuPlugin],
+        mocks: { $workflowService },
+        provide: { versionInfo: null },
+      },
+    })
+    // Drawer closed: '≡>' icon
+    drawerState.value = false
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.$el).to.exist
+    const btn = wrapper.find('#toggle-drawer')
+    expect(btn.find('svg path').attributes('d')).to.equal(mdiMenuClose)
+    // Drawer open: '≡<' icon
+    drawerState.value = true
+    await wrapper.vm.$nextTick()
+    expect(btn.find('svg path').attributes('d')).to.equal(mdiMenuOpen)
+  })
+
+  it('toggles drawer on button click', async () => {
+    const wrapper = mount(Toolbar, {
+      global: {
+        plugins: [store, vuetify, CommandMenuPlugin],
+        mocks: { $workflowService },
+        provide: { versionInfo: null },
+      },
+    })
+    expect(drawerState.value).to.equal(false)
+    await wrapper.find('#toggle-drawer').trigger('click')
+    expect(drawerState.value).to.equal(true)
+    await wrapper.find('#toggle-drawer').trigger('click')
+    expect(drawerState.value).to.equal(false)
+  })
+
+  it.each([
+    {
+      route: {
+        params: { workflowName: 'A' },
+        meta: { title: 'B' },
+      },
+      expected: 'A'
+    },
+    {
+      route: {
+        meta: { title: 'B' },
+      },
+      expected: 'B'
+    },
+  ])('displays title $expected from the route', async ({ route, expected }) => {
+    mockRoute(route)
+    const wrapper = mount(Toolbar, {
+      global: {
+        plugins: [store, vuetify, CommandMenuPlugin],
+        mocks: { $workflowService },
+        provide: { versionInfo: null },
+      },
+    })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('.c-toolbar-title').text()).to.include(expected)
   })
 })

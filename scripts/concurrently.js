@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const concurrently = require('concurrently')
+import concurrently from 'concurrently'
 
 const args = process.argv.slice(2)
 const { VITE_OPTIONS } = process.env
@@ -36,6 +36,6 @@ concurrently(
   args.map((arg) => allCommands[arg]),
   {
     successCondition: 'first',
-    killOthers: ['success', 'failure'],
+    killOthersOn: ['success', 'failure'],
   }
 )

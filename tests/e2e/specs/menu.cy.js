@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ describe('Command Menu component', () => {
       // the menu should now be open
       .get('.c-mutation-menu-list:first')
       .should('be.visible')
-      .children('.c-mutation')
+      .children('.c-mutation-menu-item')
       .should('have.length', collapsedWorkflowMenuLength)
       .get('.c-mutation-menu')
       .should('be.visible')
@@ -51,7 +51,7 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')
-      .children('.c-mutation')
+      .children('.c-mutation-menu-item')
       .should('have.length', expandedWorkflowMenuLength)
     // Should close when clicking outside of the menu
     // (click on hidden element to avoid clicking on anything unexpected)
@@ -64,7 +64,7 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')
-      .children('.c-mutation')
+      .children('.c-mutation-menu-item')
       .should('have.length', collapsedWorkflowMenuLength)
   })
 
@@ -113,9 +113,16 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')
-    // Should close when clicking on task mutation
+    // Should not close when clicking on dialog opened from menu
+    cy.get('.c-mutation-menu-item:not([aria-disabled]) [data-cy=mutation-edit]:first')
+      .click()
+      .get('.c-mutation-dialog [data-cy=cancel]')
+      .click()
+      .get('.c-mutation-menu')
+      .should('be.visible')
+    // Should close when clicking on task mutation without opening a dialog
     cy.get('.c-mutation-menu-list')
-      .find('.c-mutation:not([aria-disabled]):first')
+      .find('.c-mutation-menu-item:not([aria-disabled]):first')
       .click()
       .get('.c-mutation-menu')
       .should('not.exist')

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,18 +39,16 @@ describe('Table view', () => {
       .should('be.visible')
   })
 
-  describe('Filters & sorting', () => {
+  describe('Filters', () => {
     it('Should filter by ID', () => {
       cy.get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
-      cy.get('[data-cy=filter-id] input')
+      cy.get('[data-cy=control-taskIDFilter] input')
         .should('be.empty')
-      cy.get('[data-cy="filter task state"] input')
-        .should('have.value', '')
       cy.get('td [data-cy-task-name=sleepy]')
         .should('be.visible')
       for (const id of ['eep', '/sle']) {
-        cy.get('[data-cy=filter-id] input')
+        cy.get('[data-cy=control-taskIDFilter] input')
           .clear()
           .type(id)
         cy.get('td [data-cy-task-name=sleepy]')
@@ -69,7 +67,7 @@ describe('Table view', () => {
         .get('td [data-cy-task-name=failed]')
         .should('be.visible')
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy=control-taskStateFilter]')
         .click()
       cy
         .get('.v-list-item')
@@ -89,7 +87,7 @@ describe('Table view', () => {
         .get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy=control-taskStateFilter]')
         .click()
       cy
         .get('.v-list-item')
@@ -100,13 +98,28 @@ describe('Table view', () => {
         .should('have.length', 2)
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id] input')
+        .get('[data-cy=control-taskIDFilter] input')
         .type('eventually')
       cy
         .get('td [data-cy-task-name=eventually_succeeded]')
         .should('be.visible')
     })
 
+    it('Displays a notice when no tasks match the filter', () => {
+      cy.get('.c-table table > tbody > tr')
+        .should('have.length', initialNumRows)
+      cy.get('.c-table [data-cy=filter-no-results]')
+        .should('not.exist')
+      cy.get('[data-cy="control-taskIDFilter"]')
+        .type('j3cduF4h2djAk1')
+      cy.get('.c-table table > tbody > tr')
+        .should('have.length', 1)
+      cy.get('.c-table [data-cy=filter-no-results]')
+        .should('be.visible')
+    })
+  })
+
+  describe('Sorting', () => {
     it('displays and sorts latest job run time', () => {
       const nonzeroValues = [
         '00:00:01',
@@ -182,18 +195,19 @@ describe('State saving', () => {
       .get('.c-table table > tbody > tr')
       .should('have.length', initialNumRows)
     cy
-      .get('[data-cy="filter task state"]:last')
+      .get('[data-cy=control-taskStateFilter]:last')
       .click()
     cy
       .get('.v-list-item')
-      .contains(TaskState.SUCCEEDED.name)
+      .filter(':visible')
+      .contains('.v-list-item', 'succeeded')
       .click({ force: true })
     cy
       .get('.c-table table > tbody > tr')
       .should('have.length', 2)
       .should('be.visible')
     cy
-      .get('[data-cy=filter-id] input:last')
+      .get('[data-cy=control-taskIDFilter] input:last')
       .type('eventually')
     cy
       .get('td [data-cy-task-name=eventually_succeeded]')
@@ -245,7 +259,7 @@ describe('State saving', () => {
   })
 
   describe('Flow nums', () => {
-    it('Only shows flow nums when not 1, and flow=None is dimmed', () => {
+    it('Only shows flow nums when not 1, and n!=0 tasks are dimmed', () => {
       cy.visit('/#/table/one')
       cy.get('[data-cy-task-name=failed]')
         .find('[data-cy=flow-num-chip]')
@@ -253,7 +267,7 @@ describe('State saving', () => {
       cy.get('[data-cy-task-name=checkpoint]')
         .find('[data-cy=flow-num-chip]')
         .should('not.exist')
-      cy.get('[data-cy-task-name=sleepy].flow-none')
+      cy.get('[data-cy-task-name=sleepy].dimmed')
         .should('have.css', 'opacity')
         .then((opacity) => {
           expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)

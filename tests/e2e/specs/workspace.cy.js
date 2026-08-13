@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,8 @@ describe('Workspace view and component/widget', () => {
   it('Can remove widgets by clicking close icon in tab', () => {
     cy.get('.lm-TabBar-tabLabel')
       .should('have.length', 1)
+    cy.get('#empty-workspace-notice')
+      .should('not.exist')
     addView('Tree')
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel')
@@ -104,6 +106,8 @@ describe('Workspace view and component/widget', () => {
       .should('not.exist')
     cy.get('.lm-DockPanel-widget')
       .should('not.exist')
+    cy.get('#empty-workspace-notice')
+      .should('be.visible')
   })
 
   it('Saves and restores layout when navigating', () => {
@@ -118,7 +122,7 @@ describe('Workspace view and component/widget', () => {
         .should('have.length', 2)
       cy.get('.c-tree')
         .should('be.visible')
-        .find('[data-cy=filter-id] input')
+        .find('[data-cy=control-taskIDFilter] input')
         .should('have.value', 'GOOD')
       cy.get('.c-table')
         .should('be.visible')
@@ -141,7 +145,8 @@ describe('Workspace view and component/widget', () => {
     // (It takes a moment for the split pane to render properly - should('be.visible') does not wait for this unfortunately)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(100)
-    cy.get('.c-tree [data-cy=filter-id] input')
+    cy.get('.c-tree')
+      .find('[data-cy=control-taskIDFilter] input')
       .type('GOOD')
     expectRememberedLayout()
 

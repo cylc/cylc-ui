@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ import {
 } from 'lodash'
 import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   updateInitialOptionsEvent,
@@ -272,10 +272,6 @@ class AnalysisTaskCallback extends DeltasCallback {
 export default {
   name: 'Analysis',
 
-  mixins: [
-    graphqlMixin
-  ],
-
   components: {
     AnalysisTable,
     BoxPlot,
@@ -288,7 +284,9 @@ export default {
 
   emits: [updateInitialOptionsEvent],
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
     /**
@@ -323,6 +321,8 @@ export default {
      */
     const timeseriesPlotOptions = useInitialOptions('timeseriesPlotOptions', { props, emit })
 
+    const { workflowIDs } = useGraphQL()
+
     return {
       tasksFilter,
       chartType,
@@ -330,6 +330,7 @@ export default {
       dataTableOptions,
       boxPlotOptions,
       timeseriesPlotOptions,
+      workflowIDs,
     }
   },
 
@@ -343,13 +344,6 @@ export default {
   },
 
   computed: {
-    // a list of the workflow IDs this view is "viewing"
-    // NOTE: we plan multi-workflow functionality so we are writing views
-    // to be mult-workflow compatible in advance of this feature arriving
-    workflowIDs () {
-      return [this.workflowId]
-    },
-
     filteredTasks () {
       return this.tasks.filter(task => matchTask(task, this.tasksFilter))
     },

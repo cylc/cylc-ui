@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,3 +34,5 @@ export const useReducedAnimation = () => useLocalStorage('reducedAnimation', fal
 export const useWorkflowWarnings = () => useLocalStorage('useWorkflowWarnings', true)
 
 export const useLogWordWrapDefault = () => useLocalStorage('logWordWrap', false)
+
+export const useCompactMode = () => useLocalStorage('compactMode', false)

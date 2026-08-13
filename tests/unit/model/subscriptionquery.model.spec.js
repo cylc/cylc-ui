@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ describe('SubscriptionQuery model', () => {
     it('should be created', () => {
       const query = gql`query { workflow { id } }`
       const variables = {
-        workflowId: '~cylc/cylc'
+        workflowID: '~cylc/cylc'
       }
       const name = 'root'
       const callbacks = [

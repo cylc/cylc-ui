@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -554,8 +554,14 @@ const modifierTransform = _getModifierTransform()
 
     &.running .progress {
       animation-name: c8-task-progress-animation;
+      // Use steps() to improve performance for large workflows:
       animation-timing-function: steps(50);
       animation-iteration-count: 1;
+
+      #quickstart-guide & {
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+      }
     }
   }
 

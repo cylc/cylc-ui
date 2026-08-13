@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,69 +22,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-key-val my-1"
     no-gutters
   >
-    <v-col cols="5">
-      <div>
-        <v-text-field
-          placeholder="key"
-          v-model="modelValue.key"
-          :disabled="modelValue.frozenKey"
-          class="c-input-key"
-          v-bind="{ ...$attrs, ...$options.textFieldProps }"
+    <v-defaults-provider :defaults="defaults">
+      <v-col cols="5">
+        <div>
+          <v-text-field
+            placeholder="key"
+            v-model="model.key"
+            :disabled="model.frozenKey"
+            class="c-input-key"
+          />
+          <v-tooltip v-if="model.frozenKey">
+            <span><code>{{ model.key }}</code><br/>(Pre-existing settings cannot be renamed)</span>
+          </v-tooltip>
+        </div>
+      </v-col>
+      <v-col cols="auto" style="display: inline-block; padding-top: 0.5em;">
+        <span>=</span>
+      </v-col>
+      <v-col>
+        <v-textarea
+          rows="1"
+          auto-grow
+          placeholder="value"
+          v-model="model.value"
+          class="c-input-val"
         />
-        <v-tooltip v-bind="tooltipProps">
-          <span><code>{{ modelValue.key }}</code><br/>(Pre-existing settings cannot be renamed)</span>
+      </v-col>
+      <v-col cols="auto">
+        <slot
+          name="append"
+          :disabled="model.frozenKey"
+        />
+        <v-tooltip v-if="model.frozenKey">
+          <span>Pre-existing settings cannot be removed</span>
         </v-tooltip>
-      </div>
-    </v-col>
-    <v-col cols="auto" style="display: inline-block; padding-top: 0.5em;">
-      <span>=</span>
-    </v-col>
-    <v-col>
-      <v-textarea
-        rows="1"
-        auto-grow
-        placeholder="value"
-        v-model="modelValue.value"
-        class="c-input-val"
-        v-bind="{ ...$attrs, ...$options.textFieldProps }"
-      />
-    </v-col>
-    <v-col cols="auto">
-      <slot
-        name="append"
-        :disabled="modelValue.frozenKey"
-      />
-      <v-tooltip v-bind="tooltipProps">
-        <span>Pre-existing settings cannot be removed</span>
-      </v-tooltip>
-    </v-col>
+      </v-col>
+    </v-defaults-provider>
   </v-row>
 </template>
 
-<script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+<script setup>
 
-export default {
-  name: 'g-map-item',
-
-  mixins: [
-    formElement
-  ],
-
+defineOptions({
   inheritAttrs: false,
+})
 
-  computed: {
-    tooltipProps () {
-      return {
-        location: 'top',
-        disabled: !this.modelValue.frozenKey,
-        openDelay: 400
-      }
-    }
+const model = defineModel({ required: true })
+
+const defaults = {
+  VTooltip: {
+    location: 'top',
+    openDelay: 400
   },
-
-  textFieldProps: {
-    hideDetails: true
-  }
+  VTextField: {
+    hideDetails: true,
+  },
+  VTextarea: {
+    hideDetails: true,
+  },
 }
+
 </script>

@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container fluid>
+  <v-container
+    id="quickstart-guide"
+    fluid
+  >
     <h1 class="ma-0">Cylc UI Quick Start</h1>
     <!--
       TODO: make sections linkable
@@ -49,32 +52,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
          </v-card-text>
             <table id="task-job-state-table">
-              <tr>
-                <td>Task</td>
-                <td></td>
-                <td>Job</td>
-              </tr>
-              <tr
-                v-bind:key="state.name.name"
-                v-for="state of states"
-              >
-                <td style="font-size: 2em;">
-                  <!-- set times to make the progress change -->
-                  <task
-                    :task="{
-                      state: state.name,
-                      task: {meanElapsedTime: 30}
-                    }"
-                    :startTime="String(Date.now())"
-                  />
-                </td>
-                <td>
-                  <span>{{ state.name }}</span>
-                </td>
-                <td style="font-size: 2em;">
-                  <job :status="state.name" />
-                </td>
-              </tr>
+              <thead style="font-size: 2em;">
+                <tr>
+                  <td>Task</td>
+                  <td></td>
+                  <td>Job</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-bind:key="state.name.name"
+                  v-for="state of states"
+                >
+                  <td style="font-size: 2em;">
+                    <!-- set times to make the progress change -->
+                    <Task
+                      :task="{
+                        state: state.name,
+                        task: {meanElapsedTime: 30}
+                      }"
+                      :startTime="String(Date.now())"
+                    />
+                  </td>
+                  <td>
+                    <span>{{ state.name }}</span>
+                  </td>
+                  <td style="font-size: 2em;">
+                    <Job :status="state.name" />
+                  </td>
+                </tr>
+              </tbody>
             </table>
           <v-card-text>
             <p>
@@ -104,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <v-list-item>
                 <template v-slot:prepend>
-                  <task
+                  <Task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
                     class="mr-4"
@@ -118,6 +125,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-list-item-subtitle>
               </v-list-item>
             </v-list>
+          </v-card-text>
+        </v-card>
+
+        <br />
+
+        <v-card variant="outlined" class="pa-1">
+          <v-card-title primary-title>
+            <p class="text-h4 text--primary">Views</p>
+          </v-card-title>
+          <v-card-text>
+            Cylc provides lots of views which you can use to monitor and
+            interact with workflows in different ways.
+            <v-list>
+              <v-list-item
+                v-for="[name, view] in workflowViews.entries()"
+                v-bind:key="name"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="large">{{ view.icon }}</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ view.description }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+
+            When viewing a workflow, press the "Add View" button to open a new
+            view.
+          </v-card-text>
+        </v-card>
+
+        <br />
+
+        <v-card variant="outlined" class="pa-1">
+          <v-card-title primary-title>
+            <p class="text-h4 text--primary">Tabs</p>
+          </v-card-title>
+          <v-card-text>
+            <p>
+              The Cylc GUI has lots of views, each of which opens in a new tab.
+            </p>
+
+            <p>
+              Click and drag on tabs to arrange them into a layout. Click and
+              drag on the margin between tabs to resize them.
+            </p>
+
+            <br />
+
+            <img src="/img/guide-tabs.gif" style="width: 100%; max-width: 600px;" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -255,6 +315,111 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
              </p>
           </v-card-text>
         </v-card>
+
+        <br />
+
+        <v-card variant="outlined" class="pa-1">
+          <v-card-title primary-title>
+            <p class="text-h4 text--primary">The n-window</p>
+          </v-card-title>
+          <v-card-text>
+            <p>
+              Cylc workflows can be very large, or even infinite. So rather
+              than displaying <b>all</b> of the tasks, Cylc displays a
+              moving window of tasks built around the workflow's
+              "<a href="https://cylc.org/cylc-doc/stable/html/glossary.html#term-active-task">active tasks</a>"
+              (the ones which the workflow is operating on right now).
+            </p>
+
+            <p>
+              By default, Cylc shows you all active tasks, as well as any
+              immediately upstream or downstream of them.
+              We call this the "n=1 window".
+              Active tasks are said to be "n=0". The tasks immediately
+              up/downstream of them are "n=1", and so on
+              (<a href="https://cylc.org/cylc-doc/stable/html/user-guide/running-workflows/tasks-jobs-ui.html#the-n-window">full documentation</a>).
+            </p>
+
+            <p>
+              The following example shows a workflow with four tasks
+              (a, b, c & d) which run in order:
+            </p>
+
+            <div style="height: 25em; margin: 2em;">
+              <svg
+                height="100%"
+                ref="graph2"
+                class="c-graph job_theme--default"
+                viewBox="0 0 1200 850"
+              >
+                <defs>
+                  <marker
+                    :id="`${uid}-arrow-end`"
+                    viewbox="0 0 8 8"
+                    refX="1" refY="5"
+                    markerUnits="strokeWidth"
+                    markerWidth="8"
+                    markerHeight="8"
+                    orient="auto"
+                  >
+                    <path d="M 0 0 L 8 4 L 0 8 z" fill="rgb(90,90,90)" />
+                  </marker>
+                </defs>
+                <g
+                ref="graph"
+                  v-on:click.stop.prevent=""
+                  >
+
+                  <g
+                    v-for="(task, index) in exampleTasks"
+                    v-bind:key="index"
+                  >
+                    <GraphNode
+                      v-bind="task"
+                      :transform="`translate(0, ${ 240 * index })`"
+                      :class="{ 'dimmed': task.task.node.graphDepth }"
+                      v-on:click.stop.capture
+                    />
+                    <text
+                      :transform="`translate(275, ${ (240 * index) + 50 })`"
+                      font-size="50px"
+                    >
+                      n={{ Math.abs(index - 1) }}
+                      - {{
+                        [
+                          'Active task (running)', // b
+                          'Future task (waiting)', // c
+                          'Future task (waiting)', // d
+                          'Historical task (succeeded)', // a
+                        ].at(index - 1)
+                      }}
+                    </text>
+                    <path
+                      v-if="index < (exampleTasks.length - 1)"
+                      d="M 50 0 L 50 80"
+                      stroke="rgb(90,90,90)"
+                      stroke-width="5"
+                      fill="none"
+                      :marker-end="`url(#${uid}-arrow-end)`"
+                    :transform="`translate(0, ${ (240 * index) + 120 })`"
+                    />
+
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <p>
+              When viewing a workflow, you can change the n-window that Cylc
+              uses from the toolbar.
+            </p>
+
+            <p>
+              Note that the tasks outside of the active window (i.e. the ones
+              that are not n=0) are greyed out. This highlights the tasks that
+              Cylc is currently managing.
+            </p>
+          </v-card-text>
+        </v-card>
       </v-col>
     </div>
 
@@ -264,19 +429,72 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
+import GraphNode from '@/components/cylc/GraphNode.vue'
+import { workflowViews } from '@/views/views'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
+import { Tokens } from '@/utils/uid'
+import { uniqueId } from 'lodash-es'
 
 export default {
   name: 'Guide',
   components: {
-    task: Task,
-    job: Job
+    Task,
+    Job,
+    GraphNode,
   },
-  // TODO: extract task states and descriptions from the GraphQL API
-  //       once this is an enumeration.
+
   data: () => ({
-    states: TaskStateUserOrder
-  })
+    uid: uniqueId('guide'),
+
+    // TODO: extract task states and descriptions from the GraphQL API
+    //       once this is an enumeration.
+    states: TaskStateUserOrder,
+
+    workflowViews,
+
+    exampleTasks: [
+      {
+        task: {
+          name: 'a',
+          tokens: new Tokens('2000/a', true),
+          node: { state: 'succeeded', graphDepth: 1 },
+        },
+        jobs: [{
+          name: '01',
+          tokens: new Tokens('2000/a/01', true),
+          node: { state: 'succeeded' },
+        }],
+      },
+      {
+        task: {
+          name: 'b',
+          tokens: new Tokens('2000/b', true),
+          node: { state: 'running', graphDepth: 0 },
+        },
+        jobs: [{
+          name: '01',
+          tokens: new Tokens('2000/b/01', true),
+          node: { state: 'running' },
+        }],
+      },
+      {
+        task: {
+          name: 'c',
+          tokens: new Tokens('2000/c', true),
+          node: { state: 'waiting', graphDepth: 1 },
+        },
+        jobs: [],
+      },
+      {
+        task: {
+          name: 'd',
+          tokens: new Tokens('2000/d', true),
+          node: { state: 'waiting', graphDepth: 2 },
+        },
+        jobs: [],
+      },
+    ]
+  }),
 }
 </script>
 
@@ -306,24 +524,12 @@ export default {
       line-height: 1.2em;
     }
 
-    tr:nth-child(1) {
-      font-size: 2em;
-    }
-
-    tr > td:nth-child(2) {
-      font-size: 1em;
-    }
-
     tr > td:nth-child(1), tr > td:nth-child(3) {
       width: 5em;
     }
 
     td {
       padding: 0.1em 0 0.1em 0;
-    }
-
-    td > * {
-      background-color: white;
     }
   }
 </style>

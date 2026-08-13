@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ export default defineConfig(({ mode }) => {
     base: '',
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        $tests: path.resolve(__dirname, './tests'),
+        '@': path.resolve('./src'),
+        $tests: path.resolve('./tests'),
         lodash: 'lodash-es',
         // GraphiQL is a React app (use Preact as it's smaller):
         react: 'preact/compat',
@@ -88,7 +88,8 @@ export default defineConfig(({ mode }) => {
       },
       watch: {
         ignored: [
-          path.resolve(__dirname, './coverage')
+          path.resolve('./coverage'),
+          path.resolve('./**/.nfs*'),
         ]
       },
       warmup: {
@@ -103,10 +104,26 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: mode !== 'production',
       target: 'baseline-widely-available',
-      rollupOptions: {
-        // Workaround https://github.com/vitejs/vite/issues/19410:
-        maxParallelFileOps: 100,
-      },
+      rolldownOptions: {
+        output: {
+          // Disable code splitting (apart from GraphiQL) if desired by the developer
+          // (can speed up build when using a slow disk, e.g. network drive):
+          codeSplitting: process.env.DISABLE_CODE_SPLITTING
+            ? {
+                groups: [
+                  {
+                    test: /node_modules[\\/]graphiql/,
+                    name: 'graphiql',
+                  },
+                  {
+                    test: /.*/,
+                    name: 'main',
+                  },
+                ]
+              }
+            : true,
+        }
+      }
     },
     css: {
       preprocessorOptions: {
@@ -135,7 +152,7 @@ export default defineConfig(({ mode }) => {
       coverage: {
         provider: 'istanbul',
         include: [
-          'src/**'
+          'src/**/*.{js,mjs,jsx,ts,tsx,vue}',
         ],
         exclude: [
           'src/services/mock/**'

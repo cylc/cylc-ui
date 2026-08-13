@@ -8,29 +8,33 @@
         "host": "localhost",
         "port": 43079,
         "cylcVersion": "8.4.2",
+        "runMode": "live",
         "status": "running",
         "statusMsg": "running",
+        "lastUpdated": 1765537625.399079,
         "stateTotals": {
           "waiting": 3,
           "expired": 0,
           "preparing": 0,
           "submit-failed": 0,
-          "submitted": 0,
-          "running": 1,
-          "failed": 1,
+          "submitted": 1,
+          "running": 10,
+          "failed": 2,
           "succeeded": 2
         },
+        "containsHeld": true,
+        "containsRetry": true,
         "latestStateTasks": {
           "submitted": [],
           "running": [
-            "checkpoint"
+            "20000102T0000Z/checkpoint"
           ],
           "succeeded": [
-            "eventually_succeeded",
-            "succeeded"
+            "20000102T0000Z/eventually_succeeded",
+            "20000102T0000Z/succeeded"
           ],
           "failed": [
-            "failed"
+            "20000102T0000Z/failed"
           ]
         }
       },
@@ -50,9 +54,18 @@
       "familyProxies": [
         {
           "__typename": "FamilyProxy",
+          "id": "~user/one//20000102T0000Z/root",
+          "name": "root",
+          "state": "failed",
+          "graphDepth": 0,
+          "cyclePoint": "20000102T0000Z"
+        },
+        {
+          "__typename": "FamilyProxy",
           "id": "~user/one//20000102T0000Z/BAD",
           "name": "BAD",
           "state": "failed",
+          "graphDepth": 0,
           "cyclePoint": "20000102T0000Z",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/root",
@@ -73,6 +86,7 @@
           "id": "~user/one//20000102T0000Z/GOOD",
           "name": "GOOD",
           "state": "succeeded",
+          "graphDepth": 0,
           "cyclePoint": "20000102T0000Z",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/root",
@@ -90,6 +104,7 @@
           "id": "~user/one//20000102T0000Z/SUCCEEDED",
           "name": "SUCCEEDED",
           "state": "succeeded",
+          "graphDepth": 0,
           "cyclePoint": "20000102T0000Z",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/GOOD",
@@ -112,9 +127,13 @@
           "id": "~user/one//20000102T0000Z/checkpoint",
           "name": "checkpoint",
           "state": "running",
+          "graphDepth": 0,
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -126,15 +145,20 @@
           "task": {
             "name": "checkpoint",
             "meanElapsedTime": 180
-          }
+          },
+          "namespace": ["root", "checkpoint"]
         },
         {
           "id": "~user/one//20000102T0000Z/eventually_succeeded",
           "name": "eventually_succeeded",
           "state": "succeeded",
+          "graphDepth": 0,
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -146,15 +170,20 @@
           "task": {
             "meanElapsedTime": 11.5,
             "name": "eventually_succeeded"
-          }
+          },
+          "namespace": ["root", "GOOD", "SUCCEEDED", "eventually_succeeded"]
         },
         {
           "id": "~user/one//20000102T0000Z/failed",
           "name": "failed",
           "state": "failed",
-          "isHeld": false,
+          "graphDepth": 0,
+          "isHeld": true,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1,2]",
           "firstParent": {
@@ -165,15 +194,20 @@
           },
           "task": {
             "name": "failed"
-          }
+          },
+          "namespace": ["root", "BAD", "failed"]
         },
         {
           "id": "~user/one//20000102T0000Z/retrying",
           "name": "retrying",
           "state": "waiting",
+          "graphDepth": 0,
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": true,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -184,15 +218,20 @@
           },
           "task": {
             "name": "retrying"
-          }
+          },
+          "namespace": ["root", "BAD", "retrying"]
         },
         {
           "id": "~user/one//20000102T0000Z/sleepy",
           "name": "sleepy",
           "state": "submitted",
+          "graphDepth": 1,
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[]",
           "firstParent": {
@@ -203,15 +242,20 @@
           },
           "task": {
             "name": "sleepy"
-          }
+          },
+          "namespace": ["root", "sleepy"]
         },
         {
           "id": "~user/one//20000102T0000Z/succeeded",
           "name": "succeeded",
           "state": "succeeded",
+          "graphDepth": 0,
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -223,15 +267,23 @@
           "task": {
             "meanElapsedTime": 4.0,
             "name": "succeeded"
-          }
+          },
+          "runtime": {
+            "runMode": "Skip"
+          },
+          "namespace": ["root", "GOOD", "SUCCEEDED", "succeeded"]
         },
         {
           "id": "~user/one//20000102T0000Z/waiting",
           "name": "waiting",
           "state": "waiting",
+          "graphDepth": 0,
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": true,
+          "isXtriggered": true,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -242,7 +294,8 @@
           },
           "task": {
             "name": "waiting"
-          }
+          },
+          "namespace": ["root", "waiting"]
         }
       ],
       "jobs": [

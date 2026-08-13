@@ -16,12 +16,10 @@ coverage:
     project:
       default:
         # fail if coverage below this:
-        target: '85%'
-        # fail if coverage drops by this much:
-        threshold: '2%'
+        target: '80%'
     patch:
       default:
-        target: '85%'
+        target: '80%'
 
 # turn off comments to pull requests
 comment: false

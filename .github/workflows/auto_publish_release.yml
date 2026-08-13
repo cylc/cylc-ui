@@ -22,12 +22,12 @@ jobs:
     steps:
 
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ env.MERGE_SHA }}
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
 
@@ -87,3 +87,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release-url: ${{ steps.create-release.outputs.html_url }}
+
+      - name: Bump dev version
+        uses: cylc/release-actions/stage-2/bump-dev-version-js@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

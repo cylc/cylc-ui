@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,32 +167,67 @@ describe('Tree view', () => {
   describe('filters', () => {
     const initialNumTasks = 7
 
-    it('Should filter by ID', () => {
-      cy.visit('/#/tree/one')
+    function checkFilteredTasks (expectedNames) {
+      cy.get('.c-tree .node-data-task:visible')
+        .then((eles) => {
+          const names = []
+          for (const ele of eles) {
+            names.push(
+              Cypress.$(ele).find('.mx-1:first').text()
+            )
+          }
+          expect(names.sort()).to.deep.equal(expectedNames.sort())
+        })
+    }
+
+    function testFiltering () {
+      cy.get('[data-cy=control-taskIDFilter] input').as('idFilter')
+
       // Should not filter by default
       cy.get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
         .contains('waiting')
-      for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
-        cy.get('[data-cy=filter-id] input')
-          .clear()
-          .type(id)
-        cy.get('.node-data-task:visible')
-          .should('have.length.lessThan', initialNumTasks)
-          .contains('succeeded')
-        cy.get('[data-node-name=waiting]')
-          .should('not.be.visible')
-      }
-      // It should stop filtering when input is cleared
-      cy.get('[data-cy=filter-id] input')
-        .clear()
+
+      // filter by task name
+      cy.get('@idFilter').clear().type('c')
+        .then(() => { checkFilteredTasks(['eventually_succeeded', 'succeeded', 'checkpoint']) })
+      cy.get('@idFilter').clear().type('ch')
+        .then(() => { checkFilteredTasks(['checkpoint']) })
+      cy.get('@idFilter').clear().type('c*point')
+        .then(() => { checkFilteredTasks(['checkpoint']) })
+
+      // chearing the input should clear the filter
+      cy.get('@idFilter').clear()
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
-      // It should filter by cycle point
-      cy.get('[data-cy=filter-id] input')
-        .type('2000') // (matches all tasks)
+
+      // filter by family name
+      cy.get('@idFilter').clear().type('BA')
+        .then(() => { checkFilteredTasks(['failed', 'retrying']) })
+      cy.get('@idFilter').clear().type('B*D')
+        .then(() => { checkFilteredTasks(['failed', 'retrying']) })
+
+      // filter by cycle point
+      cy.get('@idFilter').clear().type('20000102T0000Z')
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
+
+      cy.get('@idFilter').clear()
+    }
+
+    it('Should filter by ID (normal mode)', () => {
+      cy.visit('/#/tree/one')
+
+      testFiltering()
+    })
+
+    it('Should filter by ID (flat mode)', () => {
+      cy.visit('/#/tree/one')
+
+      // put the tree view into "flat" mode (no families)
+      cy.get('[data-cy="control-flat"]').click()
+
+      testFiltering()
     })
 
     it('Should filter by task states', () => {
@@ -202,7 +237,7 @@ describe('Tree view', () => {
           .contains(name)
           .should('be.visible')
       }
-      cy.get('[data-cy="filter task state"]')
+      cy.get('[data-cy="control-taskStateFilter"]')
         .click()
         .get('.v-list-item')
         .contains(new RegExp(`^${TaskState.FAILED.name}$`))
@@ -226,10 +261,10 @@ describe('Tree view', () => {
         .contains('failed')
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id]')
+        .get('[data-cy="control-taskIDFilter"]')
         .type('i')
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy="control-taskStateFilter"]')
         .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -247,10 +282,10 @@ describe('Tree view', () => {
         .contains('failed')
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id]')
+        .get('[data-cy="control-taskIDFilter"]')
         .type('i')
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy="control-taskStateFilter"]')
         .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -265,18 +300,51 @@ describe('Tree view', () => {
         .contains('retrying')
     })
 
-    it('Provides a select all functionality', () => {
+    it('Provides a reset functionality', () => {
       cy.visit('/#/tree/one')
-      cy.get('[data-cy="filter task state"]')
+      cy.get('[data-cy="control-taskStateFilter"]')
+        .click()
+        .get('.v-list-item')
+        .as('filters')
+
+      // select some states
+      for (const state of [
+        TaskState.WAITING,
+        TaskState.PREPARING,
+        TaskState.SUBMITTED]
+      ) {
+        cy.get('@filters')
+          .contains(state.name)
+          .click()
+      }
+
+      // there should be three states selected
+      cy.get('@filters')
+        .get('.v-list-item--active')
+        .should('have.length', 3)
+
+      // press the reset button
+      cy.get('[data-cy="control-taskStateFilter-reset"]')
+        .click()
+
+      // there should be zero states selected
+      cy.get('@filters')
         .get('.v-list-item--active')
         .should('have.length', 0)
-      cy.get('[data-cy="filter task state"]')
-        .click()
-        .get('[data-cy=task-filter-select-all]')
-        .click()
-      cy.get('[data-cy="filter task state"]')
-        .get('.v-list-item--active')
-        .should('have.length', 8)
+    })
+
+    it('Displays a notice when no tasks match the filter', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-task')
+        .should('be.visible')
+      cy.get('[data-cy=filter-no-results]')
+        .should('not.exist')
+      cy.get('[data-cy="control-taskIDFilter"]')
+        .type('j3cduF4h2djAk1')
+      cy.get('.node-data-task')
+        .should('not.be.visible')
+      cy.get('[data-cy=filter-no-results]')
+        .should('be.visible')
     })
   })
 
@@ -287,11 +355,11 @@ describe('Tree view', () => {
         .contains('sleepy')
         .as('sleepyTask')
         .should('be.visible')
-      cy.get('[data-cy=collapse-all]')
+      cy.get('[data-cy=control-CollapseAll]')
         .click()
         .get('@sleepyTask')
         .should('not.be.visible')
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         .get('@sleepyTask')
         .should('be.visible')
@@ -299,7 +367,7 @@ describe('Tree view', () => {
 
     it('Does not expand jobs but can collapse them', () => {
       cy.visit('/#/tree/one')
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         .get('.node-data-job:first')
         .should('not.exist')
@@ -308,14 +376,14 @@ describe('Tree view', () => {
         .click()
         .get('.node-data-job:first')
         .should('be.visible')
-      cy.get('[data-cy=expand-all]')
+      cy.get('[data-cy=control-ExpandAll]')
         .click()
         // The job should remain expanded
         .get('.node-data-job:first')
         .should('be.visible')
-      cy.get('[data-cy=collapse-all]')
+      cy.get('[data-cy=control-CollapseAll]')
         .click()
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         // The job should be collapsed now
         .get('.node-data-job:first')
@@ -328,47 +396,30 @@ describe('Tree view', () => {
         .contains('sleepy')
         .as('sleepyTask')
         .should('be.visible')
-      cy.get('[data-cy=filter-id]')
+      cy.get('[data-cy="control-taskIDFilter"]')
         .type('sleep')
-      cy.get('[data-cy=collapse-all]')
+      cy.get('[data-cy=control-CollapseAll]')
         .click()
         .get('@sleepyTask')
         .should('not.be.visible')
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         .get('@sleepyTask')
         .should('be.visible')
     })
   })
 
-  it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
-    cy.visit('/#/tree/one')
-    cy.get('[data-cy="filter task state"]')
-      .click()
-    // eslint-disable-next-line no-lone-blocks
-    TaskState.enumValues.forEach(state => {
-      cy.get('.v-list-item')
-        .contains(state.name)
-        .click({ force: true })
-    })
-    // Click outside to close dropdown
-    cy.get('noscript')
-      .click({ force: true })
-    cy.get('[data-cy="filter task state"]')
-      .contains('.v-select__selection', '(+')
-  })
-
   describe('Toggle families', () => {
     it('Toggles between flat and hierarchical modes', () => {
       cy.visit('/#/tree/one')
       cy.get('.node-data-family').should('have.length', 3)
-      cy.get('[data-cy=toggle-families]').click()
+      cy.get('[data-cy=control-flat]').click()
       cy.get('.node-data-family').should('have.length', 0)
     })
   })
 
   describe('Flow nums', () => {
-    it('Only shows flow nums when not 1, and flow=None is dimmed', () => {
+    it('Only shows flow nums when not 1, and n!=0 tasks are dimmed', () => {
       cy.visit('/#/tree/one')
       cy.get('[data-node-name=failed]')
         .find('[data-cy=flow-num-chip]')
@@ -376,21 +427,21 @@ describe('Tree view', () => {
       cy.get('[data-node-name=checkpoint]')
         .find('[data-cy=flow-num-chip]')
         .should('not.exist')
-      cy.get('[data-node-name=sleepy] .flow-none')
+      cy.get('[data-node-name=sleepy] .dimmed')
         .should('have.css', 'opacity')
         .then((opacity) => {
           expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
         })
       cy.get('[data-node-name=sleepy] .node-expand-collapse-button').click()
         // node expand/collapse button should not be dimmed
-        .parents('.flow-none')
+        .parents('.dimmed')
         .should('not.exist')
         // task icon should be dimmed
         .get('[data-node-name=sleepy] .c-task')
-        .parents('.flow-none')
+        .parents('.dimmed')
         // children should not be dimmed
         .get('[data-node-name=sleepy] .c-treeitem')
-        .parents('.flow-none')
+        .parents('.dimmed')
         .should('not.exist')
     })
   })

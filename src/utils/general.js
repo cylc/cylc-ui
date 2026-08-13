@@ -1,6 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
- *
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,28 +14,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
-import storeOptions from '@/store/options'
-
 /**
- * Tests for the store/app module.
+ * Remove an item from an array if it exists.
+ *
+ * @param {T[]} array - The array to remove the item from.
+ * @param {T} item - The item to remove from the array.
+ * @return {boolean} True if the item was found and removed, false otherwise.
  */
-describe('app', () => {
-  let store
-  beforeEach(() => {
-    store = createStore(storeOptions)
-  })
-  /**
-   * Tests for store.app.title.
-   */
-  describe('title', () => {
-    it('should start with no title', () => {
-      expect(store.state.app.title).to.equal(null)
-    })
-    it('should set title', () => {
-      const title = 'Cylc'
-      store.commit('app/setTitle', title)
-      expect(store.state.app.title).to.equal(title)
-    })
-  })
-})
+export function discardFromArray (array, item) {
+  const index = array.indexOf(item)
+  if (index >= 0) {
+    array.splice(index, 1)
+    return true
+  }
+  return false
+}

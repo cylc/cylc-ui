@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -52,7 +52,7 @@ import { Alert } from '@/model/Alert.model'
 import { store } from '@/store/index'
 import { detokenise, Tokens } from '@/utils/uid'
 import { WorkflowState, WorkflowStateNames } from '@/model/WorkflowState.model'
-import { isBoolean, startCase } from 'lodash-es'
+import { cloneDeep, isBoolean, startCase } from 'lodash-es'
 
 /** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
 /** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
@@ -828,7 +828,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
     }
     argspec[arg.name] ||= arg._default
   }
-  return argspec
+  return cloneDeep(argspec)
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 import { mount } from '@vue/test-utils'
 import Mutation from '@/components/cylc/Mutation.vue'
 import { createVuetify } from 'vuetify'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const cylcObject = { id: '~u/w//1/t', isFamily: false }
 
@@ -50,7 +51,7 @@ describe('Mutation Component', () => {
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = (options) => {
-    const vuetify = createVuetify()
+    const vuetify = createVuetify(vuetifyOptions)
     return mount(Mutation, {
       global: {
         plugins: [vuetify]
@@ -62,8 +63,10 @@ describe('Mutation Component', () => {
   it('should display mutation name and description', () => {
     const wrapper = mountFunction({
       props: {
-        cylcObject,
-        mutation: BASIC_MUTATION,
+        initialOptions: {
+          cylcObject,
+          mutation: BASIC_MUTATION,
+        },
         cancel: () => {}
       }
     })
@@ -75,12 +78,14 @@ describe('Mutation Component', () => {
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
       props: {
-        cylcObject,
-        mutation: {
-          name: 'Darmok',
-          description: desc,
-          args: [],
-          _title: 'Darmok'
+        initialOptions: {
+          cylcObject,
+          mutation: {
+            name: 'Darmok',
+            description: desc,
+            args: [],
+            _title: 'Darmok'
+          },
         },
         cancel: () => {}
       }

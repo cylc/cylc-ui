@@ -1,4 +1,4 @@
-/* Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+/* Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,15 @@
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
-import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
-import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import { Tokens } from '@/utils/uid'
-import { getIDMap } from '$tests/util'
+import { getIDMap, mockRoute } from '$tests/util'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
-const vuetify = createVuetify()
 
 const expandID = (id) => ({
   id,
@@ -55,7 +52,7 @@ const workflowNode = {
                 {
                   ...expandID('~user/workflow1//1/foo'),
                   type: 'task',
-                  node: { state: 'failed' },
+                  node: { state: 'failed', isHeld: true },
                   children: [
                     {
                       ...expandID('~user/workflow1//1/foo/1'),
@@ -79,6 +76,7 @@ const workflowNode = {
 }
 
 describe('Tree view', () => {
+  mockRoute({ params: { workflowName: 'workflow1' } })
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
@@ -86,14 +84,12 @@ describe('Tree view', () => {
     store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
-        plugins: [vuetify, CommandMenuPlugin, store],
+        plugins: [store],
         mocks: {
           $workflowService
         }
       },
-      props: {
-        workflowName: 'workflow1',
-      },
+      shallow: true,
       ...options
     })
   })
@@ -114,19 +110,33 @@ describe('Tree view', () => {
     })
 
     it.each([
+      // the task should be displayed
       { tasksFilter: { id: 'foo' }, filteredOut: false },
       { tasksFilter: { states: ['failed'] }, filteredOut: false },
       { tasksFilter: { id: 'foo', states: ['failed'] }, filteredOut: false },
+      { tasksFilter: { id: 'foo', states: ['isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'foo', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f*', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f?', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f[o]o', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f[!z]o', states: ['failed', 'isHeld'] }, filteredOut: false },
 
+      // the task should *not* be displayed
       { tasksFilter: { id: 'asdf' }, filteredOut: true },
       { tasksFilter: { states: ['running'] }, filteredOut: true },
       { tasksFilter: { id: 'foo', states: ['running'] }, filteredOut: true },
       { tasksFilter: { id: 'asdf', states: ['failed'] }, filteredOut: true },
+      { tasksFilter: { id: 'asdf', states: ['failed', 'isRunahead'] }, filteredOut: true },
+      { tasksFilter: { id: 'asdf*' }, filteredOut: true },
+      { tasksFilter: { id: 'asdf?' }, filteredOut: true },
+      { tasksFilter: { id: 'asd[f]' }, filteredOut: true },
+      { tasksFilter: { id: 'asd[!f]' }, filteredOut: true },
     ])('filters by $tasksFilter', async ({ tasksFilter, filteredOut }) => {
       const wrapper = mountFunction()
       wrapper.vm.tasksFilter = tasksFilter
       await nextTick()
-      expect(wrapper.vm.filterState).toMatchObject(tasksFilter)
+      expect(wrapper.vm.filterState[0]).toMatchObject(tasksFilter.id)
+      expect(wrapper.vm.filterState[1]).toMatchObject(tasksFilter.states)
       const filteredOutNodesCache = new Map()
       expect(wrapper.vm.filterNode(workflowNode, filteredOutNodesCache)).toEqual(!filteredOut)
       expect(getIDMap(filteredOutNodesCache)).toEqual({

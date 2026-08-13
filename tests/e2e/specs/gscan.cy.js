@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,10 +47,14 @@ describe('GScan component', () => {
         .type('level')
         .get('.c-treeitem:visible')
         .should('have.length', 1)
+        .get('.c-gscan [data-cy=filter-no-results]')
+        .should('not.exist')
       cy.get('#c-gscan-search-workflows')
         .type('abc')
         .get('.c-treeitem:visible')
         .should('have.length', 0)
+        .get('.c-gscan [data-cy=filter-no-results]')
+        .should('be.visible')
     })
 
     it('filters by workflow state', () => {
@@ -106,7 +110,7 @@ describe('GScan component', () => {
       cy.get('[data-cy="filter task state"]')
         .click()
         .get('.v-select__content')
-        .contains('.v-list-item', 'succeed')
+        .contains('.v-list-item', 'succeeded')
         .click({ force: true })
       cy.get('.c-treeitem:visible')
         .should('have.length', 1)
@@ -167,6 +171,38 @@ describe('GScan component', () => {
         .contains('.v-list-item', 'stopped')
         .click({ force: true })
       cy.get('@badge')
+        .should('be.visible')
+    })
+  })
+
+  describe('Task state badges', () => {
+    it('collates task states up the tree', () => {
+      cy.get('.c-gscan')
+        .find('[data-node-name="other/multi"]').as('parent')
+        .find('.node:first .task-state-badge')
+        .should('have.length', 1)
+        .should('have.class', 'running')
+        .contains('3')
+      // child run2 contributes the running tasks
+      cy.get('@parent').find('[data-node-name="run2"] .task-state-badge')
+        .should('have.length', 1)
+        .should('have.class', 'running')
+        .contains('3')
+      // but child run1 is stopped and so doesn't contribute
+      cy.get('@parent').find('[data-node-name="run1"] .task-state-badge')
+        .should('have.length', 1)
+        .should('have.class', 'failed')
+        .contains('1')
+    })
+  })
+
+  describe('Task waiting badges', () => {
+    it('displays retry and held icons', () => {
+      cy.get('.c-gscan')
+        .find('[data-node-name="one"]').as('parent')
+        .find('.node:first .modifier-badge.held')
+        .should('be.visible')
+      cy.get('@parent').find('.node:first .modifier-badge.retrying')
         .should('be.visible')
     })
   })

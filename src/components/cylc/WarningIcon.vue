@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,9 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <span
-    class="c-warn"
+    class="c-warn d-inline-flex"
     :class="{'active': workflow.node.warningActive}"
-    style="display: inline-block;"
   >
     <v-tooltip
       :activator="null"
@@ -45,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           @click="deactivate"
           @click.prevent
           style="
-            vertical-align: middle;
             cursor: pointer;
           "
           :style="[workflow.node.logRecords?.length ? {opacity: 1} : {opacity: 0.3}]"

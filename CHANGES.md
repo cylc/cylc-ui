@@ -12,6 +12,87 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.14.0 (Released 2026-05-06)
+
+### 🔧 Fixes
+
+[#2386](https://github.com/cylc/cylc-ui/pull/2386) - Fixed occasional empty cycle point bug in the tree view.
+
+[#2507](https://github.com/cylc/cylc-ui/pull/2507) - Tree view: ensured task icon modifiers (e.g. held, retrying) also show on their parent families and cycle icons.
+
+[#2519](https://github.com/cylc/cylc-ui/pull/2519) - Fix an issue in the "info" view where task outputs which contain hyphens were missing from completion expressions.
+
+## cylc-ui-2.13.0 (Released 2026-02-24)
+
+### 🚀 Enhancements
+
+[#2373](https://github.com/cylc/cylc-ui/pull/2373) - Family inheritance is now shown in the Info view for tasks.
+
+### 🔧 Fixes
+
+[#2473](https://github.com/cylc/cylc-ui/pull/2473) - Fixed bug where tasks would sometimes disappear from the table view.
+
+## cylc-ui-2.12.2 (Released 2026-01-12)
+
+### 🔧 Fixes
+
+[#2413](https://github.com/cylc/cylc-ui/pull/2413) - Fixed tree view search bugs:
+  - Didn't work when families are toggled off.
+  - Globs containing multiple `*` didn't work.
+
+## cylc-ui-2.12.1 (Released 2026-01-08)
+
+### 🔧 Fixes
+
+[#2404](https://github.com/cylc/cylc-ui/pull/2404) - Fixed a bug introduced in 2.12.0 where the command editor would lose inputted data.
+
+[#2407](https://github.com/cylc/cylc-ui/pull/2407), [#2409](https://github.com/cylc/cylc-ui/pull/2409) - Disabled opening of Edit Runtime and Broadcast editor in a new tab due to a bug introduced in 2.12.0.
+
+## cylc-ui-2.12.0 (Released 2026-01-08)
+
+### 🚀 Enhancements
+
+[#2361](https://github.com/cylc/cylc-ui/pull/2361) - An information icon containing workflow details (via hover over) has been added to the workspace toolbar.
+
+[#2370](https://github.com/cylc/cylc-ui/pull/2370) - Task filtering improvements:
+  * Task ID filtering now supports globs.
+  * Task state filtering now supports queued, runahead, wallclock, xtriggered, retry, held and skip selectors.
+  * Task filtering controls have been redesigned.
+
+[#2372](https://github.com/cylc/cylc-ui/pull/2372) - Improved the appearance of the Info view.
+
+[#2378](https://github.com/cylc/cylc-ui/pull/2378) - Added held and retry icons to the workflows sidebar, these will indicate if any n=0 tasks are in these states.
+
+[#2380](https://github.com/cylc/cylc-ui/pull/2380) - Made the workflows sidebar more compact and added an option called "Compact Mode" to reduce it further.
+
+[#2381](https://github.com/cylc/cylc-ui/pull/2381), [#2396](https://github.com/cylc/cylc-ui/pull/2396) - Added a "last activity" column to the workflows table.
+
+[#2392](https://github.com/cylc/cylc-ui/pull/2392) - Expanded the guide section and added it as a view so it can be opened as a tab.
+
+[#2394](https://github.com/cylc/cylc-ui/pull/2394) - The command editor can now be opened in a new tab.
+
+### 🔧 Fixes
+
+[#2377](https://github.com/cylc/cylc-ui/pull/2377) - Fixed the play/pause/stop buttons in the toolbar being incorrectly disabled when switching between workflows.
+
+## cylc-ui-2.11.0 (Released 2025-11-27)
+
+### 🚀 Enhancements
+
+[#2290](https://github.com/cylc/cylc-ui/pull/2290) - Added tooltip to distinguish between multiple log view tabs.
+
+[#2331](https://github.com/cylc/cylc-ui/pull/2331) - Improved how task states are displayed in the sidebar.
+
+[#2339](https://github.com/cylc/cylc-ui/pull/2339) - In the sidebar, don't include task states for stopped workflows in any parent state totals.
+
+### 🔧 Fixes
+
+[#2284](https://github.com/cylc/cylc-ui/pull/2284) - Fixed Log & Info commands erroneously showing for families.
+
+[#2335](https://github.com/cylc/cylc-ui/pull/2335) - The play, pause and stop buttons in the workspace toolbar will now "grey out" if you do not have the permissions to run these commands.
+
+[#2349](https://github.com/cylc/cylc-ui/pull/2349) - Fixed workflow sorting bug in the sidebar.
+
 ## cylc-ui-2.10.0 (Released 2025-10-01)
 
 ### 🚀 Enhancements

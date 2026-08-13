@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-text-field
             v-else
             data-cy="workflow-id-input"
-            v-model="workflowId"
+            v-model="workflowID"
             disabled
           />
         </v-col>
@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="flex-0-0"
       >
         <v-col
-          v-if="results.path"
+          v-if="results.connected != null"
           class="d-flex align-center"
         >
           <v-chip
@@ -158,18 +158,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             {{ results.connected ? 'Connected' : 'Reconnect' }}
           </v-chip>
-          <div
-            data-cy="log-path"
-            class="ml-2 mr-1 d-flex text-medium-emphasis text-pre overflow-x-hidden"
-          >
-            <span>{{ results.host }}:</span>
-            <span class="flex-shrink-1 text-truncate">{{ parentPath }}</span>
-            <span>/{{ file }}</span>
-          </div>
-          <CopyBtn
-            :text="results.path"
-            tooltip="Copy path"
-          />
+          <template v-if="results.path">
+            <div
+              data-cy="log-path"
+              class="ml-2 mr-1 d-flex text-medium-emphasis text-pre overflow-x-hidden"
+            >
+              <span>{{ results.host }}:</span>
+              <span class="flex-shrink-1 text-truncate">{{ parentPath }}</span>
+              <span>/{{ file }}</span>
+            </div>
+            <CopyBtn
+              :text="results.path"
+              tooltip="Copy path"
+            />
+          </template>
         </v-col>
       </v-row>
       <v-alert
@@ -218,7 +220,7 @@ import {
   mdiInformationOutline,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -274,8 +276,8 @@ query LogFiles($id: ID!) {
  * @type {DocumentNode}
 */
 const JOB_QUERY = gql`
-query Jobs($id: ID!, $workflowId: ID!) {
-  jobs (live: false, ids: [$id], workflows: [$workflowId]) {
+query Jobs($id: ID!, $workflowID: ID!) {
+  jobs (live: false, ids: [$id], workflows: [$workflowID]) {
     id
     state
     platform
@@ -342,7 +344,6 @@ export default {
   name: 'Log',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -368,6 +369,8 @@ export default {
 
   setup (props, { emit }) {
     const store = useStore()
+
+    const { workflowID, variables } = useGraphQL()
 
     /**
      * The task/job ID.
@@ -471,6 +474,8 @@ export default {
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
       jobNode: ref(null),
+      workflowID,
+      variables,
     }
   },
 
@@ -507,7 +512,7 @@ export default {
   computed: {
     workflowTokens () {
       // tokens for the workflow this view was opened for
-      return new Tokens(this.workflowId)
+      return new Tokens(this.workflowID)
     },
     id () {
       // the ID of the workflow/task/job we are subscribed to
@@ -515,7 +520,7 @@ export default {
       if (this.jobLog) {
         return this.relativeTokens?.clone(this.workflowTokens)?.id
       }
-      return this.workflowId
+      return this.workflowID
     },
     controlGroups () {
       return [
@@ -590,7 +595,7 @@ export default {
             JOB_QUERY,
             {
               id: this.relativeTokens.id,
-              workflowId: this.workflowTokens.workflow
+              workflowID: this.workflowTokens.workflow
             }
           )
         }
