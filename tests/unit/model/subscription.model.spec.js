@@ -24,7 +24,7 @@ import ViewState from '@/model/ViewState.model'
 describe('SubscriptionQuery model', () => {
   const query = gql`query { workflow { id } }`
   const variables = {
-    workflowId: '~cylc/cylc'
+    workflowID: '~cylc/cylc'
   }
   const name = 'root'
   const callbacks = []

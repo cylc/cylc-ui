@@ -56,8 +56,8 @@ export default defineConfig(({ mode }) => {
     base: '',
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        $tests: path.resolve(__dirname, './tests'),
+        '@': path.resolve('./src'),
+        $tests: path.resolve('./tests'),
         lodash: 'lodash-es',
         // GraphiQL is a React app (use Preact as it's smaller):
         react: 'preact/compat',
@@ -88,8 +88,8 @@ export default defineConfig(({ mode }) => {
       },
       watch: {
         ignored: [
-          path.resolve(__dirname, './coverage'),
-          path.resolve(__dirname, '**/.nfs*'),
+          path.resolve('./coverage'),
+          path.resolve('./**/.nfs*'),
         ]
       },
       warmup: {

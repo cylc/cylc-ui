@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :id="id"
   >
     <component
-      :is="props.allViews.get(name).component"
+      :is="allViews.get(name).component"
       :workflow-name="workflowName"
       v-model:initial-options="views.get(id).initialOptions"
       :widgetID="id"
@@ -63,7 +63,7 @@ import { LuminoWidget } from '@/components/cylc/workspace/luminoWidget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
 import { watchWithControl } from '@/utils/reactivity'
 import { replacer, reviver } from '@/utils/json'
-import { useDefaultView } from '@/views/views'
+import { allViews, useDefaultView } from '@/views/views'
 import { eventBus } from '@/services/eventBus'
 import { useWorkspaceLayoutsCache } from '@/composables/cacheStorage'
 
@@ -89,15 +89,6 @@ import '@lumino/default-theme/style'
 const props = defineProps({
   workflowName: {
     type: String,
-    required: true
-  },
-  /**
-   * All possible view component classes that can be rendered
-   *
-   * @type {Map<string, import('@/views/views.js').CylcView>}
-   */
-  allViews: {
-    type: Map,
     required: true
   },
 })

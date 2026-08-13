@@ -91,7 +91,7 @@ describe('WorkflowService', () => {
     subscriptionQuery = new SubscriptionQuery(
       query,
       {
-        workflowId: '~cylc/test'
+        workflowID: '~cylc/test'
       },
       'root',
       [],

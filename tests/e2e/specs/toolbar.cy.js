@@ -36,27 +36,31 @@ describe('Toolbar component', () => {
   it('displays workflow controls for existing workflows and hidden otherwise', () => {
     // Start at the dashboard
     cy.visit('/#/')
-    // The toolbar workflow controls are not visible on the dashboard
     cy.get('#core-app-bar').should('exist')
+    // The toolbar workflow controls are not visible on the dashboard
     cy.get('.c-workflow-controls').should('not.exist')
+    // User avatar visible
+    cy.get('#core-app-bar [data-cy=user-avatar-btn]').as('avatar')
+      .should('be.visible')
 
     // Navigate to an existing workflow
     cy.visit('/#/workspace/one')
     cy.get('#core-app-bar').should('be.visible')
     cy.get('.c-workflow-controls').should('be.visible')
+    cy.get('@avatar').should('be.visible')
 
     // Navigate to a non-existent workflow
     cy.visit('/#/workspace/non-exist')
     cy.get('#core-app-bar').should('be.visible')
     cy.get('.c-workflow-controls').should('not.exist')
+    cy.get('@avatar').should('be.visible')
   })
-  it('Contains an avatar displaying user icon', () => {
-    cy.visit('/#/workspace/one')
-    cy
-      .get('#core-app-bar')
-      .get('.v-avatar')
-      .get('.v-icon')
-      .should('exist')
+
+  it('Does NOT display nav button when using a standalone view', () => {
+    cy.visit('/#/gantt/one')
+    // forces cypress to wait for the toolbar to load
+    cy.get('#core-app-bar [data-cy=user-avatar-btn]').should('be.visible')
+    cy.get('#core-app-bar #toggle-drawer').should('not.exist')
   })
 })
 

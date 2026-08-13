@@ -20,8 +20,8 @@ const multi = require('./multi')
 
 const workflows = [one, ...multi]
 
-function Workflow ({ workflowId }) {
-  return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
+function Workflow ({ workflowID }) {
+  return workflows.find(({ deltas }) => deltas.id === workflowID) || {}
 }
 
 module.exports = {
