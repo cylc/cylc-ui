@@ -58,7 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
     </template>
     <template #item.latestJob.node.finishedTime="{ item, value }">
+      <!-- Use key to workaround https://github.com/vuetifyjs/vuetify/issues/23123 -->
       <EstimatedTime
+        key="taskFinishTime"
         :actual="value"
         :estimate="item.latestJob?.node.estimatedFinishTime"
       />
@@ -112,7 +114,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ job.node.submittedTime }}</td>
         <td>{{ job.node.startedTime }}</td>
         <td>
+          <!-- Use key to workaround https://github.com/vuetifyjs/vuetify/issues/23123 -->
           <EstimatedTime
+            key="jobFinishTime"
             :actual="job.node.finishedTime"
             :estimate="job.node.estimatedFinishTime"
           />
