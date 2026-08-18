@@ -559,8 +559,7 @@ export default {
      * UI-only, so changing it does not require re-subscribing.
      *
      * There is no user-facing control for this: we always pop so the view
-     * stays bounded. It is kept as an option so it can be flipped (e.g. via
-     * saved view options) to "keep all lines" during development.
+     * stays bounded. Kept as an option so it can be flipped for development.
      */
     const popMode = useInitialOptions('popMode', { props, emit }, true)
 
