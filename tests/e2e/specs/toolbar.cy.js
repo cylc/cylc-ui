@@ -25,13 +25,15 @@ describe('Toolbar component', () => {
       .get('#core-app-bar')
       .should('exist')
   })
-  it('Is NOT displayed when using a standalone view', () => {
+  it('Is displayed when using a standalone view', () => {
+    // The unified toolbar is shown on all pages, including standalone views
+    // (just without the drawer/nav button - see test below).
     cy.visit('/#/gantt/one')
     // forces cypress to wait for the view to load
     cy.get('.gantt-container canvas').should('be.visible')
     cy
       .get('#core-app-bar')
-      .should('not.exist')
+      .should('exist')
   })
   it('displays workflow controls for existing workflows and hidden otherwise', () => {
     // Start at the dashboard
