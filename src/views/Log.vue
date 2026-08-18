@@ -267,9 +267,6 @@ import { eventBus } from '@/services/eventBus'
 const LOG_MODE_HEAD = 'tail'
 const LOG_MODE_TAIL = 'tail-end'
 
-/** The ordered list of modes the toolbar control cycles through. */
-const LOG_MODES = [LOG_MODE_HEAD, LOG_MODE_TAIL]
-
 /**
  * Build a prominent multi-line divider shown where the log has been truncated.
  *
@@ -550,12 +547,11 @@ export default {
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
     /**
-     * The log view mode (one of LOG_MODES).
-     * HEAD (cat-log "tail" mode) shows the start of the file and follows it;
-     * TAIL (cat-log "tail-end" mode) shows the end. Defaults to HEAD to
-     * preserve the original behaviour.
+     * The log view mode
+     * true - HEAD (cat-log "tail" mode) shows the start of the file and follows it;
+     * false - TAIL (cat-log "tail-end" mode) shows the end.
      */
-    const logMode = useInitialOptions('logMode', { props, emit }, LOG_MODE_HEAD)
+    const logMode = useInitialOptions('logMode', { props, emit }, false)
 
     /**
      * Pop mode? (true = only keep the most recent `maxLines` lines,
@@ -646,8 +642,8 @@ export default {
 
     // re-subscribe when the log view mode is changed
     this.$watch(() => this.logMode, (logMode) => {
-      if (logMode === LOG_MODE_TAIL) {
-        // this mode follows the end of the file, so jump to the end and
+      if (!logMode) {
+        // TAIL mode follows the end of the file, so jump to the end and
         // follow new lines
         this.autoScroll = true
       } else {
@@ -727,16 +723,13 @@ export default {
               key: 'autoScroll',
             },
             {
-              title: {
-                [LOG_MODE_HEAD]: 'HEAD: showing the start of the file',
-                [LOG_MODE_TAIL]: 'TAIL: showing the end of the file',
-              }[this.logMode],
-              icon: {
-                [LOG_MODE_HEAD]: mdiFormatVerticalAlignTop,
-                [LOG_MODE_TAIL]: mdiFormatVerticalAlignBottom,
-              },
-              action: 'cycle',
-              values: LOG_MODES,
+              title: this.logMode
+                ? 'HEAD: showing the start of the file'
+                : 'TAIL: showing the end of the file',
+              icon: this.logMode
+                ? mdiFormatVerticalAlignTop
+                : mdiFormatVerticalAlignBottom,
+              action: 'toggle',
               value: this.logMode,
               key: 'logMode',
             },
@@ -766,7 +759,7 @@ export default {
         {
           id: this.id,
           file: this.file,
-          mode: this.logMode,
+          mode: this.logMode ? LOG_MODE_HEAD : LOG_MODE_TAIL,
           maxLines: normalizeLogMaxLines(this.maxLines),
         },
         `log-query-${this._uid}`,
