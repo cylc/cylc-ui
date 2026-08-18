@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  */
 
 // Modules
-import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
 
@@ -69,7 +68,6 @@ const mutations = {
 // Create a new store
 export default {
   modules: {
-    app,
     workflows,
     user
   },

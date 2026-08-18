@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@ import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
-import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
+import { mockRoute } from '$tests/util'
 
 describe('Log view', () => {
   const owner = 'svimes'
@@ -32,21 +32,21 @@ describe('Log view', () => {
   const workflowID = `~${owner}/${workflowName}`
   const initialFile = 'koom-valley.log'
 
-  const vuetify = createVuetify()
+  mockRoute({ params: { workflowName } })
   let $workflowService, store
 
   const mountFunction = (options) => mount(Log, {
     global: {
-      plugins: [vuetify, store],
+      plugins: [store],
       mocks: { $workflowService },
     },
     props: {
-      workflowName,
       initialOptions: {
         file: initialFile,
       },
     },
-    ...options
+    shallow: true,
+    ...options,
   })
 
   beforeEach(() => {
@@ -170,7 +170,6 @@ describe('Log view', () => {
     const expectedJobID = `${workflowID}//${relativeID}/NN`
     const wrapper = mountFunction({
       props: {
-        workflowName,
         initialOptions: {
           file: 'job.out',
           relativeID,

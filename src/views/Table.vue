@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,8 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -52,8 +51,8 @@ import gql from 'graphql-tag'
 import TaskFilter from '@/components/cylc/viewToolbar/TaskFilter.vue'
 
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas (workflows: [$workflowID]) {
     id
     added {
       ...AddedDelta
@@ -121,6 +120,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {
@@ -142,7 +142,6 @@ export default {
   name: 'Table',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -159,6 +158,8 @@ export default {
   },
 
   setup (props, { emit }) {
+    const { workflowIDs, variables } = useGraphQL()
+
     /**
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<object>}
@@ -176,15 +177,14 @@ export default {
       dataTableOptions,
       tasksFilter,
       filterState,
+      workflowIDs,
+      variables,
     }
   },
 
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
-    workflowIDs () {
-      return [this.workflowId]
-    },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
     },

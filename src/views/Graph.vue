@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :task="node"
             :jobs="node.children"
             :jobTheme="jobTheme"
-            :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
+            :class="{ 'dimmed': node.node.graphDepth }"
           />
         </g>
         <!-- the edges
@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import { useJobTheme } from '@/composables/localStorage'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -167,15 +167,14 @@ import {
   mdiFileRotateRight,
   mdiVectorSelection
 } from '@mdi/js'
-import { isFlowNone } from '@/utils/tasks'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }
@@ -213,6 +212,7 @@ fragment TaskProxyData on TaskProxy {
     meanElapsedTime
   }
   flowNums
+  graphDepth
   runtime {
     runMode
   }
@@ -267,7 +267,6 @@ export default {
   name: 'Graph',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -278,7 +277,9 @@ export default {
     ViewToolbarBtn,
   },
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
     /**
@@ -308,13 +309,16 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
+    const { workflowIDs, variables } = useGraphQL()
+
     return {
       jobTheme: useJobTheme(),
       transpose,
       autoRefresh,
       spacing,
       groupCycle,
-      isFlowNone,
+      workflowIDs,
+      variables,
       icons: {
         mdiTimer,
         mdiImageFilterCenterFocus,
@@ -380,9 +384,6 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       )
-    },
-    workflowIDs () {
-      return [this.workflowId]
     },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)

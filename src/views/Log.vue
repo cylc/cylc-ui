@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-text-field
             v-else
             data-cy="workflow-id-input"
-            v-model="workflowId"
+            v-model="workflowID"
             disabled
           />
         </div>
@@ -208,7 +208,7 @@ import {
   mdiMouseMoveDown,
   mdiInformationOutline,
 } from '@mdi/js'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -265,8 +265,8 @@ query LogFiles($id: ID!) {
  * @type {DocumentNode}
 */
 const JOB_QUERY = gql`
-query Jobs($id: ID!, $workflowId: ID!) {
-  jobs (live: false, ids: [$id], workflows: [$workflowId]) {
+query Jobs($id: ID!, $workflowID: ID!) {
+  jobs (live: false, ids: [$id], workflows: [$workflowID]) {
     id
     state
     platform
@@ -333,7 +333,6 @@ export default {
   name: 'Log',
 
   mixins: [
-    graphqlMixin,
     subscriptionComponentMixin
   ],
 
@@ -360,6 +359,8 @@ export default {
 
   setup (props, { emit }) {
     const store = useStore()
+
+    const { workflowID, variables } = useGraphQL()
 
     /**
      * The task/job ID.
@@ -458,6 +459,8 @@ export default {
       autoScroll,
       reset,
       jobNode: ref(null),
+      workflowID,
+      variables,
       icons: {
         mdiClockOutline,
         mdiFileAlertOutline,
@@ -504,7 +507,7 @@ export default {
   computed: {
     workflowTokens () {
       // tokens for the workflow this view was opened for
-      return new Tokens(this.workflowId)
+      return new Tokens(this.workflowID)
     },
     id () {
       // the ID of the workflow/task/job we are subscribed to
@@ -512,7 +515,7 @@ export default {
       if (this.jobLog) {
         return this.relativeTokens?.clone(this.workflowTokens)?.id
       }
-      return this.workflowId
+      return this.workflowID
     },
   },
 
@@ -553,7 +556,7 @@ export default {
             JOB_QUERY,
             {
               id: this.relativeTokens.id,
-              workflowId: this.workflowTokens.workflow
+              workflowID: this.workflowTokens.workflow
             }
           )
         }

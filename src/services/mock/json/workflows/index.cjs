@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ const multi = require('./multi')
 
 const workflows = [one, ...multi]
 
-function Workflow ({ workflowId }) {
-  return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
+function Workflow ({ workflowID }) {
+  return workflows.find(({ deltas }) => deltas.id === workflowID) || {}
 }
 
 module.exports = {

@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,9 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </template>
 
     <v-card-text class="card-text py-0 px-4">
-      <!-- Have to repeat these defaults as the ones set in App.vue don't make it through
-      the parent v-dialog - see https://github.com/vuetifyjs/vuetify/issues/18123 -->
-      <v-defaults-provider :defaults="vuetifyDefaults">
+      <v-defaults-provider :defaults="inputDefaults">
         <!-- the mutation description -->
         <v-expansion-panels
           v-bind="extendedDescription ? { hover: true } : { readonly: true }"
@@ -164,7 +162,6 @@ import {
   mutationStatus
 } from '@/utils/aotf'
 import { mdiClose, mdiOpenInNew } from '@mdi/js'
-import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
 import { inputDefaults } from '@/components/graphqlFormGenerator/components/vuetify'
 import { eventBus } from '@/services/eventBus'
 import { store } from '@/store/index'
@@ -199,8 +196,6 @@ export default {
   },
 
   setup (props) {
-    const vuetifyDefaults = useDynamicVuetifyDefaults(inputDefaults)
-
     if (props.initialOptions.isView) {
       // set the tab title to something informative
       eventBus.emit(
@@ -210,7 +205,7 @@ export default {
     }
 
     return {
-      vuetifyDefaults,
+      inputDefaults,
 
       // properties extracted from initialOptions...
 
