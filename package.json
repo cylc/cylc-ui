@@ -49,7 +49,6 @@
     "vue-router": "5.2.0",
     "vue-the-mask": "0.11.1",
     "vuetify": "3.11.8",
-    "vue3-apexcharts": "1.8.0",
     "vuex": "4.1.0"
   },
   "devDependencies": {
