@@ -416,7 +416,6 @@ class LogsCallback extends DeltasCallback {
         // the *end* of the file is omitted
         this.results.lines.push(marker)
       }
-      this.trim()
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -431,15 +430,19 @@ class LogsCallback extends DeltasCallback {
 
   /**
    * In "pop" mode, discard the oldest non-frozen lines to stay within the
-   * limit (the frozen leading lines are never discarded).
+   * limit.  The frozen leading lines (e.g. start-truncation marker) are
+   * never discarded and do not count against the limit.
    */
   trim () {
     const maxLines = this.getMaxLines?.()
-    if (maxLines != null && this.results.lines.length > maxLines) {
-      this.results.lines.splice(
-        this.results.frozenLength,
-        this.results.lines.length - maxLines
-      )
+    if (maxLines != null) {
+      const nonFrozen = this.results.lines.length - this.results.frozenLength
+      if (nonFrozen > maxLines) {
+        this.results.lines.splice(
+          this.results.frozenLength,
+          nonFrozen - maxLines
+        )
+      }
     }
   }
 }
