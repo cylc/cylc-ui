@@ -41,31 +41,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-if="iControl.action === 'input'"
               v-model="iControl.value"
               class="input"
-              :class="{ wide: iControl.wide }"
               v-bind="iControl.props"
               clearable
               :prepend-inner-icon="iControl.icon"
               @update:modelValue="iControl.callback"
-              @keydown.enter="apply(iControl)"
               @focus="autoResizeInput"
               @blur="autoResizeInput"
-            >
-              <template
-                v-if="iControl.appendButton"
-                #append-inner
-              >
-                <v-btn
-                  variant="text"
-                  density="comfortable"
-                  size="small"
-                  @click="apply(iControl)"
-                  :data-cy="`control-${iControl.key}-apply`"
-                >
-                  <v-icon>{{ iControl.appendButton.icon }}</v-icon>
-                  <v-tooltip>{{ iControl.appendButton.title }}</v-tooltip>
-                </v-btn>
-              </template>
-            </v-text-field>
+            />
 
             <!-- buttons -->
             <v-btn
@@ -191,12 +173,6 @@ export default {
 
                 // props to be set on the control
                 props: Object
-
-                // for use with action='input'
-                // adds a button inside the input which (like pressing Enter)
-                // commits the current value via appendButton.callback(value);
-                // use this instead of applying on every keystroke
-                appendButton: { icon: Icon, title: String, callback: Function }
 
                 // list of keys
                 // only enable this control if all of the listed controls have
@@ -374,12 +350,6 @@ export default {
         }
       }
     },
-    apply (control) {
-      // commit an input control's current value (for inputs that have an
-      // explicit apply button / respond to Enter rather than applying on
-      // every keystroke); a no-op for inputs without an appendButton
-      control.appendButton?.callback?.(control.value)
-    },
     isSet (value) {
       // determine if a control is active or not
       if (Array.isArray(value)) {
@@ -423,25 +393,6 @@ export default {
       }
       .input:has(input.expanded) {
         width: 20em;
-      }
-      // inputs that should always be shown at full width (e.g. numeric
-      // inputs that always contain a value, so have nothing to collapse to)
-      .input.wide,
-      .input.wide:has(input.expanded) {
-        width: 14em;
-      }
-      // hide the native number-input spinner arrows: the browser snaps them
-      // to step-aligned values (giving inconsistent jumps), so users type the
-      // value instead and commit it with the apply button
-      .input input[type='number'] {
-        appearance: textfield;
-        -moz-appearance: textfield;
-      }
-      .input input[type='number']::-webkit-outer-spin-button,
-      .input input[type='number']::-webkit-inner-spin-button {
-        appearance: none;
-        -webkit-appearance: none;
-        margin: 0;
       }
     }
   }

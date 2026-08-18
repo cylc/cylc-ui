@@ -225,6 +225,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-model="compactMode"
                 />
               </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Maximum log lines</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-text-field
+                    v-model.number="logMaxLines"
+                    type="number"
+                    :min="1"
+                    :max="$options.logMaxLinesMax"
+                    @blur="logMaxLines = normalizeLogMaxLines(logMaxLines)"
+                    data-cy="input-log-max-lines"
+                  />
+                </v-col>
+              </v-row>
             </v-container>
           </v-defaults-provider>
         </v-form>
@@ -240,8 +256,11 @@ import {
   useCompactMode,
   useCyclePointsOrderDesc,
   useJobTheme,
+  useLogMaxLines,
   useReducedAnimation,
   useWorkflowWarnings,
+  normalizeLogMaxLines,
+  LOG_MAX_LINES_MAX,
 } from '@/composables/localStorage'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { workflowViews, useDefaultView } from '@/views/views.js'
@@ -268,6 +287,8 @@ export default {
       reducedAnimation: useReducedAnimation(),
       workflowWarnings: useWorkflowWarnings(),
       compactMode: useCompactMode(),
+      logMaxLines: useLogMaxLines(),
+      normalizeLogMaxLines,
       upperFirst,
       workflowViews,
     }
@@ -297,6 +318,8 @@ export default {
     'greyscale',
     'colour_blind'
   ],
+
+  logMaxLinesMax: LOG_MAX_LINES_MAX,
 
   icons: {
     settings: mdiCog,
