@@ -64,31 +64,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
     </div>
   </Teleport>
-  <div id="mainTimeSeries">
-    <VueApexCharts
-      type="line"
-      :options="chartOptions"
-      :series="series"
-      :height="450"
-      width="95%"
-      class="d-flex justify-center"
-          />
-  </div>
-  <div id="miniTimeSeries">
-    <VueApexCharts
-      type="line"
-      :options="miniChartOptions"
-      :series="series"
-      height="120"
-      width="95%"
-      @selection="zoomMainChart"
-      class="d-flex justify-center"
+  <div id="mainTimeSeries" style="position: relative;">
+    <div
+      ref="mainChart"
+      style="
+        height: 550px;
+        width: 100%;"
+      class="flex-grow-1"
     />
+    <Transition name="fade">
+      <div
+        v-if="noTasksSelected"
+        class="time-series-empty-state d-flex flex-column align-center justify-center text-center"
+        data-cy="time-series-empty-state"
+      >
+        <v-icon
+          :icon="$options.icons.mdiChartLine"
+          size="64"
+          class="mb-4 time-series-empty-icon"
+        />
+        <div class="text-h6 mb-1">No tasks selected</div>
+        <div class="text-body-2 text-medium-emphasis mb-4" style="max-width: 340px;">
+          Use the <strong>“Select tasks”</strong> box above to choose one or
+          more tasks and plot their timings over cycle points.
+        </div>
+        <v-btn
+          color="primary"
+          variant="tonal"
+          :prepend-icon="$options.icons.mdiMagnify"
+          @click="focusTaskSelect"
+          data-cy="time-series-empty-state-btn"
+        >
+          Select tasks
+        </v-btn>
+      </div>
+    </Transition>
   </div>
   </template>
 
 <script>
-import VueApexCharts from 'vue3-apexcharts'
+import * as echarts from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+  LegendComponent
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 import {
   debounce,
   difference,
@@ -100,7 +124,8 @@ import {
 import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
 import {
-  mdiDownload,
+  mdiChartLine,
+  mdiMagnify,
   mdiRefresh,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
@@ -110,6 +135,16 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
+
+echarts.use([
+  LineChart,
+  GridComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+  LegendComponent,
+  CanvasRenderer
+])
 
 /** List of fields to request for task for each task */
 const jobFields = [
@@ -175,9 +210,7 @@ class AnalysisJobCallback extends DeltasCallback {
 export default {
   name: 'TimeSeries',
 
-  components: {
-    VueApexCharts,
-  },
+  components: {},
 
   emits: [updateInitialOptionsEvent],
 
@@ -233,7 +266,14 @@ export default {
   },
 
   mounted () {
+    this.initCharts()
     this.refreshData()
+    window.addEventListener('resize', this.handleResize)
+  },
+
+  beforeUnmount () {
+    window.removeEventListener('resize', this.handleResize)
+    this.mainChart?.dispose()
   },
 
   data () {
@@ -243,7 +283,7 @@ export default {
       /** Object containing all of the jobs added by the callback */
       jobs,
       taskNames: [],
-      xRange: [undefined, undefined],
+      mainChart: null
     }
   },
 
@@ -253,10 +293,18 @@ export default {
       if (addedTasks.length > 0) {
         this.jobsQuery(newTasks)
       }
-    }
+    },
+    series: {
+      handler: 'updateCharts',
+      deep: true
+    },
+    chartOptions: 'updateCharts'
   },
 
   computed: {
+    noTasksSelected () {
+      return this.displayedTasks.length === 0
+    },
     cyclePoints () {
       // Only plot cycles that have visible data points
       const cycles = uniq(this.jobs.flatMap(
@@ -305,157 +353,104 @@ export default {
 
     chartOptions () {
       return {
-        chart: {
-          defaultLocale: 'en',
-          locales: [
-            {
-              name: 'en',
-              options: {
-                toolbar: {
-                  exportToSVG: 'Download SVG',
-                  exportToPNG: 'Download PNG',
-                  menu: 'Download',
-                  selection: 'Selection',
-                  selectionZoom: 'Selection Zoom',
-                  zoomIn: 'Zoom In',
-                  zoomOut: 'Zoom Out',
-                  pan: 'Panning',
-                  reset: 'Reset Zoom'
-                }
-              }
-            }
-          ],
-          animations: {
-            enabled: this.animate && !this.reducedAnimation,
-            easing: 'easeinout',
-            speed: 300,
-            animateGradually: {
-              enabled: true,
-              delay: 150,
-            },
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
-          },
-          fontFamily: 'inherit',
-          toolbar: {
-            autoSelected: 'zoom',
-            tools: {
-              download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-              selection: false,
-              zoom: true,
-              zoomin: false,
-              zoomout: false,
-              pan: false,
-              reset: true
-            }
-          },
-          zoom: {
-            type: 'y'
-          }
-        },
-        stroke: {
-          width: 2
-        },
-        markers: {
-          size: 4
+        animation: this.animate && !this.reducedAnimation,
+        grid: {
+          left: '5%',
+          right: '5%',
+          top: '15%',
+          bottom: '15%'
         },
         tooltip: {
-          y: {
-            formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
-              if (!value) {
-                return null
+          trigger: 'axis',
+          formatter: (params) => {
+            let result = `${params[0].axisValueLabel}<br/>`
+            for (const p of params) {
+              if (p.value) {
+                const y = formatDuration(p.value, { allowZeros: true })
+                const platform = this.series.find(s => s.name === p.seriesName).data.find(d => d.x === p.name)?.platform
+                result += `${p.marker} ${p.seriesName}: ${y} (${platform})<br/>`
               }
-              const y = formatDuration(value, { allowZeros: true })
-              const platform = this.series[seriesIndex].data[dataPointIndex].platform
-              return `${y} (${platform})`
             }
+            return result
           }
         },
-        xaxis: {
-          title: {
-            text: 'Cycle point',
-          },
-          categories: this.cyclePoints,
-          min: this.xRange[0],
-          max: this.xRange[1]
+        toolbox: {
+          feature: {
+            saveAsImage: { title: 'Download' },
+            dataZoom: { title: { zoom: 'Selection Zoom', back: 'Reset Zoom' } }
+          }
         },
-        yaxis: {
-          forceNiceScale: true,
+        dataZoom: [
+          {
+            type: 'inside',
+            filterMode: 'weak'
+          },
+          {
+            type: 'slider',
+            filterMode: 'weak',
+            bottom: 10,
+            showDataShadow: true
+          }
+        ],
+        xAxis: {
+          type: 'category',
+          data: this.cyclePoints,
+          name: 'Cycle point',
+          nameLocation: 'middle',
+          nameGap: 30
+        },
+        yAxis: {
+          type: 'value',
           min: this.showOrigin ? 0 : undefined,
-          title: {
-            text: upperFirst(this.timingOption) + ' time',
-          },
-          labels: {
+          name: upperFirst(this.timingOption) + ' time',
+          nameLocation: 'middle',
+          nameGap: 50,
+          axisLabel: {
             formatter: (value) => formatDuration(value, { allowZeros: true })
-          },
-        },
-      }
-    },
-
-    miniChartOptions () {
-      return {
-        chart: {
-          animations: {
-            enabled: this.animate && !this.reducedAnimation,
-            easing: 'easeinout',
-            speed: 300,
-            animateGradually: {
-              enabled: true,
-              delay: 150,
-            },
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
-          },
-          selection: {
-            enabled: true,
-            xaxis: {
-              min: 1,
-              max: this.cyclePoints.length,
-            }
-          },
-          toolbar: {
-            autoSelected: 'selection',
-            show: true
           }
         },
-        legend: {
-          show: false
-        },
-        markers: {
-          size: 3
-        },
-        stroke: {
-          width: 2
-        },
-        tooltip: {
-          enabled: false
-        },
-        xaxis: {
-          categories: this.cyclePoints,
-          tickAmount: 4,
-          labels: {
-            rotate: 0
-          }
-        },
-        yaxis: {
-          tickAmount: 3,
-          title: {
-            text: upperFirst(this.timingOption) + ' time',
-          },
-          labels: {
-            formatter: (value) => formatDuration(value, { allowZeros: true })
-          },
-          min: this.showOrigin ? 0 : undefined
-        },
+        series: this.series.map(s => ({
+          name: s.name,
+          type: 'line',
+          symbolSize: 8,
+          data: s.data.map(d => d.y)
+        }))
       }
-    },
+    }
   },
 
   methods: {
+    initCharts () {
+      this._lastSeriesCount = 0
+      this.mainChart = echarts.init(this.$refs.mainChart)
+      this.updateCharts()
+    },
+    updateCharts () {
+      if (!this.mainChart) return
+
+      const opts = this.chartOptions
+      const newCount = opts.series.length
+
+      // Recreate chart when series count changes to cleanly reset
+      if (newCount !== this._lastSeriesCount) {
+        const container = this.$refs.mainChart
+        this.mainChart.dispose()
+        this.mainChart = echarts.init(container)
+      }
+      this._lastSeriesCount = newCount
+
+      this.mainChart.setOption(opts)
+    },
+    handleResize () {
+      this.mainChart?.resize()
+    },
+    focusTaskSelect () {
+      // Focus (and open) the task selection combobox
+      this.$refs.selectTasks?.focus?.()
+      this.$refs.selectTasks?.$el
+        ?.querySelector('input')
+        ?.focus()
+    },
     selectSearchResults: function () {
       // Do we need a limit to number of tasks that can be added?
       const filteredTasks = this.$refs.selectTasks.filteredItems.map(
@@ -492,9 +487,6 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     ),
-    zoomMainChart: function (context, { xaxis }) {
-      this.xRange = [Math.ceil(xaxis.min), Math.floor(xaxis.max)]
-    },
     refreshData: function () {
       this.taskNamesQuery()
       this.jobsQuery(this.displayedTasks)
@@ -502,7 +494,37 @@ export default {
   },
 
   icons: {
+    mdiChartLine,
+    mdiMagnify,
     mdiRefresh,
   },
 }
 </script>
+
+<style scoped>
+.time-series-empty-state {
+  position: absolute;
+  inset: 0;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+/* Only the button should be clickable, so the chart stays interactive */
+.time-series-empty-state :deep(.v-btn) {
+  pointer-events: auto;
+}
+
+.time-series-empty-icon {
+  opacity: 0.5;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
