@@ -13,7 +13,7 @@
   },
   "minimumReleaseAge": "4 days",
   "internalChecksFilter": "strict",
-  "prCreation": "not-pending",
+  "prCreation": "immediate",
   "packageRules": [
     {
       "matchDepNames": [
