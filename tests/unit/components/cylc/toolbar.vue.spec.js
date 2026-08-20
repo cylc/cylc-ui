@@ -50,8 +50,8 @@ describe('Toolbar component', () => {
       {
         id: 'user/id',
         name: 'test',
-        status: WorkflowState.RUNNING.name
-      }
+        status: WorkflowState.RUNNING.name,
+      },
     ]
   })
 
@@ -95,13 +95,13 @@ describe('Toolbar component', () => {
         params: { workflowName: 'A' },
         meta: { title: 'B' },
       },
-      expected: 'A'
+      expected: 'A',
     },
     {
       route: {
         meta: { title: 'B' },
       },
-      expected: 'B'
+      expected: 'B',
     },
   ])('displays title $expected from the route', async ({ route, expected }) => {
     mockRoute(route)

@@ -74,8 +74,8 @@ const props = defineProps({
   },
   density: {
     type: String,
-    default: 'compact'
-  }
+    default: 'compact',
+  },
 })
 
 /** Make the job details triangle point to the job icon */
@@ -87,7 +87,7 @@ const defaults = computed(() => ({
   VTable: {
     density: props.density,
     hover: true,
-  }
+  },
 }))
 
 const customOutputs = computed(() => jobMessageOutputs(props.node))

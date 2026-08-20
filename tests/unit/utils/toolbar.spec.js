@@ -35,12 +35,12 @@ describe('Toolbar/drawer utils', () => {
         setup () {
           return useDrawer()
         },
-        render () {}
+        render () {},
       },
       {
         global: {
-          plugins: [vuetify]
-        }
+          plugins: [vuetify],
+        },
       }
     )
 

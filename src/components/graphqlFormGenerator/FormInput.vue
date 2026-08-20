@@ -85,8 +85,8 @@ const props = defineProps({
   // dictionary of props for overriding default values
   propOverrides: {
     type: Object,
-    default: () => ({})
-  }
+    default: () => ({}),
+  },
 })
 
 const model = defineModel()
@@ -102,7 +102,7 @@ const componentProps = getComponentProps(props.gqlType, VuetifyConfig.namedTypes
 // merge this in with default and override props
 const propGroups = [
   componentProps,
-  props.propOverrides || {}
+  props.propOverrides || {},
 ]
 // rules is a list so needs special treatment
 const rules = propGroups.flatMap(({ rules }) => rules ?? [])
