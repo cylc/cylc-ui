@@ -2447,32 +2447,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:14.1.0":
-  version: 14.1.0
-  resolution: "@vueuse/core@npm:14.1.0"
+"@vueuse/core@npm:14.4.0":
+  version: 14.4.0
+  resolution: "@vueuse/core@npm:14.4.0"
   dependencies:
     "@types/web-bluetooth": "npm:^0.0.21"
-    "@vueuse/metadata": "npm:14.1.0"
-    "@vueuse/shared": "npm:14.1.0"
+    "@vueuse/metadata": "npm:14.4.0"
+    "@vueuse/shared": "npm:14.4.0"
   peerDependencies:
     vue: ^3.5.0
-  checksum: 10c0/e1ed368c832f2836ae62f3969cd46691fcef40a34a3909898012e6143395cb8e31d9ebb6ccfd9b0b9fb7493b073282ce226e4fb62ab84fc2f9557d59f232b6f0
+  checksum: 10c0/3f1b61d0669ea118db9b22d8f71748d6b72a3d7a84e1e08343b02568097a43c32aa0cd65912df95cd923156e2b93adccd40b0f1f54fb34a24315ba5814ef3055
   languageName: node
   linkType: hard
 
-"@vueuse/metadata@npm:14.1.0":
-  version: 14.1.0
-  resolution: "@vueuse/metadata@npm:14.1.0"
-  checksum: 10c0/983296b13dc979e8a18831315631e0d08934e655edd0d12073c06512228a5a5140af0671eb28b20068ef42c55312a58287a7d51314427d2edcbbf0c38f5994c8
+"@vueuse/metadata@npm:14.4.0":
+  version: 14.4.0
+  resolution: "@vueuse/metadata@npm:14.4.0"
+  checksum: 10c0/f68e8213c9744be5d5b90554854db9a0707a07c343229484edf76e9877ed8f2dd0c323486fea001ab771df4d1d805d2ab1f079155219aae28bb593d7605acc7a
   languageName: node
   linkType: hard
 
-"@vueuse/shared@npm:14.1.0":
-  version: 14.1.0
-  resolution: "@vueuse/shared@npm:14.1.0"
+"@vueuse/shared@npm:14.4.0":
+  version: 14.4.0
+  resolution: "@vueuse/shared@npm:14.4.0"
   peerDependencies:
     vue: ^3.5.0
-  checksum: 10c0/642ca681ffea7bf24de970bed6580fafc01bd66a4a185f8eb05ddc2450265f1ede86b79b2d8660d22d39ec3f498658f9fedadf2606dfd94d730d443bb0b10f2a
+  checksum: 10c0/c26228253864134bb6a7a43d8204a4a7234711178406c5ff9735bff4151e901c0196b55017bff0c8d1f9bdb0a466edf1d26152cac9d67aa79e98c8965d16a743
   languageName: node
   linkType: hard
 
@@ -3719,7 +3719,7 @@ __metadata:
     "@vitejs/plugin-vue": "npm:6.0.8"
     "@vitest/coverage-istanbul": "npm:4.1.10"
     "@vue/test-utils": "npm:2.4.11"
-    "@vueuse/core": "npm:14.1.0"
+    "@vueuse/core": "npm:14.4.0"
     apexcharts: "npm:3.54.1"
     concurrently: "npm:10.0.5"
     cross-fetch: "npm:4.1.0"
