@@ -83,22 +83,32 @@ jobs:
           node-version: 'lts/*'
           cache: yarn
 
-      - name: Test (E2E)
+      - name: Install
         uses: cypress-io/github-action@v7
-        env:
-          BASE_URL: http://localhost:4173/
         with:
-          build: yarn run build --mode offline
-          start: yarn run preview
-          config: baseUrl=${{ env.BASE_URL }}
-          wait-on: ${{ env.BASE_URL }}
-          browser: ${{ matrix.browser }}
+          runTests: false
 
-      - name: Test (component)
-        uses: cypress-io/github-action@v7
-        with:
-          component: true
-          browser: ${{ matrix.browser }}
+      - parallel:
+        - name: Test (E2E)
+          uses: cypress-io/github-action@v7
+          env:
+            BASE_URL: http://localhost:4173/
+          with:
+            install: false
+            build: yarn run build --mode offline
+            start: yarn run preview
+            config: baseUrl=${{ env.BASE_URL }}
+            wait-on: ${{ env.BASE_URL }}
+            browser: ${{ matrix.browser }}
+            summary-title: "Cypress E2E Tests"
+
+        - name: Test (component)
+          uses: cypress-io/github-action@v7
+          with:
+            component: true
+            install: false
+            browser: ${{ matrix.browser }}
+            summary-title: "Cypress Component Tests"
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v7
