@@ -97,3 +97,29 @@ export const vuetifyOptions = {
     ...inputDefaults
   },
 }
+
+/**
+ * Scale icon size to button size.
+ * https://github.com/vuetifyjs/vuetify/issues/16288
+ *
+ * @param {string|number} btnSize - button size
+ * @returns {string=} font size
+ */
+export function btnIconFontSize (btnSize) {
+  const size = parseInt(btnSize)
+  if (Number.isNaN(size)) {
+    // do nothing for named sizes ('small', 'large', etc.)
+    return undefined
+  }
+  // Round to even px then convert to rem
+  return `${2 * Math.round(0.2 * size) / 16}rem`
+}
+
+export function btnSizeProps (size) {
+  return {
+    size,
+    style: {
+      fontSize: btnIconFontSize(size),
+    },
+  }
+}
