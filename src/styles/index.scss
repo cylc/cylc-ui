@@ -22,7 +22,6 @@
 @use "cylc/dashboard";
 @use "cylc/drawer";
 @use "cylc/gscan";
-@use "cylc/header";
 @use "cylc/job";
 @use "cylc/toolbar";
 @use "cylc/tree";
@@ -30,7 +29,6 @@
 @use "cylc/user_profile";
 @use "cylc/warning";
 @use "cylc/workspace";
-@use "cylc/tooltip";
 @use "cylc/mutation_form";
 @use "cylc/menu";
 
@@ -39,17 +37,30 @@ html {
   overflow-y: auto;
 }
 
-.v-theme--light.v-application {
-  background-color: transparent;
-  .content {
-    height: 100vh;
+@layer vuetify-core.reset {
+  pre, ul, li, dl, dt, dd {
+    padding: 0;
+    margin: 0;
   }
 }
 
-// The skeleton loader needs to maintain height: 100% otherwise its children
-// nodes with height: 100% or auto won't be displayed at all.
-.v-skeleton-loader {
-  height: 100%;
+@layer vuetify-overrides {
+  .v-theme--light.v-application {
+    background-color: transparent;
+    .content {
+      height: 100vh;
+    }
+  }
+
+  // The skeleton loader needs to maintain height: 100% otherwise its children
+  // nodes with height: 100% or auto won't be displayed at all.
+  .v-skeleton-loader {
+    height: 100%;
+  }
+
+  .v-list-item--one-line .v-list-item-title {
+    letter-spacing: normal;
+  }
 }
 
 [data-c-interactive] {
