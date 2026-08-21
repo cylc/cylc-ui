@@ -29,32 +29,29 @@ describe('GraphiQL', () => {
       .get('#graphiql')
       .should('be.visible')
     cy.intercept('/graphql*').as('GraphQLQuery')
-    cy.get('.CodeMirror')
+    cy.get('.monaco-editor textarea').as('editors')
       .should('have.length', 4)
+    cy.window().then((win) => {
+      const queryEditor = win.__MONACO.editor.getModels()[0]
+      queryEditor.setValue(query)
+    })
+    cy.get('@editors')
       .then((editors) => {
-        editors[0].CodeMirror.setValue(query)
-        // This appears to force the CodeMirror command above to be executed, or at least
-        // waited for.
-        expect(editors[0].CodeMirror.getValue()).to.equal(query) // query editor
-        expect(editors[1].CodeMirror.getValue()).to.equal('') // query variables
-        expect(editors[2].CodeMirror.getValue()).to.equal('') // request headers
-        expect(editors[3].CodeMirror.getValue()).to.equal('') // results box
+        expect(editors[0].value).to.equal(query) // query editor
+        expect(editors[1].value).to.equal('') // query variables
+        expect(editors[2].value).to.equal('') // request headers
+        expect(editors[3].value).to.equal('') // results box
       })
-    // TODO: CodeMirror seems to have a delay to actually set the value to the underlying
-    //       textarea. Which can cause the test below to fail as the query submitted is
-    //       the default commented-out text, instead of the given query above.
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
     cy.get('.graphiql-execute-button')
       .click()
     cy.wait('@GraphQLQuery')
     cy.get('.graphiql-response')
       .find('.graphiql-spinner')
       .should('not.exist')
-    cy.get('.CodeMirror')
+    cy.get('@editors')
       .then((editors) => {
-        expect(editors[0].CodeMirror.getValue()).to.equal(query)
-        expect(editors[3].CodeMirror.getValue()).to.contain('~user/one')
+        expect(editors[0].value).to.equal(query)
+        expect(editors[3].value).to.contain('~user/one')
       })
   })
 })
