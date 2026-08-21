@@ -234,7 +234,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import {
   useCompactMode,
@@ -249,6 +248,7 @@ import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
 import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
+import { useUserService } from '@/services/user.service'
 
 // TODO: update where user preferences are stored after #335
 
@@ -261,7 +261,10 @@ export default {
   },
 
   setup () {
+    const { user } = useUserService()
+
     return {
+      user,
       defaultView: useDefaultView(),
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       jobTheme: useJobTheme(),
@@ -271,10 +274,6 @@ export default {
       upperFirst,
       workflowViews,
     }
-  },
-
-  computed: {
-    ...mapState('user', ['user']),
   },
 
   methods: {

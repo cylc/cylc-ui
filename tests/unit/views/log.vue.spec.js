@@ -27,9 +27,9 @@ import { getJobLogFileFromState } from '@/model/JobState.model'
 import { mockRoute } from '$tests/util'
 
 describe('Log view', () => {
-  const owner = 'svimes'
+  const user = new User({ username: 'cylc', permissions: [], owner: 'svimes' })
   const workflowName = 'thud'
-  const workflowID = `~${owner}/${workflowName}`
+  const workflowID = `~${user.owner}/${workflowName}`
   const initialFile = 'koom-valley.log'
 
   mockRoute({ params: { workflowName } })
@@ -39,6 +39,7 @@ describe('Log view', () => {
     global: {
       plugins: [store],
       mocks: { $workflowService },
+      provide: { user },
     },
     props: {
       initialOptions: {
@@ -51,10 +52,6 @@ describe('Log view', () => {
 
   beforeEach(() => {
     store = createStore(storeOptions)
-    store.commit(
-      'user/SET_USER',
-      new User({ username: 'cylc', permissions: [], owner })
-    )
     $workflowService = sinon.createStubInstance(WorkflowService)
     $workflowService.apolloClient = {
       query: () => ({
