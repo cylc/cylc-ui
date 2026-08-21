@@ -82,7 +82,7 @@ export async function vitePreprocessor (file) {
       emitAssets: false,
       copyPublicDir: false,
       reportCompressedSize: false,
-    }
+    },
   })
 
   async function watchAndBuildSpec () {

@@ -49,7 +49,7 @@ import CommandMenu from '@/components/cylc/commandMenu/Menu.vue'
 const { drawerEnabled } = useDrawer()
 
 const coreViewStyle = {
-  height: `calc(100vh - ${toolbarHeight}px)`
+  height: `calc(100vh - ${toolbarHeight}px)`,
 }
 
 const offline = computed(() => store.state.offline)

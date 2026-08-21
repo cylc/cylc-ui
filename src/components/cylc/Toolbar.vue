@@ -274,7 +274,7 @@ import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import { useGraphQL } from '@/mixins/graphql'
 import {
-  mutationStatus
+  mutationStatus,
 } from '@/utils/aotf'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -379,7 +379,7 @@ export default {
   },
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   data: () => ({
@@ -387,7 +387,7 @@ export default {
       // store state from mutations in order to compute the "enabled" attrs
       play: null,
       paused: null,
-      stop: null
+      stop: null,
     },
     changingNWindow: false,
   }),
@@ -478,7 +478,7 @@ export default {
             this.expecting.stop === null ||
             this.expecting.stop === this.isStopped
           )
-        )
+        ),
       }
     },
     nWindow: {
@@ -495,7 +495,7 @@ export default {
         }
         this.changingNWindow = false
       },
-    }
+    },
   },
 
   watch: {

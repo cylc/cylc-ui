@@ -188,7 +188,7 @@ export default {
 
   // These mixins enable various functionalities.
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   setup (props) {
@@ -221,8 +221,8 @@ export default {
     // in the store and to keep it up to date.
     query () {
       return new SubscriptionQuery(QUERY, this.variables, 'workflow', [])
-    }
-  }
+    },
+  },
 
 }
 </script>

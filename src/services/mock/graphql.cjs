@@ -90,5 +90,5 @@ async function handleGraphQLRequest (request) {
 module.exports = {
   getOperationName,
   getGraphQLQueryResponse,
-  handleGraphQLRequest
+  handleGraphQLRequest,
 }

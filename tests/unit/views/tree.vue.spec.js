@@ -58,7 +58,7 @@ const workflowNode = {
                       ...expandID('~user/workflow1//1/foo/1'),
                       type: 'job',
                     },
-                  ]
+                  ],
                 },
                 {
                   ...expandID('~user/workflow1//1/bar'),
@@ -86,11 +86,11 @@ describe('Tree view', () => {
       global: {
         plugins: [store],
         mocks: {
-          $workflowService
-        }
+          $workflowService,
+        },
       },
       shallow: true,
-      ...options
+      ...options,
     })
   })
 
@@ -98,7 +98,7 @@ describe('Tree view', () => {
     it.each([
       {},
       { id: null, states: null },
-      { id: '  ', states: [] }
+      { id: '  ', states: [] },
     ])('has null filterState when filters are empty: %o', async (tasksFilter) => {
       const wrapper = mountFunction()
       expect(wrapper.vm.tasksFilter).toEqual({

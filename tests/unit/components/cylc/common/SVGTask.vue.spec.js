@@ -47,7 +47,7 @@ describe('modifier', () => {
           // switchedOn.map((modifier) => [modifier, true])
           switchedOn.map(mapper)
         ),
-      }
+      },
     })
     function mapper (key) {
       if (key === 'skip') {
