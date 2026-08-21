@@ -87,26 +87,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-list-item>
       </v-list>
     </v-card>
-    <v-dialog
-      v-if="dialogMutation"
-      v-model="dialog"
-      :width="dialogMutation._dialogWidth ?? '700px'"
-      max-width="100%"
+    <CommandDialog
+      ref="dialog"
+      v-bind="{ types }"
+      @close-menu="() => showMenu = false"
       theme="light"
-      content-class="c-mutation-dialog mx-0"
-    >
-      <Mutation
-        :initialOptions="{
-          mutation: dialogMutation,
-          cylcObject: node,
-          data: initialData(dialogMutation, node.tokens),
-          types: types,
-        }"
-        @close="() => dialog = false"
-        @success="() => showMenu = false"
-        :key="dialogKey /* Enables re-render of component each time dialog opened */"
-      />
-    </v-dialog>
+    />
   </v-menu>
 </template>
 
@@ -117,7 +103,7 @@ import {
   getMutationArgsFromTokens,
   mutate
 } from '@/utils/aotf'
-import Mutation from '@/components/cylc/Mutation.vue'
+import CommandDialog from '@/components/cylc/commandMenu/CommandDialog.vue'
 import {
   mdiPencil,
 } from '@mdi/js'
@@ -152,14 +138,11 @@ export default {
 
   components: {
     CopyBtn,
-    Mutation,
+    CommandDialog,
   },
 
   setup () {
     return {
-      dialog: ref(false),
-      dialogMutation: ref(null),
-      dialogKey: ref(false),
       expanded: ref(false),
       node: ref(null),
       mutations: ref([]),
@@ -264,10 +247,7 @@ export default {
       return !mutation._validStates.includes(status)
     },
     openDialog (mutation) {
-      this.dialog = true
-      this.dialogMutation = mutation
-      // Tell Vue to re-render the dialog component:
-      this.dialogKey = !this.dialogKey
+      this.$refs.dialog.open({ cylcObject: this.node, mutation })
     },
 
     /* Call a mutation using only the tokens for args. */
@@ -343,10 +323,6 @@ export default {
       ).sort(
         (a, b) => a.mutation.name.localeCompare(b.mutation.name)
       )
-    },
-
-    initialData (mutation, tokens) {
-      return getMutationArgsFromTokens(mutation, tokens)
     },
 
     enact (mutation, requiresInfo) {
