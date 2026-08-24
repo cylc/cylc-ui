@@ -108,7 +108,7 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
     if (value || (value === 0 && allowZeros === true)) {
       // Convert CPU time to seconds
       if (timingOption === 'cpuTime') {
-        if value === undefined || value === null) {
+        if (value === undefined || value === null) {
           return undefined
         }
         value = value / 1000
