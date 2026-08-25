@@ -23,6 +23,7 @@ import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import dns from 'dns'
 import path from 'path'
+import pkg from './package.json'
 
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
@@ -117,6 +118,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
+      __APP_VERSION__: JSON.stringify(pkg.version),
       // Allow vue devtools to work when runing vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },

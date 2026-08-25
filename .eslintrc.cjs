@@ -81,4 +81,7 @@ module.exports = {
       'off',
     ],
   },
+  globals: {
+    __APP_VERSION__: 'readonly',
+  },
 }
