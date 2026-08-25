@@ -24,7 +24,7 @@ describe('urls', () => {
   const DEFAULT_LOCATION = {
     protocol: PROTOCOL,
     host: HOST,
-    pathname: PATHNAME
+    pathname: PATHNAME,
   }
   it('should create new URLs', () => {
     const tests = [
@@ -32,26 +32,26 @@ describe('urls', () => {
         path: '',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: '',
         websockets: false,
         baseOnly: true,
         expected: `${PROTOCOL}//${HOST}/`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: 'subscriptions',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: 'subscriptions',
         websockets: true,
         expected: `wss://${HOST}/${PATHNAME}subscriptions`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: 'subscriptions',
@@ -60,45 +60,45 @@ describe('urls', () => {
         location: {
           protocol: 'http:',
           host: HOST,
-          pathname: PATHNAME
-        }
+          pathname: PATHNAME,
+        },
       },
       {
         path: '//subscriptions',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: '//graphql/endpoint//subscriptions',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: '//graphql/endpoint//subscriptions///',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions/`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: '     ',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}`,
-        location: DEFAULT_LOCATION
+        location: DEFAULT_LOCATION,
       },
       {
         path: ' graphql/endpoint//  ',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/`,
-        location: DEFAULT_LOCATION
-      }
+        location: DEFAULT_LOCATION,
+      },
     ]
     tests.forEach((test) => {
       const originalWindow = global.window
       try {
         global.window = {
-          location: test.location
+          location: test.location,
         }
         // || false just to prevent accidental undefined values
         const url = createUrl(

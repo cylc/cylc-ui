@@ -15,6 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const commaDangle = {
+  arrays: 'always-multiline',
+  objects: 'always-multiline',
+  imports: 'always-multiline',
+  exports: 'always-multiline',
+  functions: 'only-multiline',
+}
+
 module.exports = {
   root: true,
   parserOptions: {
@@ -32,40 +40,45 @@ module.exports = {
   rules: {
     'comma-dangle': [
       'error',
+      commaDangle,
+    ],
+    'vue/comma-dangle': [
+      'error',
+      commaDangle,
+    ],
+    'vue/html-indent': [
+      'error',
+      2,
       {
-        arrays: 'only-multiline',
-        objects: 'only-multiline',
-        imports: 'only-multiline',
-        exports: 'only-multiline',
-        functions: 'only-multiline',
+        alignAttributesVertically: false,
       },
     ],
     'no-console': [
       'error',
       {
-        allow: ['warn', 'error']
-      }
+        allow: ['warn', 'error'],
+      },
     ],
     'template-curly-spacing': [
-      'off'
+      'off',
     ],
     'vue/multi-word-component-names': [
-      'off'
+      'off',
     ],
     'vue/valid-v-slot': [
       'error',
       {
-        allowModifiers: true
-      }
+        allowModifiers: true,
+      },
     ],
     'promise/param-names': [
-      'error'
+      'error',
     ],
     'promise/no-return-wrap': [
-      'error'
+      'error',
     ],
     'cypress/unsafe-to-chain-command': [
-      'off'
+      'off',
     ],
   },
 }

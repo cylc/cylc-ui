@@ -43,25 +43,25 @@ const INITIAL_DATA = {
     {
       key: '--nodes',
       value: '5',
-      frozenKey: true
+      frozenKey: true,
     },
     {
       key: '--account',
       value: 'h_seldon',
-      frozenKey: true
-    }
+      frozenKey: true,
+    },
   ],
   environment: [
     {
       key: 'FACTION',
       value: 'Foundation',
-      frozenKey: true
+      frozenKey: true,
     },
     {
       key: 'MAYOR',
       value: 'Hardin',
-      frozenKey: true
-    }
+      frozenKey: true,
+    },
   ],
   outputs: [],
   runMode: 'Live',
@@ -70,7 +70,7 @@ const INITIAL_DATA = {
 const $workflowService = {
   query () {
     return Promise.resolve(taskProxy.data)
-  }
+  },
 }
 
 const vuetify = createVuetify(vuetifyOptions)
@@ -80,10 +80,10 @@ describe('EditRuntimeForm Component', () => {
     cylcObject: {
       id: '~u/w//1/t',
       isFamily: false,
-      tokens: { id: '~u/w//1/t' }
+      tokens: { id: '~u/w//1/t' },
     },
     value: false,
-    types: cloneDeep(IntrospectionQuery.data.__schema.types)
+    types: cloneDeep(IntrospectionQuery.data.__schema.types),
   }
 
   /**
@@ -93,9 +93,9 @@ describe('EditRuntimeForm Component', () => {
   const mountFunction = (options) => shallowMount(EditRuntimeForm, {
     global: {
       plugins: [vuetify],
-      mocks: { $workflowService }
+      mocks: { $workflowService },
     },
-    ...options
+    ...options,
   })
 
   describe('reset()', () => {
@@ -119,39 +119,39 @@ describe('EditRuntimeForm Component', () => {
         environment: [
           { // new item
             key: 'HORSE',
-            value: '22'
+            value: '22',
           },
           { // altered item
             key: 'FACTION',
             value: 'Empire',
-            frozenKey: true
+            frozenKey: true,
           },
           {
             key: 'MAYOR',
             value: 'Hardin',
-            frozenKey: true
-          }
+            frozenKey: true,
+          },
         ],
         outputs: [
           {
             key: 'planet',
-            value: 'Trantor'
-          }
-        ]
+            value: 'Trantor',
+          },
+        ],
       }
       const expected = [
         { execution_time_limit: 'PT30M' },
         { environment: { HORSE: '22' } },
         { environment: { FACTION: 'Empire' } },
-        { outputs: { planet: 'Trantor' } }
+        { outputs: { planet: 'Trantor' } },
       ]
       const wrapper = mountFunction({
         props,
         data: () => ({
           initialData: INITIAL_DATA,
-          model
+          model,
         }),
-        created () {}
+        created () {},
       })
       expect(wrapper.vm.getBroadcastData()).to.deep.equal(expected)
     })
@@ -161,20 +161,20 @@ describe('EditRuntimeForm Component', () => {
         ...INITIAL_DATA,
         environment: [
           { key: null, value: null },
-          { key: undefined, value: undefined }
+          { key: undefined, value: undefined },
         ],
         outputs: [
-          {}
-        ]
+          {},
+        ],
       }
       const expected = []
       const wrapper = mountFunction({
         props,
         data: () => ({
           initialData: INITIAL_DATA,
-          model
+          model,
         }),
-        created () {}
+        created () {},
       })
       expect(wrapper.vm.getBroadcastData()).to.deep.equal(expected)
     })

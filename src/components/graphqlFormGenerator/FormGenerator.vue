@@ -26,29 +26,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="input in inputs"
         v-bind:key="input.label"
       >
-          <v-list-item-title class="d-flex align-center mb-2">
-            <!-- input label - the display title for this input -->
-            {{ upperFirst(lowerCase(input.label)) }}
-            <!-- help button - tooltip for more information -->
-            <v-tooltip
-              v-if="input.description"
-              :activator="null"
-            >
-              <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" class="mx-2">
-                  {{ $options.icons.mdiHelpCircleOutline }}
-                </v-icon>
-              </template>
-              <Markdown
-                :markdown="input.description"
-              />
-            </v-tooltip>
-          </v-list-item-title>
-          <FormInput
-            v-model="model[input.label]"
-            :gqlType="input.gqlType"
-            :types="types"
-          />
+        <v-list-item-title class="d-flex align-center mb-2">
+          <!-- input label - the display title for this input -->
+          {{ upperFirst(lowerCase(input.label)) }}
+          <!-- help button - tooltip for more information -->
+          <v-tooltip
+            v-if="input.description"
+            :activator="null"
+          >
+            <template v-slot:activator="{ props }">
+              <v-icon v-bind="props" class="mx-2">
+                {{ $options.icons.mdiHelpCircleOutline }}
+              </v-icon>
+            </template>
+            <Markdown
+              :markdown="input.description"
+            />
+          </v-tooltip>
+        </v-list-item-title>
+        <FormInput
+          v-model="model[input.label]"
+          :gqlType="input.gqlType"
+          :types="types"
+        />
       </v-list-item>
     </v-list>
   </v-form>
@@ -68,7 +68,7 @@ export default {
 
   components: {
     Markdown,
-    FormInput
+    FormInput,
   },
 
   props: {
@@ -76,19 +76,19 @@ export default {
     modelValue: {
       type: Boolean,
       required: false,
-      default: () => false
+      default: () => false,
     },
 
     // the mutation we are operating on
     mutation: {
       type: Object,
-      required: true
+      required: true,
     },
 
     // list of GraphQL types extracted from the introspection query
     types: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
 
     // the live state of the form
@@ -126,7 +126,7 @@ export default {
         ret.push({
           gqlType: arg.type,
           label: arg.name,
-          description: arg.description
+          description: arg.description,
         })
       }
       return ret
@@ -138,8 +138,8 @@ export default {
       set (value) {
         // Update 'value' prop by notifying parent component's v-model for this component
         this.$emit('update:modelValue', value)
-      }
-    }
+      },
+    },
   },
 
   methods: {

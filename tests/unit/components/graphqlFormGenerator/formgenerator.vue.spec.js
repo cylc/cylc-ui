@@ -28,17 +28,17 @@ const BASIC_MUTATION = {
       defaultValue: '"MyDefault"',
       type: {
         name: 'String',
-        kind: 'SCALAR'
-      }
+        kind: 'SCALAR',
+      },
     },
     {
       name: 'MyInteger',
       type: {
         name: 'Int',
-        kind: 'SCALAR'
-      }
-    }
-  ]
+        kind: 'SCALAR',
+      },
+    },
+  ],
 }
 
 const CUSTOM_OBJECT = {
@@ -49,17 +49,17 @@ const CUSTOM_OBJECT = {
       name: 'MyString',
       type: {
         name: 'String',
-        kind: 'SCALAR'
-      }
+        kind: 'SCALAR',
+      },
     },
     {
       name: 'MyInteger',
       type: {
         name: 'Int',
-        kind: 'SCALAR'
-      }
-    }
-  ]
+        kind: 'SCALAR',
+      },
+    },
+  ],
 }
 
 const NESTED_TYPES = [
@@ -74,11 +74,11 @@ const NESTED_TYPES = [
         kind: 'NON_NULL',
         ofType: {
           name: 'String',
-          kind: 'SCALAR'
-        }
-      }
+          kind: 'SCALAR',
+        },
+      },
     },
-    null
+    null,
   ],
   [
     {
@@ -90,11 +90,11 @@ const NESTED_TYPES = [
         kind: 'LIST',
         ofType: {
           name: 'String',
-          kind: 'SCALAR'
-        }
-      }
+          kind: 'SCALAR',
+        },
+      },
     },
-    []
+    [],
   ],
   [
     {
@@ -106,11 +106,11 @@ const NESTED_TYPES = [
         kind: 'LIST',
         ofType: {
           name: 'MyObject',
-          kind: 'OBJECT'
-        }
-      }
+          kind: 'OBJECT',
+        },
+      },
     },
-    [{ MyString: null, MyInteger: null }]
+    [{ MyString: null, MyInteger: null }],
   ],
   [
     {
@@ -128,13 +128,13 @@ const NESTED_TYPES = [
             kind: 'NON_NULL',
             ofType: {
               name: 'String',
-              kind: 'SCALAR'
-            }
-          }
-        }
-      }
+              kind: 'SCALAR',
+            },
+          },
+        },
+      },
     },
-    []
+    [],
   ],
   [
     {
@@ -152,14 +152,14 @@ const NESTED_TYPES = [
             kind: 'NON_NULL',
             ofType: {
               name: 'MyObject',
-              kind: 'OBJECT'
-            }
-          }
-        }
-      }
+              kind: 'OBJECT',
+            },
+          },
+        },
+      },
     },
-    [{ MyString: null, MyInteger: null }]
-  ]
+    [{ MyString: null, MyInteger: null }],
+  ],
 ]
 
 /**
@@ -178,18 +178,18 @@ describe('FormGenerator Component', () => {
    */
   const mountFunction = (options) => mount(FormGenerator, {
     shallow: true,
-    ...options
+    ...options,
   })
 
   it('should parse default values from the schema for simple types', () => {
     const wrapper = mountFunction({
       props: {
-        mutation: BASIC_MUTATION
-      }
+        mutation: BASIC_MUTATION,
+      },
     })
     expect(getModel(wrapper)).to.deep.equal({
       MyString: 'MyDefault',
-      MyInteger: null
+      MyInteger: null,
     })
   })
 
@@ -200,10 +200,10 @@ describe('FormGenerator Component', () => {
           mutation: {
             name: type.name + 'Mutation',
             description: 'Beef Wellington',
-            args: [type]
+            args: [type],
           },
-          types: [CUSTOM_OBJECT]
-        }
+          types: [CUSTOM_OBJECT],
+        },
       })
       const expected = { [type.name]: JSON.parse(type.defaultValue) }
       expect(getModel(wrapper)).to.deep.equal(expected)
@@ -219,10 +219,10 @@ describe('FormGenerator Component', () => {
           mutation: {
             name: type.name + 'Mutation',
             description: 'Beef Wellington',
-            args: [type]
+            args: [type],
           },
-          types: [CUSTOM_OBJECT]
-        }
+          types: [CUSTOM_OBJECT],
+        },
       })
       const expected = { [type.name]: defaultValue }
       expect(getModel(wrapper)).to.deep.equal(expected)
@@ -234,13 +234,13 @@ describe('FormGenerator Component', () => {
       props: {
         mutation: BASIC_MUTATION,
         data: {
-          MyString: 'Foo'
-        }
-      }
+          MyString: 'Foo',
+        },
+      },
     })
     expect(getModel(wrapper)).to.deep.equal({
       MyString: 'Foo',
-      MyInteger: null
+      MyInteger: null,
     })
   })
 
@@ -249,12 +249,12 @@ describe('FormGenerator Component', () => {
       props: {
         mutation: BASIC_MUTATION,
         initialData: {
-          MyString: 'before'
+          MyString: 'before',
         },
         data: {
-          MyString: 'after'
+          MyString: 'after',
         },
-      }
+      },
     })
     expect(getModel(wrapper).MyString).to.deep.equal('after')
     wrapper.vm.reset()
@@ -266,9 +266,9 @@ describe('FormGenerator Component', () => {
       props: {
         mutation: BASIC_MUTATION,
         data: {
-          MyString: 'after'
+          MyString: 'after',
         },
-      }
+      },
     })
     expect(getModel(wrapper).MyString).to.deep.equal('after')
     wrapper.vm.reset()

@@ -92,19 +92,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import {
-  debounce
+  debounce,
 } from 'lodash'
 import gql from 'graphql-tag'
 import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 import DeltasCallback from '@/services/callbacks'
 import {
   matchTasks,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/gantt/filter'
 
 /** List of fields to request for each job */
@@ -114,7 +114,7 @@ const jobFields = [
   'submittedTime',
   'startedTime',
   'finishedTime',
-  'platform'
+  'platform',
 ]
 
 /** The query which retrieves historical Job timing statistics */
@@ -240,7 +240,7 @@ export default {
   },
 
   taskChoices: [
-    10, 25, 50, 100
+    10, 25, 50, 100,
   ],
 }
 </script>

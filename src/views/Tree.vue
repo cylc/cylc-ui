@@ -49,7 +49,7 @@ import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
@@ -180,7 +180,7 @@ export default {
   name: 'Tree',
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -242,7 +242,7 @@ export default {
               title: 'Filter By ID',
               action: 'taskIDFilter',
               key: 'taskIDFilter',
-              value: this.tasksFilter.id
+              value: this.tasksFilter.id,
             },
             {
               title: 'Filter By State',
@@ -259,11 +259,11 @@ export default {
               title: 'Toggle Families',
               icon: {
                 true: mdiFormatAlignJustify,
-                false: mdiFormatAlignRight
+                false: mdiFormatAlignRight,
               },
               action: 'toggle',
               value: this.flat,
-              key: 'flat'
+              key: 'flat',
             },
             {
               title: 'Expand All',
@@ -279,8 +279,8 @@ export default {
               action: 'callback',
               callback: this.treeCollapseAll,
             },
-          ]
-        }
+          ],
+        },
       ]
     },
   },

@@ -42,7 +42,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
@@ -142,7 +142,7 @@ export default {
   name: 'Table',
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -238,7 +238,7 @@ export default {
               title: 'Filter By ID',
               action: 'taskIDFilter',
               key: 'taskIDFilter',
-              value: this.tasksFilter.id
+              value: this.tasksFilter.id,
             },
             {
               title: 'Filter By State',

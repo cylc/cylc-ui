@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           location: 'top',
           openDelay: 400,
           eager: false,
-        }
+        },
       }">
         <Tree
           :workflows="workflows"
@@ -138,18 +138,18 @@ export default {
 
   components: {
     Tree,
-    TaskFilterSelect
+    TaskFilterSelect,
   },
 
   props: {
     workflowTree: {
       type: Object,
-      required: true
+      required: true,
     },
     isLoading: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data: () => ({
@@ -164,7 +164,7 @@ export default {
      */
     filters: {
       'workflow state': [],
-      'task state': []
+      'task state': [],
       // 'workflow host': [], // TODO: will it be in state totals?
       // 'cylc version': [] // TODO: will it be in state totals?
     },
@@ -228,7 +228,7 @@ export default {
   // Misc options
   icons: {
     mdiFilter,
-    mdiFolderRefresh
+    mdiFolderRefresh,
   },
   /**
    * Lists of all the possible workflow and task states

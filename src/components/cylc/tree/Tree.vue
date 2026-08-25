@@ -41,7 +41,7 @@ import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 const props = defineProps({
   workflows: {
     type: Array,
-    required: true
+    required: true,
   },
   treeItemComponent: {
     type: String,
@@ -67,7 +67,7 @@ const props = defineProps({
   /** List of node types to manually expand. */
   expandAll: {
     type: Array,
-    default: null
+    default: null,
   },
   autoStripTypes: {
     // If there is only one child of the root node and its type is listed in
@@ -78,13 +78,13 @@ const props = defineProps({
     // root nodes.
     type: Array,
     required: false,
-    default: () => []
+    default: () => [],
   },
   flat: {
     type: Boolean,
     required: false,
     default: true,
-  }
+  },
 })
 
 const components = {
