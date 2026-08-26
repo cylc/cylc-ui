@@ -143,6 +143,68 @@ describe('Log view', () => {
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
   })
 
+  it('toggles the log mode and updates the toolbar label', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    const initialMode = wrapper.vm.logMode
+    const initialTitle = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'logMode'
+    ).title
+
+    wrapper.vm.setOption('logMode', !initialMode)
+    await nextTick()
+    expect(wrapper.vm.logMode).toBe(!initialMode)
+
+    const newTitle = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'logMode'
+    ).title
+    expect(newTitle).not.toBe(initialTitle)
+  })
+
+  it('uses toggle action for the log mode toolbar control', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    const logModeControl = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'logMode'
+    )
+
+    expect(logModeControl.action).toBe('toggle')
+    expect(logModeControl.value).toBe(wrapper.vm.logMode)
+    expect(logModeControl.values).toBe(undefined)
+    expect(logModeControl.title).toBe(
+      wrapper.vm.logMode
+        ? 'HEAD: showing the start of the file'
+        : 'TAIL: showing the end of the file'
+    )
+  })
+
+  it('shows start/end truncation banner messages with max line count', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    const maxLines = Number(wrapper.vm.maxLines)
+
+    wrapper.vm.results = {
+      ...wrapper.vm.results,
+      truncated: 'start',
+    }
+    await nextTick()
+    expect(wrapper.vm.truncationMessage).toBe(
+      `The start of this file has been truncated because it is over ${maxLines} lines long.`
+    )
+
+    wrapper.vm.results = {
+      ...wrapper.vm.results,
+      truncated: 'end',
+    }
+    await nextTick()
+    expect(wrapper.vm.truncationMessage).toBe(
+      `The end of this file has been truncated because it is over ${maxLines} lines long.`
+    )
+  })
+
   it('does not issue subscription for incomplete task ID', async () => {
     const wrapper = mountFunction()
     wrapper.vm.jobLog = 1
