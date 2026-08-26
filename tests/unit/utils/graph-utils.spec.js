@@ -15,10 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  posToPath,
-  nonCryptoHash,
-} from '@/utils/graph-utils'
+import { posToPath } from '@/utils/graph-utils'
 
 describe('Graph functionality', () => {
   describe('posToPath', () => {
@@ -45,15 +42,6 @@ describe('Graph functionality', () => {
       )).to.equal(
         'M-2 2 C 3 3, -1 0, L 1 -1'
       )
-    })
-  })
-
-  describe('nonCryptoHash', () => {
-    it.each([
-      ['foo', 101574],
-      ['', 0],
-    ])('Converts a string to a stable hash: %o -> %i', (str, expected) => {
-      expect(nonCryptoHash(str)).to.equal(expected)
     })
   })
 })
