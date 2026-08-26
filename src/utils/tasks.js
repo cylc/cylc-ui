@@ -30,7 +30,7 @@ const isStoppedOrderedStates = [
   TaskState.EXPIRED,
   TaskState.PREPARING,
   TaskState.SUCCEEDED,
-  TaskState.WAITING
+  TaskState.WAITING,
 ]
 
 /**
@@ -134,16 +134,6 @@ export function getRunTime (jobNode) {
  */
 export function formatFlowNums (flowNums) {
   return JSON.parse(flowNums).join(', ') || 'None'
-}
-
-/**
- * Return whether a task is in the None flow.
- *
- * @param {string=} flowNums
- * @returns {boolean}
- */
-export function isFlowNone (flowNums) {
-  return Boolean(flowNums && !JSON.parse(flowNums).length)
 }
 
 export function isTruthyOrZero (value) {

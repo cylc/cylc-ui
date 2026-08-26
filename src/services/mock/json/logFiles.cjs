@@ -44,9 +44,9 @@ const LogFiles = async ({ id }) => {
       logFiles: {
         files: id == null
           ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
+          : id.includes('//') ? jobLogFiles : workflowLogFiles,
+      },
+    },
   }
 }
 
@@ -55,11 +55,11 @@ const LogFiles = async ({ id }) => {
  *
  * @param {{ id: string }} variables
  */
-const Jobs = async ({ id, workflowId }) => {
-  if (!workflowId.startsWith('~')) {
-    workflowId = `~user/${workflowId}`
+const Jobs = async ({ id, workflowID }) => {
+  if (!workflowID.startsWith('~')) {
+    workflowID = `~user/${workflowID}`
   }
-  const { deltas } = Workflow({ workflowId })
+  const { deltas } = Workflow({ workflowID })
   const searchID = id.replace(
     /\/NN$/, ''
   ).replace(
@@ -69,8 +69,8 @@ const Jobs = async ({ id, workflowId }) => {
   await simulatedDelay(500)
   return {
     data: {
-      jobs: node.state ? [{ id, ...node }] : []
-    }
+      jobs: node.state ? [{ id, ...node }] : [],
+    },
   }
 }
 

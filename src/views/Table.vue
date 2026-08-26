@@ -37,13 +37,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
@@ -52,8 +51,8 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas (workflows: [$workflowID]) {
     id
     added {
       ...AddedDelta
@@ -121,6 +120,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {
@@ -142,8 +142,7 @@ export default {
   name: 'Table',
 
   mixins: [
-    graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -158,6 +157,8 @@ export default {
   },
 
   setup (props, { emit }) {
+    const { workflowIDs, variables } = useGraphQL()
+
     /**
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<object>}
@@ -175,15 +176,14 @@ export default {
       dataTableOptions,
       tasksFilter,
       filterState,
+      workflowIDs,
+      variables,
     }
   },
 
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
-    workflowIDs () {
-      return [this.workflowId]
-    },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
     },
@@ -238,7 +238,7 @@ export default {
               title: 'Filter By ID',
               action: 'taskIDFilter',
               key: 'taskIDFilter',
-              value: this.tasksFilter.id
+              value: this.tasksFilter.id,
             },
             {
               title: 'Filter By State',

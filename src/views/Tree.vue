@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import { mapState, mapGetters } from 'vuex'
 import {
   mdiFormatAlignJustify,
@@ -44,11 +45,11 @@ import {
   mdiPlus,
 } from '@mdi/js'
 import gql from 'graphql-tag'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
@@ -56,8 +57,8 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import { matchID, matchState, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas (workflows: [$workflowID]) {
     id
     added {
       ...AddedDelta
@@ -129,6 +130,7 @@ fragment FamilyProxyData on FamilyProxy {
   isRetry
   isWallclock
   isXtriggered
+  graphDepth
 }
 
 fragment TaskProxyData on TaskProxy {
@@ -150,6 +152,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {
@@ -177,8 +180,7 @@ export default {
   name: 'Tree',
 
   mixins: [
-    graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -186,9 +188,13 @@ export default {
     ViewToolbar,
   },
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
+    const { workflowIDs, variables } = useGraphQL()
+
     /**
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<Object>}
@@ -199,23 +205,18 @@ export default {
     const flat = useInitialOptions('flat', { props, emit }, false)
 
     return {
+      expandAll: ref(null),
       tasksFilter,
       filterState,
       flat,
+      workflowIDs,
+      variables,
     }
   },
-
-  data: () => ({
-    expandAll: null,
-  }),
 
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
-
-    workflowIDs () {
-      return [this.workflowId]
-    },
 
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
@@ -241,7 +242,7 @@ export default {
               title: 'Filter By ID',
               action: 'taskIDFilter',
               key: 'taskIDFilter',
-              value: this.tasksFilter.id
+              value: this.tasksFilter.id,
             },
             {
               title: 'Filter By State',
@@ -258,11 +259,11 @@ export default {
               title: 'Toggle Families',
               icon: {
                 true: mdiFormatAlignJustify,
-                false: mdiFormatAlignRight
+                false: mdiFormatAlignRight,
               },
               action: 'toggle',
               value: this.flat,
-              key: 'flat'
+              key: 'flat',
             },
             {
               title: 'Expand All',
@@ -278,8 +279,8 @@ export default {
               action: 'callback',
               callback: this.treeCollapseAll,
             },
-          ]
-        }
+          ],
+        },
       ]
     },
   },

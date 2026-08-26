@@ -20,13 +20,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <slot />
   </v-main>
 </template>
-
-<script>
-export default {
-  name: 'Empty'
-}
-</script>
-
-<style scoped>
-
-</style>

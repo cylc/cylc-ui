@@ -50,23 +50,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               One task can have multiple jobs, by automatic retry or manual
               triggering.
             </p>
-         </v-card-text>
-            <table id="task-job-state-table">
+          </v-card-text>
+          <table id="task-job-state-table">
+            <thead style="font-size: 2em;">
               <tr>
                 <td>Task</td>
                 <td></td>
                 <td>Job</td>
               </tr>
+            </thead>
+            <tbody>
               <tr
                 v-bind:key="state.name.name"
                 v-for="state of states"
               >
                 <td style="font-size: 2em;">
                   <!-- set times to make the progress change -->
-                  <task
+                  <Task
                     :task="{
                       state: state.name,
-                      task: {meanElapsedTime: 30}
+                      task: {meanElapsedTime: 30},
                     }"
                     :startTime="String(Date.now())"
                   />
@@ -75,10 +78,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <span>{{ state.name }}</span>
                 </td>
                 <td style="font-size: 2em;">
-                  <job :status="state.name" />
+                  <Job :status="state.name" />
                 </td>
               </tr>
-            </table>
+            </tbody>
+          </table>
           <v-card-text>
             <p>
               A <b>waiting task</b> with <b>failed jobs</b> will
@@ -103,11 +107,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               back from running by some other factor (e.g, if they are held).
             </p>
             <v-list
-               lines="three"
+              lines="three"
             >
               <v-list-item>
                 <template v-slot:prepend>
-                  <task
+                  <Task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
                     class="mr-4"
@@ -187,7 +191,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <p>
               Why has my task not started to run yet?
             </p>
-           <v-list
+            <v-list
               lines="three"
             >
               <v-list-item>
@@ -305,10 +309,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item>
             </v-list>
             <p>
-            <em>Note: tasks downstream of queued (or runahead limited) tasks
-               are not themselves shown as queued (or runahead limited)
-               because they are not otherwise ready to run yet.</em>
-             </p>
+              <em>Note: tasks downstream of queued (or runahead limited) tasks
+                are not themselves shown as queued (or runahead limited)
+                because they are not otherwise ready to run yet.</em>
+            </p>
           </v-card-text>
         </v-card>
 
@@ -362,9 +366,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </marker>
                 </defs>
                 <g
-                ref="graph"
+                  ref="graph"
                   v-on:click.stop.prevent=""
-                  >
+                >
 
                   <g
                     v-for="(task, index) in exampleTasks"
@@ -373,7 +377,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <GraphNode
                       v-bind="task"
                       :transform="`translate(0, ${ 240 * index })`"
-                      :class="{ 'flow-none': isFlowNone(task.task.node.flowNums) }"
+                      :class="{ 'dimmed': task.task.node.graphDepth }"
                       v-on:click.stop.capture
                     />
                     <text
@@ -397,7 +401,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       stroke-width="5"
                       fill="none"
                       :marker-end="`url(#${uid}-arrow-end)`"
-                    :transform="`translate(0, ${ (240 * index) + 120 })`"
+                      :transform="`translate(0, ${ (240 * index) + 120 })`"
                     />
 
                   </g>
@@ -410,8 +414,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
 
             <p>
-              Note that the "future" tasks (the ones ahead of the workflow) are
-              grey. This indicates that are are not yet being managed by Cylc.
+              Note that the tasks outside of the active window (i.e. the ones
+              that are not n=0) are greyed out. This highlights the tasks that
+              Cylc is currently managing.
             </p>
           </v-card-text>
         </v-card>
@@ -429,13 +434,12 @@ import { workflowViews } from '@/views/views'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { Tokens } from '@/utils/uid'
 import { uniqueId } from 'lodash-es'
-import { isFlowNone } from '@/utils/tasks'
 
 export default {
   name: 'Guide',
   components: {
-    task: Task,
-    job: Job,
+    Task,
+    Job,
     GraphNode,
   },
 
@@ -453,7 +457,7 @@ export default {
         task: {
           name: 'a',
           tokens: new Tokens('2000/a', true),
-          node: { state: 'succeeded' },
+          node: { state: 'succeeded', graphDepth: 1 },
         },
         jobs: [{
           name: '01',
@@ -465,7 +469,7 @@ export default {
         task: {
           name: 'b',
           tokens: new Tokens('2000/b', true),
-          node: { state: 'running' },
+          node: { state: 'running', graphDepth: 0 },
         },
         jobs: [{
           name: '01',
@@ -477,7 +481,7 @@ export default {
         task: {
           name: 'c',
           tokens: new Tokens('2000/c', true),
-          node: { state: 'waiting', flowNums: '[]' },
+          node: { state: 'waiting', graphDepth: 1 },
         },
         jobs: [],
       },
@@ -485,16 +489,12 @@ export default {
         task: {
           name: 'd',
           tokens: new Tokens('2000/d', true),
-          node: { state: 'waiting', flowNums: '[]' },
+          node: { state: 'waiting', graphDepth: 2 },
         },
         jobs: [],
       },
-    ]
+    ],
   }),
-
-  methods: {
-    isFlowNone,
-  },
 }
 </script>
 
@@ -524,24 +524,12 @@ export default {
       line-height: 1.2em;
     }
 
-    tr:nth-child(1) {
-      font-size: 2em;
-    }
-
-    tr > td:nth-child(2) {
-      font-size: 1em;
-    }
-
     tr > td:nth-child(1), tr > td:nth-child(3) {
       width: 5em;
     }
 
     td {
       padding: 0.1em 0 0.1em 0;
-    }
-
-    td > * {
-      background-color: white;
     }
   }
 </style>

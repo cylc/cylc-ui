@@ -24,6 +24,7 @@ import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
+import { mockRoute } from '$tests/util'
 
 describe('Log view', () => {
   const owner = 'svimes'
@@ -31,6 +32,7 @@ describe('Log view', () => {
   const workflowID = `~${owner}/${workflowName}`
   const initialFile = 'koom-valley.log'
 
+  mockRoute({ params: { workflowName } })
   let $workflowService, store
 
   const mountFunction = (options) => mount(Log, {
@@ -39,7 +41,6 @@ describe('Log view', () => {
       mocks: { $workflowService },
     },
     props: {
-      workflowName,
       initialOptions: {
         file: initialFile,
       },
@@ -61,7 +62,7 @@ describe('Log view', () => {
           logFiles: {
             files: ['a.log', 'b.log'],
           },
-        }
+        },
       }),
     }
   })
@@ -81,8 +82,8 @@ describe('Log view', () => {
             jobs: [
               // Query response only includes latest job
               { id: 'w//1/foo/02', state },
-            ]
-          }
+            ],
+          },
         })
         const wrapper = mountFunction()
         wrapper.vm.jobLog = 1
@@ -231,7 +232,6 @@ describe('Log view', () => {
     const expectedJobID = `${workflowID}//${relativeID}/NN`
     const wrapper = mountFunction({
       props: {
-        workflowName,
         initialOptions: {
           file: 'job.out',
           relativeID,

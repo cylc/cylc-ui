@@ -316,7 +316,7 @@ export default {
   jobThemes: [
     'default',
     'greyscale',
-    'colour_blind'
+    'colour_blind',
   ],
 
   logMaxLinesMax: LOG_MAX_LINES_MAX,

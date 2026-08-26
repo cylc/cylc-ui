@@ -154,11 +154,11 @@ import {
   pick,
 } from 'lodash'
 import gql from 'graphql-tag'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import DeltasCallback from '@/services/callbacks'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
@@ -166,7 +166,7 @@ import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 import {
   matchTask,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/analysis/filter'
 import {
   mdiChartTimeline,
@@ -195,7 +195,7 @@ const taskFields = [
   'stdDevQueueTime',
   'minQueueTime',
   'queueQuartiles',
-  'maxQueueTime'
+  'maxQueueTime',
 ]
 
 /** The one-off query which retrieves historical task timing statistics */
@@ -248,14 +248,10 @@ class AnalysisTaskCallback extends DeltasCallback {
 export default {
   name: 'Analysis',
 
-  mixins: [
-    graphqlMixin
-  ],
-
   components: {
     AnalysisTable,
     BoxPlot,
-    TimeSeries
+    TimeSeries,
   },
 
   beforeMount () {
@@ -264,7 +260,9 @@ export default {
 
   emits: [updateInitialOptionsEvent],
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
     /**
@@ -299,6 +297,8 @@ export default {
      */
     const timeseriesPlotOptions = useInitialOptions('timeseriesPlotOptions', { props, emit })
 
+    const { workflowIDs } = useGraphQL()
+
     return {
       tasksFilter,
       chartType,
@@ -306,6 +306,7 @@ export default {
       dataTableOptions,
       boxPlotOptions,
       timeseriesPlotOptions,
+      workflowIDs,
     }
   },
 
@@ -319,13 +320,6 @@ export default {
   },
 
   computed: {
-    // a list of the workflow IDs this view is "viewing"
-    // NOTE: we plan multi-workflow functionality so we are writing views
-    // to be mult-workflow compatible in advance of this feature arriving
-    workflowIDs () {
-      return [this.workflowId]
-    },
-
     filteredTasks () {
       return this.tasks.filter(task => matchTask(task, this.tasksFilter))
     },
@@ -336,7 +330,7 @@ export default {
 
     timingOption () {
       return this.tasksFilter.timingOption.replace(/Times/, '')
-    }
+    },
   },
 
   methods: {
@@ -355,7 +349,7 @@ export default {
         this.callback.onAdded(ret.data)
       },
       200 // only re-run this once every 0.2 seconds
-    )
+    ),
   },
 
   icons: {

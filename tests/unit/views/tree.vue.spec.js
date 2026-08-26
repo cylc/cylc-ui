@@ -22,7 +22,7 @@ import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
-import { getIDMap } from '$tests/util'
+import { getIDMap, mockRoute } from '$tests/util'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
@@ -58,7 +58,7 @@ const workflowNode = {
                       ...expandID('~user/workflow1//1/foo/1'),
                       type: 'job',
                     },
-                  ]
+                  ],
                 },
                 {
                   ...expandID('~user/workflow1//1/bar'),
@@ -76,6 +76,7 @@ const workflowNode = {
 }
 
 describe('Tree view', () => {
+  mockRoute({ params: { workflowName: 'workflow1' } })
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
@@ -85,14 +86,11 @@ describe('Tree view', () => {
       global: {
         plugins: [store],
         mocks: {
-          $workflowService
-        }
-      },
-      props: {
-        workflowName: 'workflow1',
+          $workflowService,
+        },
       },
       shallow: true,
-      ...options
+      ...options,
     })
   })
 
@@ -100,7 +98,7 @@ describe('Tree view', () => {
     it.each([
       {},
       { id: null, states: null },
-      { id: '  ', states: [] }
+      { id: '  ', states: [] },
     ])('has null filterState when filters are empty: %o', async (tasksFilter) => {
       const wrapper = mountFunction()
       expect(wrapper.vm.tasksFilter).toEqual({

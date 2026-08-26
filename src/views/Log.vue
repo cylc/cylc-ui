@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-text-field
             v-else
             data-cy="workflow-id-input"
-            v-model="workflowId"
+            v-model="workflowID"
             disabled
           />
         </v-col>
@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             } : {
               color: 'error',
               prependIcon: $options.icons.mdiPowerPlugOff,
-              onClick: updateQuery
+              onClick: updateQuery,
             }"
           >
             {{ results.connected ? 'Connected' : 'Reconnect' }}
@@ -235,12 +235,12 @@ import {
   mdiFormatVerticalAlignTop,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import LogComponent from '@/components/cylc/log/Log.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -329,8 +329,8 @@ query LogFiles($id: ID!) {
  * @type {DocumentNode}
 */
 const JOB_QUERY = gql`
-query Jobs($id: ID!, $workflowId: ID!) {
-  jobs (live: false, ids: [$id], workflows: [$workflowId]) {
+query Jobs($id: ID!, $workflowID: ID!) {
+  jobs (live: false, ids: [$id], workflows: [$workflowID]) {
     id
     state
     platform
@@ -448,8 +448,7 @@ export default {
   name: 'Log',
 
   mixins: [
-    graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -475,6 +474,8 @@ export default {
   setup (props, { emit }) {
     const store = useStore()
 
+    const { workflowID, variables } = useGraphQL()
+
     /**
      * The task/job ID.
      * @type {import('vue').Ref<string>}
@@ -490,7 +491,7 @@ export default {
     const inputID = refWithControl(relativeID.value, {
       onChanged: debounce((value) => {
         relativeID.value = value
-      }, 500)
+      }, 500),
     })
 
     function validateInputID (id) {
@@ -607,6 +608,8 @@ export default {
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
       jobNode: ref(null),
+      workflowID,
+      variables,
     }
   },
 
@@ -615,7 +618,7 @@ export default {
     this.$watch(
       () => ({
         id: this.id ?? undefined, // (do not trigger the callback on null ⇄ undefined)
-        file: this.file ?? undefined
+        file: this.file ?? undefined,
       }),
       async ({ id, file }, old) => {
         // update the widget tab caption when the id or file change
@@ -675,7 +678,7 @@ export default {
   computed: {
     workflowTokens () {
       // tokens for the workflow this view was opened for
-      return new Tokens(this.workflowId)
+      return new Tokens(this.workflowID)
     },
     truncationMessage () {
       // the banner shown when the log file has been truncated
@@ -693,7 +696,7 @@ export default {
       if (this.jobLog) {
         return this.relativeTokens?.clone(this.workflowTokens)?.id
       }
-      return this.workflowId
+      return this.workflowID
     },
     controlGroups () {
       return [
@@ -705,7 +708,7 @@ export default {
               icon: mdiClockOutline,
               action: 'toggle',
               value: this.timestamps,
-              key: 'timestamps'
+              key: 'timestamps',
             },
             {
               title: 'Word wrap',
@@ -732,10 +735,10 @@ export default {
               value: this.logMode,
               key: 'logMode',
             },
-          ]
-        }
+          ],
+        },
       ]
-    }
+    },
   },
 
   methods: {
@@ -766,7 +769,7 @@ export default {
           new LogsCallback(
             this.results,
             () => this.popMode ? normalizeLogMaxLines(this.maxLines) : null
-          )
+          ),
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false
@@ -787,7 +790,7 @@ export default {
             JOB_QUERY,
             {
               id: this.relativeTokens.id,
-              workflowId: this.workflowTokens.workflow
+              workflowID: this.workflowTokens.workflow,
             }
           )
         }
@@ -822,7 +825,7 @@ export default {
         // get the list of available log files
         result = await this.$workflowService.apolloClient.query({
           query: LOG_FILE_QUERY,
-          variables: { id: this.id }
+          variables: { id: this.id },
         })
       } catch (err) {
         // the query failed
@@ -887,7 +890,7 @@ export default {
       this.file = null
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
-    }
+    },
   },
 
   // Misc options
@@ -897,6 +900,6 @@ export default {
     mdiPowerPlugOff,
     mdiFileAlertOutline,
     mdiInformationOutline,
-  }
+  },
 }
 </script>

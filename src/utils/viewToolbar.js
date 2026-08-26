@@ -44,7 +44,7 @@ export const btnProps = (size) => ({
   variant: 'text',
   size,
   style: {
-    fontSize: btnIconFontSize(size)
+    fontSize: btnIconFontSize(size),
   },
 })
 
@@ -68,9 +68,9 @@ export const taskStateItems = [
         return {
           title: modifier.title,
           value: modifier.field,
-          taskProps: getProps(modifier)
+          taskProps: getProps(modifier),
         }
-      })
+      }),
   },
   ...TaskStateNames
     .filter((name) => name !== TaskState.WAITING.name)
@@ -78,7 +78,7 @@ export const taskStateItems = [
       return {
         title: name,
         value: name,
-        taskProps: { state: name }
+        taskProps: { state: name },
       }
     }),
   { type: 'divider' },
@@ -87,7 +87,7 @@ export const taskStateItems = [
       return {
         title: modifier.title,
         value: modifier.field,
-        taskProps: getProps(modifier)
+        taskProps: getProps(modifier),
       }
     }),
 ]

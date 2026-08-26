@@ -92,19 +92,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import {
-  debounce
+  debounce,
 } from 'lodash'
 import gql from 'graphql-tag'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 import DeltasCallback from '@/services/callbacks'
 import {
   matchTasks,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/gantt/filter'
 
 /** List of fields to request for each job */
@@ -114,7 +114,7 @@ const jobFields = [
   'submittedTime',
   'startedTime',
   'finishedTime',
-  'platform'
+  'platform',
 ]
 
 /** The query which retrieves historical Job timing statistics */
@@ -161,10 +161,6 @@ export class GanttCallback extends DeltasCallback {
 export default {
   name: 'Gantt',
 
-  mixins: [
-    graphqlMixin
-  ],
-
   components: {
     GanttChart,
   },
@@ -190,9 +186,12 @@ export default {
       platformOption: -1,
     })
 
+    const { workflowIDs } = useGraphQL()
+
     return {
       tasksPerPage,
       jobsFilter,
+      workflowIDs,
     }
   },
 
@@ -212,12 +211,6 @@ export default {
   },
 
   computed: {
-    // a list of the workflow IDs this view is "viewing"
-    // NOTE: we plan multi-workflow functionality so we are writing views
-    // to be mult-workflow compatible in advance of this feature arriving
-    workflowIDs () {
-      return [this.workflowId]
-    },
     filteredJobs () {
       return matchTasks(this.callback.jobs, this.jobsFilter)
     },
@@ -247,7 +240,7 @@ export default {
   },
 
   taskChoices: [
-    10, 25, 50, 100
+    10, 25, 50, 100,
   ],
 }
 </script>

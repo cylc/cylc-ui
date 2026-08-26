@@ -19,30 +19,35 @@ import { shallowMount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import User from '@/model/User.model'
 import storeOptions from '@/store/options'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
+import { defineComponent } from 'vue'
+import { mockRoute } from '$tests/util'
 
-describe('GraphQL mixin', () => {
+describe('GraphQL composables', () => {
   const store = createStore(storeOptions)
-  it('should create the GraphQL Query variables', () => {
+  const workflowName = 'test'
+  mockRoute({ params: { workflowName } })
+
+  it('creates the GraphQL Query variables and computed properties', () => {
     const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
     store.commit('user/SET_USER', user)
-    const workflowName = 'test'
-    const Component = {
-      mixins: [graphqlMixin],
-      render () {}
-    }
+    const Component = defineComponent({
+      setup () {
+        return useGraphQL()
+      },
+      render: () => null,
+    })
     const component = shallowMount(Component, {
       global: {
-        plugins: [store]
+        plugins: [store],
       },
-      props: {
-        workflowName
-      }
     })
-    const variables = component.vm.variables
-    const expected = {
-      workflowId: `~${user.owner}/${workflowName}`
-    }
-    expect(variables).to.deep.equal(expected)
+    const expectedID = `~${user.owner}/${workflowName}`
+
+    expect(component.vm.workflowID).to.equal(expectedID)
+    expect(component.vm.workflowIDs).to.deep.equal([expectedID])
+    expect(component.vm.variables).to.deep.equal({
+      workflowID: expectedID,
+    })
   })
 })
