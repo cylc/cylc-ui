@@ -64,7 +64,7 @@ import {
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 export default {
@@ -75,11 +75,11 @@ export default {
   props: {
     tasks: {
       type: Array,
-      required: true
+      required: true,
     },
     timingOption: {
       type: String,
-      required: true
+      required: true,
     },
     initialOptions,
   },
@@ -106,7 +106,7 @@ export default {
     return {
       itemsPerPage,
       sortBy,
-      page
+      page,
     }
   },
 
@@ -115,17 +115,17 @@ export default {
       headers: [
         {
           title: 'Task',
-          key: 'name'
+          key: 'name',
         },
         {
           title: 'Platform',
-          key: 'platform'
+          key: 'platform',
         },
         {
           title: 'Count',
-          key: 'count'
-        }
-      ]
+          key: 'count',
+        },
+      ],
     }
   },
 
@@ -142,42 +142,42 @@ export default {
             key: `${formatHeader('mean', times)}`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           },
           {
             title: `Min ${formatChartLabels(times)}`,
             key: `${formatHeader('min', times)}`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           },
           {
             title: `Q1 ${formatChartLabels(times)}`,
             key: `${formatHeader('quartiles', times)}Quartiles.0`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           },
           {
             title: `Median ${formatChartLabels(times)}`,
             key: `${formatHeader('quartiles', times)}Quartiles.1`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           },
           {
             title: `Q3 ${formatChartLabels(times)}`,
             key: `${formatHeader('quartiles', times)}Quartiles.2`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           },
           {
             title: `Max ${formatChartLabels(times)}`,
             key: `${formatHeader('max', times)}`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           }
         )
       } else {
@@ -187,7 +187,7 @@ export default {
             key: `${formatHeader('mean', times)}`,
             formatter: formatDuration,
             allowZeros: true,
-            timingOption: this.timingOption
+            timingOption: this.timingOption,
           }
         )
       }
@@ -199,11 +199,11 @@ export default {
           key: `${formatHeader('stdDev', times)}`,
           formatter: formatDuration,
           allowZeros: true,
-          timingOption: this.timingOption
+          timingOption: this.timingOption,
         })
       }
       return this.headers.concat(timingHeaders)
-    }
+    },
   },
 
   methods: {
@@ -219,7 +219,7 @@ export default {
         return header.formatter(value, header.allowZeros, this.timingOption)
       }
       return value
-    }
+    },
   },
 
   itemsPerPageOptions: [
@@ -228,7 +228,7 @@ export default {
     { value: 50, title: '50' },
     { value: 100, title: '100' },
     { value: 200, title: '200' },
-    { value: -1, title: 'All' }
+    { value: -1, title: 'All' },
   ],
 }
 </script>

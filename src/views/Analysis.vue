@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-btn>
           <v-chip location="right" v-if="timingOption === 'cpuTime'">
             Total CPU Time: {{
-            formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
+              formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
           </v-chip>
           <v-btn>
             <v-icon :icon="$options.icons.mdiInformationOutline" />
@@ -169,7 +169,7 @@ import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import DeltasCallback from '@/services/callbacks'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
@@ -177,7 +177,7 @@ import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 import {
   matchTask,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/analysis/filter'
 import {
   mdiChartTimeline,
@@ -219,7 +219,7 @@ const taskFields = [
   'totalCpuTime',
   'cpuTimeQuartiles',
   'totalOfTotals',
-  'memAlloc'
+  'memAlloc',
 ]
 
 /** The one-off query which retrieves historical task timing statistics */
@@ -275,7 +275,7 @@ export default {
   components: {
     AnalysisTable,
     BoxPlot,
-    TimeSeries
+    TimeSeries,
   },
 
   beforeMount () {
@@ -354,7 +354,7 @@ export default {
 
     timingOption () {
       return this.tasksFilter.timingOption.replace(/Times/, '')
-    }
+    },
   },
 
   methods: {
@@ -374,7 +374,7 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     ),
-    formatDuration
+    formatDuration,
   },
 
   icons: {

@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :height="105 + series[0].data.length * 60"
     width="95%"
     class="d-flex justify-center"
-    />
+  />
   <v-pagination
     v-model="page"
     :length="numPages"
@@ -76,7 +76,7 @@ import { useReducedAnimation } from '@/composables/localStorage'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 export default {
@@ -155,10 +155,10 @@ export default {
                 toolbar: {
                   exportToSVG: 'Download SVG',
                   exportToPNG: 'Download PNG',
-                  menu: 'Download'
-                }
-              }
-            }
+                  menu: 'Download',
+                },
+              },
+            },
           ],
           animations: {
             enabled: reducedAnimation.value ? false : props.animate,
@@ -218,7 +218,7 @@ export default {
             x: point.memAlloc,
             y: point.name,
             marker: {
-              size: 0 // Hides the default marker
+              size: 0, // Hides the default marker
             },
             image: {
               path: 'img/redline.jpg',
@@ -226,8 +226,8 @@ export default {
               height: 60,
               offsetX: 0,
               offsetY: -3,
-            }
-          }))
+            },
+          })),
         },
         plotOptions: {
           bar: {
@@ -248,7 +248,7 @@ export default {
             text: `${formatChartLabels(props.timingOption)}`,
           },
           labels: {
-            formatter: (value) => formatDuration(value, true, props.timingOption)
+            formatter: (value) => formatDuration(value, true, props.timingOption),
           },
         },
       }
@@ -277,8 +277,8 @@ export default {
             sortedTasks[i][`${this.timingOption}Quartiles`][1],
             sortedTasks[i][`${this.timingOption}Quartiles`][2],
             sortedTasks[i][`max${upperFirst(getTimingOption(this.timingOption))}`],
-            sortedTasks[i].memAlloc > 0 ? sortedTasks[i].memAlloc : 1 // ApexCharts seems inconsistent if this extra data is 0
-          ]
+            sortedTasks[i].memAlloc > 0 ? sortedTasks[i].memAlloc : 1, // ApexCharts seems inconsistent if this extra data is 0
+          ],
         })
       }
       return [{ name: 'boxPlot', type: 'boxPlot', data: boxData }]
@@ -305,7 +305,7 @@ export default {
     numPages () {
       // Clamp page number
       this.page = Math.min(this.numPages, this.page)
-    }
+    },
   },
 
   icons: {

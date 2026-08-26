@@ -18,7 +18,7 @@
 import TaskState from '@/model/TaskState.model'
 import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
 import {
-  upperFirst
+  upperFirst,
 } from 'lodash'
 /**
  * States used when the parent is stopped.

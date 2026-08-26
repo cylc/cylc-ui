@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :height="450"
       width="95%"
       class="d-flex justify-center"
-          />
+    />
   </div>
   <div id="miniTimeSeries">
     <VueApexCharts
@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="d-flex justify-center"
     />
   </div>
-  </template>
+</template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'
@@ -94,13 +94,13 @@ import {
   difference,
   pick,
   union,
-  uniq
+  uniq,
 } from 'lodash'
 import gql from 'graphql-tag'
 import {
   getTimingOption,
   formatDuration,
-  formatChartLabels
+  formatChartLabels,
 } from '@/utils/tasks'
 import {
   mdiDownload,
@@ -111,7 +111,7 @@ import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 /** List of fields to request for task for each task */
@@ -125,7 +125,7 @@ const jobFields = [
   'runTime',
   'startedTime',
   'maxRss',
-  'cpuTime'
+  'cpuTime',
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -229,7 +229,7 @@ export default {
     return {
       reducedAnimation,
       displayedTasks,
-      showOrigin
+      showOrigin,
     }
   },
 
@@ -258,7 +258,7 @@ export default {
       if (addedTasks.length > 0) {
         this.jobsQuery(newTasks)
       }
-    }
+    },
   },
 
   computed: {
@@ -280,7 +280,7 @@ export default {
         }
         seriesData[task] = {
           name: task,
-          data
+          data,
         }
       }
 
@@ -295,7 +295,7 @@ export default {
                 x: job.cyclePoint,
                 y: time,
                 platform: job.platform,
-                startedTime: job.startedTime
+                startedTime: job.startedTime,
               })
             }
           }
@@ -325,10 +325,10 @@ export default {
                   zoomIn: 'Zoom In',
                   zoomOut: 'Zoom Out',
                   pan: 'Panning',
-                  reset: 'Reset Zoom'
-                }
-              }
-            }
+                  reset: 'Reset Zoom',
+                },
+              },
+            },
           ],
           animations: {
             enabled: this.animate && !this.reducedAnimation,
@@ -353,18 +353,18 @@ export default {
               zoomin: false,
               zoomout: false,
               pan: false,
-              reset: true
-            }
+              reset: true,
+            },
           },
           zoom: {
-            type: 'y'
-          }
+            type: 'y',
+          },
         },
         stroke: {
-          width: 2
+          width: 2,
         },
         markers: {
-          size: 4
+          size: 4,
         },
         tooltip: {
           y: {
@@ -375,8 +375,8 @@ export default {
               const y = formatDuration(value, true, this.timingOption)
               const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
-            }
-          }
+            },
+          },
         },
         xaxis: {
           title: {
@@ -384,7 +384,7 @@ export default {
           },
           categories: this.cyclePoints,
           min: this.xRange[0],
-          max: this.xRange[1]
+          max: this.xRange[1],
         },
         yaxis: {
           forceNiceScale: true,
@@ -393,7 +393,7 @@ export default {
             text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: (value) => formatDuration(value, true, this.timingOption)
+            formatter: (value) => formatDuration(value, true, this.timingOption),
           },
         },
       }
@@ -420,31 +420,31 @@ export default {
             xaxis: {
               min: 1,
               max: this.cyclePoints.length,
-            }
+            },
           },
           toolbar: {
             autoSelected: 'selection',
-            show: true
-          }
+            show: true,
+          },
         },
         legend: {
-          show: false
+          show: false,
         },
         markers: {
-          size: 3
+          size: 3,
         },
         stroke: {
-          width: 2
+          width: 2,
         },
         tooltip: {
-          enabled: false
+          enabled: false,
         },
         xaxis: {
           categories: this.cyclePoints,
           tickAmount: 4,
           labels: {
-            rotate: 0
-          }
+            rotate: 0,
+          },
         },
         yaxis: {
           tickAmount: 3,
@@ -452,9 +452,9 @@ export default {
             text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: (value) => formatDuration(value, true, this.timingOption)
+            formatter: (value) => formatDuration(value, true, this.timingOption),
           },
-          min: this.showOrigin ? 0 : undefined
+          min: this.showOrigin ? 0 : undefined,
         },
       }
     },
@@ -503,7 +503,7 @@ export default {
     refreshData: function () {
       this.taskNamesQuery()
       this.jobsQuery(this.displayedTasks)
-    }
+    },
   },
 
   icons: {
