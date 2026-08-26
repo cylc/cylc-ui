@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <FormInput
         v-model="model[index]"
         :gqlType="gqlType.ofType"
-        :types="types"
         :id="inputId(index)"
       >
         <template v-slot:append="slotProps">
@@ -58,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { nextTick } from 'vue'
+import { inject, nextTick } from 'vue'
 import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { formElementProps } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/aotf'
@@ -81,6 +80,9 @@ const model = defineModel({ type: Array })
 // Handle cases in the schema where a List is not required/NON_NULL:
 model.value ??= []
 
+const workflowService = inject('workflowService')
+const { types } = workflowService.loadedGraphQLSchema
+
 const listId = uniqueId('list')
 /** Return unique DOM ID for an input. */
 function inputId (index) {
@@ -89,7 +91,7 @@ function inputId (index) {
 
 /** Add an item to the list. */
 async function add () {
-  const newInput = getNullValue(props.gqlType.ofType, props.types)
+  const newInput = getNullValue(props.gqlType.ofType, types)
   let index = 0
   if (props.addAtStart) {
     model.value.unshift(newInput)

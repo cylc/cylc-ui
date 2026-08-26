@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <MutationComponent
       v-if="item.mutation"
       v-model="formState"
-      v-bind="{ ...item, types }"
+      v-bind="item"
       @cancel="close()"
       @success="closeAll()"
     >
@@ -54,12 +54,6 @@ import { cloneDeep } from 'lodash-es'
 const router = useRouter()
 
 const emit = defineEmits(['closeMenu'])
-
-const props = defineProps({
-  types: {
-    type: Array,
-  },
-})
 
 /** @type {import('vue').ShallowReactive<{ cylcObject: any, mutation: any }>} */
 const item = shallowReactive({})
@@ -115,7 +109,6 @@ async function openInTab () {
       initialOptions: {
         data,
         ...item,
-        types: props.types,
       },
     }
   )

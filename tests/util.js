@@ -16,6 +16,7 @@
  */
 
 import { config } from '@vue/test-utils'
+import { omit, pick } from 'lodash-es'
 import { routeLocationKey, routerKey } from 'vue-router'
 
 /**
@@ -64,6 +65,23 @@ export function mockRoute (route = { params: { workflowName: 'test' } }) {
  */
 export function mockRouter (router) {
   config.global.provide[routerKey] = router
+}
+
+/**
+ * Provide a mock workflow service to use in tests, with default empty schema.
+ */
+export function mockWorkflowService (overrides = {}) {
+  const mockSchema = {
+    mutations: [],
+    types: [],
+    queries: [],
+    ...pick(overrides, ['mutations', 'types', 'queries']),
+  }
+  config.global.provide.workflowService = {
+    getGraphQLSchema: async () => mockSchema,
+    loadedGraphQLSchema: mockSchema,
+    ...omit(overrides, ['mutations', 'types', 'queries']),
+  }
 }
 
 /**

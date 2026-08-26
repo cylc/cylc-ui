@@ -60,6 +60,8 @@ import CylcTreeCallback from '@/services/treeCallback'
  */
 
 class WorkflowService {
+  #graphQLSchemaPromise
+
   /**
    * @constructor
    * @param {string} httpUrl
@@ -88,7 +90,11 @@ class WorkflowService {
     // mutations defaults
     this.primaryMutations = primaryMutations
 
-    this.introspection = this.loadTypes()
+    // Load the GraphQL schema, but do not block
+    this.getGraphQLSchema().then((schema) => {
+      /** GraphQL schema available synchronously once loaded, but will be undefined before this - use carefully!  */
+      this.loadedGraphQLSchema = schema
+    })
 
     // create & start the global callback
     this.globalCallback = new CylcTreeCallback()
@@ -151,11 +157,16 @@ class WorkflowService {
   }
 
   /**
-   * Load mutations, queries and types from GraphQL introspection.
+   * Get mutations, queries and types from GraphQL introspection.
+   * Fetches the schema if it hasn't been fetched yet, otherwise returns the cached schema.
    *
    * @returns {Promise<IntrospectionObj>}
    */
-  async loadTypes () {
+  async getGraphQLSchema () {
+    return (this.#graphQLSchemaPromise ??= this.#fetchGraphQLSchema())
+  }
+
+  async #fetchGraphQLSchema () {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
     let response
@@ -169,7 +180,7 @@ class WorkflowService {
       // eslint-disable-next-line no-console
       console.log('retrying introspection query')
       await new Promise(resolve => setTimeout(resolve, 2000))
-      return this.loadTypes()
+      return this.#fetchGraphQLSchema()
     }
     const mutations = response.data.__schema.mutationType.fields
     const queries = response.data.__schema.queryType.fields
@@ -186,7 +197,7 @@ class WorkflowService {
    * @returns {Promise<Mutation=>}
    */
   async getMutation (mutationName) {
-    const { mutations } = await this.introspection
+    const { mutations } = await this.getGraphQLSchema()
     return findByName(mutations, mutationName)
   }
 
@@ -199,7 +210,7 @@ class WorkflowService {
    * @return {Promise<Query>}
    */
   async getQuery (queryName, argNames, fields) {
-    const { queries, types } = await this.introspection
+    const { queries, types } = await this.getGraphQLSchema()
     const queryObj = findByName(queries, queryName)
     const typeName = getBaseType(queryObj.type).name
     const type = findByName(types, typeName)

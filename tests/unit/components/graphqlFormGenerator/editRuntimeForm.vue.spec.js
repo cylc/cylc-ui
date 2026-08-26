@@ -21,6 +21,7 @@ import { IntrospectionQuery, taskProxy } from '@/services/mock/json/index.cjs'
 import { cloneDeep } from 'lodash'
 import { createVuetify } from 'vuetify'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { mockWorkflowService } from '$tests/util'
 
 /** NOTE: update this if updating src/services/mock/json/taskProxy.json */
 const INITIAL_DATA = {
@@ -67,22 +68,20 @@ const INITIAL_DATA = {
   runMode: 'Live',
 }
 
-const workflowService = {
-  query () {
-    return Promise.resolve(taskProxy.data)
-  },
-}
-
 const vuetify = createVuetify(vuetifyOptions)
 
 describe('EditRuntimeForm Component', () => {
+  mockWorkflowService({
+    query: async () => taskProxy.data,
+    types: cloneDeep(IntrospectionQuery.data.__schema.types),
+  })
+
   const props = {
     cylcObject: {
       id: '~u/w//1/t',
       isFamily: false,
       tokens: { id: '~u/w//1/t' },
     },
-    types: cloneDeep(IntrospectionQuery.data.__schema.types),
   }
 
   /**
@@ -92,7 +91,6 @@ describe('EditRuntimeForm Component', () => {
   const mountFunction = (options) => shallowMount(EditRuntimeForm, {
     global: {
       plugins: [vuetify],
-      provide: { workflowService },
     },
     ...options,
   })

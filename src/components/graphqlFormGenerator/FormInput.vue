@@ -26,7 +26,6 @@ dynamically created inputs.
     v-bind="inputProps"
     v-model="model"
     :gqlType="gqlType"
-    :types="types"
     v-mask="inputProps.mask"
   >
     <template
