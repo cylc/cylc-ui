@@ -30,9 +30,9 @@ vi.mock('vue-router', () => ({
   useRoute: () => ({
     name: 'app',
     meta: {
-      layout: 'empty'
-    }
-  })
+      layout: 'empty',
+    },
+  }),
 }))
 
 describe('App', () => {
@@ -44,10 +44,10 @@ describe('App', () => {
           createStore(storeOptions),
         ],
         components: {
-          'empty-layout': Empty
+          'empty-layout': Empty,
         },
         stubs: ['router-view'],
-      }
+      },
     })
   }
 
@@ -67,18 +67,18 @@ describe('App', () => {
       value: true,
       expected: {
         transition: 'no',
-        ripple: false
-      }
+        ripple: false,
+      },
     },
     {
       value: false,
-      expected: {}
+      expected: {},
     },
   ])('applies reduced animation = $value from localStorage', ({ value, expected }) => {
     localStorage.setItem('reducedAnimation', value)
     const wrapper = mountFunction()
     expect(wrapper.vm.vuetifyDefaults).toMatchObject({
-      global: expected
+      global: expected,
     })
   })
 })

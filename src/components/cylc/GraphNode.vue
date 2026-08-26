@@ -95,26 +95,26 @@ export default {
   name: 'GraphNode',
   components: {
     SVGTask,
-    Job
+    Job,
   },
   props: {
     task: {
       type: Object,
-      required: true
+      required: true,
     },
     jobs: {
       type: Array,
-      required: true
+      required: true,
     },
     maxJobs: {
       // maximum number of jobs to display before using an overflow indicator
       default: 6,
-      required: false
+      required: false,
     },
     mostRecentJobScale: {
       // the size of the most recent job icon relative to any previos jobs
       default: 1.2,
-      required: false
+      required: false,
     },
   },
   computed: {
@@ -147,7 +147,7 @@ export default {
       // the most recent job is larger so all subsequent jobs need to be bumped
       // along a bit further to account for this
       return (this.mostRecentJobScale * 100) - 100 // y offset in px
-    }
-  }
+    },
+  },
 }
 </script>

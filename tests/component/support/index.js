@@ -36,9 +36,9 @@ Cypress.Commands.add('vmount', (component, options = {}) => {
     component,
     {
       global: {
-        plugins: [createVuetify(vuetifyOptions)]
+        plugins: [createVuetify(vuetifyOptions)],
       },
-      ...options
+      ...options,
     }
   )
 })

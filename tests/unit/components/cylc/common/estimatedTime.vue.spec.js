@@ -50,7 +50,7 @@ describe('Estimated Time component', () => {
       props,
       global: {
         plugins: [vuetify],
-      }
+      },
     })
     expect(wrapper.text()).toBe(expected)
   })

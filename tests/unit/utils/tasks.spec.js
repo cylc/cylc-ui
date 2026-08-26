@@ -38,7 +38,7 @@ describe('tasks', () => {
           [TaskState.WAITING].map((state) => state.name)],
         [
           TaskState.RUNNING.name,
-          [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)]
+          [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)],
       ].forEach((val) => {
         const groupState = extractGroupState(val[1], false)
         expect(groupState).to.equal(val[0])
@@ -55,7 +55,7 @@ describe('tasks', () => {
           [TaskState.SUCCEEDED].map((state) => state.name)],
         [
           TaskState.RUNNING.name,
-          [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name)]
+          [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name)],
       ].forEach((val) => {
         const groupState = extractGroupState(val[1], true)
         expect(groupState).to.equal(val[0])
@@ -70,27 +70,27 @@ describe('tasks', () => {
   describe.each([
     {
       taskProxy: null,
-      expected: undefined
+      expected: undefined,
     },
     {
       taskProxy: {},
-      expected: undefined
+      expected: undefined,
     },
     {
       taskProxy: {
-        children: []
+        children: [],
       },
-      expected: undefined
+      expected: undefined,
     },
     {
       taskProxy: {
         children: [
           { node: 'foo' },
           { node: 'bar' },
-        ]
+        ],
       },
-      expected: 'foo'
-    }
+      expected: 'foo',
+    },
   ])('latestJob($taskProxy)', ({ taskProxy, expected }) => {
     it(`returns ${expected}`, () => {
       expect(latestJob(taskProxy)).to.equal(expected)
@@ -144,9 +144,9 @@ describe('tasks', () => {
             outputs: [{
               label: 'my-output',
               message: 'chilbolton',
-            }]
-          }
-        }
+            }],
+          },
+        },
       }
 
       expect(jobMessageOutputs(jobNode)).toEqual([

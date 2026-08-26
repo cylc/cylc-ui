@@ -33,7 +33,7 @@ const state = () => ({
    * Number of references that have set the loading state.
    * TODO: we can probably remove it and use a different approach for alerts (see bootstrap toast).
    */
-  refCount: 0
+  refCount: 0,
 })
 
 // Actions
@@ -52,7 +52,7 @@ const actions = {
       console.log(alert.err)
     }
     commit('SET_ALERT', alert)
-  }
+  },
 }
 
 // Mutations
@@ -62,16 +62,16 @@ const mutations = {
   },
   SET_OFFLINE (state, offline) {
     state.offline = offline
-  }
+  },
 }
 
 // Create a new store
 export default {
   modules: {
     workflows,
-    user
+    user,
   },
   actions,
   mutations,
-  state
+  state,
 }

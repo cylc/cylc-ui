@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { computed } from 'vue'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 import { VCombobox } from 'vuetify/components/VCombobox'
@@ -26,8 +25,6 @@ import { VCardActions } from 'vuetify/components/VCard'
 import { VEmptyState } from 'vuetify/components/VEmptyState'
 import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
-import { useReducedAnimation } from '@/composables/localStorage'
-import { merge } from 'lodash-es'
 
 export const inputComponents = [
   VAutocomplete,
@@ -45,7 +42,7 @@ const inputDefaults = Object.fromEntries(
       variant: 'outlined',
       clearIcon: mdiClose,
       hideDetails: 'auto',
-    }
+    },
   ])
 )
 
@@ -62,20 +59,20 @@ export const vuetifyOptions = {
           primary: colors.lightBlue.accent4,
           'primary-darken-1': colors.lightBlue.darken4,
           secondary: colors.teal.accent4,
-          'secondary-darken-1': colors.teal.darken3
-        }
-      }
-    }
+          'secondary-darken-1': colors.teal.darken3,
+        },
+      },
+    },
   },
   display: {
-    mobileBreakpoint: 991
+    mobileBreakpoint: 991,
   },
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi
-    }
+      mdi,
+    },
   },
   aliases: {
     VSelectActions: VCardActions,
@@ -90,35 +87,13 @@ export const vuetifyOptions = {
       slim: true,
     },
     VSelectActions: {
-      class: 'mt-n2'
+      class: 'mt-n2',
     },
     VFilterEmptyState: {
       title: 'No results',
       text: 'Try adjusting your filters above',
       class: 'text-medium-emphasis',
     },
-    ...inputDefaults
+    ...inputDefaults,
   },
-}
-
-/**
- * Composable that provides Vuetify defaults that can change at runtime, as opposed to
- * the static defaults provided in `createVuetify(vuetifyOptions)`.
- *
- * For use with a v-defaults-provider.
- *
- * @param {Object=} other - Additional defaults to provide.
- */
-export function useDynamicVuetifyDefaults (other = {}) {
-  const reducedAnimation = useReducedAnimation()
-
-  return computed(() => merge(
-    {
-      global: {
-        transition: reducedAnimation.value ? 'no' : undefined,
-        ripple: reducedAnimation.value ? false : undefined,
-      },
-    },
-    other
-  ))
 }
