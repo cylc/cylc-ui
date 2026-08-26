@@ -31,18 +31,18 @@ const BASIC_MUTATION = {
       defaultValue: '"MyDefault"',
       type: {
         name: 'String',
-        kind: 'SCALAR'
-      }
+        kind: 'SCALAR',
+      },
     },
     {
       name: 'MyInteger',
       type: {
         name: 'Int',
-        kind: 'SCALAR'
-      }
-    }
+        kind: 'SCALAR',
+      },
+    },
   ],
-  _title: 'My Mutation'
+  _title: 'My Mutation',
 }
 
 describe('Mutation Component', () => {
@@ -54,9 +54,9 @@ describe('Mutation Component', () => {
     const vuetify = createVuetify(vuetifyOptions)
     return mount(Mutation, {
       global: {
-        plugins: [vuetify]
+        plugins: [vuetify],
       },
-      ...options
+      ...options,
     })
   }
 
@@ -67,8 +67,8 @@ describe('Mutation Component', () => {
           cylcObject,
           mutation: BASIC_MUTATION,
         },
-        cancel: () => {}
-      }
+        cancel: () => {},
+      },
     })
     const html = wrapper.html()
     expect(html).to.contain('My Mutation')
@@ -84,11 +84,11 @@ describe('Mutation Component', () => {
             name: 'Darmok',
             description: desc,
             args: [],
-            _title: 'Darmok'
+            _title: 'Darmok',
           },
         },
-        cancel: () => {}
-      }
+        cancel: () => {},
+      },
     })
     describe('For a single line description', () => {
       const desc = 'Lorem ipsum.'

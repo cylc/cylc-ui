@@ -37,7 +37,7 @@ export default {
   name: 'Workspace',
 
   mixins: [
-    subscriptionMixin
+    subscriptionMixin,
   ],
 
   components: {
@@ -50,7 +50,7 @@ export default {
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
       // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
       this.viewState = ViewState.NO_STATE
-    }
+    },
   },
 }
 </script>

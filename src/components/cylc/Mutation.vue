@@ -53,8 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-bind="extendedDescription ? {} : {
                 expandIcon: null,
                 style: {
-                  cursor: 'default'
-                }
+                  cursor: 'default',
+                },
               }"
             >
               <Markdown :markdown="shortDescription"/>
@@ -159,7 +159,7 @@ import Markdown from '@/components/Markdown.vue'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc,
-  mutationStatus
+  mutationStatus,
 } from '@/utils/aotf'
 import { mdiClose, mdiOpenInNew } from '@mdi/js'
 import { inputDefaults } from '@/components/graphqlFormGenerator/components/vuetify'
@@ -174,7 +174,7 @@ export default {
   components: {
     EditRuntimeForm,
     FormGenerator,
-    Markdown
+    Markdown,
   },
 
   emits: [
@@ -251,8 +251,8 @@ export default {
       },
       set (val) {
         if (!val) this.warningMsg = null
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -291,8 +291,8 @@ export default {
       this.$router.push({
         name: 'Workspace',
         params: {
-          workflowName: this.cylcObject.tokens.workflow
-        }
+          workflowName: this.cylcObject.tokens.workflow,
+        },
       }).then(() => {
         // open the command editor in a new tab
         // (re-initialises this component preserving state)
@@ -319,7 +319,7 @@ export default {
   icons: {
     close: mdiClose,
     mdiOpenInNew,
-  }
+  },
 }
 </script>
 

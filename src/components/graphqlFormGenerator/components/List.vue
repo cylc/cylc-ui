@@ -66,15 +66,15 @@ import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
 import { uniqueId } from 'lodash-es'
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 })
 
 const props = defineProps({
   ...formElementProps,
   addAtStart: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const model = defineModel({ type: Array })

@@ -32,7 +32,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import { Tokens } from '@/utils/uid'
 
@@ -196,7 +196,7 @@ export default {
   name: 'InfoView',
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -244,7 +244,7 @@ export default {
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
         [
-          new InfoCallback(this.task, this.taskNode)
+          new InfoCallback(this.task, this.taskNode),
         ],
         /* isDelta */ true,
         /* isGlobalCallback */ false
@@ -255,7 +255,7 @@ export default {
   methods: {
     updatePanelExpansion (value) {
       this.panelExpansion = value
-    }
-  }
+    },
+  },
 }
 </script>
