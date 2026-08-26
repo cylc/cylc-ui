@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { onMounted, toRefs, ref } from 'vue'
+import { inject, onMounted, toRefs, triggerRef, ref } from 'vue'
 import { eventBus } from '@/services/eventBus'
 import MutationComponent from '@/components/cylc/Mutation.vue'
 import {
@@ -43,6 +43,10 @@ import {
   useInitialOptions,
 } from '@/utils/initialOptions'
 import { mdiCheck } from '@mdi/js'
+
+import { nonCryptoHash } from '@/utils/general'
+
+const workflowService = inject('workflowService')
 
 const emit = defineEmits([updateInitialOptionsEvent])
 
@@ -58,11 +62,23 @@ const { mutation, cylcObject } = toRefs(props.initialOptions)
 
 const data = useInitialOptions('data', { props, emit })
 
+// Calculate a hash of the current GraphQL schema and store it
+const schemaHash = nonCryptoHash(JSON.stringify(workflowService.loadedGraphQLSchema))
+const storedHash = useInitialOptions('schemaHash', { props, emit }, schemaHash)
+triggerRef(storedHash)
+
+if (storedHash.value !== schemaHash) {
+  // The form must have been saved in a previous version of Cylc, and is no longer valid, so clear the data
+  data.value = undefined
+  storedHash.value = schemaHash
+}
+
 onMounted(() => {
   // set the tab title to something informative
+  const title = `Command: ${mutation.value._title}`
   eventBus.emit(
     `lumino:update-tab:${props.widgetID}`,
-    { title: `Command: ${mutation.value._title}` },
+    { title, caption: title },
   )
 })
 

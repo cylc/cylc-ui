@@ -114,10 +114,8 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import GraphSubgraph from '@/components/cylc/GraphSubgraph.vue'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
-import {
-  posToPath,
-  nonCryptoHash,
-} from '@/utils/graph-utils'
+import { posToPath } from '@/utils/graph-utils'
+import { nonCryptoHash } from '@/utils/general'
 import { Graphviz } from '@hpcc-js/wasm/graphviz'
 import svgPanZoom from 'svg-pan-zoom'
 import {
