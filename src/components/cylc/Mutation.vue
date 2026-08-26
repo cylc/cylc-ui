@@ -16,7 +16,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
+  <v-skeleton-loader
+    v-if="isLoading"
+    type="heading,subtitle,divider,sentences@3,actions"
+    class="align-content-start"
+  />
   <v-card
+    v-else
     class="c-mutation"
     variant="flat"
   >
@@ -61,7 +67,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="mutation.name === 'editRuntime'"
           v-bind="{
             cylcObject,
-            types,
           }"
           ref="form"
           v-model="isValid"
@@ -71,7 +76,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-bind="{
             mutation,
             cylcObject,
-            types,
           }"
           v-model:data="data"
           ref="form"
@@ -139,7 +143,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { ref, computed, useTemplateRef } from 'vue'
+import { ref, computed, useTemplateRef, inject } from 'vue'
+import { useAsyncState } from '@vueuse/core'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import Markdown from '@/components/Markdown.vue'
@@ -169,11 +174,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  types: {
-    // list of all graphql types as returned by introspection query
-    // (required for resolving InputType objects
-    type: Array,
-  },
   // Explicitly include so we can detect if the parent is providing a listener:
   onCancel: {
     type: Function,
@@ -181,6 +181,9 @@ const props = defineProps({
 })
 
 const data = defineModel({ type: Object })
+
+const workflowService = inject('workflowService')
+const { isLoading } = useAsyncState(workflowService.getGraphQLSchema())
 
 const isValid = ref(false)
 const submitting = ref(false)

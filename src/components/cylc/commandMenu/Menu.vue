@@ -34,16 +34,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-card-subtitle class="pb-2">
         {{ typeAndStatusText }}
       </v-card-subtitle>
-      <v-divider v-if="primaryMutations.length || displayMutations.length" />
+      <v-divider v-if="isLoading || displayMutations.length" />
       <v-skeleton-loader
-        v-if="isLoading && primaryMutations.length"
+        v-if="isLoading"
         type="list-item-avatar-two-line@3"
         min-width="400"
         class="my-2"
         data-cy="skeleton"
       />
       <v-list
-        v-if="displayMutations.length"
+        v-else-if="displayMutations.length"
         class="c-mutation-menu-list pt-0"
         :lines="false"
       >
@@ -89,7 +89,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-card>
     <CommandDialog
       ref="dialog"
-      v-bind="{ types }"
       @close-menu="() => showMenu = false"
       theme="light"
     />
@@ -130,7 +129,6 @@ const node = ref(null)
 const mutations = ref([])
 const isLoading = ref(true)
 const showMenu = ref(false)
-const types = ref([])
 const target = ref(null)
 
 onMounted(() => {
@@ -284,16 +282,14 @@ async function showMutationsMenu (e) {
   await nextTick()
   showMenu.value = true
   // ensure graphql query to get mutations has completed
-  // const i = await workflowService.introspection
-  const introspection = await workflowService.introspection
+  const schema = await workflowService.getGraphQLSchema()
   // if mutations are slow to load then there will be a delay before they are reactively
   // displayed in the menu (this is what the skeleton-loader is for)
   isLoading.value = false
-  types.value = introspection.types
   mutations.value = filterAssociations(
     node.value.type,
     node.value.tokens,
-    introspection.mutations,
+    schema.mutations,
     user.permissions
   ).sort(
     (a, b) => a.mutation.name.localeCompare(b.mutation.name)

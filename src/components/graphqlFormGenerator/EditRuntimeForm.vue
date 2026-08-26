@@ -45,7 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :is="getInputProps(key).is"
           v-bind="getInputProps(key)"
           v-model="model[key]"
-          :types="types"
         />
       </div>
     </v-form>
@@ -89,14 +88,11 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  types: {
-    // introspection types
-    type: Array,
-    required: true,
-  },
 })
 
-const runtimeType = findByName(props.types, 'Runtime')
+const { types } = workflowService.loadedGraphQLSchema
+
+const runtimeType = findByName(types, 'Runtime')
 const loading = ref(true)
 const model = ref({})
 /** Initial data immediately after each time the form is reset (does not need to be reactive). */

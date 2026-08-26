@@ -19,6 +19,7 @@ import { mount } from '@vue/test-utils'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import { cloneDeep, merge } from 'lodash-es'
 import { processMutations } from '@/utils/aotf'
+import { mockWorkflowService } from '$tests/util'
 
 const BASIC_MUTATION = {
   name: 'My Mutation',
@@ -173,14 +174,12 @@ function getModel (wrapper) {
 }
 
 describe('FormGenerator Component', () => {
+  mockWorkflowService()
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = (options) => mount(FormGenerator, {
-    global: {
-      provide: { workflowService: null },
-    },
     ...merge(
       {
         props: { cylcObject: {} },

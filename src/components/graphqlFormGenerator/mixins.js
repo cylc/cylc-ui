@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 
 /**
  * @type {Record<string, import('vue').Prop>}
@@ -26,16 +26,13 @@ export const formElementProps = {
     type: Object,
     required: true,
   },
-  // array of all GraphQL types in the schema
-  types: {
-    type: Array,
-    default: () => [],
-  },
 }
 
 export function useFormElement (props) {
+  const workflowService = inject('workflowService')
+
   const type = computed(
-    () => props.types.find(
+    () => workflowService.loadedGraphQLSchema.types.find(
       (type) => type.name === props.gqlType.name && type.kind === props.gqlType.kind
     )
   )
