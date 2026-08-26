@@ -29,7 +29,7 @@ const jobs = {
     submittedTime: '2023-02-23T11:10:09Z',
     startedTime: '2023-02-23T11:10:13Z',
     finishedTime: '2023-02-23T11:10:20Z',
-    platform: 'localhost'
+    platform: 'localhost',
   }],
   yet_another_test_job: [{
     name: 'yet_another_test_job',
@@ -37,8 +37,8 @@ const jobs = {
     submittedTime: '2023-02-23T11:10:21Z',
     startedTime: '2023-02-23T11:10:24Z',
     finishedTime: '2023-02-23T11:10:26Z',
-    platform: 'localhost'
-  }]
+    platform: 'localhost',
+  }],
 }
 
 const vuetify = createVuetify(vuetifyOptions)
@@ -52,7 +52,7 @@ describe('GanttChart component', () => {
         mocks: { $workflowService },
       },
       shallow: true,
-      ...options
+      ...options,
     })
   }
 
@@ -60,7 +60,7 @@ describe('GanttChart component', () => {
     const wrapper = mountFunction({
       props: {
         jobs,
-      }
+      },
     })
 
     // Check displayedJobs contains the correct jobs
@@ -80,7 +80,7 @@ describe('GanttChart component', () => {
       props: {
         jobs,
         tasksPerPage: 1,
-      }
+      },
     })
 
     expect(wrapper.vm.displayedTaskCount).to.equal(1)

@@ -74,7 +74,7 @@ const mountOpts = {
   props: {
     timingOption: 'total',
     animate: false,
-  }
+  },
 }
 
 describe('BoxPlot', () => {
@@ -94,7 +94,7 @@ describe('BoxPlot', () => {
     // see: https://on.cypress.io/mounting-vue
     const tasks = Array.from(Array(7).keys(), (i) => ({
       ...task1,
-      name: `task_${i}`
+      name: `task_${i}`,
     }))
     cy.mount(BoxPlot, merge(mountOpts, {
       props: {

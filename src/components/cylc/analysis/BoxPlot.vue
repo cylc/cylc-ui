@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ref="chart"
     :style="{
       height: `${100 + series[0].data.length * 50}px`,
-      width: '100%'
+      width: '100%',
     }"
     class="flex-grow-1"
   />
@@ -62,7 +62,7 @@ import { BoxplotChart } from 'echarts/charts'
 import {
   GridComponent,
   TooltipComponent,
-  ToolboxComponent
+  ToolboxComponent,
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import {
@@ -75,7 +75,7 @@ import { useReducedAnimation } from '@/composables/localStorage'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 echarts.use([
@@ -83,7 +83,7 @@ echarts.use([
   GridComponent,
   TooltipComponent,
   ToolboxComponent,
-  CanvasRenderer
+  CanvasRenderer,
 ])
 
 export default {
@@ -149,7 +149,7 @@ export default {
 
   data () {
     return {
-      chart: null
+      chart: null,
     }
   },
 
@@ -174,13 +174,13 @@ export default {
   watch: {
     series: {
       handler: 'updateChart',
-      deep: true
+      deep: true,
     },
     chartOptions: 'updateChart',
     numPages () {
       // Clamp page number
       this.page = Math.min(this.numPages, this.page)
-    }
+    },
   },
 
   computed: {
@@ -200,19 +200,19 @@ export default {
                 <div>Minimum: ${formatDuration(min, { allowZeros: true })}</div>
               </div>
             `
-          }
+          },
         },
         grid: {
           left: '0%',
           right: '5%',
           top: '3%',
           bottom: '12%',
-          containLabel: true
+          containLabel: true,
         },
         toolbox: {
           feature: {
-            saveAsImage: { title: 'Download' }
-          }
+            saveAsImage: { title: 'Download' },
+          },
         },
         xAxis: {
           type: 'value',
@@ -221,8 +221,8 @@ export default {
           nameGap: 30,
           scale: true,
           axisLabel: {
-            formatter: (value) => formatDuration(value, { allowZeros: true })
-          }
+            formatter: (value) => formatDuration(value, { allowZeros: true }),
+          },
         },
         yAxis: {
           type: 'category',
@@ -231,7 +231,7 @@ export default {
             interval: 0,
             overflow: 'truncate',
             width: 150,
-          }
+          },
         },
         series: [
           {
@@ -239,10 +239,10 @@ export default {
             data: this.series[0].data.map(d => d.y),
             itemStyle: {
               color: '#6AA4F1',
-              borderColor: '#6DD5C2'
-            }
-          }
-        ]
+              borderColor: '#6DD5C2',
+            },
+          },
+        ],
       }
     },
     series () {

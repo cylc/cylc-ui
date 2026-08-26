@@ -32,8 +32,8 @@ $workflowService.query2.resolves({
       { name: 'succeeded' },
       { name: 'waiting' },
       { name: 'eventually_succeeded' },
-    ]
-  }
+    ],
+  },
 })
 
 describe('TimeSeries component', () => {
@@ -43,7 +43,7 @@ describe('TimeSeries component', () => {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
-      ...options
+      ...options,
     })
   }
 
@@ -53,7 +53,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     expect(wrapper.vm.jobs).to.deep.equal([])
@@ -68,7 +68,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     // Retrieve job data and check that nothing is displayed
@@ -93,7 +93,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     wrapper.vm.jobs = analysisJobs
@@ -107,14 +107,14 @@ describe('TimeSeries component', () => {
     )).to.deep.equal([
       '20240101T1200Z',
       '20240101T0000Z',
-      '20240102T0000Z'
+      '20240102T0000Z',
     ])
 
     // Check that cyclePoints is in order
     expect(wrapper.vm.cyclePoints).to.deep.equal([
       '20240101T0000Z',
       '20240101T1200Z',
-      '20240102T0000Z'
+      '20240102T0000Z',
     ])
     expect(wrapper.vm.series[0].data[0].x).to.equal('20240101T0000Z')
     expect(wrapper.vm.series[0].data[1].x).to.equal('20240101T1200Z')
@@ -127,7 +127,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     wrapper.vm.jobs = analysisJobs
@@ -137,14 +137,14 @@ describe('TimeSeries component', () => {
     expect(wrapper.vm.cyclePoints).to.deep.equal([
       '20240101T0000Z',
       '20240101T1200Z',
-      '20240102T0000Z'
+      '20240102T0000Z',
     ])
 
     // waiting only has data on two of the cycle points
     wrapper.vm.displayedTasks = ['waiting']
     expect(wrapper.vm.cyclePoints).to.deep.equal([
       '20240101T0000Z',
-      '20240102T0000Z'
+      '20240102T0000Z',
     ])
   })
 
@@ -154,7 +154,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     wrapper.vm.jobs = analysisJobs
@@ -170,7 +170,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     wrapper.vm.jobs = analysisJobs
@@ -187,7 +187,7 @@ describe('TimeSeries component', () => {
         workflowIDs: ['one'],
         platformOption: -1,
         timingOption: 'total',
-      }
+      },
     })
 
     wrapper.vm.jobs = analysisJobs

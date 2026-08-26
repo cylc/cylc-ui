@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
     </Transition>
   </div>
-  </template>
+</template>
 
 <script>
 import * as echarts from 'echarts/core'
@@ -110,7 +110,7 @@ import {
   TooltipComponent,
   DataZoomComponent,
   ToolboxComponent,
-  LegendComponent
+  LegendComponent,
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import {
@@ -119,7 +119,7 @@ import {
   pick,
   union,
   uniq,
-  upperFirst
+  upperFirst,
 } from 'lodash'
 import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
@@ -133,7 +133,7 @@ import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 echarts.use([
@@ -143,7 +143,7 @@ echarts.use([
   DataZoomComponent,
   ToolboxComponent,
   LegendComponent,
-  CanvasRenderer
+  CanvasRenderer,
 ])
 
 /** List of fields to request for task for each task */
@@ -155,7 +155,7 @@ const jobFields = [
   'totalTime',
   'queueTime',
   'runTime',
-  'startedTime'
+  'startedTime',
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -257,7 +257,7 @@ export default {
     return {
       reducedAnimation,
       displayedTasks,
-      showOrigin
+      showOrigin,
     }
   },
 
@@ -283,7 +283,7 @@ export default {
       /** Object containing all of the jobs added by the callback */
       jobs,
       taskNames: [],
-      mainChart: null
+      mainChart: null,
     }
   },
 
@@ -296,9 +296,9 @@ export default {
     },
     series: {
       handler: 'updateCharts',
-      deep: true
+      deep: true,
     },
-    chartOptions: 'updateCharts'
+    chartOptions: 'updateCharts',
   },
 
   computed: {
@@ -323,7 +323,7 @@ export default {
         }
         seriesData[task] = {
           name: task,
-          data
+          data,
         }
       }
 
@@ -338,7 +338,7 @@ export default {
                 x: job.cyclePoint,
                 y: time,
                 platform: job.platform,
-                startedTime: job.startedTime
+                startedTime: job.startedTime,
               })
             }
           }
@@ -358,7 +358,7 @@ export default {
           left: '5%',
           right: '5%',
           top: '15%',
-          bottom: '15%'
+          bottom: '15%',
         },
         tooltip: {
           trigger: 'axis',
@@ -372,32 +372,32 @@ export default {
               }
             }
             return result
-          }
+          },
         },
         toolbox: {
           feature: {
             saveAsImage: { title: 'Download' },
-            dataZoom: { title: { zoom: 'Selection Zoom', back: 'Reset Zoom' } }
-          }
+            dataZoom: { title: { zoom: 'Selection Zoom', back: 'Reset Zoom' } },
+          },
         },
         dataZoom: [
           {
             type: 'inside',
-            filterMode: 'weak'
+            filterMode: 'weak',
           },
           {
             type: 'slider',
             filterMode: 'weak',
             bottom: 10,
-            showDataShadow: true
-          }
+            showDataShadow: true,
+          },
         ],
         xAxis: {
           type: 'category',
           data: this.cyclePoints,
           name: 'Cycle point',
           nameLocation: 'middle',
-          nameGap: 30
+          nameGap: 30,
         },
         yAxis: {
           type: 'value',
@@ -406,17 +406,17 @@ export default {
           nameLocation: 'middle',
           nameGap: 50,
           axisLabel: {
-            formatter: (value) => formatDuration(value, { allowZeros: true })
-          }
+            formatter: (value) => formatDuration(value, { allowZeros: true }),
+          },
         },
         series: this.series.map(s => ({
           name: s.name,
           type: 'line',
           symbolSize: 8,
-          data: s.data.map(d => d.y)
-        }))
+          data: s.data.map(d => d.y),
+        })),
       }
-    }
+    },
   },
 
   methods: {
@@ -490,7 +490,7 @@ export default {
     refreshData: function () {
       this.taskNamesQuery()
       this.jobsQuery(this.displayedTasks)
-    }
+    },
   },
 
   icons: {

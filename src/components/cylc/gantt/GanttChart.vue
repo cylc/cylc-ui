@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ref="chartContainer"
     class="gantt-container"
     :style="{
-      height: `${Math.max(300, 60 + displayedTaskCount * 55)}px`
+      height: `${Math.max(300, 60 + displayedTaskCount * 55)}px`,
     }"
   />
   <v-pagination

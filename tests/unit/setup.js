@@ -40,12 +40,12 @@ const localStorageMock = (function () {
     },
     clear: function () {
       store = {}
-    }
+    },
   }
 })()
 
 Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 })
 
 vi.mock('echarts/core', async () => {
@@ -57,8 +57,8 @@ vi.mock('echarts/core', async () => {
       resize: () => {},
       on: () => {},
       dispose: () => {},
-      clear: () => {}
-    })
+      clear: () => {},
+    }),
   }
 })
 
@@ -67,5 +67,5 @@ HTMLCanvasElement.prototype.getContext = () => {}
 
 config.global.components = {
   VFilterEmptyState: VEmptyState,
-  VSelectActions: VCardActions
+  VSelectActions: VCardActions,
 }
