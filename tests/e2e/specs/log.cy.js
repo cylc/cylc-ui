@@ -211,7 +211,7 @@ describe('Log View', () => {
 })
 
 describe('Log command in menu', () => {
-  it('opens a log view tab', () => {
+  it('opens a job log view tab', () => {
     cy.visit('/#/workspace/one')
       .get('.lm-DockPanel-widget')
       .should('have.length', 1)
@@ -223,6 +223,36 @@ describe('Log command in menu', () => {
       .should('have.length', 2)
       .get('[data-cy=log-viewer]')
       .contains(jobLogLines.join(''))
+  })
+
+  it('navigates to and opens a workflow log view tab', () => {
+    const one = 'one'
+    const multi = 'multi/level/run1'
+    cy.visit('/#')
+      .get('.c-gscan .node').contains(one)
+      .parents('.node').find('[data-c-interactive]')
+      .click()
+      .get('.c-mutation-menu-item').contains('Log')
+      .click()
+    cy.url()
+      .should('contain', `/workspace/${encodeURIComponent(one)}`)
+      .get('.lm-DockPanel-widget')
+      .should('have.length', 2)
+      .get('.c-log [data-cy=workflow-id-input] input').as('idInput')
+      .invoke('val')
+      .should('eq', `~user/${one}`)
+    cy.get('.c-gscan .node').contains(multi)
+      .parents('.node').find('[data-c-interactive]')
+      .click()
+      .get('.c-mutation-menu-item').contains('Log')
+      .click()
+    cy.url()
+      .should('contain', `/workspace/${encodeURIComponent(multi)}`)
+      .get('.lm-DockPanel-widget')
+      .should('have.length', 2)
+      .get('@idInput')
+      .invoke('val')
+      .should('eq', `~user/${multi}`)
   })
 
   it('chooses the log file based on the job state', () => {
@@ -345,31 +375,5 @@ describe('Log view in workspace', () => {
     openLogViewTab()
     cy.get('.c-log [data-cy=control-wordWrap] button')
       .should('have.attr', 'aria-checked', 'true')
-  })
-
-  it('navigates to correct workflow when choosing log option in mutation menu', () => {
-    const one = 'one'
-    const multi = 'multi/level/run1'
-    cy.visit('/#')
-      .get('.c-gscan .node').contains(one)
-      .parents('.node').find('[data-c-interactive]')
-      .click()
-      .get('.c-mutation-menu-item').contains('Log')
-      .click()
-    cy.url()
-      .should('contain', `/workspace/${encodeURIComponent(one)}`)
-      .get('.c-log [data-cy=workflow-id-input] input').as('idInput')
-      .invoke('val')
-      .should('eq', `~user/${one}`)
-    cy.get('.c-gscan .node').contains(multi)
-      .parents('.node').find('[data-c-interactive]')
-      .click()
-      .get('.c-mutation-menu-item').contains('Log')
-      .click()
-    cy.url()
-      .should('contain', `/workspace/${encodeURIComponent(multi)}`)
-      .get('@idInput')
-      .invoke('val')
-      .should('eq', `~user/${multi}`)
   })
 })
