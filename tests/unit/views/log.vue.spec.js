@@ -20,7 +20,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import sinon from 'sinon'
-import Log from '@/views/Log.vue'
+import Log, { Results, LogsCallback } from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
@@ -148,17 +148,17 @@ describe('Log view', () => {
     const wrapper = mountFunction()
     await nextTick()
 
-    const initialMode = wrapper.vm.logMode
+    const initialMode = wrapper.vm.headMode
     const initialTitle = wrapper.vm.controlGroups[0].controls.find(
-      ({ key }) => key === 'logMode'
+      ({ key }) => key === 'headMode'
     ).title
 
-    wrapper.vm.setOption('logMode', !initialMode)
+    wrapper.vm.setOption('headMode', !initialMode)
     await nextTick()
-    expect(wrapper.vm.logMode).toBe(!initialMode)
+    expect(wrapper.vm.headMode).toBe(!initialMode)
 
     const newTitle = wrapper.vm.controlGroups[0].controls.find(
-      ({ key }) => key === 'logMode'
+      ({ key }) => key === 'headMode'
     ).title
     expect(newTitle).not.toBe(initialTitle)
   })
@@ -167,43 +167,40 @@ describe('Log view', () => {
     const wrapper = mountFunction()
     await nextTick()
 
-    const logModeControl = wrapper.vm.controlGroups[0].controls.find(
-      ({ key }) => key === 'logMode'
+    const headModeControl = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'headMode'
     )
 
-    expect(logModeControl.action).toBe('toggle')
-    expect(logModeControl.value).toBe(wrapper.vm.logMode)
-    expect(logModeControl.values).toBe(undefined)
-    expect(logModeControl.title).toBe(
-      wrapper.vm.logMode
+    expect(headModeControl.action).toBe('toggle')
+    expect(headModeControl.value).toBe(wrapper.vm.headMode)
+    expect(headModeControl.values).toBe(undefined)
+    expect(headModeControl.title).toBe(
+      wrapper.vm.headMode
         ? 'HEAD: showing the start of the file'
         : 'TAIL: showing the end of the file'
     )
   })
 
-  it('shows start/end truncation banner messages with max line count', async () => {
-    const wrapper = mountFunction()
-    await nextTick()
+  it('inserts banner-like truncation markers into the log lines', async () => {
+    const results = new Results()
+    const callback = new LogsCallback(results, () => null)
 
-    const maxLines = Number(wrapper.vm.maxLines)
+    // start-of-file truncation -> marker pinned to the top and frozen
+    callback.onAdded({ lines: ['line-1', 'line-2'] })
+    callback.onAdded({ truncated: 'start' })
+    expect(results.lines[0]).toMatchObject({ truncation: 'start' })
+    expect(results.lines[0].message).toMatch(/earlier lines omitted/)
+    expect(results.frozenLength).toBe(1)
 
-    wrapper.vm.results = {
-      ...wrapper.vm.results,
-      truncated: 'start',
-    }
-    await nextTick()
-    expect(wrapper.vm.truncationMessage).toBe(
-      `The start of this file has been truncated because it is over ${maxLines} lines long.`
-    )
-
-    wrapper.vm.results = {
-      ...wrapper.vm.results,
-      truncated: 'end',
-    }
-    await nextTick()
-    expect(wrapper.vm.truncationMessage).toBe(
-      `The end of this file has been truncated because it is over ${maxLines} lines long.`
-    )
+    // end-of-file truncation -> marker appended to the bottom
+    const endResults = new Results()
+    const endCallback = new LogsCallback(endResults, () => null)
+    endCallback.onAdded({ lines: ['line-1', 'line-2'] })
+    endCallback.onAdded({ truncated: 'end' })
+    const last = endResults.lines[endResults.lines.length - 1]
+    expect(last).toMatchObject({ truncation: 'end' })
+    expect(last.message).toMatch(/later lines omitted/)
+    expect(endResults.frozenLength).toBe(0)
   })
 
   it('does not issue subscription for incomplete task ID', async () => {

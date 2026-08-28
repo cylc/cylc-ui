@@ -186,18 +186,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {{ results.error }}
         </span>
       </v-alert>
-      <v-alert
-        v-if="truncationMessage"
-        type="warning"
-        variant="tonal"
-        density="compact"
-        class="mt-2"
-        :icon="$options.icons.mdiFileAlertOutline"
-      >
-        <span class="text-pre-wrap text-break">
-          {{ truncationMessage }}
-        </span>
-      </v-alert>
     </v-container>
 
     <!-- the log file viewer -->
@@ -268,29 +256,17 @@ const LOG_MODE_HEAD = 'tail'
 const LOG_MODE_TAIL = 'tail-end'
 
 /**
- * Build a prominent multi-line divider shown where the log has been truncated.
- *
- * The block is a single log "line" (with embedded newlines) so it counts as one
- * entry for the pop/freeze logic. It has a trailing blank line so the following
- * log line starts fresh rather than appending to the marker.
- *
- * @param {string} message
- * @returns {string}
- */
-function truncationMarker (message) {
-  const rule = '-'.repeat(56)
-  return `\n${rule}\n  ${message}\n${rule}\n\n`
-}
-
-/**
- * Dividers shown where the log file has been truncated.
+ * Truncation markers inserted into the log stream where the file has been
+ * truncated.
  *
  * The uiserver sends a structured `truncated` value ("start" or "end"); these
- * are the human-readable blocks shown in its place.
+ * objects are inserted into the log lines in its place. Each counts as one log
+ * "line" (for the pop/freeze logic) but is rendered as a banner-like block by
+ * the log component (rather than as plain text).
  */
 const LOG_TRUNCATION_MARKERS = {
-  start: truncationMarker('earlier lines omitted (file truncated)'),
-  end: truncationMarker('later lines omitted (file truncated)'),
+  start: { truncation: 'start', message: 'earlier lines omitted (file truncated)' },
+  end: { truncation: 'end', message: 'later lines omitted (file truncated)' },
 }
 
 /**
@@ -348,7 +324,7 @@ query Jobs($id: ID!, $workflowID: ID!) {
  * The first pattern with a matching file name will be chosen.
  */
 
-class Results {
+export class Results {
   constructor () {
     /** @type {string[]} */
     this.lines = []
@@ -361,12 +337,6 @@ class Results {
     /** @type {?string} */
     this.error = null
     /**
-     * Which end of the file (if any) has been truncated: "start", "end" or
-     * null. Drives the truncation banner.
-     * @type {?string}
-     */
-    this.truncated = null
-    /**
      * Number of leading lines that must not be discarded in "pop" mode
      * (the frozen start-truncation marker).
      * @type {number}
@@ -376,7 +346,7 @@ class Results {
 }
 
 /** Callback for assembling the log file from the subscription */
-class LogsCallback extends DeltasCallback {
+export class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
    * @param {() => (?number)} getMaxLines
@@ -394,16 +364,13 @@ class LogsCallback extends DeltasCallback {
       // We have reconnected; clear the current lines otherwise they will be duplicated
       this.results.lines = []
       this.results.frozenLength = 0
-      this.results.truncated = null
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
       this.trim()
     }
     if (added.truncated != null) {
-      // record which end was truncated (drives the banner) and insert a
-      // marker line where the file has been truncated
-      this.results.truncated = added.truncated
+      // insert a banner-like marker where the file has been truncated
       const marker = LOG_TRUNCATION_MARKERS[added.truncated]
       if (added.truncated === 'start') {
         // the *start* of the file is omitted -> pin the marker to the top
@@ -679,16 +646,6 @@ export default {
     workflowTokens () {
       // tokens for the workflow this view was opened for
       return new Tokens(this.workflowID)
-    },
-    truncationMessage () {
-      // the banner shown when the log file has been truncated
-      if (!this.results.truncated) {
-        return null
-      }
-      const maxLines = normalizeLogMaxLines(this.maxLines)
-      const which = this.results.truncated === 'start' ? 'start' : 'end'
-      return `The ${which} of this file has been truncated because it is` +
-        ` over ${maxLines} lines long.`
     },
     id () {
       // the ID of the workflow/task/job we are subscribed to

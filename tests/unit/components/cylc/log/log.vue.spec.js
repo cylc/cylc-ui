@@ -41,4 +41,17 @@ describe('Log component', () => {
       expect(wrapper.vm.stripTimestamp(line)).toEqual(expected)
     })
   })
+
+  it('renders truncation markers as banner-like blocks', () => {
+    const marker = { truncation: 'end', message: 'later lines omitted' }
+    const bannerWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1', marker],
+      },
+    })
+    const banner = bannerWrapper.find('[data-cy="log-truncation-end"]')
+    expect(banner.exists()).toBe(true)
+    expect(banner.classes()).toContain('log-truncation-banner')
+    expect(banner.text()).toBe('later lines omitted')
+  })
 })
