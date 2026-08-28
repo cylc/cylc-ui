@@ -548,11 +548,11 @@ export default {
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
     /**
-     * The log view mode
-     * true - HEAD (cat-log "tail" mode) shows the start of the file and follows it;
-     * false - TAIL (cat-log "tail-end" mode) shows the end.
+     * Whether the log view is in HEAD mode:
+     * HEAD (cat-log "tail" mode) shows the start of the file and follows it;
+     * TAIL (cat-log "tail-end" mode) shows the end.
      */
-    const logMode = useInitialOptions('logMode', { props, emit }, false)
+    const headMode = useInitialOptions('headMode', { props, emit }, false)
 
     /**
      * Pop mode? (true = only keep the most recent `maxLines` lines,
@@ -601,7 +601,7 @@ export default {
       timestamps,
       wordWrap,
       autoScroll,
-      logMode,
+      headMode,
       popMode,
       maxLines,
       reset,
@@ -643,8 +643,8 @@ export default {
     )
 
     // re-subscribe when the log view mode is changed
-    this.$watch(() => this.logMode, (logMode) => {
-      if (!logMode) {
+    this.$watch(() => this.headMode, (headMode) => {
+      if (!headMode) {
         // TAIL mode follows the end of the file, so jump to the end and
         // follow new lines
         this.autoScroll = true
@@ -725,15 +725,15 @@ export default {
               key: 'autoScroll',
             },
             {
-              title: this.logMode
+              title: this.headMode
                 ? 'HEAD: showing the start of the file'
                 : 'TAIL: showing the end of the file',
-              icon: this.logMode
+              icon: this.headMode
                 ? mdiFormatVerticalAlignTop
                 : mdiFormatVerticalAlignBottom,
               action: 'toggle',
-              value: this.logMode,
-              key: 'logMode',
+              value: this.headMode,
+              key: 'headMode',
             },
           ],
         },
@@ -761,7 +761,7 @@ export default {
         {
           id: this.id,
           file: this.file,
-          mode: this.logMode ? LOG_MODE_HEAD : LOG_MODE_TAIL,
+          mode: this.headMode ? LOG_MODE_HEAD : LOG_MODE_TAIL,
           maxLines: normalizeLogMaxLines(this.maxLines),
         },
         `log-query-${this._uid}`,
