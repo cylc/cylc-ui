@@ -56,6 +56,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
       </template>
     </ViewToolbar>
+    <v-fade-transition hide-on-leave>
+      <div v-show="enableSelect">
+        <v-alert
+          :icon="mdiInformationOutline"
+          text="Selection mode enabled. The list of displayed tasks will not update. Any selection will be lost if you leave this workflow."
+          type="info"
+          variant="tonal"
+          density="compact"
+          class="my-2"
+        />
+      </div>
+    </v-fade-transition>
     <div class="overflow-hidden">
       <TableComponent
         :tasks="filteredItems"
@@ -75,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { whenever } from '@vueuse/core'
-import { mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
+import { mdiInformationOutline, mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
 import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -305,6 +317,7 @@ export default {
       mdiSelect,
       mdiSelectOff,
       mdiPencilBoxMultiple,
+      mdiInformationOutline,
     }
   },
 
