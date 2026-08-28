@@ -49,13 +49,12 @@ function getMaxLineWidth ($els) {
 }
 
 describe('Log View', () => {
+  const defaultFile = 'scheduler/01-start-01.log'
   beforeEach(() => {
     cy.visit('/#/log/one')
   })
 
   it('displays the workflow log', () => {
-    const defaultFile = workflowLogFiles[0]
-
     // the workflow ID should be filled in
     cy.get('.c-log [data-cy=workflow-id-input]')
       .should('be.visible')
@@ -182,7 +181,7 @@ describe('Log View', () => {
       .click()
     cy.window().its('navigator.clipboard')
       .then((clip) => clip.readText())
-      .should('equal', `${logDirPath}/${workflowLogFiles[0]}`)
+      .should('equal', `${logDirPath}/${defaultFile}`)
   })
 
   it('has a job info menu', () => {
@@ -267,18 +266,44 @@ describe('Log command in menu', () => {
 })
 
 describe('Log view in workspace', () => {
-  function openWorkflowLog () {
+  function setLogViewAsDefault () {
+    localStorage.defaultView = 'Log'
+  }
+
+  function openLogViewTab () {
     cy.get('#workflow-mutate-button')
       .click()
       .get('.c-mutation-menu-item').contains('Log')
       .click()
   }
 
-  it('remembers job ID and file when switching between workflows', () => {
-    const jobFile = /^job$/
-    const jobID = '20000102T0000Z/succeeded'
+  it('remembers workflow log file when navigating', () => {
+    const workflowFile = 'config/01-start-01.log'
+    setLogViewAsDefault()
     cy.visit('/#/workspace/one')
-    openWorkflowLog()
+    cy.get('.c-log [data-cy=file-input]').as('fileInput')
+      // get inner input value when the files have loaded and the input is no longer disabled
+      .find('input:not([disabled])').as('inputValue')
+      .should('not.have.value', workflowFile)
+    // select a different file
+    cy.get('@fileInput')
+      .click()
+      .get('[data-cy=file-input-menu] [role=listbox]')
+      .contains(workflowFile)
+      .click()
+      .get('@inputValue')
+      .should('have.value', workflowFile)
+    // Refresh the page
+    cy.reload()
+      .get('@inputValue')
+      .should('have.value', workflowFile)
+  })
+
+  it('remembers job ID and file when navigating', () => {
+    const jobFile = 'job-activity.log'
+    const jobID = '20000102T0000Z/succeeded'
+    setLogViewAsDefault()
+    cy.visit('/#/workspace/one')
     cy.get('[data-cy=job-toggle]')
       .click()
       .get('.c-log [data-cy=job-id-input] input').as('jobIDInput')
@@ -291,28 +316,23 @@ describe('Log view in workspace', () => {
       .contains(jobFile)
       .click()
       .get('@fileInput')
-      .contains(jobFile)
-    // Navigate away
-    cy.visit('/#/workspace/two')
-      .get('.c-log')
-      .should('not.exist')
-    // Navigate back
-    cy.visit('/#/workspace/one')
+      .find('input:not([disabled])').as('inputValue')
+      .should('have.value', jobFile)
+    // Refresh the page
+    cy.reload()
       .get('@jobIDInput')
-      .invoke('val')
-      .should('eq', jobID)
-      .get('@fileInput')
-      .contains(jobFile)
+      .invoke('val').should('eq', jobID)
+      .get('@inputValue')
+      .should('have.value', jobFile)
   })
 
   it('remembers word wrap setting and sets default word wrap', () => {
+    setLogViewAsDefault()
     cy.visit('/#/workspace/one')
-      .get('.lm-TabBar-tabCloseIcon').click()
-    openWorkflowLog()
     cy.get('.c-log [data-cy=control-wordWrap] button')
       .should('have.attr', 'aria-checked', 'false')
     // Open a new log view
-    openWorkflowLog()
+    openLogViewTab()
     cy.get('.c-log:last [data-cy=control-wordWrap] button')
       .click()
       .should('have.attr', 'aria-checked', 'true')
@@ -322,7 +342,7 @@ describe('Log view in workspace', () => {
       .should('have.attr', 'aria-checked', 'false')
     // Should set the default word wrap for new log views
     cy.visit('/#/workspace/multi/level/run1')
-    openWorkflowLog()
+    openLogViewTab()
     cy.get('.c-log [data-cy=control-wordWrap] button')
       .should('have.attr', 'aria-checked', 'true')
   })
