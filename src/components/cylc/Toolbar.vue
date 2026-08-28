@@ -256,7 +256,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { useDisplay } from 'vuetify'
 import {
   mdiCog,
@@ -400,7 +400,7 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getIndex']),
     query () {
       if (!this.workflowName) return null
       return new SubscriptionQuery(
@@ -410,8 +410,7 @@ export default {
       )
     },
     currentWorkflow () {
-      if (!this.workflowName) return null
-      return this.cylcTree.$index[this.workflowID]
+      return this.workflowName ? this.getIndex(this.workflowID) : null
     },
     isRunning () {
       return (

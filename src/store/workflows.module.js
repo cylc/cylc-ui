@@ -75,6 +75,11 @@ const getters = {
     }
     return ret
   },
+
+  /**
+   * Get a node from the store by its ID.
+   */
+  getIndex: (state) => (id) => getIndex(state, id),
 }
 
 /* Initialise the data store. */
