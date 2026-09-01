@@ -116,8 +116,8 @@
     {
       "groupName": "eslint packages",
       "matchPackageNames": [
-        "standard",
-        "eslint*"
+        "/^@?eslint/",
+        "*-eslint-parser"
       ],
       "automerge": true,
       "schedule": [
