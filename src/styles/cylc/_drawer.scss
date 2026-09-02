@@ -20,10 +20,10 @@
 @use '../util';
 
 body.resizing-drawer {
-  cursor: ew-resize !important;
+  cursor: ew-resize;
   #c-sidebar, .v-main {
     // Prevent Vuetify-provided transitions during resize to ensure responsiveness
-    transition: none !important;
+    transition: none;
   }
 }
 
