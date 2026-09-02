@@ -19,7 +19,20 @@
           "stdDevQueueTime": 3,
           "minQueueTime": 9,
           "queueQuartiles": [10, 11, 13],
-          "maxQueueTime": 14
+          "maxQueueTime": 14,
+          "maxMaxRss": 20000000,
+          "meanMaxRss": 10000000,
+          "stdDevMaxRss": 5,
+          "minMaxRss": 5000000,
+          "maxRssQuartiles": [5500000, 10000000, 15000000],
+          "maxCpuTime": 30000,
+          "meanCpuTime": 20000,
+          "stdDevCpuTime": 5,
+          "minCpuTime": 10000,
+          "totalCpuTime": 200000,
+          "cpuTimeQuartiles": [10000, 20000, 30000],
+          "totalOfTotals": 420000,
+          "memAlloc": 1073741824
         },
         {
           "name": "eventually_succeeded",
@@ -39,7 +52,20 @@
           "stdDevQueueTime": 2,
           "minQueueTime": 8,
           "queueQuartiles": [9, 10, 11],
-          "maxQueueTime": 11
+          "maxQueueTime": 11,
+          "maxMaxRss": 30000000,
+          "meanMaxRss": 20000000,
+          "stdDevMaxRss": 5,
+          "minMaxRss": 6000000,
+          "maxRssQuartiles": [6600000, 20000000, 25000000],
+          "maxCpuTime": 20000,
+          "meanCpuTime": 10000,
+          "stdDevCpuTime": 5,
+          "minCpuTime": 1000,
+          "totalCpuTime": 200000,
+          "cpuTimeQuartiles": [10000, 11000, 13000],
+          "totalOfTotals": 420000,
+          "memAlloc": 1073741824
         },
         {
           "name": "waiting",
@@ -59,7 +85,20 @@
           "stdDevQueueTime": 3,
           "minQueueTime": 10,
           "queueQuartiles": [10, 12, 13],
-          "maxQueueTime": 14
+          "maxQueueTime": 14,
+          "maxMaxRss": 40000000,
+          "meanMaxRss": 30000000,
+          "stdDevMaxRss": 5,
+          "minMaxRss": 7000000,
+          "maxRssQuartiles": [7700000, 30000000, 35000000],
+          "maxCpuTime": 30000,
+          "meanCpuTime": 20000,
+          "stdDevCpuTime": 5,
+          "minCpuTime": 9000,
+          "totalCpuTime": 200000,
+          "cpuTimeQuartiles": [10000, 11000, 13000],
+          "totalOfTotals": 420000,
+          "memAlloc": 1073741824
         }
       ]
     }
@@ -74,7 +113,9 @@
           "totalTime": 60,
           "queueTime": 2,
           "runTime": 58,
-          "startedTime": "2023-01-01T00:00:00Z"
+          "startedTime": "2023-01-01T00:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "succeeded",
@@ -83,7 +124,9 @@
           "totalTime": 61,
           "queueTime": 2,
           "runTime": 59,
-          "startedTime": "2023-01-01T01:00:00Z"
+          "startedTime": "2023-01-01T01:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "succeeded",
@@ -92,7 +135,9 @@
           "totalTime": 62,
           "queueTime": 2,
           "runTime": 60,
-          "startedTime": "2023-01-01T02:00:00Z"
+          "startedTime": "2023-01-01T02:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "eventually_succeeded",
@@ -101,7 +146,9 @@
           "totalTime": 41,
           "queueTime": 2,
           "runTime": 39,
-          "startedTime": "2023-01-01T01:00:00Z"
+          "startedTime": "2023-01-01T01:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "eventually_succeeded",
@@ -110,7 +157,9 @@
           "totalTime": 40,
           "queueTime": 2,
           "runTime": 38,
-          "startedTime": "2023-01-01T00:00:00Z"
+          "startedTime": "2023-01-01T00:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "eventually_succeeded",
@@ -119,7 +168,9 @@
           "totalTime": 42,
           "queueTime": 2,
           "runTime": 40,
-          "startedTime": "2023-01-01T02:00:00Z"
+          "startedTime": "2023-01-01T02:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "waiting",
@@ -128,7 +179,9 @@
           "totalTime": 50,
           "queueTime": 2,
           "runTime": 48,
-          "startedTime": "2023-01-01T00:00:00Z"
+          "startedTime": "2023-01-01T00:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "waiting",
@@ -137,7 +190,10 @@
           "totalTime": 4,
           "queueTime": 2,
           "runTime": 2,
-          "startedTime": "2023-01-01T02:01:00Z"},
+          "startedTime": "2023-01-01T02:01:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
+        },
         {
           "name": "waiting",
           "platform": "platform_2",
@@ -145,7 +201,9 @@
           "totalTime": 52,
           "queueTime": 2,
           "runTime": 50,
-          "startedTime": "2023-01-01T02:02:00Z"
+          "startedTime": "2023-01-01T02:02:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         },
         {
           "name": "waiting",
@@ -154,7 +212,9 @@
           "totalTime": 3,
           "queueTime": 2,
           "runTime": 1,
-          "startedTime": "2023-01-01T02:00:00Z"
+          "startedTime": "2023-01-01T02:00:00Z",
+          "maxRss": 1000,
+          "cpuTime": 50000
         }
       ]
     }
