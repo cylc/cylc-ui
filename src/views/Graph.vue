@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :task="node"
             :jobs="node.children"
             :jobTheme="jobTheme"
-            :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
+            :class="{ 'dimmed': node.node.graphDepth }"
           />
         </g>
         <!-- the edges
@@ -140,11 +140,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import { useJobTheme } from '@/composables/localStorage'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
@@ -154,7 +154,7 @@ import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
 import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 import {
   posToPath,
-  nonCryptoHash
+  nonCryptoHash,
 } from '@/utils/graph-utils'
 import { Graphviz } from '@hpcc-js/wasm/graphviz'
 import svgPanZoom from 'svg-pan-zoom'
@@ -165,17 +165,16 @@ import {
   mdiArrowExpand,
   mdiRefresh,
   mdiFileRotateRight,
-  mdiVectorSelection
+  mdiVectorSelection,
 } from '@mdi/js'
-import { isFlowNone } from '@/utils/tasks'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }
@@ -213,6 +212,7 @@ fragment TaskProxyData on TaskProxy {
     meanElapsedTime
   }
   flowNums
+  graphDepth
   runtime {
     runMode
   }
@@ -267,8 +267,7 @@ export default {
   name: 'Graph',
 
   mixins: [
-    graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -278,7 +277,9 @@ export default {
     ViewToolbarBtn,
   },
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
     /**
@@ -308,13 +309,16 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
+    const { workflowIDs, variables } = useGraphQL()
+
     return {
       jobTheme: useJobTheme(),
       transpose,
       autoRefresh,
       spacing,
       groupCycle,
-      isFlowNone,
+      workflowIDs,
+      variables,
       icons: {
         mdiTimer,
         mdiImageFilterCenterFocus,
@@ -381,9 +385,6 @@ export default {
         /* isGlobalCallback */ true
       )
     },
-    workflowIDs () {
-      return [this.workflowId]
-    },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
     },
@@ -432,7 +433,7 @@ export default {
           fit: false,
           contain: false,
           center: true,
-          refreshRate: 'auto'
+          refreshRate: 'auto',
         }
       )
 
@@ -624,7 +625,7 @@ export default {
       // pan to center
       this.panZoomWidget.pan({
         x: -realZoom * (bbox.x - width / (realZoom * 2) + bbox.width / 2),
-        y: -realZoom * (bbox.y - height / (realZoom * 2) + bbox.height / 2)
+        y: -realZoom * (bbox.y - height / (realZoom * 2) + bbox.height / 2),
       })
 
       // zoom to fit
@@ -763,7 +764,7 @@ export default {
               y: -top,
               width: right - left,
               height: top - bottom,
-              label: obj.label
+              label: obj.label,
             }
           }
         } else {
@@ -787,7 +788,7 @@ export default {
         // mount the svgPanZoom widget on first load
         this.mountSVGPanZoom()
       }
-    }
+    },
   },
 
   watch: {
@@ -816,8 +817,8 @@ export default {
       // refresh the graph when group by cycle point option is changed
       this.graphID = null
       this.refresh()
-    }
-  }
+    },
+  },
 }
 </script>
 

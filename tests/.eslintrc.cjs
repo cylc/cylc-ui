@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 module.exports = {
   env: {
-    mocha: true
+    mocha: true,
   },
   plugins: [
-    'no-only-tests'
+    'no-only-tests',
   ],
   rules: {
     'no-console': 'off',
@@ -31,8 +31,8 @@ module.exports = {
       files: ['*.spec.js', '*.cy.js'],
       rules: {
         // Don't complain about certain chai assertions:
-        'no-unused-expressions': 'off'
-      }
-    }
-  ]
+        'no-unused-expressions': 'off',
+      },
+    },
+  ],
 }

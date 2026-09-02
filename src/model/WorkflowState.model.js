@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import {
   mdiPauseCircle,
   mdiPlayCircle,
   mdiSkipNextCircle,
-  mdiStopCircle
+  mdiStopCircle,
 } from '@mdi/js'
 
 /**
@@ -56,7 +56,7 @@ export const WorkflowStateOrder = new Map([
   [WorkflowState.PAUSED.name, 1],
   [WorkflowState.STOPPING.name, 1],
   [WorkflowState.STOPPED.name, 2],
-  [undefined, 9]
+  [undefined, 9],
 ])
 
 /** @type {string[]} */

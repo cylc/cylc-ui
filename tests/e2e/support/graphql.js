@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ export function patchUserprofile () {
         'jobMutation',
         'namespaceMutation',
       ],
-    }
+    },
   })
 }
 
@@ -50,10 +50,10 @@ export const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'unauthorisedMutation',
@@ -66,10 +66,10 @@ export const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'cycleMutation',
@@ -79,17 +79,17 @@ export const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
+          kind: null,
+        },
       },
       {
         name: 'cycle',
         type: {
           name: 'CyclePoint',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'namespaceMutation',
@@ -99,17 +99,17 @@ export const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
+          kind: null,
+        },
       },
       {
         name: 'namespace',
         type: {
           name: 'NamespaceName',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'jobMutation',
@@ -119,16 +119,16 @@ export const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
+          kind: null,
+        },
       },
       {
         name: 'job',
         type: {
           name: 'JobID',
-          kind: null
-        }
-      }
-    ]
-  }
+          kind: null,
+        },
+      },
+    ],
+  },
 ]

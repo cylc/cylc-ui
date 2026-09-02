@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ describe('user', () => {
     it('should set user', () => {
       const user = {
         id: 1,
-        username: 'cylc'
+        username: 'cylc',
       }
       store.commit('user/SET_USER', user)
       expect(store.state.user.user).to.deep.equal(user)

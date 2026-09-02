@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ export default {
   data () {
     return {
       fetcher: null,
-      subscription: null
+      subscription: null,
     }
   },
   mounted () {
@@ -38,7 +38,7 @@ export default {
     render(
       createElement(GraphiQL, {
         fetcher: this.fetcher,
-        defaultVariableEditorOpen: false
+        defaultVariableEditorOpen: false,
       }),
       this.$refs.graphiql
     )
@@ -57,8 +57,8 @@ export default {
       return subscriptionClient !== null
         ? graphQLFetcher(subscriptionClient, fallbackGraphQLFetcher, this)
         : fallbackGraphQLFetcher
-    }
-  }
+    },
+  },
 }
 </script>
 

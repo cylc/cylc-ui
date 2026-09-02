@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ describe('task filtering', () => {
       { glob: '\\w\\d\\s', regex: /\\w\\d\\s/ },
 
       // nasty
-      { glob: 'a*[bc]d[!ef]*g?h.*i(j)', regex: /a.*[bc]d[^ef].*g.h\..*i\(j\)/ }
+      { glob: 'a*[bc]d[!ef]*g?h.*i(j)', regex: /a.*[bc]d[^ef].*g.h\..*i\(j\)/ },
     ])('globToRegex($glob) => $regex', ({ glob, regex }) => {
       expect(String(globToRegex(glob))).toBe(String(regex))
     })

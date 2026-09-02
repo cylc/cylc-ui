@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
 import WorkflowService from '@/services/workflow.service'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const jobs = {
   test_job: [{
@@ -28,7 +29,7 @@ const jobs = {
     submittedTime: '2023-02-23T11:10:09Z',
     startedTime: '2023-02-23T11:10:13Z',
     finishedTime: '2023-02-23T11:10:20Z',
-    platform: 'localhost'
+    platform: 'localhost',
   }],
   yet_another_test_job: [{
     name: 'yet_another_test_job',
@@ -36,11 +37,11 @@ const jobs = {
     submittedTime: '2023-02-23T11:10:21Z',
     startedTime: '2023-02-23T11:10:24Z',
     finishedTime: '2023-02-23T11:10:26Z',
-    platform: 'localhost'
-  }]
+    platform: 'localhost',
+  }],
 }
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('GanttChart component', () => {
@@ -51,7 +52,7 @@ describe('GanttChart component', () => {
         mocks: { $workflowService },
       },
       shallow: true,
-      ...options
+      ...options,
     })
   }
 
@@ -62,22 +63,22 @@ describe('GanttChart component', () => {
     const wrapper = mountFunction({
       props: {
         jobs,
-      }
+      },
     })
 
     expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
       expectedSubmittedTime,
-      expectedFinishedTime
+      expectedFinishedTime,
     ])
     await wrapper.setProps({ timingOption: 'queue' })
     expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
       expectedSubmittedTime,
-      expectedStartedTime
+      expectedStartedTime,
     ])
     await wrapper.setProps({ timingOption: 'run' })
     expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
       expectedStartedTime,
-      expectedFinishedTime
+      expectedFinishedTime,
     ])
   })
 })

@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       stroke-width="8px"
       stroke="grey"
       stroke-dasharray="50 50"
-      />
+    />
     <text
       :x="labelXPosition"
       :y="labelYPosition"
@@ -54,8 +54,8 @@ export default {
   props: {
     subgraph: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     labelXPosition () {
@@ -67,6 +67,6 @@ export default {
       // Adding 90pt to the y position brings the label inside the rect
       return (parseInt(this.subgraph.y) + 90)
     },
-  }
+  },
 }
 </script>

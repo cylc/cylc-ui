@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,15 +147,15 @@ describe('Graph View', () => {
   })
 
   describe('Flow nums', () => {
-    it('Shows flow=None task dimmed', () => {
+    it('Shows n!=0 task dimmed', () => {
       cy.visit('/#/graph/one')
       waitForGraphLayout()
-      cy.get('.c-graph-node.flow-none').as('flowNone')
+      cy.get('.c-graph-node.dimmed').as('dimmed')
         .should('have.css', 'opacity')
         .then((opacity) => {
           expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
         })
-      cy.get('@flowNone')
+      cy.get('@dimmed')
         .contains('sleepy')
     })
   })

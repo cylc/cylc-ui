@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,15 +32,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="snack-close"
       />
     </template>
-    <p>
+    <div>
       {{ alert.text }}
-    </p>
-    <p
+    </div>
+    <div
       v-if="alert.detail"
       class="mt-2 opacity-80"
     >
       {{ alert.detail }}
-    </p>
+    </div>
   </v-snackbar>
 </template>
 

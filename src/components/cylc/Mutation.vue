@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,9 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </template>
 
     <v-card-text class="card-text py-0 px-4">
-      <!-- Have to repeat these defaults as the ones set in App.vue don't make it through
-      the parent v-dialog - see https://github.com/vuetifyjs/vuetify/issues/18123 -->
-      <v-defaults-provider :defaults="vuetifyDefaults">
+      <v-defaults-provider :defaults="inputDefaults">
         <!-- the mutation description -->
         <v-expansion-panels
           v-bind="extendedDescription ? { hover: true } : { readonly: true }"
@@ -55,8 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-bind="extendedDescription ? {} : {
                 expandIcon: null,
                 style: {
-                  cursor: 'default'
-                }
+                  cursor: 'default',
+                },
               }"
             >
               <Markdown :markdown="shortDescription"/>
@@ -99,7 +97,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-btn
         color="grey"
         @click="close()"
-        variant="text"
         data-cy="cancel"
         v-if="!isView"
       >
@@ -108,13 +105,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-btn
         color="orange"
         @click="$refs.form.reset()"
-        variant="text"
         data-cy="reset"
       >
         Reset
       </v-btn>
       <v-btn
-        variant="text"
         :color="isValid ? 'primary' : 'error'"
         @click="submit"
         :loading="submitting"
@@ -161,10 +156,9 @@ import Markdown from '@/components/Markdown.vue'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc,
-  mutationStatus
+  mutationStatus,
 } from '@/utils/aotf'
 import { mdiClose, mdiOpenInNew } from '@mdi/js'
-import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
 import { inputDefaults } from '@/components/graphqlFormGenerator/components/vuetify'
 import { eventBus } from '@/services/eventBus'
 import { store } from '@/store/index'
@@ -177,7 +171,7 @@ export default {
   components: {
     EditRuntimeForm,
     FormGenerator,
-    Markdown
+    Markdown,
   },
 
   emits: [
@@ -199,8 +193,6 @@ export default {
   },
 
   setup (props) {
-    const vuetifyDefaults = useDynamicVuetifyDefaults(inputDefaults)
-
     if (props.initialOptions.isView) {
       // set the tab title to something informative
       eventBus.emit(
@@ -210,7 +202,7 @@ export default {
     }
 
     return {
-      vuetifyDefaults,
+      inputDefaults,
 
       // properties extracted from initialOptions...
 
@@ -256,8 +248,8 @@ export default {
       },
       set (val) {
         if (!val) this.warningMsg = null
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -296,8 +288,8 @@ export default {
       this.$router.push({
         name: 'Workspace',
         params: {
-          workflowName: this.cylcObject.tokens.workflow
-        }
+          workflowName: this.cylcObject.tokens.workflow,
+        },
       }).then(() => {
         // open the command editor in a new tab
         // (re-initialises this component preserving state)
@@ -324,7 +316,7 @@ export default {
   icons: {
     close: mdiClose,
     mdiOpenInNew,
-  }
+  },
 }
 </script>
 

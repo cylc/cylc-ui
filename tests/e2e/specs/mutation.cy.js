@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,10 +59,10 @@ describe('Mutations component', () => {
       service.introspection = Promise.resolve({
         mutations,
         types: [],
-        queries: []
+        queries: [],
       })
       service.primaryMutations = {
-        workflow: ['workflowMutation']
+        workflow: ['workflowMutation'],
       }
     })
   }
@@ -79,9 +79,9 @@ describe('Mutations component', () => {
             data: {
               [req.body.operationName]: {
                 result: [true, {}],
-                __typename: upperFirst(req.body.operationName)
-              }
-            }
+                __typename: upperFirst(req.body.operationName),
+              },
+            },
           })
         }
       })

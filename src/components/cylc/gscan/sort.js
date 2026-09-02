@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 import {
-  sortedIndexBy
+  sortedIndexBy,
 } from '@/components/cylc/common/sort'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 
@@ -108,7 +108,7 @@ export function flattenWorkflowParts (node) {
   } else if (node.children.length > 1) {
     return {
       ...node,
-      children: node.children.map((n) => flattenWorkflowParts(n))
+      children: node.children.map((n) => flattenWorkflowParts(n)),
     }
   }
 }

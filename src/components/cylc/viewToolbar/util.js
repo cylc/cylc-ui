@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -45,9 +45,9 @@ export const taskStateItems = [
         return {
           title: upperFirst(modifier.title),
           value: modifier.field,
-          taskProps: getProps(modifier)
+          taskProps: getProps(modifier),
         }
-      })
+      }),
   },
   ...TaskStateNames
     .filter((name) => name !== TaskState.WAITING.name)
@@ -55,7 +55,7 @@ export const taskStateItems = [
       return {
         title: upperFirst(name),
         value: name,
-        taskProps: { state: name }
+        taskProps: { state: name },
       }
     }),
   { type: 'divider' },
@@ -64,7 +64,7 @@ export const taskStateItems = [
       return {
         title: upperFirst(modifier.title),
         value: modifier.field,
-        taskProps: getProps(modifier)
+        taskProps: getProps(modifier),
       }
     }),
 ]

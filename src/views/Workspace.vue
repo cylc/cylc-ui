@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,52 +16,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div data-cy="workspace-view">
-    <Toolbar
-      :views="workflowViews"
-      :workflow-name="workflowName"
+  <div
+    data-cy="workspace-view"
+    class="workflow-panel h-100"
+  >
+    <Lumino
+      :key="$route.params.workflowName"
+      @emptied="onEmptied"
+      :workflow-name="$route.params.workflowName"
     />
-    <div
-      class="workflow-panel"
-      :style="$options.panelStyle"
-    >
-      <Lumino
-        :key="workflowName"
-        @emptied="onEmptied"
-        :workflow-name="workflowName"
-        :allViews="allViews"
-      />
-    </div>
   </div>
 </template>
 
 <script>
-import { allViews, workflowViews } from '@/views/views.js'
-import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import Lumino from '@/components/cylc/workspace/Lumino.vue'
-import Toolbar from '@/components/cylc/workspace/Toolbar.vue'
-import { toolbarHeight } from '@/utils/toolbar'
 
 export default {
   name: 'Workspace',
 
   mixins: [
-    graphqlMixin,
-    subscriptionMixin
+    subscriptionMixin,
   ],
 
   components: {
     Lumino,
-    Toolbar
-  },
-
-  setup () {
-    return {
-      allViews,
-      workflowViews,
-    }
   },
 
   methods: {
@@ -70,11 +50,7 @@ export default {
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
       // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
       this.viewState = ViewState.NO_STATE
-    }
-  },
-
-  panelStyle: {
-    height: `calc(100vh - ${toolbarHeight}px)`,
+    },
   },
 }
 </script>

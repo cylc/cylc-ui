@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,18 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-container
     fill-height
     fluid
-    grid-list-xl
+    class="pa-0"
   >
-    <v-row class="align-self-start">
+    <v-row no-gutters>
       <v-col>
-        <!-- TODO: this is not really an alert, it's a heading -->
-        <v-alert
-          :icon="icons.mdiTable"
-          prominent
-          color="grey-lighten-3"
-        >
-          <h3 class="text-h5">{{ $t('Workflows.tableHeader') }}</h3>
-        </v-alert>
         <v-data-table
           :headers="$options.headers"
           :items="workflowsTable"
@@ -123,7 +115,7 @@ export default {
   ],
 
   components: {
-    WorkflowIcon
+    WorkflowIcon,
   },
 
   setup () {
@@ -164,7 +156,7 @@ export default {
     },
     workflowsTable () {
       return Object.values(this.workflows)
-    }
+    },
   },
 
   methods: {
@@ -180,49 +172,49 @@ export default {
       if (timestamp) {
         return humanDuration(new Date(timestamp * 1000))
       }
-    }
+    },
   },
 
   headers: [
     {
       sortable: false,
       title: '',
-      key: 'icon'
+      key: 'icon',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnName'),
-      key: 'tokens.workflow'
+      key: 'tokens.workflow',
     },
     {
       sortable: true,
       title: 'Status',
-      key: 'node.status'
+      key: 'node.status',
     },
     {
       sortable: true,
       title: 'Cylc Version',
-      key: 'node.cylcVersion'
+      key: 'node.cylcVersion',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnOwner'),
-      key: 'node.owner'
+      key: 'node.owner',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnHost'),
-      key: 'node.host'
+      key: 'node.host',
     },
     {
       sortable: false,
       title: i18n.global.t('Workflows.tableColumnPort'),
-      key: 'node.port'
+      key: 'node.port',
     },
     {
       sortable: true,
       title: 'Last Activity',
-      key: 'node.lastUpdated'
+      key: 'node.lastUpdated',
     },
   ],
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,15 @@ import Empty from '@/layouts/Empty.vue'
 import storeOptions from '@/store/options'
 import { vuetifyOptions } from '@/plugins/vuetify'
 
+const vuetify = createVuetify(vuetifyOptions)
+
 vi.mock('vue-router', () => ({
   useRoute: () => ({
     name: 'app',
     meta: {
-      layout: 'empty'
-    }
-  })
+      layout: 'empty',
+    },
+  }),
 }))
 
 describe('App', () => {
@@ -38,14 +40,14 @@ describe('App', () => {
     return mount(App, {
       global: {
         plugins: [
-          createVuetify(vuetifyOptions),
+          vuetify,
           createStore(storeOptions),
         ],
         components: {
-          'empty-layout': Empty
+          'empty-layout': Empty,
         },
         stubs: ['router-view'],
-      }
+      },
     })
   }
 
@@ -65,18 +67,18 @@ describe('App', () => {
       value: true,
       expected: {
         transition: 'no',
-        ripple: false
-      }
+        ripple: false,
+      },
     },
     {
       value: false,
-      expected: {}
+      expected: {},
     },
   ])('applies reduced animation = $value from localStorage', ({ value, expected }) => {
     localStorage.setItem('reducedAnimation', value)
     const wrapper = mountFunction()
     expect(wrapper.vm.vuetifyDefaults).toMatchObject({
-      global: expected
+      global: expected,
     })
   })
 })

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import { LuminoWidget } from '@/components/cylc/workspace/luminoWidget'
 describe('LuminoWidget', () => {
   it('stringifies to JSON and revives to new instance', () => {
     const layout = {
-      widgets: [new LuminoWidget('widget71', 'Treadstone')]
+      widgets: [new LuminoWidget('widget71', 'Treadstone')],
     }
     const stringified = JSON.stringify(layout)
     expect(JSON.parse(stringified).widgets[0]).toEqual({

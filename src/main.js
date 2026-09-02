@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+// CSS first
+import 'nprogress/css/nprogress.css'
+import '@/styles/index.scss'
 
 import { createApp } from 'vue'
 
@@ -30,9 +34,6 @@ import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
 import { createVuetify } from 'vuetify'
-
-import 'nprogress/css/nprogress.css'
-import '@/styles/index.scss'
 
 if (location.search) {
   /* Remove token from the querystring - we only need it on first load.

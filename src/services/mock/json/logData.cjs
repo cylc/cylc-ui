@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ const jobLogLines = [
   'two\n',
   'three\n',
   'four\n',
-  'five\n'
+  'five\n',
 ]
 
 const workflowLogLines = [
@@ -58,7 +58,7 @@ const LogData = async ({ id, file }) => {
         : undefined,
       path: `my-host:${path}`,
       lines: isJob ? jobLogLines : workflowLogLines,
-    }
+    },
   }
 }
 

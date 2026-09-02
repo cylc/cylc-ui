@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,19 +39,19 @@ export default {
   name: 'Task',
   props: {
     task: {
-      required: true
+      required: true,
     },
     startTime: {
-      required: false
+      required: false,
     },
     modifierSize: {
       // Scale the size of the task state modifier
       type: Number,
-      default: 0.7
+      default: 0.7,
     },
   },
   components: {
-    SVGTask
+    SVGTask,
   },
 }
 </script>

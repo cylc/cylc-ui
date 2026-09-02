@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,11 @@ import { simpleTableTasks } from './table.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import WorkflowService from '@/services/workflow.service'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Table component', () => {
   /**
@@ -36,17 +37,17 @@ describe('Table component', () => {
     global: {
       plugins: [vuetify, CommandMenuPlugin],
       mocks: {
-        $workflowService
-      }
+        $workflowService,
+      },
     },
-    ...options
+    ...options,
   })
 
   it('should sort cycle point column descending by default', async () => {
     const wrapper = mountFunction({
       props: {
-        tasks: simpleTableTasks
-      }
+        tasks: simpleTableTasks,
+      },
     })
     // check the the raw task data has the cycle points from lowest to highest
     expect(wrapper.vm.tasks[wrapper.vm.tasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
@@ -61,8 +62,8 @@ describe('Table component', () => {
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
       props: {
-        tasks: simpleTableTasks
-      }
+        tasks: simpleTableTasks,
+      },
     })
     expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
@@ -76,11 +77,11 @@ describe('Table component', () => {
       localStorage.setItem('cyclePointsOrderDesc', cyclePointsOrderDesc)
       const wrapper = mountFunction({
         props: {
-          tasks: simpleTableTasks
-        }
+          tasks: simpleTableTasks,
+        },
       })
       expect(wrapper.vm.sortBy).toMatchObject([
-        { order: expected }
+        { order: expected },
       ])
     })
 
@@ -108,9 +109,10 @@ describe('Table component', () => {
           props: {
             tasks: [],
             initialOptions: {
-              sortBy: [{ key, order }]
-            }
-          }
+              sortBy: [{ key, order }],
+            },
+          },
+          shallow: true,
         })
         const comparator = (x, y) => {
           return order === 'asc' ? x.localeCompare(y) : y.localeCompare(x)

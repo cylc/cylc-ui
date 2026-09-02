@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,10 @@ const WarningComponent = defineComponent({
       'span',
       { style: 'font-size: 200px; margin: 100px;' },
       [
-        h(WarningIcon, this.$attrs)
+        h(WarningIcon, this.$attrs),
       ]
     )
-  }
+  },
 })
 
 // data-store workflow node with no warnings
@@ -42,10 +42,10 @@ const workflowWithWarning = {
   ...workflowWithoutWarning,
   node: {
     logRecords: [
-      { level: 'INFO', message: 'Hello Warning!' }
+      { level: 'INFO', message: 'Hello Warning!' },
     ],
     warningActive: true,
-  }
+  },
 }
 
 describe('Warning Icon', () => {

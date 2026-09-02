@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <v-defaults-provider :defaults="{
         VExpansionPanelTitle: {
-          class: 'text-button py-2',
+          class: 'text-title-small py-2',
         },
         VExpansionPanelText: {
           class: 'mt-2',
@@ -125,15 +125,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-expansion-panel-title>
             <template #default="{ expanded }">
               Inheritance
-                <v-icon
-                  v-if="expanded"
-                  :icon="icons.mdiHelpCircleOutline"
-                  class="ml-2"
-                  v-tooltip="{
-                    text: 'Shows the linearised family inheritance hierarchy for this task. The order of precedence is determined by the C3 algorithm used in Python.',
-                    location: 'top',
-                  }"
-                />
+              <v-icon
+                v-if="expanded"
+                :icon="icons.mdiHelpCircleOutline"
+                class="ml-2"
+                v-tooltip="{
+                  text: 'Shows the linearised family inheritance hierarchy for this task. The order of precedence is determined by the C3 algorithm used in Python.',
+                  location: 'top',
+                }"
+              />
             </template>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
@@ -386,13 +386,13 @@ export default {
         return a.label > b.label ? 1 : -1
       })
       return xtriggers
-    }
+    },
 
   },
 
   methods: {
     formatCompletion,
-  }
+  },
 
 }
 </script>
