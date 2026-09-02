@@ -309,21 +309,21 @@ describe('Log view in workspace', () => {
     cy.visit('/#/workspace/one')
       .get('.lm-TabBar-tabCloseIcon').click()
     openWorkflowLog()
-    cy.get('.c-log [data-cy=control-wordWrap] button')
+    cy.get('.c-log [data-cy=control-wordWrap]')
       .should('have.attr', 'aria-checked', 'false')
     // Open a new log view
     openWorkflowLog()
-    cy.get('.c-log:last [data-cy=control-wordWrap] button')
+    cy.get('.c-log:last [data-cy=control-wordWrap]')
       .click()
       .should('have.attr', 'aria-checked', 'true')
     // Should not affect the first log view
     cy.get('.lm-TabBar-tab:first').click()
-      .get('.c-log:first [data-cy=control-wordWrap] button')
+      .get('.c-log:first [data-cy=control-wordWrap]')
       .should('have.attr', 'aria-checked', 'false')
     // Should set the default word wrap for new log views
     cy.visit('/#/workspace/multi/level/run1')
     openWorkflowLog()
-    cy.get('.c-log [data-cy=control-wordWrap] button')
+    cy.get('.c-log [data-cy=control-wordWrap]')
       .should('have.attr', 'aria-checked', 'true')
   })
 
