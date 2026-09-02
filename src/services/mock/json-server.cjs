@@ -27,6 +27,9 @@ const jsonServer = require('json-server')
 const logger = require('morgan')
 
 const server = jsonServer.create()
+// Cylc UIServer's base path is /cylc/ - match that here:
+server.use(jsonServer.rewriter({ '/cylc/*': '/$1' }))
+
 require('express-ws')(server)
 const router = jsonServer.router({
   userProfile,
