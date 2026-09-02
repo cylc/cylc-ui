@@ -20,7 +20,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import sinon from 'sinon'
-import Log from '@/views/Log.vue'
+import Log, { Results, LogsCallback } from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
@@ -142,6 +142,65 @@ describe('Log view', () => {
     expect(wrapper.vm.id).toBe(undefined)
     // should have unsubscribed
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
+  })
+
+  it('toggles the log mode and updates the toolbar label', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    const initialMode = wrapper.vm.headMode
+    const initialTitle = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'headMode'
+    ).title
+
+    wrapper.vm.setOption('headMode', !initialMode)
+    await nextTick()
+    expect(wrapper.vm.headMode).toBe(!initialMode)
+
+    const newTitle = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'headMode'
+    ).title
+    expect(newTitle).not.toBe(initialTitle)
+  })
+
+  it('uses toggle action for the log mode toolbar control', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    const headModeControl = wrapper.vm.controlGroups[0].controls.find(
+      ({ key }) => key === 'headMode'
+    )
+
+    expect(headModeControl.action).toBe('toggle')
+    expect(headModeControl.value).toBe(wrapper.vm.headMode)
+    expect(headModeControl.values).toBe(undefined)
+    expect(headModeControl.title).toBe(
+      wrapper.vm.headMode
+        ? 'HEAD: showing the start of the file'
+        : 'TAIL: showing the end of the file'
+    )
+  })
+
+  it('inserts banner-like truncation markers into the log lines', async () => {
+    const results = new Results()
+    const callback = new LogsCallback(results, () => null)
+
+    // start-of-file truncation -> marker pinned to the top and frozen
+    callback.onAdded({ lines: ['line-1', 'line-2'] })
+    callback.onAdded({ truncated: 'start' })
+    expect(results.lines[0]).toMatchObject({ truncation: 'start' })
+    expect(results.lines[0].message).toMatch(/earlier lines omitted/)
+    expect(results.frozenLength).toBe(1)
+
+    // end-of-file truncation -> marker appended to the bottom
+    const endResults = new Results()
+    const endCallback = new LogsCallback(endResults, () => null)
+    endCallback.onAdded({ lines: ['line-1', 'line-2'] })
+    endCallback.onAdded({ truncated: 'end' })
+    const last = endResults.lines[endResults.lines.length - 1]
+    expect(last).toMatchObject({ truncation: 'end' })
+    expect(last.message).toMatch(/later lines omitted/)
+    expect(endResults.frozenLength).toBe(0)
   })
 
   it('does not issue subscription for incomplete task ID', async () => {

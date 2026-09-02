@@ -15,6 +15,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<style lang="scss">
+// banner-like marker shown inline where the log file has been truncated
+.log-truncation-banner {
+  display: block;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  font-weight: 500;
+  color: rgb(var(--v-theme-warning));
+  background-color: rgba(var(--v-theme-warning), 0.12);
+  border: 1px solid rgba(var(--v-theme-warning), 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+</style>
+
 <template>
   <div
     ref="scrollWrapper"
@@ -24,10 +39,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       ref="logText"
       :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
       data-cy="log-text"
-    ><span
+    ><template
       v-for="(log, index) in computedLogs"
       :key="index"
-    >{{ log }}</span></pre>
+    ><span
+      v-if="log?.truncation"
+      class="log-truncation-banner"
+      :data-cy="`log-truncation-${log.truncation}`"
+    >{{ log.message }}</span><span
+      v-else
+    >{{ log }}</span></template></pre>
     <v-btn
       v-if="logs.length"
       position="fixed"
@@ -157,6 +178,10 @@ export default {
   methods: {
     updateLogs () {
       return this.logs.map((logLine) => {
+        // truncation markers are objects, not plain log lines
+        if (typeof logLine !== 'string') {
+          return logLine
+        }
         return this.stripTimestamp(logLine)
       })
     },
