@@ -136,7 +136,7 @@ export default {
 
     const chartOptions = computed(() => {
       const currentTasks = (() => {
-        if (props.timingOption === 'maxRss') {
+        if (props.timingOption === 'peakRss') {
           const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b, sortBy.value, sortDesc.value))
           const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
           const endIndex = Math.min(sortedTasks.length, startIndex + props.itemsPerPage)
@@ -187,7 +187,7 @@ export default {
             const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true, props.timingOption)
             const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true, props.timingOption)
             const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true, props.timingOption)
-            if (props.timingOption === 'maxRss') {
+            if (props.timingOption === 'peakRss') {
               const memAlloc = formatDuration(w.globals.series[seriesIndex][dataPointIndex], true, props.timingOption)
               return `
               <div class="pa-2">

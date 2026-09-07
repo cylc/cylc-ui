@@ -100,7 +100,7 @@ export function jobMessageOutputs (jobNode) {
  * @return {string=} Formatted duration
  */
 export function formatDuration (value, allowZeros = false, timingOption = true) {
-  if (timingOption === 'maxRss') {
+  if (timingOption === 'peakRss') {
     return formatRSS(value)
   }
   // Times are formatted as HH:MM:SS
@@ -135,7 +135,7 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
 }
 
 function formatRSS (value) {
-  // Format the max RSS value in a human-readable format
+  // Format the peak RSS value in a human-readable format
   if (value === undefined || value === null) {
     return undefined
   } else if (value / 1024 < 1000) {
@@ -158,7 +158,7 @@ export function compare (a, b, sortBy, sortDesc) {
   */
   let ret = ''
   // Median values are stored in quartile arrays, so need to access the 2nd element
-  if (sortBy === 'medianRunTime' || sortBy === 'medianQueueTime' || sortBy === 'medianTotalTime' || sortBy === 'medianMaxRss') {
+  if (sortBy === 'medianRunTime' || sortBy === 'medianQueueTime' || sortBy === 'medianTotalTime' || sortBy === 'medianPeakRss') {
     sortBy = sortBy.replace('median', '').replace('Time', '')
     sortBy = sortBy.charAt(0).toLowerCase() + sortBy.slice(1)
     sortBy = sortBy + 'Quartiles'
@@ -175,8 +175,8 @@ export function compare (a, b, sortBy, sortDesc) {
 
 export function formatChartLabels (timingOption) {
   // Create correct labels for the charts
-  if (timingOption.toLowerCase() === 'maxrss') {
-    return 'Max RSS'
+  if (timingOption.toLowerCase() === 'peakrss') {
+    return 'Peak RSS'
   } else if (timingOption === 'cpuTime' || timingOption === 'CpuTime') {
     return 'CPU Time'
   } else {
@@ -186,7 +186,7 @@ export function formatChartLabels (timingOption) {
 
 export function getTimingOption (timingOption) {
   // Create correct timing option for the charts
-  if (timingOption === 'maxRss' || timingOption === 'cpuTime') {
+  if (timingOption === 'peakRss' || timingOption === 'cpuTime') {
     return timingOption
   } else {
     return timingOption + 'Time'
@@ -194,7 +194,7 @@ export function getTimingOption (timingOption) {
 }
 
 export function formatHeader (statistic, timingOption) {
-  if (timingOption === 'MaxRss' || timingOption === 'CpuTime' || timingOption === 'totalCpuTime') {
+  if (timingOption === 'PeakRss' || timingOption === 'CpuTime' || timingOption === 'totalCpuTime') {
     if (statistic === 'quartiles') {
       return timingOption.charAt(0).toLowerCase() + timingOption.slice(1)
     } else {

@@ -137,13 +137,13 @@ describe('Analysis view', () => {
         cy
           .get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
-        // Show Max RSS
+        // Show Peak RSS
         cy
           .get('#c-analysis-filter-task-timings')
           .click({ force: true })
         cy
           .get('.v-list-item')
-          .contains('Max RSS')
+          .contains('Peak RSS')
           .click({ force: true })
         cy
           .get('td')
@@ -226,13 +226,13 @@ describe('Analysis view', () => {
           .should('have.length', 1)
           .should('be.visible')
       })
-      it('Should show Max RSS', () => {
+      it('Should show Peak RSS', () => {
         cy
           .get('#c-analysis-filter-task-timings')
           .click({ force: true })
         cy
           .get('.v-list-item')
-          .contains('Max RSS')
+          .contains('Peak RSS')
           .click({ force: true })
         cy
           .get('td')
@@ -288,13 +288,13 @@ describe('Analysis view', () => {
         .get('.vue-apexcharts')
         .should('not.exist')
     })
-    it('Should show Max RSS', () => {
+    it('Should show Peak RSS', () => {
       cy
         .get('#c-analysis-filter-task-timings')
         .click({ force: true })
       cy
         .get('.v-list-item')
-        .contains('Max RSS')
+        .contains('Peak RSS')
         .click({ force: true })
       cy
         .get('.apexcharts-yaxis-label')
@@ -649,11 +649,11 @@ describe('Filters and Options save state', () => {
         .contains('Median')
       cy.get('.apexcharts-tooltip')
         .contains('Minimum')
-      // If timingOption is maxRss, check for Memory Allocated
+      // If timingOption is peakRss, check for Memory Allocated
       cy.get('#c-analysis-filter-task-timings')
         .invoke('val')
         .then(val => {
-          if (val === 'Max RSS') {
+          if (val === 'Peak RSS') {
             cy.get('.apexcharts-tooltip').contains('Memory Allocated')
           }
         })

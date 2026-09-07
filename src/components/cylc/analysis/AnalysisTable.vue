@@ -192,8 +192,8 @@ export default {
         )
       }
 
-      // Don't show std dev for cpuTime or maxRss
-      if (this.timingOption !== 'cpuTime' && this.timingOption !== 'maxRss' && stats) {
+      // Don't show std dev for cpuTime or peakRss
+      if (this.timingOption !== 'cpuTime' && this.timingOption !== 'peakRss' && stats) {
         timingHeaders.push({
           title: `Std Dev ${times}`,
           key: `${formatHeader('stdDev', times)}`,
