@@ -5,7 +5,6 @@ import { vitePreprocessor } from './tests/e2e/support/preprocessor.js'
 export default defineConfig({
   video: false,
   defaultCommandTimeout: 10000,
-  execTimeout: 60000,
   taskTimeout: 60000,
   pageLoadTimeout: 60000,
   requestTimeout: 30000,
@@ -39,8 +38,6 @@ export default defineConfig({
     supportFile: 'tests/component/support/index.js',
     indexHtmlFile: 'tests/component/support/component-index.html',
   },
-
-  allowCypressEnv: false,
 
   expose: {
     // Cypress uses this to detect whether to collect coverage
