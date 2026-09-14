@@ -177,7 +177,7 @@ describe('Log View', () => {
       .should('be.visible')
   })
 
-  it('copies the log filepath to the clipboard', { browser: 'electron' }, () => {
+  it('copies the log filepath to the clipboard', { browser: { family: 'chromium' } }, () => {
     cy.get('.c-log [data-cy=copy-to-clipboard]')
       .click()
     cy.window().its('navigator.clipboard')

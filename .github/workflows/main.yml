@@ -65,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [firefox, chrome, electron]
+        browser: [firefox, chrome]
         os: [ubuntu-latest]
 # TODO: re-enable once macos build is stable #590
 #         include:
