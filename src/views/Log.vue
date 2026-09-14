@@ -22,6 +22,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   display: inline-block;
   margin-left: 1em;
 }
+
+// HEAD/TAIL mode toggle button styling
+.c-log {
+  // flip the icon upside-down for HEAD mode
+  .log-mode-toggle__icon--flip {
+    transform: rotate(180deg);
+  }
+  // stylised "bubble" text (LAYOUT 3)
+  .log-mode-toggle__bubble {
+    display: inline-block;
+    padding: 2px 14px;
+    border-radius: 999px;
+    background: rgba(var(--v-theme-on-surface), 0.08);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  // tighten the stacked text so the two words sit close together (LAYOUT 5)
+  .log-mode-toggle__stack {
+    line-height: 1.1;
+  }
+  // stacked "bubble letter" text: coloured fill with a contrasting outline
+  // (LAYOUT 6). Tweak the two colours / stroke width to taste.
+  .log-mode-toggle__bubble-text {
+    line-height: 1;
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: rgb(0, 0, 255);                        // fill colour
+    -webkit-text-stroke: 1.5px rgb(var(--v-theme-on-surface)); // outline colour
+    // draw the outline behind the fill so the fill stays crisp
+    paint-order: stroke fill;
+  }
+}
 </style>
 
 <template>
@@ -52,6 +88,171 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @setOption="setOption"
             :size="toolbarBtnSize"
           />
+
+          <!--
+            HEAD/TAIL mode toggle button.
+
+            This shows the invoice-text-outline icon (flipped upside-down when
+            in HEAD mode) combined with some text. Several starting layouts are
+            provided below - enable ONE and comment the others out to compare
+            them. They are only rough starting points for styling.
+          -->
+
+          <!-- LAYOUT 1: icon + "Truncated" stacked vertically. The label sits
+               above the (flipped) icon in HEAD mode, below it in TAIL mode. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="d-flex flex-column align-center py-1">
+              <span
+                v-if="headMode"
+                class="text-caption"
+              >Truncated</span>
+              <v-icon
+                :icon="$options.icons.mdiInvoiceTextOutline"
+                :class="{ 'log-mode-toggle__icon--flip': headMode }"
+              />
+              <span
+                v-if="!headMode"
+                class="text-caption"
+              >Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 2: icon + "Truncated" inline. The label sits before the
+               (flipped) icon in HEAD mode, after it in TAIL mode. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <span
+              v-if="headMode"
+              class="text-caption mr-1"
+            >Truncated</span>
+            <v-icon
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            <span
+              v-if="!headMode"
+              class="text-caption ml-1"
+            >Truncated</span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+          <!-- LAYOUT 3: no icon - stylised "bubble" text only. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <span class="log-mode-toggle__bubble">
+              {{ headMode ? 'Start truncated' : 'End truncated' }}
+            </span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+          <!-- LAYOUT 4: icon + short "Start"/"End" label, icon prepended. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="tonal"
+            size="small"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <v-icon
+              start
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            {{ headMode ? 'Start' : 'End' }}
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 5: text only, stacked with one word above the other. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 6: stacked "bubble letter" text - coloured fill with a
+               contrasting outline (see the styles at the top of the file). -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="log-mode-toggle__bubble-text d-flex flex-column align-center py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 7: LAYOUT 6's stacked bubble-letter text inside a tonal
+               button (like LAYOUT 4). -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="tonal"
+            size="small"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 8: LAYOUT 4 (icon + tonal button) but with the label
+               stacked over two lines ("Start"/"End" above "Truncated"). -->
+          <v-btn
+            class="log-mode-toggle ml-2"
+            variant="tonal"
+            size="small"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <v-icon
+              start
+              size="large"
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn>
         </v-col>
       </v-row>
 
@@ -221,8 +422,7 @@ import {
   mdiFileAlertOutline,
   mdiMouseMoveDown,
   mdiInformationOutline,
-  mdiFormatVerticalAlignBottom,
-  mdiFormatVerticalAlignTop,
+  mdiInvoiceTextOutline,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import { useGraphQL } from '@/mixins/graphql'
@@ -664,20 +864,15 @@ export default {
               value: this.autoScroll,
               key: 'autoScroll',
             },
-            {
-              title: this.headMode
-                ? 'HEAD: showing the start of the file'
-                : 'TAIL: showing the end of the file',
-              icon: this.headMode
-                ? mdiFormatVerticalAlignTop
-                : mdiFormatVerticalAlignBottom,
-              action: 'toggle',
-              value: this.headMode,
-              key: 'headMode',
-            },
           ],
         },
       ]
+    },
+    /** Tooltip/label for the HEAD/TAIL mode toggle button. */
+    headModeTitle () {
+      return this.headMode
+        ? 'HEAD: showing the start of the file'
+        : 'TAIL: showing the end of the file'
     },
   },
 
@@ -840,6 +1035,7 @@ export default {
     mdiPowerPlugOff,
     mdiFileAlertOutline,
     mdiInformationOutline,
+    mdiInvoiceTextOutline,
   },
 }
 </script>
