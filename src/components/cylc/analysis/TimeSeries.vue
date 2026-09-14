@@ -83,8 +83,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           size="64"
           class="mb-4 time-series-empty-icon"
         />
-        <div class="text-h6 mb-1">No tasks selected</div>
-        <div class="text-body-2 text-medium-emphasis mb-4" style="max-width: 340px;">
+        <div class="text-headline-small mb-1">No tasks selected</div>
+        <div class="text-body-medium text-medium-emphasis mb-4" style="max-width: 340px;">
           Use the <strong>“Select tasks”</strong> box above to choose one or
           more tasks and plot their timings over cycle points.
         </div>
