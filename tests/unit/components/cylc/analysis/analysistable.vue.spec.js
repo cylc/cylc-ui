@@ -16,16 +16,13 @@
  */
 
 import { mount } from '@vue/test-utils'
-import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
-import WorkflowService from '@/services/workflow.service'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import { vuetifyOptions } from '@/plugins/vuetify'
 
 const vuetify = createVuetify(vuetifyOptions)
 const analysisTasks = analysisTaskQuery.data.tasks
-const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('AnalysisTable component', () => {
   /**
@@ -36,7 +33,6 @@ describe('AnalysisTable component', () => {
     return mount(AnalysisTable, {
       global: {
         plugins: [vuetify],
-        mocks: { $workflowService },
       },
       ...options,
     })

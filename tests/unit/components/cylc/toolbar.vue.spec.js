@@ -24,7 +24,7 @@ import WorkflowState from '@/model/WorkflowState.model'
 
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { __drawer as drawerState } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { mdiMenuClose, mdiMenuOpen } from '@mdi/js'
