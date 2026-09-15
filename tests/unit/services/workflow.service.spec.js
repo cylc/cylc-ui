@@ -22,8 +22,6 @@ import { vi } from 'vitest'
 import sinon from 'sinon'
 import { print } from 'graphql/language'
 import gql from 'graphql-tag'
-// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
-import 'cross-fetch/polyfill'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import WorkflowService from '@/services/workflow.service'
