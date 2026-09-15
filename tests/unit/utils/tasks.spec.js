@@ -110,13 +110,25 @@ describe('tasks', () => {
       expect(formatDuration(0)).to.equal(undefined)
     })
     it('should change format of 0 seconds based on value of allowZeros', () => {
-      expect(formatDuration(0, { allowZeros: false })).to.equal(undefined)
-      expect(formatDuration(0, { allowZeros: true })).to.equal('00:00:00')
+      expect(formatDuration(0, false)).to.equal(undefined)
+      expect(formatDuration(0, true)).to.equal('00:00:00')
     })
     it('should not change format of non-zero values based on allowZeros', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: false })).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: true })).to.equal('00:00:42')
+    })
+    it('should format peak RSS values (given in MB) into human-readable memory', () => {
+      // undefined/null values
+      expect(formatDuration(null, true, 'peakRss')).to.equal(undefined)
+      expect(formatDuration(undefined, true, 'peakRss')).to.equal(undefined)
+      // values below 1 MB are shown in KB
+      expect(formatDuration(0.5, true, 'peakRss')).to.equal('512 KB')
+      // values below 1000 MB are shown in MB
+      expect(formatDuration(20, true, 'peakRss')).to.equal('20.0 MB')
+      expect(formatDuration(512, true, 'peakRss')).to.equal('512 MB')
+      // values of 1000 MB or more are shown in GB
+      expect(formatDuration(2048, true, 'peakRss')).to.equal('2.00 GB')
     })
   })
 
