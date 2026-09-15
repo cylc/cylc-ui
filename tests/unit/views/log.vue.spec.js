@@ -20,7 +20,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import sinon from 'sinon'
-import Log from '@/views/Log.vue'
+import Log, { Results, LogsCallback } from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
@@ -142,6 +142,55 @@ describe('Log view', () => {
     expect(wrapper.vm.id).toBe(undefined)
     // should have unsubscribed
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
+  })
+
+  it('toggles the log mode and updates the toggle label', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    const initialMode = wrapper.vm.headMode
+    const initialTitle = wrapper.vm.headModeTitle
+
+    wrapper.vm.headMode = !initialMode
+    await nextTick()
+    expect(wrapper.vm.headMode).toBe(!initialMode)
+    expect(wrapper.vm.headModeTitle).not.toBe(initialTitle)
+  })
+
+  it('provides the correct label for each log mode', async () => {
+    const wrapper = mountFunction()
+    await nextTick()
+
+    wrapper.vm.headMode = true
+    expect(wrapper.vm.headModeTitle).toBe(
+      'HEAD: showing the start of the file'
+    )
+
+    wrapper.vm.headMode = false
+    expect(wrapper.vm.headModeTitle).toBe(
+      'TAIL: showing the end of the file'
+    )
+  })
+
+  it('records which end of the file has been truncated', async () => {
+    // start-of-file truncation
+    const startResults = new Results()
+    const startCallback = new LogsCallback(startResults, () => null)
+    startCallback.onAdded({ lines: ['line-1', 'line-2'] })
+    startCallback.onAdded({ truncated: 'start' })
+    expect(startResults.truncatedStart).toBe(true)
+    expect(startResults.truncatedEnd).toBe(false)
+    // markers are no longer injected into the log lines
+    expect(startResults.lines).toEqual(['line-1', 'line-2'])
+
+    // end-of-file truncation
+    const endResults = new Results()
+    const endCallback = new LogsCallback(endResults, () => null)
+    endCallback.onAdded({ lines: ['line-1', 'line-2'] })
+    endCallback.onAdded({ truncated: 'end' })
+    expect(endResults.truncatedEnd).toBe(true)
+    expect(endResults.truncatedStart).toBe(false)
+    expect(endResults.lines).toEqual(['line-1', 'line-2'])
   })
 
   it('does not issue subscription for incomplete task ID', async () => {

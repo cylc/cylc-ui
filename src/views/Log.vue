@@ -22,6 +22,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   display: inline-block;
   margin-left: 1em;
 }
+
+// HEAD/TAIL mode toggle button styling
+.c-log {
+  // flip the icon upside-down for HEAD mode
+  .log-mode-toggle__icon--flip {
+    transform: rotate(180deg);
+  }
+  // stylised "bubble" text (LAYOUT 3)
+  .log-mode-toggle__bubble {
+    display: inline-block;
+    padding: 2px 14px;
+    border-radius: 999px;
+    background: rgba(var(--v-theme-on-surface), 0.08);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  // tighten the stacked text so the two words sit close together (LAYOUT 5)
+  .log-mode-toggle__stack {
+    line-height: 1.1;
+  }
+  // stacked "bubble letter" text: coloured fill with a contrasting outline
+  // (LAYOUT 6). Tweak the two colours / stroke width to taste.
+  .log-mode-toggle__bubble-text {
+    line-height: 1;
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: rgb(0, 0, 255);                        // fill colour
+    -webkit-text-stroke: 1.5px rgb(var(--v-theme-on-surface)); // outline colour
+    // draw the outline behind the fill so the fill stays crisp
+    paint-order: stroke fill;
+  }
+}
 </style>
 
 <template>
@@ -52,6 +88,171 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @setOption="setOption"
             :size="toolbarBtnSize"
           />
+
+          <!--
+            HEAD/TAIL mode toggle button.
+
+            This shows the invoice-text-outline icon (flipped upside-down when
+            in HEAD mode) combined with some text. Several starting layouts are
+            provided below - enable ONE and comment the others out to compare
+            them. They are only rough starting points for styling.
+          -->
+
+          <!-- LAYOUT 1: icon + "Truncated" stacked vertically. The label sits
+               above the (flipped) icon in HEAD mode, below it in TAIL mode. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="d-flex flex-column align-center py-1">
+              <span
+                v-if="headMode"
+                class="text-caption"
+              >Truncated</span>
+              <v-icon
+                :icon="$options.icons.mdiInvoiceTextOutline"
+                :class="{ 'log-mode-toggle__icon--flip': headMode }"
+              />
+              <span
+                v-if="!headMode"
+                class="text-caption"
+              >Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 2: icon + "Truncated" inline. The label sits before the
+               (flipped) icon in HEAD mode, after it in TAIL mode. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <span
+              v-if="headMode"
+              class="text-caption mr-1"
+            >Truncated</span>
+            <v-icon
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            <span
+              v-if="!headMode"
+              class="text-caption ml-1"
+            >Truncated</span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+          <!-- LAYOUT 3: no icon - stylised "bubble" text only. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <span class="log-mode-toggle__bubble">
+              {{ headMode ? 'Start truncated' : 'End truncated' }}
+            </span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+          <!-- LAYOUT 4: icon + short "Start"/"End" label, icon prepended. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="tonal"
+            size="small"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <v-icon
+              start
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            {{ headMode ? 'Start' : 'End' }}
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 5: text only, stacked with one word above the other. -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 6: stacked "bubble letter" text - coloured fill with a
+               contrasting outline (see the styles at the top of the file). -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="text"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="log-mode-toggle__bubble-text d-flex flex-column align-center py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 7: LAYOUT 6's stacked bubble-letter text inside a tonal
+               button (like LAYOUT 4). -->
+          <!-- <v-btn
+            class="log-mode-toggle ml-2"
+            variant="tonal"
+            size="small"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </div>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn> -->
+
+          <!-- LAYOUT 8: LAYOUT 4 (icon + tonal button) but with the label
+               stacked over two lines ("Start"/"End" above "Truncated"). -->
+          <v-btn
+            class="log-mode-toggle ml-2"
+            variant="tonal"
+            size="small"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="headMode = !headMode"
+            data-cy="log-mode-toggle"
+          >
+            <v-icon
+              start
+              size="large"
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>Truncated</span>
+            </span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn>
         </v-col>
       </v-row>
 
@@ -196,10 +397,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
     <log-component
       v-else
+      ref="logComponent"
       data-cy="log-viewer"
       :logs="results.lines"
       :timestamps="timestamps"
       :word-wrap="wordWrap"
+      :truncated-start="results.truncatedStart"
+      :truncated-end="results.truncatedEnd"
       v-model:autoScroll="autoScroll"
     />
   </v-container>
@@ -218,6 +422,7 @@ import {
   mdiFileAlertOutline,
   mdiMouseMoveDown,
   mdiInformationOutline,
+  mdiInvoiceTextOutline,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import { useGraphQL } from '@/mixins/graphql'
@@ -238,8 +443,19 @@ import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
 import JobDetails from '@/components/cylc/common/JobDetails.vue'
-import { useLogWordWrapDefault } from '@/composables/localStorage'
+import { useLogWordWrapDefault, useLogMaxLines, normalizeLogMaxLines } from '@/composables/localStorage'
 import { eventBus } from '@/services/eventBus'
+
+/**
+ * Log view modes.
+ *
+ * These map to the `--mode` values of `cylc cat-log`. "HEAD" is presented to
+ * the user but corresponds to the "tail" cat-log mode (follow the file from
+ * the start); "TAIL" corresponds to the "tail-end" cat-log mode (follow the
+ * file from the end).
+ */
+const LOG_MODE_HEAD = 'tail'
+const LOG_MODE_TAIL = 'tail-end'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -247,12 +463,13 @@ import { eventBus } from '@/services/eventBus'
  * @type {DocumentNode}
 */
 const LOGS_SUBSCRIPTION = gql`
-subscription LogData ($id: ID!, $file: String!) {
-  logs (id: $id, file: $file) {
+subscription LogData ($id: ID!, $file: String!, $mode: String, $maxLines: Int) {
+  logs (id: $id, file: $file, mode: $mode, maxLines: $maxLines) {
     lines
     connected
     path
     error
+    truncated
   }
 }
 `
@@ -295,7 +512,7 @@ query Jobs($id: ID!, $workflowID: ID!) {
  * The first pattern with a matching file name will be chosen.
  */
 
-class Results {
+export class Results {
   constructor () {
     /** @type {string[]} */
     this.lines = []
@@ -307,26 +524,53 @@ class Results {
     this.connected = null
     /** @type {?string} */
     this.error = null
+    /**
+     * Whether the *start* of the file has been truncated (some earlier lines
+     * are not shown). Drives the truncation warning above the log.
+     * @type {boolean}
+     */
+    this.truncatedStart = false
+    /**
+     * Whether the *end* of the file has been truncated (some later lines are
+     * not shown). Drives the truncation warning below the log.
+     * @type {boolean}
+     */
+    this.truncatedEnd = false
   }
 }
 
 /** Callback for assembling the log file from the subscription */
-class LogsCallback extends DeltasCallback {
+export class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
+   * @param {() => (?number)} getMaxLines
+   *   Returns the maximum number of lines to keep (discarding the oldest as
+   *   new lines arrive), or null/undefined to keep all lines.
    */
-  constructor (results) {
+  constructor (results, getMaxLines) {
     super()
     this.results = results
+    this.getMaxLines = getMaxLines
   }
 
   onAdded (added, store, errors) {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
       this.results.lines = []
+      this.results.truncatedStart = false
+      this.results.truncatedEnd = false
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
+      this.trim()
+    }
+    if (added.truncated != null) {
+      // record which end of the file has been truncated (drives the warning)
+      if (added.truncated === 'start') {
+        this.results.truncatedStart = true
+      } else {
+        this.results.truncatedEnd = true
+      }
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -336,6 +580,16 @@ class LogsCallback extends DeltasCallback {
     }
     if (added.path != null) {
       [this.results.host, this.results.path] = added.path.split(':', 2)
+    }
+  }
+
+  /**
+   * In "pop" mode, discard the oldest lines to stay within the limit.
+   */
+  trim () {
+    const maxLines = this.getMaxLines?.()
+    if (maxLines != null && this.results.lines.length > maxLines) {
+      this.results.lines.splice(0, this.results.lines.length - maxLines)
     }
   }
 }
@@ -443,6 +697,33 @@ export default {
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
+    /**
+     * Whether the log view is in HEAD mode:
+     * HEAD (cat-log "tail" mode) shows the start of the file and follows it;
+     * TAIL (cat-log "tail-end" mode) shows the end.
+     */
+    const headMode = useInitialOptions('headMode', { props, emit }, false)
+
+    /**
+     * Pop mode? (true = only keep the most recent `maxLines` lines,
+     * discarding the oldest as new lines arrive; false = keep all lines).
+     * UI-only, so changing it does not require re-subscribing.
+     *
+     * There is no user-facing control for this: we always pop so the view
+     * stays bounded. Kept as an option so it can be flipped for development.
+     */
+    const popMode = useInitialOptions('popMode', { props, emit }, true)
+
+    /**
+     * The maximum number of log lines to fetch/display.
+     *
+     * This is a global, per-user setting (edited on the User Profile page),
+     * not a per-workflow view option. Changing it re-subscribes (raising it
+     * needs the backend) and also acts as the cap for "pop" mode.
+     * @type {import('vue').Ref<number>}
+     */
+    const maxLines = useLogMaxLines()
+
     /** View toolbar button size */
     const toolbarBtnSize = '40'
 
@@ -470,6 +751,9 @@ export default {
       timestamps,
       wordWrap,
       autoScroll,
+      headMode,
+      popMode,
+      maxLines,
       reset,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
@@ -507,6 +791,38 @@ export default {
       },
       { immediate: true }
     )
+
+    // re-subscribe when the log view mode is changed
+    this.$watch(() => this.headMode, (headMode) => {
+      if (!headMode) {
+        // TAIL mode follows the end of the file, so jump to the end and
+        // follow new lines
+        this.autoScroll = true
+      } else {
+        // HEAD mode shows the start of the file, so stop following and jump
+        // to the top
+        this.autoScroll = false
+        this.$refs.logComponent?.scrollToTop()
+      }
+      this.updateQuery()
+    })
+
+    // apply the pop limit immediately when it is enabled (otherwise it only
+    // takes effect as new lines arrive)
+    this.$watch(() => this.popMode, (popMode) => {
+      const maxLines = normalizeLogMaxLines(this.maxLines)
+      if (popMode && this.results.lines.length > maxLines) {
+        this.results.lines.splice(
+          0,
+          this.results.lines.length - maxLines
+        )
+      }
+    })
+
+    // re-subscribe when the maximum number of lines is changed
+    this.$watch(() => this.maxLines, () => {
+      this.updateQuery()
+    })
   },
 
   computed: {
@@ -552,6 +868,12 @@ export default {
         },
       ]
     },
+    /** Tooltip/label for the HEAD/TAIL mode toggle button. */
+    headModeTitle () {
+      return this.headMode
+        ? 'HEAD: showing the start of the file'
+        : 'TAIL: showing the end of the file'
+    },
   },
 
   methods: {
@@ -571,10 +893,18 @@ export default {
       // update the subscription
       this.query = new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
-        { id: this.id, file: this.file },
+        {
+          id: this.id,
+          file: this.file,
+          mode: this.headMode ? LOG_MODE_HEAD : LOG_MODE_TAIL,
+          maxLines: normalizeLogMaxLines(this.maxLines),
+        },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results),
+          new LogsCallback(
+            this.results,
+            () => this.popMode ? normalizeLogMaxLines(this.maxLines) : null
+          ),
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false
@@ -705,6 +1035,7 @@ export default {
     mdiPowerPlugOff,
     mdiFileAlertOutline,
     mdiInformationOutline,
+    mdiInvoiceTextOutline,
   },
 }
 </script>
