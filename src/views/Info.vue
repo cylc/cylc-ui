@@ -26,10 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import DeltasCallback from '@/services/callbacks'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import {
   initialOptions,
   useInitialOptions,
@@ -159,39 +158,6 @@ function rebuildTaskChildren (taskNode, taskData) {
   }
 }
 
-/** Callback for assembling the log file from the subscription */
-class InfoCallback extends DeltasCallback {
-  /**
-   * @param {Results} results
-   */
-  constructor (task, taskNode) {
-    super()
-    this.task = task
-    this.taskNode = taskNode
-  }
-
-  onAdded (added, store, errors) {
-    // store the task info
-    Object.assign(this.task, added.taskProxies[0])
-
-    // construct a dummy "node" like to make it look like a node in the
-    // central data store
-    Object.assign(this.taskNode, taskObjToNode(this.task))
-    rebuildTaskChildren(this.taskNode, this.task)
-  }
-
-  onUpdated (updated, store, errors) {
-    if (updated?.taskProxies) {
-      Object.assign(this.task, updated.taskProxies[0])
-    }
-
-    rebuildTaskChildren(this.taskNode, this.task)
-  }
-
-  onPruned (pruned) {
-  }
-}
-
 export default {
   name: 'InfoView',
 
@@ -208,7 +174,7 @@ export default {
   },
 
   setup (props, { emit }) {
-    const { variables } = useGraphQL()
+    const { variables } = useWorkflowVariables()
 
     const requestedTokens = useInitialOptions('requestedTokens', { props, emit })
     const panelExpansion = useInitialOptions('panelExpansion', { props, emit }, ['metadata'])
@@ -222,12 +188,6 @@ export default {
 
   data () {
     return {
-      // This is the task we will request metadata for.
-      // when you change these values, the old query will be automatically canceled
-      // and re-issued with the new values
-      requestedCycle: undefined,
-      requestedTask: undefined,
-
       // The task formatted as a data-store node
       task: {},
       taskNode: {},
@@ -243,11 +203,24 @@ export default {
         QUERY,
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
-        [
-          new InfoCallback(this.task, this.taskNode),
-        ],
-        /* isDelta */ true,
-        /* isGlobalCallback */ false
+        {
+          onDelta: ({ added, updated }) => {
+            if (added) {
+            // store the task info
+              Object.assign(this.task, added.taskProxies[0])
+
+              // construct a dummy "node" like to make it look like a node in the central data store
+              Object.assign(this.taskNode, taskObjToNode(this.task))
+              rebuildTaskChildren(this.taskNode, this.task)
+            }
+            if (updated) {
+              if (updated?.taskProxies) {
+                Object.assign(this.task, updated.taskProxies[0])
+              }
+              rebuildTaskChildren(this.taskNode, this.task)
+            }
+          },
+        }
       )
     },
   },
