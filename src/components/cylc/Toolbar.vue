@@ -281,7 +281,7 @@ import {
   mutationStatus,
 } from '@/utils/aotf'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
 import { upperFirst } from 'lodash-es'
@@ -407,9 +407,6 @@ export default {
         QUERY,
         this.variables,
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
     },
     currentWorkflow () {

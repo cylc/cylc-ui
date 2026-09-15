@@ -198,7 +198,7 @@ import { jupyterLogo } from '@/utils/icons'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import EventChip from '@/components/cylc/EventChip.vue'
 
@@ -255,9 +255,6 @@ export default {
         QUERY,
         {},
         'root',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       ),
     }
   },

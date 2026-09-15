@@ -19,7 +19,6 @@
 import { mount } from '@vue/test-utils'
 import { Assertion } from 'chai'
 import { createVuetify } from 'vuetify'
-import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import {
@@ -29,7 +28,6 @@ import {
   simpleTaskNode,
 } from './tree.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
-import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 import TaskState from '@/model/TaskState.model'
 import { vuetifyOptions } from '@/plugins/vuetify'
@@ -59,13 +57,10 @@ Assertion.addMethod('expanded', function () {
   )
 })
 
-const $workflowService = sinon.createStubInstance(WorkflowService)
-
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
       plugins: [vuetify, CommandMenuPlugin],
-      mock: { $workflowService },
     },
     ...options,
   })
@@ -143,7 +138,6 @@ describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
       plugins: [vuetify, CommandMenuPlugin],
-      mock: { $workflowService },
     },
     ...options,
   })

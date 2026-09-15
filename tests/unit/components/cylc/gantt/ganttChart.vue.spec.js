@@ -16,9 +16,7 @@
  */
 
 import { mount } from '@vue/test-utils'
-import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
-import WorkflowService from '@/services/workflow.service'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 import { vuetifyOptions } from '@/plugins/vuetify'
 
@@ -42,14 +40,12 @@ const jobs = {
 }
 
 const vuetify = createVuetify(vuetifyOptions)
-const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('GanttChart component', () => {
   const mountFunction = (options) => {
     return mount(GanttChart, {
       global: {
         plugins: [vuetify],
-        mocks: { $workflowService },
       },
       shallow: true,
       ...options,
