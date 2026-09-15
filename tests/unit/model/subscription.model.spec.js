@@ -15,90 +15,71 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import sinon from 'sinon'
 import gql from 'graphql-tag'
-import Subscription from '@/model/Subscription.model'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { Subscription } from '@/model/Subscription.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import ViewState from '@/model/ViewState.model'
 
-describe('SubscriptionQuery model', () => {
+describe('Subscription model', () => {
   const query = gql`query { workflow { id } }`
   const variables = {
     workflowID: '~cylc/cylc',
   }
   const name = 'root'
-  const callbacks = []
-  const isDelta = true
-  const isGlobalCallback = true
   let subscriptionQuery
   beforeEach(() => {
-    sinon.stub(console, 'debug')
     subscriptionQuery = new SubscriptionQuery(
       query,
       variables,
       name,
-      callbacks,
-      isDelta,
-      isGlobalCallback)
+    )
   })
-  afterEach(() => {
-    sinon.restore()
-  })
+
   describe('constructor', () => {
     it('should be created', () => {
-      const debug = false
-      const subscription = new Subscription(subscriptionQuery, debug)
+      const subscription = new Subscription(subscriptionQuery)
       expect(subscription.query).to.equal(subscriptionQuery)
       expect(subscription.observable).to.equal(null)
-      expect(Object.keys(subscription.subscribers).length).to.equal(0)
-      expect(subscription.callbacks.length).to.equal(0)
+      expect(subscription.subscribers.size).to.equal(0)
       expect(subscription.reload).to.equal(false)
-      expect(subscription.debug).to.equal(debug)
     })
   })
-  describe('handleView', () => {
-    it('should set the subscribers viewStates', () => {
-      const tests = [
-        {
-          viewState: ViewState.ERROR,
-          debug: true,
-          context: {
-            message: 'test',
-          },
+
+  describe('handleViewState', () => {
+    it.each([
+      {
+        viewState: ViewState.ERROR,
+        context: {
+          message: 'test',
         },
-        {
-          viewState: ViewState.NO_STATE,
-          debug: true,
-          context: {
-            message: 'test',
-          },
+      },
+      {
+        viewState: ViewState.NO_STATE,
+        context: {
+          message: 'test',
         },
-        {
-          viewState: ViewState.LOADING,
-          debug: true,
-          context: {
-            message: 'test',
-          },
+      },
+      {
+        viewState: ViewState.LOADING,
+        context: {
+          message: 'test',
         },
-        {
-          viewState: ViewState.COMPLETE,
-          debug: true,
-          context: {
-            message: 'test',
-          },
+      },
+      {
+        viewState: ViewState.COMPLETE,
+        context: {
+          message: 'test',
         },
-      ]
-      for (const test of tests) {
-        const subscription = new Subscription(subscriptionQuery, test.debug)
-        subscription.subscribers[1] = {
-          viewState: null,
-          setAlert: () => {
-          },
-        }
-        subscription.handleViewState(test.viewState, test.context)
-        Object.values(subscription.subscribers).forEach(subscriber => {
-          expect(subscriber.viewState).to.equal(test.viewState)
-        })
+      },
+    ])('sets the subscribers viewStates: $viewState', ({ viewState, context }) => {
+      const subscription = new Subscription(subscriptionQuery)
+      subscription.subscribers.set('1', {
+        viewState: null,
+        setAlert: () => {},
+      })
+      subscription.handleViewState(viewState, context)
+      for (const subscriber of subscription.subscribers.values()) {
+        expect(subscriber.viewState).to.equal(viewState)
       }
     })
   })

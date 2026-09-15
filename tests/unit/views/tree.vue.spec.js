@@ -19,7 +19,7 @@ import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
 import { getIDMap, mockRoute } from '$tests/util'
 
