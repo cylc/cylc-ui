@@ -19,7 +19,7 @@ import { mount } from '@vue/test-utils'
 import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
 import { analysisJobQuery } from '@/services/mock/json/index.cjs'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 import { vuetifyOptions } from '@/plugins/vuetify'
 
