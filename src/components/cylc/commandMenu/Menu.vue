@@ -121,13 +121,14 @@ import Mutation from '@/components/cylc/Mutation.vue'
 import {
   mdiPencil,
 } from '@mdi/js'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 import { eventBus } from '@/services/eventBus'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { upperFirst } from 'lodash-es'
 import { formatFlowNums } from '@/utils/tasks'
 import { getJobLogFileFromState } from '@/model/JobState.model'
+import { useUserService } from '@/services/user.service'
 
 /**
  * Return the appropriate log file for a job or task node, or nothing for other nodes.
@@ -156,7 +157,10 @@ export default {
   },
 
   setup () {
+    const { user } = useUserService()
+
     return {
+      user,
       dialog: ref(false),
       dialogMutation: ref(null),
       dialogKey: ref(false),
@@ -191,8 +195,6 @@ export default {
     canExpand () {
       return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
     },
-
-    ...mapState('user', ['user']),
 
     displayMutations () {
       if (!this.mutations.length) {
