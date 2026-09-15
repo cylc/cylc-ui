@@ -235,7 +235,7 @@ describe('Log command in menu', () => {
     }
 
     const jobDataQueries = []
-    cy.intercept('/graphql', ({ body }) => {
+    cy.intercept('/cylc/graphql', ({ body }) => {
       if (body.operationName === 'Jobs') {
         jobDataQueries.push(body.variables.id)
       }

@@ -23,6 +23,7 @@ import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import dns from 'dns'
 import path from 'path'
+import pkg from './package.json'
 
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
@@ -46,14 +47,11 @@ export default defineConfig(({ mode }) => {
     )
   }
 
-  /**
-   * When running the Vite dev server to serve the app, set the proxy for the
-   * mock JSON server data in offline mode else the Cylc UIServer data.
-   */
-  const devProxyTarget = `http://localhost:3000${mode === 'offline' ? '/' : '/cylc/'}`
+  /** Proxy target for the JSON server that provides mock data to stand in for the UIServer in dev mode */
+  const devProxyTarget = 'http://localhost:3000/'
 
   return {
-    base: '',
+    base: '/cylc/',
     resolve: {
       alias: {
         '@': path.resolve('./src'),
@@ -76,11 +74,11 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        '^/(userprofile|version|graphql)': {
+        '^/cylc/(userprofile|version|graphql)': {
           target: devProxyTarget,
           changeOrigin: true,
         },
-        '^/subscriptions': {
+        '^/cylc/subscriptions': {
           target: devProxyTarget,
           changeOrigin: true,
           ws: true,
@@ -120,6 +118,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
+      __APP_VERSION__: JSON.stringify(pkg.version),
       // Allow vue devtools to work when runing vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
