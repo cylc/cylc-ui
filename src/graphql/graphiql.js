@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component
           observer.next('Your subscription data will appear here after server publication!')
           const subscription = subscriptionsClient.request({
             query: graphQLParams.query,
-            variables: graphQLParams.variables
+            variables: graphQLParams.variables,
           }, function (error, result) {
             if (error) {
               observer.error(error)
@@ -92,7 +92,7 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component
             }
           })
           return component.subscription
-        }
+        },
       }
     } else {
       return fallbackFetcher(graphQLParams)
@@ -115,10 +115,10 @@ function fallbackGraphQLFetcher (graphQLParams) {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        ...getXSRFHeaders()
+        ...getXSRFHeaders(),
       },
       body: JSON.stringify(graphQLParams),
-      credentials: 'include'
+      credentials: 'include',
     }
   ).then(function (response) {
     return response.json().catch(function () {
@@ -129,5 +129,5 @@ function fallbackGraphQLFetcher (graphQLParams) {
 
 export {
   graphQLFetcher,
-  fallbackGraphQLFetcher
+  fallbackGraphQLFetcher,
 }

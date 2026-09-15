@@ -8,6 +8,12 @@
   ],
   "platformAutomerge": true,
   "automergeStrategy": "squash",
+   "github-actions": {
+    "enabled": false
+  },
+  "minimumReleaseAge": "4 days",
+  "internalChecksFilter": "strict",
+  "prCreation": "immediate",
   "packageRules": [
     {
       "matchDepNames": [
@@ -137,14 +143,35 @@
       ]
     },
     {
+      "matchPackageNames": [
+        "simple-icons"
+      ],
+      "schedule": [
+        "* * * 1,6 *"
+      ]
+    },
+    {
       "groupName": "analysis view packages",
       "matchPackageNames": [
         "apexcharts",
         "vue3-apexcharts"
       ],
       "addLabels": [
-        "data workflows team"
-      ]
+        "analysis views"
+      ],
+      "prPriority": -1
+    },
+    {
+      "matchPackageNames": [
+        "apexcharts"
+      ],
+      "allowedVersions": "<5"
+    },
+    {
+      "matchPackageNames": [
+        "vue3-apexcharts"
+      ],
+      "allowedVersions": "<1.9"
     }
   ],
   "vulnerabilityAlerts": {
@@ -152,7 +179,7 @@
       "security"
     ]
   },
-  "github-actions": {
-    "enabled": false
-  }
+  "postUpdateOptions": [
+    "yarnDedupeHighest"
+  ]
 }

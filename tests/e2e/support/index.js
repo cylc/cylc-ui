@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,10 @@ import '@cypress/code-coverage/support'
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+
+import { enableBrowserPermissions } from '$tests/util'
+
+enableBrowserPermissions()
 
 beforeEach(() => {
   // Cypress test isolation does not include CacheStorage, so we need to clear it ourselves:

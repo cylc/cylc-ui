@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ describe('Header Component multiuser', () => {
           'read',
         ],
         mode: 'multi user',
-        owner: 'userTest'
-      }
+        owner: 'userTest',
+      },
     }).as('test-data-server-owner-input')
     cy.visit('/#/')
   })

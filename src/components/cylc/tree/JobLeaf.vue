@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -74,8 +74,8 @@ const props = defineProps({
   },
   density: {
     type: String,
-    default: 'compact'
-  }
+    default: 'compact',
+  },
 })
 
 /** Make the job details triangle point to the job icon */
@@ -87,7 +87,7 @@ const defaults = computed(() => ({
   VTable: {
     density: props.density,
     hover: true,
-  }
+  },
 }))
 
 const customOutputs = computed(() => jobMessageOutputs(props.node))

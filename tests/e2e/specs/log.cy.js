@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ describe('Log View', () => {
       .should('be.visible')
   })
 
-  it('copies the log filepath to the clipboard', { browser: 'electron' }, () => {
+  it('copies the log filepath to the clipboard', { browser: { family: 'chromium' } }, () => {
     cy.get('.c-log [data-cy=copy-to-clipboard]')
       .click()
     cy.window().its('navigator.clipboard')

@@ -12,7 +12,8 @@
     "compilerOptions": {
         // "checkJs": true,
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "$tests/*": ["./tests/*"]
         }
     },
     "watchOptions": {

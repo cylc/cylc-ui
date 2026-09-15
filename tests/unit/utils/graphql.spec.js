@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ describe('utils', () => {
           'ws://localhost:12345',
           {
             reconnect: false,
-            lazy: true
+            lazy: true,
           },
           {})
         expect(typeof subscriptionClient.request).to.equal('function')
@@ -51,7 +51,7 @@ describe('utils', () => {
           'ws://localhost:12345',
           {
             reconnect: false,
-            lazy: true
+            lazy: true,
           },
           {})
         expect(store.state.offline).to.equal(false)
@@ -60,24 +60,24 @@ describe('utils', () => {
         for ({ eventName, expectedOffline } of [
           {
             eventName: 'connecting',
-            expectedOffline: true
+            expectedOffline: true,
           },
           {
             eventName: 'connected',
-            expectedOffline: false
+            expectedOffline: false,
           },
           {
             eventName: 'reconnecting',
-            expectedOffline: true
+            expectedOffline: true,
           },
           {
             eventName: 'reconnected',
-            expectedOffline: false
+            expectedOffline: false,
           },
           {
             eventName: 'disconnected',
-            expectedOffline: true
-          }
+            expectedOffline: true,
+          },
         ]) {
           subscriptionClient.eventEmitter.emit(eventName)
           expect(store.state.offline).to.equal(expectedOffline)

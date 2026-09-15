@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,11 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     theme="dark"
   >
     <v-card>
-      <v-card-title class="pb-1 pt-3">
+      <v-card-title class="text-title-medium pb-1 pt-3">
         {{ title }}
         <CopyBtn :text="title"/>
       </v-card-title>
-      <v-card-subtitle class="pt-0 pb-2">
+      <v-card-subtitle class="pb-2">
         {{ typeAndStatusText }}
       </v-card-subtitle>
       <v-divider v-if="primaryMutations.length || displayMutations.length" />
@@ -115,7 +115,7 @@ import { nextTick, ref } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
-  mutate
+  mutate,
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation.vue'
 import {
@@ -282,8 +282,8 @@ export default {
         this.$router.push({
           name: 'Workspace',
           params: {
-            workflowName: this.node.tokens.workflow
-          }
+            workflowName: this.node.tokens.workflow,
+          },
         }).then(() => {
           eventBus.emit(
             'add-view',
@@ -292,7 +292,7 @@ export default {
               initialOptions: {
                 relativeID: this.node.tokens.relativeID || null,
                 file: getLogFileForNode(this.node),
-              }
+              },
             }
           )
         })
@@ -300,16 +300,16 @@ export default {
         this.$router.push({
           name: 'Workspace',
           params: {
-            workflowName: this.node.tokens.workflow
-          }
+            workflowName: this.node.tokens.workflow,
+          },
         }).then(() => {
           eventBus.emit(
             'add-view',
             {
               name: 'Info',
               initialOptions: {
-                requestedTokens: this.node.tokens || undefined
-              }
+                requestedTokens: this.node.tokens || undefined,
+              },
             }
           )
         })
@@ -355,7 +355,7 @@ export default {
       } else {
         this.callMutationFromContext(mutation)
       }
-    }
+    },
   },
 }
 </script>

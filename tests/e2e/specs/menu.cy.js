@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,8 +128,8 @@ describe('Command Menu component', () => {
       .should('not.exist')
   })
 
-  it("copies the object's name to the clipboard", { browser: 'electron' }, () => {
-    // (Access to the clipboard in Cypress only reliably works in Electron)
+  it("copies the object's name to the clipboard", { browser: { family: 'chromium' } }, () => {
+    // (Access to the clipboard in Cypress only works in Chromium-based browsers)
     cy.get('.node-data-task:first [data-c-interactive]:first')
       .click()
       .get('.c-mutation-menu')

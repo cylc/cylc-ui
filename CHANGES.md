@@ -12,6 +12,16 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.14.0 (Released 2026-05-06)
+
+### 🔧 Fixes
+
+[#2386](https://github.com/cylc/cylc-ui/pull/2386) - Fixed occasional empty cycle point bug in the tree view.
+
+[#2507](https://github.com/cylc/cylc-ui/pull/2507) - Tree view: ensured task icon modifiers (e.g. held, retrying) also show on their parent families and cycle icons.
+
+[#2519](https://github.com/cylc/cylc-ui/pull/2519) - Fix an issue in the "info" view where task outputs which contain hyphens were missing from completion expressions.
+
 ## cylc-ui-2.13.0 (Released 2026-02-24)
 
 ### 🚀 Enhancements

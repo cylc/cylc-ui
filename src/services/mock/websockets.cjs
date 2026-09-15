@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ const graphql = require('./graphql.cjs')
 function wsResponse (id, type, data = null) {
   const response = {
     id,
-    type
+    type,
   }
   // connection ack does not include a payload
   if (data) {
     response.payload = {
-      data
+      data,
     }
   }
   return JSON.stringify(response)

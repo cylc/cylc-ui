@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ function mergeQueries (queryA, queryB) {
   // Finally return the merged definitions and fragments (loc in the AST nodes is not important).
   queryA.definitions = [
     definition,
-    ...fragments
+    ...fragments,
   ]
   return queryA
 }

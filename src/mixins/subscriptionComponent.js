@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ import { uniqueId } from 'lodash'
  */
 export default {
   mixins: [
-    subscriptionMixin
+    subscriptionMixin,
   ],
   beforeCreate () {
     // Uniquely identify this component/view so we can keep track of which
@@ -61,7 +61,7 @@ export default {
         this.$workflowService.subscribe(this)
         this.$workflowService.startSubscriptions()
       }
-    }
+    },
   },
   watch: {
     query: {
@@ -73,5 +73,5 @@ export default {
       // (this is needed to prevent subscription mismatches):
       flush: 'post',
     },
-  }
+  },
 }

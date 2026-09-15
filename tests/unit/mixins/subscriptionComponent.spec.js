@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,14 @@ describe('Subscription Component mixin', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
       data: () => ({
-        query: { foo: 1 }
+        query: { foo: 1 },
       }),
-      render () { }
+      render () { },
     }
     component = mount(Component, {
       global: {
-        mocks: { $workflowService }
-      }
+        mocks: { $workflowService },
+      },
     })
   })
 

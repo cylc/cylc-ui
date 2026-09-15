@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,31 +28,41 @@ const resize = (width) => cy
   .trigger('mousemove', { clientX: width, clientY: 500 })
   .trigger('mouseup', { force: true })
 
+// Cypress 16 deprecated the original visibility strategy so it no longer includes checking
+// that the element has not been transformed off-screen
+// https://docs.cypress.io/app/core-concepts/interacting-with-elements#Visibility-Strategy
+Cypress.Commands.addQuery('isOnScreen', () => {
+  return ($els) => Array.from($els).every(
+    (el) => Cypress.dom.isVisible(el) && el.getBoundingClientRect().right > 0
+  )
+})
+
 describe('Drawer component', () => {
   it('is displayed when mode is desktop', () => {
     cy.visit('/#/')
-    cy
-      .get('#c-sidebar')
-      .should('be.visible')
+    cy.get('#c-sidebar')
+      .isOnScreen()
+      .should('be.true')
+    cy.get('#toggle-drawer')
+      .click()
+    cy.get('#c-sidebar')
+      .isOnScreen()
+      .should('not.be.true')
   })
 
-  it('has a width of 260', () => {
-    cy.visit('/#/')
-    cy.get('#c-sidebar').invoke('innerWidth').should('be.eq', 260)
-  })
-
-  it('is NOT displayed when mode is mobile', () => {
+  it('is NOT displayed when viewport is narrow', () => {
     // when the window dimension is below a mobile-threshold, the app sets state.app.drawer as false
     // and then the drawer is hidden
     cy.viewport(320, 480)
     cy.visit('/#/')
-    cy
-      .get('#c-sidebar')
-      .should('not.be.visible')
-    // besides the above, now the user should see a link to display the drawer
-    cy
-      .get('#toggle-drawer')
-      .should('be.visible')
+    cy.get('#c-sidebar')
+      .isOnScreen()
+      .should('not.be.true')
+    cy.get('#toggle-drawer')
+      .click()
+    cy.get('#c-sidebar')
+      .isOnScreen()
+      .should('be.true')
   })
 
   it('should drag to trigger resize', () => {
@@ -67,13 +77,16 @@ describe('Drawer component', () => {
     // Resizing to less than min width should hide it
     resize(minWidth - 5)
     cy.get('#c-sidebar')
-      .should('not.be.visible')
+      .isOnScreen()
+      .should('not.be.true')
     // Click hamburger btn to bring it back
     cy.get('#toggle-drawer')
       .should('be.visible')
       .click()
-      .get('#c-sidebar')
-      .should('be.visible')
+    cy.get('#c-sidebar')
+      .isOnScreen()
+      .should('be.true')
+    cy.get('#c-sidebar')
       .invoke('innerWidth')
       .should('be.closeTo', 200, 5)
   })

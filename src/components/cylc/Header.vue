@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         VCombobox: {
           bgColor: 'white',
           rules: [(val) => Boolean(val) || 'Required'],
-        }
+        },
       }">
         <!-- Owner combobox -->
         <v-combobox
@@ -44,12 +44,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
             <v-list-item
-              :title="item.title"
+              :title="item"
               v-bind="props"
             >
-              <template v-slot:append v-if="item.title !== ownerOnLoad">
+              <template v-slot:append v-if="item !== ownerOnLoad">
                 <v-icon
-                  @click.stop="owners.delete(item.title)"
+                  @click.stop="owners.delete(item)"
                   color="pink-accent-4"
                   :icon="mdiClose"
                 />
@@ -71,12 +71,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
             <v-list-item
-              :title="item.title"
+              :title="item"
               v-bind="props"
             >
-              <template v-slot:append v-if="item.title !== deploymentOnLoad">
+              <template v-slot:append v-if="item !== deploymentOnLoad">
                 <v-icon
-                  @click.stop="deployments.delete(item.title)"
+                  @click.stop="deployments.delete(item)"
                   color="pink-accent-4"
                   :icon="mdiClose"
                 />
@@ -105,7 +105,7 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useLocalStorage } from '@vueuse/core'
 import {
-  mdiClose
+  mdiClose,
 } from '@mdi/js'
 
 const store = useStore()
@@ -130,5 +130,4 @@ const showGoButton = computed(() => (
   deployment.value &&
   isNewRoute.value
 ))
-
 </script>

@@ -29,7 +29,7 @@ describe('View Toolbar Button Component', () => {
         props: {
           variant: 'text',
           ...props,
-        }
+        },
       }
     ).then((m) => m.wrapper).as('wrapper')
     // add the classes Vuetify requires
@@ -67,7 +67,7 @@ describe('View Toolbar Button Component', () => {
       activeModifiers: { toggle: true },
       'onUpdate:active': (val) => {
         wrapper.setProps({ active: val })
-      }
+      },
     })
     cy.get('@wrapper').then((_wrapper) => {
       wrapper = _wrapper

@@ -1,4 +1,4 @@
-/* Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+/* Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,15 @@
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
-import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
-import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import { Tokens } from '@/utils/uid'
-import { getIDMap } from '$tests/util'
+import { getIDMap, mockRoute } from '$tests/util'
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
-const vuetify = createVuetify()
 
 const expandID = (id) => ({
   id,
@@ -61,7 +58,7 @@ const workflowNode = {
                       ...expandID('~user/workflow1//1/foo/1'),
                       type: 'job',
                     },
-                  ]
+                  ],
                 },
                 {
                   ...expandID('~user/workflow1//1/bar'),
@@ -79,6 +76,7 @@ const workflowNode = {
 }
 
 describe('Tree view', () => {
+  mockRoute({ params: { workflowName: 'workflow1' } })
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
@@ -86,15 +84,13 @@ describe('Tree view', () => {
     store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
-        plugins: [vuetify, CommandMenuPlugin, store],
+        plugins: [store],
         mocks: {
-          $workflowService
-        }
+          $workflowService,
+        },
       },
-      props: {
-        workflowName: 'workflow1',
-      },
-      ...options
+      shallow: true,
+      ...options,
     })
   })
 
@@ -102,7 +98,7 @@ describe('Tree view', () => {
     it.each([
       {},
       { id: null, states: null },
-      { id: '  ', states: [] }
+      { id: '  ', states: [] },
     ])('has null filterState when filters are empty: %o', async (tasksFilter) => {
       const wrapper = mountFunction()
       expect(wrapper.vm.tasksFilter).toEqual({
