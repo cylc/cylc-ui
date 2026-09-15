@@ -38,7 +38,7 @@ const AnalysisView = defineAsyncComponent(() => import('@/views/Analysis.vue'))
 const GanttView = defineAsyncComponent(() => import('@/views/Gantt.vue'))
 const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
 const InfoView = defineAsyncComponent(() => import('@/views/Info.vue'))
-const MutationView = defineAsyncComponent(() => import('@/components/cylc/Mutation.vue'))
+const MutationView = defineAsyncComponent(() => import('@/views/Mutation.vue'))
 const GuideView = defineAsyncComponent(() => import('@/views/Guide.vue'))
 
 /**
