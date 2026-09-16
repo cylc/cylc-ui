@@ -126,6 +126,8 @@ export default defineConfig(({ mode }) => {
     test: {
       include: ['./tests/unit/**/*.spec.{js,ts}'],
       environment: 'jsdom',
+      // Disable isolation to speed up tests, however this means you should be careful to avoid pollution of globals:
+      isolate: false,
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       restoreMocks: true,
