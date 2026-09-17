@@ -17,7 +17,7 @@
 
 import { shallowRef } from 'vue'
 import { createSubscriptionClient, createGraphQLUrls } from '@/graphql'
-import SubscriptionWorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { fetchData } from '@/utils/urls'
 
 /**
@@ -46,7 +46,7 @@ export default {
   _installWorkflowService (app) {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
-    const workflowService = new SubscriptionWorkflowService(
+    const workflowService = new WorkflowService(
       graphQLUrls.httpUrl,
       client
     )

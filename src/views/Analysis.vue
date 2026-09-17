@@ -148,7 +148,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { useTemplateRef } from 'vue'
+import { useTemplateRef, ref } from 'vue'
 import {
   debounce,
   pick,
@@ -160,7 +160,6 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions,
 } from '@/utils/initialOptions'
-import DeltasCallback from '@/services/callbacks'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
@@ -206,44 +205,6 @@ query analysisTaskQuery ($workflows: [ID]) {
   }
 }
 `
-
-/** The callback which gets called when data comes in from the query */
-class AnalysisTaskCallback extends DeltasCallback {
-  /**
-   * @param {Object[]} tasks
-   */
-  constructor (tasks) {
-    super()
-    this.tasks = tasks
-  }
-
-  /**
-   * Add tasks contained in data to this.tasks
-   */
-  add (data) {
-    this.tasks.push(
-      ...data.tasks.map((task) => pick(task, taskFields))
-    )
-  }
-
-  // called when new objects are added
-  // NOTE: we manually call this to add items which come through on the query
-  onAdded (added, store, errors) {
-    this.add(added)
-  }
-
-  // called when existing objects are updated
-  onUpdated (updated, store, errors) {
-    this.add(updated)
-  }
-
-  // other hooks we don't need but must declare (for now)
-  before () {}
-  after () {}
-  onPruned () {}
-  commit () {}
-  tearDown () {}
-}
 
 export default {
   name: 'Analysis',
@@ -299,7 +260,19 @@ export default {
 
     const { workflowIDs } = useGraphQL()
 
+    /** Object containing all of the tasks added by the callback */
+    const tasks = ref([])
+
+    /** Call when new objects are added */
+    function add (data) {
+      tasks.value.push(
+        ...data.tasks.map((task) => pick(task, taskFields))
+      )
+    }
+
     return {
+      add,
+      tasks,
       tasksFilter,
       chartType,
       toolbarRef,
@@ -307,15 +280,6 @@ export default {
       boxPlotOptions,
       timeseriesPlotOptions,
       workflowIDs,
-    }
-  },
-
-  data () {
-    const tasks = []
-    return {
-      callback: new AnalysisTaskCallback(tasks),
-      /** Object containing all of the tasks added by the callback */
-      tasks,
     }
   },
 
@@ -341,12 +305,11 @@ export default {
     tasksQuery: debounce(
       async function () {
         this.tasks = []
-        this.callback = new AnalysisTaskCallback(this.tasks)
         const ret = await this.$workflowService.query2(
           TASK_QUERY,
           { workflows: this.workflowIDs }
         )
-        this.callback.onAdded(ret.data)
+        this.add(ret.data)
       },
       200 // only re-run this once every 0.2 seconds
     ),

@@ -108,7 +108,7 @@ import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
 import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 
 // Any fields that our view will use (e.g. TaskProxy.status) must be requested
 // in the query.
@@ -220,7 +220,16 @@ export default {
     // WorkflowService promises to make the data defined by the query available
     // in the store and to keep it up to date.
     query () {
-      return new SubscriptionQuery(QUERY, this.variables, 'workflow', [])
+      return new SubscriptionQuery(
+        QUERY,
+        this.variables,
+        'workflow',
+        {
+          // We can define hooks here to run when the subscription receives data
+          // (empty as no need in this case, but showing for demo purposes):
+          onDelta ({ added, updated, pruned }) { },
+        }
+      )
     },
   },
 

@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-gantt">
     <v-skeleton-loader
-      v-if="!Object.keys(callback.jobs).length"
+      v-if="!Object.keys(jobs).length"
       type="table"
       class="align-content-start"
     />
@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             closable-chips
             clearable
             placeholder="Search"
-            :items="callback.uniqueTasks"
+            :items="uniqueTasks"
             v-model="jobsFilter.name"
             label="Select tasks"
             ref="selectTasks"
@@ -101,11 +101,11 @@ import {
   useInitialOptions,
 } from '@/utils/initialOptions'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
-import DeltasCallback from '@/services/callbacks'
 import {
   matchTasks,
   platformOptions,
 } from '@/components/cylc/gantt/filter'
+import { ref } from 'vue'
 
 /** List of fields to request for each job */
 const jobFields = [
@@ -126,38 +126,6 @@ query ganttQuery ($workflows: [ID]) {
 }
 `
 
-/** The callback which gets called when data comes in from the query */
-export class GanttCallback extends DeltasCallback {
-  constructor () {
-    super()
-    this.jobs = {}
-  }
-  /**
-   * Add jobs contained in data to this.jobs
-   */
-
-  add (data) {
-    this.uniqueTasks = Array.from(
-      new Set(data.jobs.map((job) => job.name))
-    )
-    const sortedData = Object.fromEntries(this.uniqueTasks.map(key => [key, []]))
-    for (let i = 0; i < data.jobs.length; i++) {
-      sortedData[data.jobs[i].name].push(data.jobs[i])
-    }
-    Object.assign(this.jobs, sortedData)
-  }
-  // called when new objects are added
-  // NOTE: we manually call this to add items which come through on the query
-
-  onAdded (added, store, errors) {
-    this.add(added)
-  }
-
-  // called when existing objects are updated
-  onUpdated (updated, store, errors) {
-    this.add(updated)
-  }
-}
 export default {
   name: 'Gantt',
 
@@ -188,7 +156,25 @@ export default {
 
     const { workflowIDs } = useGraphQL()
 
+    const jobs = ref({})
+    const uniqueTasks = ref([])
+
+    /** Add jobs from incoming data */
+    function add (data) {
+      uniqueTasks.value = Array.from(
+        new Set(data.jobs.map((job) => job.name))
+      )
+      const sortedData = Object.fromEntries(uniqueTasks.value.map(key => [key, []]))
+      for (let i = 0; i < data.jobs.length; i++) {
+        sortedData[data.jobs[i].name].push(data.jobs[i])
+      }
+      Object.assign(jobs.value, sortedData)
+    }
+
     return {
+      add,
+      jobs,
+      uniqueTasks,
       tasksPerPage,
       jobsFilter,
       workflowIDs,
@@ -201,7 +187,6 @@ export default {
 
   data () {
     return {
-      callback: new GanttCallback(),
       timingOptions: [
         { value: 'totalTimes', title: 'Total times' },
         { value: 'runTimes', title: 'Run times' },
@@ -212,10 +197,10 @@ export default {
 
   computed: {
     filteredJobs () {
-      return matchTasks(this.callback.jobs, this.jobsFilter)
+      return matchTasks(this.jobs, this.jobsFilter)
     },
     platformOptions () {
-      return platformOptions(this.callback.jobs)
+      return platformOptions(this.jobs)
     },
     timingOption () {
       return this.jobsFilter.timingOption.replace(/Times/, '')
@@ -233,7 +218,7 @@ export default {
           QUERY,
           { workflows: this.workflowIDs }
         )
-        this.callback.onAdded(ret.data)
+        this.add(ret.data)
       },
       200 // only re-run this once every 0.2 seconds
     ),

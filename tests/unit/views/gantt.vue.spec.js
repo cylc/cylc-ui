@@ -15,10 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { GanttCallback } from '@/views/Gantt.vue'
+import { createStore } from 'vuex'
+import { mount } from '@vue/test-utils'
+import Gantt from '@/views/Gantt.vue'
 import {
   matchTasks,
 } from '@/components/cylc/gantt/filter'
+import storeOptions from '@/store/options'
 
 const input = {
   jobs: [{
@@ -91,25 +94,26 @@ const filteredJobs = {
   }],
 }
 
-describe('GanttCallback', () => {
-  it('adds data', () => {
-    const ganttCallback = new GanttCallback()
-    ganttCallback.onAdded(input)
-    expect(ganttCallback.jobs).toEqual(expectedJobs)
+describe('Gantt', () => {
+  const mountFunc = () => mount(Gantt, {
+    global: {
+      plugins: [createStore(storeOptions)],
+    },
+    props: { workflowName: 'test' },
+    shallow: true,
   })
-  it('updates data', () => {
-    const ganttCallback = new GanttCallback()
-    ganttCallback.onUpdated(input)
-    expect(ganttCallback.jobs).toEqual(expectedJobs)
+
+  it('adds data', () => {
+    const wrapper = mountFunc()
+    wrapper.vm.add(input)
+    expect(wrapper.vm.jobs).toEqual(expectedJobs)
   })
   it('matches tasks', () => {
-    const ganttCallback = new GanttCallback()
-    ganttCallback.onAdded(input)
     const jobsFilter = {
       name: ['a'],
       timingOption: 'totalTimes',
       platformOption: -1,
     }
-    expect(matchTasks(ganttCallback.jobs, jobsFilter)).toEqual(filteredJobs)
+    expect(matchTasks(expectedJobs, jobsFilter)).toEqual(filteredJobs)
   })
 })

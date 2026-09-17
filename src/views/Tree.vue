@@ -51,7 +51,7 @@ import {
   initialOptions,
   useInitialOptions,
 } from '@/utils/initialOptions'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import { matchID, matchState, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
@@ -227,9 +227,6 @@ export default {
         QUERY,
         this.variables,
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
     },
 

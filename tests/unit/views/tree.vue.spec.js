@@ -20,7 +20,7 @@ import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
 import { getIDMap, mockRoute } from '$tests/util'
 
