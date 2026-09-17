@@ -67,7 +67,7 @@ const INITIAL_DATA = {
   runMode: 'Live',
 }
 
-const $workflowService = {
+const workflowService = {
   query () {
     return Promise.resolve(taskProxy.data)
   },
@@ -82,7 +82,6 @@ describe('EditRuntimeForm Component', () => {
       isFamily: false,
       tokens: { id: '~u/w//1/t' },
     },
-    value: false,
     types: cloneDeep(IntrospectionQuery.data.__schema.types),
   }
 
@@ -93,17 +92,14 @@ describe('EditRuntimeForm Component', () => {
   const mountFunction = (options) => shallowMount(EditRuntimeForm, {
     global: {
       plugins: [vuetify],
-      mocks: { $workflowService },
+      provide: { workflowService },
     },
     ...options,
   })
 
   describe('reset()', () => {
     it("queries the task's runtime section & processes the response", async () => {
-      const wrapper = mountFunction({
-        props,
-        created () {},
-      })
+      const wrapper = mountFunction({ props })
       await wrapper.vm.reset()
       expect(INITIAL_DATA).not.to.have.key('__typename')
       expect(wrapper.vm.model).to.deep.equal(INITIAL_DATA)
@@ -145,14 +141,9 @@ describe('EditRuntimeForm Component', () => {
         { environment: { FACTION: 'Empire' } },
         { outputs: { planet: 'Trantor' } },
       ]
-      const wrapper = mountFunction({
-        props,
-        data: () => ({
-          initialData: INITIAL_DATA,
-          model,
-        }),
-        created () {},
-      })
+      const wrapper = mountFunction({ props })
+      wrapper.vm.initialData = INITIAL_DATA
+      wrapper.vm.model = model
       expect(wrapper.vm.getBroadcastData()).to.deep.equal(expected)
     })
 
@@ -168,14 +159,9 @@ describe('EditRuntimeForm Component', () => {
         ],
       }
       const expected = []
-      const wrapper = mountFunction({
-        props,
-        data: () => ({
-          initialData: INITIAL_DATA,
-          model,
-        }),
-        created () {},
-      })
+      const wrapper = mountFunction({ props })
+      wrapper.vm.initialData = INITIAL_DATA
+      wrapper.vm.model = model
       expect(wrapper.vm.getBroadcastData()).to.deep.equal(expected)
     })
   })
