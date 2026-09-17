@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,31 +16,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-defaults-provider :defaults="vuetifyDefaults">
-    <v-app :class="`job_theme--${jobTheme}`">
-      <component :is="layout" :showSidebar="showSidebar">
-        <router-view/>
-      </component>
-    </v-app>
-  </v-defaults-provider>
+  <v-app :class="`job_theme--${jobTheme}`">
+    <component :is="layout">
+      <router-view/>
+    </component>
+  </v-app>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useJobTheme } from '@/composables/localStorage'
-import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
+import { injectDefaults } from 'vuetify/lib/composables/defaults'
+import { mergeDeep } from 'vuetify/lib/util'
+import { useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 
 const DEFAULT_LAYOUT = 'empty'
 const route = useRoute()
 
 const layout = computed(() => `${route.meta.layout || DEFAULT_LAYOUT}-layout`)
 
-const showSidebar = computed(() => route.meta.showSidebar ?? true)
-
 const jobTheme = useJobTheme()
 
-const vuetifyDefaults = useDynamicVuetifyDefaults()
+const reducedAnimation = useReducedAnimation()
+
+// Reactively update Vuetify global defaults to respect reduced animation setting
+// (https://github.com/vuetifyjs/vuetify/issues/19645#issuecomment-5242189108):
+const vuetifyDefaults = injectDefaults()
+watch(
+  reducedAnimation,
+  (value) => {
+    vuetifyDefaults.value = mergeDeep(
+      vuetifyDefaults.value,
+      {
+        global: {
+          transition: value ? 'no' : undefined,
+          ripple: value ? false : undefined,
+        },
+      },
+    )
+  },
+  { immediate: true }
+)
 
 onMounted(() => {
   // apply stored application font-size

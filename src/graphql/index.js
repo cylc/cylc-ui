@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,19 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  split
+  split,
 } from '@apollo/client/core'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
 import { store } from '@/store/index'
 import { createUrl, getXSRFHeaders } from '@/utils/urls'
+import { disableFragmentWarnings } from 'graphql-tag'
+
+// graphql-tag warns about fragments with the same name, as if they end up in the same GraphQL document, it will cause an error.
+// However, we have logic to merge subscription documents that means we shouldn't have two fragments with the same name in the same document.
+// See https://github.com/cylc/cylc-ui/issues/1757
+disableFragmentWarnings()
 
 /** @typedef {import('subscriptions-transport-ws').ClientOptions} ClientOptions */
 
@@ -42,7 +48,7 @@ export function createGraphQLUrls () {
   const wsUrl = createUrl('subscriptions', true)
   return {
     httpUrl,
-    wsUrl
+    wsUrl,
   }
 }
 
@@ -112,7 +118,7 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
  */
 export function createApolloClient (httpUrl, subscriptionClient) {
   const httpLink = new HttpLink({
-    uri: httpUrl
+    uri: httpUrl,
   })
 
   const wsLink = subscriptionClient !== null
@@ -133,8 +139,8 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     return {
       headers: {
         ...headers,
-        ...getXSRFHeaders()
-      }
+        ...getXSRFHeaders(),
+      },
     }
   })
 
@@ -144,12 +150,12 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     defaultOptions: {
       query: {
         fetchPolicy: 'no-cache',
-        errorPolicy: 'all'
+        errorPolicy: 'all',
       },
       watchQuery: {
         fetchPolicy: 'no-cache',
-        errorPolicy: 'all'
-      }
+        errorPolicy: 'all',
+      },
     },
     devtools: {
       enabled: import.meta.env.MODE !== 'production',

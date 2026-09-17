@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,19 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-container fluid class="c-user-profile">
     <v-row class="wrap">
       <v-col cols="12">
-        <v-alert
-          :icon="$options.icons.settings"
-          prominent
-          color="grey-lighten-3"
-        >
-          <h3 class="text-h5">{{ $t('UserProfile.title') }}</h3>
-        </v-alert>
         <v-form>
           <v-defaults-provider :defaults="$options.vuetifyDefaults">
             <v-container py-0>
-              <v-row no-gutters>
-                <h3>{{ $t('UserProfile.yourProfile') }}</h3>
-              </v-row>
+
+              <h3>{{ $t('UserProfile.yourProfile') }}</h3>
 
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
@@ -42,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :model-value="user.username"
                     disabled
                     id="profile-username"
-                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
@@ -60,7 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :model-value="Object.keys(user.extensions).join(', ') || 'None'"
                     disabled
                     id="profile-extensions"
-                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
@@ -90,9 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
               </v-row>
 
-              <v-row no-gutters class="mt-4">
-                <h3>Preferences</h3>
-              </v-row>
+              <h3>Preferences</h3>
 
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
@@ -218,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <template v-slot:item="{ item, props }">
                     <v-list-item
                       v-bind="props"
-                      :prepend-icon="workflowViews.get(item.value).icon"
+                      :prepend-icon="workflowViews.get(item).icon"
                     />
                   </template>
                 </v-select>
@@ -302,7 +290,7 @@ export default {
   jobThemes: [
     'default',
     'greyscale',
-    'colour_blind'
+    'colour_blind',
   ],
 
   icons: {

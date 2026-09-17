@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ describe('WorkflowService subscriptions', () => {
 describe('WorkflowService mutations', () => {
   it('handles asynchronously loaded mutations properly', () => {
     const deferred = new Deferred()
-    cy.intercept('/graphql', req => {
+    cy.intercept('/cylc/graphql', req => {
       if (req.body.query?.startsWith('mutation')) {
         // equivalent to `.as('mutation')`:
         req.alias = 'mutation'

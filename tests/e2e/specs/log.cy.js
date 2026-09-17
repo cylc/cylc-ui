@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +49,12 @@ function getMaxLineWidth ($els) {
 }
 
 describe('Log View', () => {
+  const defaultFile = 'scheduler/01-start-01.log'
   beforeEach(() => {
     cy.visit('/#/log/one')
   })
 
   it('displays the workflow log', () => {
-    const defaultFile = workflowLogFiles[0]
-
     // the workflow ID should be filled in
     cy.get('.c-log [data-cy=workflow-id-input]')
       .should('be.visible')
@@ -177,12 +176,12 @@ describe('Log View', () => {
       .should('be.visible')
   })
 
-  it('copies the log filepath to the clipboard', { browser: 'electron' }, () => {
+  it('copies the log filepath to the clipboard', { browser: { family: 'chromium' } }, () => {
     cy.get('.c-log [data-cy=copy-to-clipboard]')
       .click()
     cy.window().its('navigator.clipboard')
       .then((clip) => clip.readText())
-      .should('equal', `${logDirPath}/${workflowLogFiles[0]}`)
+      .should('equal', `${logDirPath}/${defaultFile}`)
   })
 
   it('has a job info menu', () => {
@@ -212,7 +211,7 @@ describe('Log View', () => {
 })
 
 describe('Log command in menu', () => {
-  it('opens a log view tab', () => {
+  it('opens a job log view tab', () => {
     cy.visit('/#/workspace/one')
       .get('.lm-DockPanel-widget')
       .should('have.length', 1)
@@ -226,6 +225,36 @@ describe('Log command in menu', () => {
       .contains(jobLogLines.join(''))
   })
 
+  it('navigates to and opens a workflow log view tab', () => {
+    const one = 'one'
+    const multi = 'multi/level/run1'
+    cy.visit('/#')
+      .get('.c-gscan .node').contains(one)
+      .parents('.node').find('[data-c-interactive]')
+      .click()
+      .get('.c-mutation-menu-item').contains('Log')
+      .click()
+    cy.url()
+      .should('contain', `/workspace/${encodeURIComponent(one)}`)
+      .get('.lm-DockPanel-widget')
+      .should('have.length', 2)
+      .get('.c-log [data-cy=workflow-id-input] input').as('idInput')
+      .invoke('val')
+      .should('eq', `~user/${one}`)
+    cy.get('.c-gscan .node').contains(multi)
+      .parents('.node').find('[data-c-interactive]')
+      .click()
+      .get('.c-mutation-menu-item').contains('Log')
+      .click()
+    cy.url()
+      .should('contain', `/workspace/${encodeURIComponent(multi)}`)
+      .get('.lm-DockPanel-widget')
+      .should('have.length', 2)
+      .get('@idInput')
+      .invoke('val')
+      .should('eq', `~user/${multi}`)
+  })
+
   it('chooses the log file based on the job state', () => {
     function openJobLog (state) {
       cy.get(`.c-tree .c-job.${state}:first`)
@@ -235,7 +264,7 @@ describe('Log command in menu', () => {
     }
 
     const jobDataQueries = []
-    cy.intercept('/graphql', ({ body }) => {
+    cy.intercept('/cylc/graphql', ({ body }) => {
       if (body.operationName === 'Jobs') {
         jobDataQueries.push(body.variables.id)
       }
@@ -267,18 +296,44 @@ describe('Log command in menu', () => {
 })
 
 describe('Log view in workspace', () => {
-  function openWorkflowLog () {
+  function setLogViewAsDefault () {
+    localStorage.defaultView = 'Log'
+  }
+
+  function openLogViewTab () {
     cy.get('#workflow-mutate-button')
       .click()
       .get('.c-mutation-menu-item').contains('Log')
       .click()
   }
 
-  it('remembers job ID and file when switching between workflows', () => {
-    const jobFile = /^job$/
-    const jobID = '20000102T0000Z/succeeded'
+  it('remembers workflow log file when navigating', () => {
+    const workflowFile = 'config/01-start-01.log'
+    setLogViewAsDefault()
     cy.visit('/#/workspace/one')
-    openWorkflowLog()
+    cy.get('.c-log [data-cy=file-input]').as('fileInput')
+      // get inner input value when the files have loaded and the input is no longer disabled
+      .find('input:not([disabled])').as('inputValue')
+      .should('not.have.value', workflowFile)
+    // select a different file
+    cy.get('@fileInput')
+      .click()
+      .get('[data-cy=file-input-menu] [role=listbox]')
+      .contains(workflowFile)
+      .click()
+      .get('@inputValue')
+      .should('have.value', workflowFile)
+    // Refresh the page
+    cy.reload()
+      .get('@inputValue')
+      .should('have.value', workflowFile)
+  })
+
+  it('remembers job ID and file when navigating', () => {
+    const jobFile = 'job-activity.log'
+    const jobID = '20000102T0000Z/succeeded'
+    setLogViewAsDefault()
+    cy.visit('/#/workspace/one')
     cy.get('[data-cy=job-toggle]')
       .click()
       .get('.c-log [data-cy=job-id-input] input').as('jobIDInput')
@@ -291,28 +346,23 @@ describe('Log view in workspace', () => {
       .contains(jobFile)
       .click()
       .get('@fileInput')
-      .contains(jobFile)
-    // Navigate away
-    cy.visit('/#/workspace/two')
-      .get('.c-log')
-      .should('not.exist')
-    // Navigate back
-    cy.visit('/#/workspace/one')
+      .find('input:not([disabled])').as('inputValue')
+      .should('have.value', jobFile)
+    // Refresh the page
+    cy.reload()
       .get('@jobIDInput')
-      .invoke('val')
-      .should('eq', jobID)
-      .get('@fileInput')
-      .contains(jobFile)
+      .invoke('val').should('eq', jobID)
+      .get('@inputValue')
+      .should('have.value', jobFile)
   })
 
   it('remembers word wrap setting and sets default word wrap', () => {
+    setLogViewAsDefault()
     cy.visit('/#/workspace/one')
-      .get('.lm-TabBar-tabCloseIcon').click()
-    openWorkflowLog()
     cy.get('.c-log [data-cy=control-wordWrap]')
       .should('have.attr', 'aria-checked', 'false')
     // Open a new log view
-    openWorkflowLog()
+    openLogViewTab()
     cy.get('.c-log:last [data-cy=control-wordWrap]')
       .click()
       .should('have.attr', 'aria-checked', 'true')
@@ -322,34 +372,8 @@ describe('Log view in workspace', () => {
       .should('have.attr', 'aria-checked', 'false')
     // Should set the default word wrap for new log views
     cy.visit('/#/workspace/multi/level/run1')
-    openWorkflowLog()
+    openLogViewTab()
     cy.get('.c-log [data-cy=control-wordWrap]')
       .should('have.attr', 'aria-checked', 'true')
-  })
-
-  it('navigates to correct workflow when choosing log option in mutation menu', () => {
-    const one = 'one'
-    const multi = 'multi/level/run1'
-    cy.visit('/#')
-      .get('.c-gscan .node').contains(one)
-      .parents('.node').find('[data-c-interactive]')
-      .click()
-      .get('.c-mutation-menu-item').contains('Log')
-      .click()
-    cy.url()
-      .should('contain', `/workspace/${encodeURIComponent(one)}`)
-      .get('.c-log [data-cy=workflow-id-input] input').as('idInput')
-      .invoke('val')
-      .should('eq', `~user/${one}`)
-    cy.get('.c-gscan .node').contains(multi)
-      .parents('.node').find('[data-c-interactive]')
-      .click()
-      .get('.c-mutation-menu-item').contains('Log')
-      .click()
-    cy.url()
-      .should('contain', `/workspace/${encodeURIComponent(multi)}`)
-      .get('@idInput')
-      .invoke('val')
-      .should('eq', `~user/${multi}`)
   })
 })

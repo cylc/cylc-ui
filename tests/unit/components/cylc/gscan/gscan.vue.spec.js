@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,21 +21,22 @@ import GScan from '@/components/cylc/gscan/GScan.vue'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import {
   WorkflowState,
-  WorkflowStateOrder
+  WorkflowStateOrder,
 } from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
 import {
   getWorkflowTreeSortValue,
-  sortedWorkflowTree
+  sortedWorkflowTree,
 } from '@/components/cylc/gscan/sort.js'
 
 import {
   TEST_TREE,
-  listTree
+  listTree,
 } from './utils'
 import { getIDMap } from '$tests/util'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
-const vuetify = createVuetify()
+const vuetify = createVuetify(vuetifyOptions)
 
 /**
  * Helper function to run filtering.
@@ -56,7 +57,7 @@ describe('GScan component', () => {
           getWorkflowTreeSortValue({
             type: 'workflow',
             node: { status: workflowState.name },
-            children: []
+            children: [],
           })
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
 
@@ -69,15 +70,15 @@ describe('GScan component', () => {
               {
                 type: 'workflow',
                 node: { status: workflowState.name },
-                children: []
+                children: [],
               },
               {
                 // a workflow with no state shouldn't mess with the sort order
                 type: 'workflow',
                 node: { status: undefined },
-                children: []
-              }
-            ]
+                children: [],
+              },
+            ],
           })
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
       }
@@ -88,7 +89,7 @@ describe('GScan component', () => {
       expect(
         listTree(sortedWorkflowTree(TEST_TREE))
       ).to.deep.equal([
-        '~u/b', '~u/c', '~u/a/x1', '~u/a/x2'
+        '~u/b', '~u/c', '~u/a/x1', '~u/a/x2',
       ])
     })
   })
@@ -102,7 +103,7 @@ describe('GScan component', () => {
         workflowTree: TEST_TREE,
         isLoading: false,
       },
-      ...options
+      ...options,
     })
 
     it('has null filterState when filters are empty', async () => {
@@ -117,7 +118,7 @@ describe('GScan component', () => {
         filters: {
           'workflow state': [],
           'task state': [],
-        }
+        },
       })
       expect(wrapper.vm.filterState).toBeNull()
     })
@@ -160,7 +161,7 @@ describe('GScan component', () => {
           'workflow state': [
             WorkflowState.STOPPING.name,
             WorkflowState.STOPPED.name,
-          ]
+          ],
         },
       })
       filterNodes(wrapper, filteredOutNodesCache)
@@ -203,7 +204,7 @@ describe('GScan component', () => {
       const filteredOutNodesCache = new Map()
 
       await wrapper.setData({
-        filters: { 'task state': [TaskState.RUNNING.name] }
+        filters: { 'task state': [TaskState.RUNNING.name] },
       })
       filterNodes(wrapper, filteredOutNodesCache)
       expect(getIDMap(filteredOutNodesCache)).toEqual({
@@ -215,7 +216,7 @@ describe('GScan component', () => {
       })
 
       await wrapper.setData({
-        filters: { 'task state': [TaskState.SUBMITTED.name] }
+        filters: { 'task state': [TaskState.SUBMITTED.name] },
       })
       filterNodes(wrapper, filteredOutNodesCache)
       expect(getIDMap(filteredOutNodesCache)).toEqual({

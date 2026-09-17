@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ export function formatCompletion (completion, outputs) {
 
   // break the completion expression down into parts and iterate over them
   for (let part of completion.split(/(and|or|\(|\))/)) {
-    part = part.trim()
+    // NOTE: "-"s are replaced by "_"s in the completion expression
+    part = part.trim().replace('_', '-')
 
     if (!part) {
       continue

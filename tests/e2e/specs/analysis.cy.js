@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
 
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
 import { clone } from 'lodash'
+
+/** A delay for state to be saved before refreshing page, otherwise can flakily fail */
+const stateSaveDelay = 100
 
 const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
 
@@ -428,21 +431,19 @@ describe('Filters and Options save state', () => {
       cy.visit('/#/workspace/one')
     })
 
-    it('remembers table and box & whiskers toggle option when switching between workflows', () => {
+    it('remembers table and box & whiskers toggle option', () => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
         .get('.vue-apexcharts')
         .should('be.visible')
-      // Navigate away
-      cy.visit('/#/')
-      cy.get('.c-dashboard')
-      // Navigate back
-      cy.visit('/#/workspace/one')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(stateSaveDelay)
+      cy.reload()
       cy.get('.vue-apexcharts')
         .should('be.visible')
     })
 
-    it('remembers task name, platform and timings when switching between workflows', () => {
+    it('remembers task name, platform and timings', () => {
       // Check default options
       cy
         .get('.c-analysis table > tbody > tr')
@@ -475,11 +476,9 @@ describe('Filters and Options save state', () => {
         .contains('Queue')
         .click({ force: true })
 
-      // Navigate away
-      cy.visit('/#/')
-      cy.get('.c-dashboard')
-      // Navigate back
-      cy.visit('/#/workspace/one')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(stateSaveDelay)
+      cy.reload()
 
       // Check number of tasks
       cy
@@ -489,7 +488,7 @@ describe('Filters and Options save state', () => {
         .should('be.visible')
     })
 
-    it('remembers table sorting & page options when switching between workflows', () => {
+    it('remembers table sorting & page options', () => {
       const sortedClass = 'v-data-table__th--sorted'
       cy.get('.c-table th')
         .contains('Platform')
@@ -510,31 +509,26 @@ describe('Filters and Options save state', () => {
         .should('not.exist')
         .get('@itemsPerPage').find('input')
         .should('have.value', 'All')
-      // Navigate away
-      cy.visit('/#/')
-        .get('.c-dashboard')
-      // Navigate back
-      cy.visit('/#/workspace/one')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(stateSaveDelay)
+      cy.reload()
       cy.get('@platformCol')
         .should('have.class', sortedClass)
       cy.get('@itemsPerPage').find('input')
         .should('have.value', 'All')
     })
 
-    it('remembers box and whisker sorting options when switching between workflows', () => {
+    it('remembers box and whisker sorting options', () => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
       cy.get('[data-cy="box-plot-sort-select"]')
         .click()
-      cy
-        .get('.v-list-item')
+      cy.get('.v-list-item')
         .contains('Count')
         .click({ force: true })
-      // Navigate away
-      cy.visit('/#/')
-        .get('.c-dashboard')
-      // Navigate back
-      cy.visit('/#/workspace/one')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(stateSaveDelay)
+      cy.reload()
       cy.get('[data-cy=box-plot-sort-select]')
         .contains('Count')
         .should('be.visible')

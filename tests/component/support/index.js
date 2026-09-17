@@ -23,6 +23,9 @@ import '@/styles/index.scss'
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { enableBrowserPermissions } from '$tests/util'
+
+enableBrowserPermissions()
 
 // vanilla mount function
 // e.g. cy.mount(MyComponent)
@@ -36,9 +39,9 @@ Cypress.Commands.add('vmount', (component, options = {}) => {
     component,
     {
       global: {
-        plugins: [createVuetify(vuetifyOptions)]
+        plugins: [createVuetify(vuetifyOptions)],
       },
-      ...options
+      ...options,
     }
   )
 })

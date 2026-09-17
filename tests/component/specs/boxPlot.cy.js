@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ const mountOpts = {
   props: {
     timingOption: 'total',
     animate: false,
-  }
+  },
 }
 
 describe('BoxPlot', () => {
@@ -99,7 +99,7 @@ describe('BoxPlot', () => {
       props: {
         tasks: Array.from(Array(7).keys(), (i) => ({
           ...task1,
-          name: `task_${i}`
+          name: `task_${i}`,
         })),
         itemsPerPage: 4,
       },

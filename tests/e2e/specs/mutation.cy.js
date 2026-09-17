@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,10 +59,10 @@ describe('Mutations component', () => {
       service.introspection = Promise.resolve({
         mutations,
         types: [],
-        queries: []
+        queries: [],
       })
       service.primaryMutations = {
-        workflow: ['workflowMutation']
+        workflow: ['workflowMutation'],
       }
     })
   }
@@ -71,7 +71,7 @@ describe('Mutations component', () => {
     beforeEach(() => {
       mockMutations()
       // Patch graphql responses
-      cy.intercept('/graphql', (req) => {
+      cy.intercept('/cylc/graphql', (req) => {
         const { query } = req.body
         if (query.startsWith('mutation')) {
           console.log(req)
@@ -79,9 +79,9 @@ describe('Mutations component', () => {
             data: {
               [req.body.operationName]: {
                 result: [true, {}],
-                __typename: upperFirst(req.body.operationName)
-              }
-            }
+                __typename: upperFirst(req.body.operationName),
+              },
+            },
           })
         }
       })
@@ -119,7 +119,7 @@ describe('Mutations component', () => {
 
     it('should stay open while submitting', () => {
       const deferred = new Deferred()
-      cy.intercept('/graphql', req => {
+      cy.intercept('/cylc/graphql', req => {
         if (req.body.query.startsWith('mutation')) {
           // Cypress will await promise before continuing with the request
           return deferred.promise

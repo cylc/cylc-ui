@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,14 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { getPageTitle } from '@/router/index'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import { Tokens } from '@/utils/uid'
 
@@ -41,8 +40,8 @@ import InfoComponent from '@/components/cylc/Info.vue'
 
 // NOTE: This query is run outside of the central data store
 const QUERY = gql`
-subscription InfoViewSubscription ($workflowId: ID, $taskID: ID) {
-  deltas(workflows: [$workflowId]) {
+subscription InfoViewSubscription ($workflowID: ID, $taskID: ID) {
+  deltas(workflows: [$workflowID]) {
     added {
       ...AddedDelta
     }
@@ -197,19 +196,11 @@ export default {
   name: 'InfoView',
 
   mixins: [
-    graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
     InfoComponent,
-  },
-
-  head () {
-    return {
-      // This sets the page title.
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
   },
 
   props: {
@@ -217,11 +208,15 @@ export default {
   },
 
   setup (props, { emit }) {
+    const { variables } = useGraphQL()
+
     const requestedTokens = useInitialOptions('requestedTokens', { props, emit })
     const panelExpansion = useInitialOptions('panelExpansion', { props, emit }, ['metadata'])
+
     return {
       requestedTokens,
       panelExpansion,
+      variables,
     }
   },
 
@@ -249,7 +244,7 @@ export default {
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
         [
-          new InfoCallback(this.task, this.taskNode)
+          new InfoCallback(this.task, this.taskNode),
         ],
         /* isDelta */ true,
         /* isGlobalCallback */ false
@@ -260,7 +255,7 @@ export default {
   methods: {
     updatePanelExpansion (value) {
       this.panelExpansion = value
-    }
-  }
+    },
+  },
 }
 </script>

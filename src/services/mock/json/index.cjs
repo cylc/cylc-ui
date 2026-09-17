@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ const ganttQuery = require('./ganttQuery.json')
 const InfoViewSubscription = require('./infoView.json')
 
 module.exports = {
+  // NOTE: the names of these exports must match the GraphQL operation (query/mutation/subscription) names
   IntrospectionQuery,
   taskProxy,
   familyProxy,
@@ -34,10 +35,11 @@ module.exports = {
   Jobs,
   App: workflows,
   Workflow,
+  SimpleTreeSubscription: Workflow,
   GraphIQLTest: one,
   analysisTaskQuery: analysisQuery.taskQuery,
   analysisJobQuery: analysisQuery.jobQuery,
   analysisQuery,
   ganttQuery,
-  InfoViewSubscription
+  InfoViewSubscription,
 }

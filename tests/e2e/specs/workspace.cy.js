@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +148,9 @@ describe('Workspace view and component/widget', () => {
     cy.get('.c-tree')
       .find('[data-cy=control-taskIDFilter] input')
       .type('GOOD')
+    // Give a moment for the input to be saved, otherwise can flakily fail
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(100)
     expectRememberedLayout()
 
     // Navigate to another workflow

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,14 +49,14 @@ describe('TreeItem component', () => {
       .should('deep.equal', {
         // Auto expand everything down to task nodes by default
         all: ['cycle', 'task'],
-        visible: ['cycle', 'task']
+        visible: ['cycle', 'task'],
       })
 
     cy.toggleNode('task')
     cy.getNodeTypes()
       .should('deep.equal', {
         all: ['cycle', 'task', 'job', 'job'],
-        visible: ['cycle', 'task', 'job', 'job']
+        visible: ['cycle', 'task', 'job', 'job'],
       })
 
     cy.toggleNode('cycle')
@@ -64,7 +64,7 @@ describe('TreeItem component', () => {
       .should('deep.equal', {
         // All previously expanded nodes under cycle should be hidden but remain rendered
         all: ['cycle', 'task', 'job', 'job'],
-        visible: ['cycle']
+        visible: ['cycle'],
       })
 
     cy.toggleNode('cycle')
@@ -73,7 +73,7 @@ describe('TreeItem component', () => {
       .should('deep.equal', {
         // Job node does not use a child TreeItem
         all: ['cycle', 'task', 'job', 'job'],
-        visible: ['cycle', 'task', 'job', 'job']
+        visible: ['cycle', 'task', 'job', 'job'],
       })
   })
 })

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  */
 
 // Modules
-import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
 
@@ -34,7 +33,7 @@ const state = () => ({
    * Number of references that have set the loading state.
    * TODO: we can probably remove it and use a different approach for alerts (see bootstrap toast).
    */
-  refCount: 0
+  refCount: 0,
 })
 
 // Actions
@@ -53,7 +52,7 @@ const actions = {
       console.log(alert.err)
     }
     commit('SET_ALERT', alert)
-  }
+  },
 }
 
 // Mutations
@@ -63,17 +62,16 @@ const mutations = {
   },
   SET_OFFLINE (state, offline) {
     state.offline = offline
-  }
+  },
 }
 
 // Create a new store
 export default {
   modules: {
-    app,
     workflows,
-    user
+    user,
   },
   actions,
   mutations,
-  state
+  state,
 }

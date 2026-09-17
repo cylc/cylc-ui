@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,16 @@ import { vi } from 'vitest'
 import { cloneDeep } from 'lodash'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
+import { createVuetify } from 'vuetify'
+import { vuetifyOptions } from '@/plugins/vuetify'
+
+const vuetify = createVuetify(vuetifyOptions)
 
 describe('Tree component', () => {
   const mountFunction = (props) => mount(Tree, {
+    global: {
+      plugins: [vuetify],
+    },
     props: {
       workflows: cloneDeep(simpleWorkflowTree4Nodes),
       autoStripTypes: ['workflow'],

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,15 @@ import {
   stateTotalsTestWorkflowNodes,
   simpleWorkflowNode,
   simpleCyclepointNode,
-  simpleTaskNode
+  simpleTaskNode,
 } from './tree.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 import TaskState from '@/model/TaskState.model'
+import { vuetifyOptions } from '@/plugins/vuetify'
+
+const vuetify = createVuetify(vuetifyOptions)
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -61,10 +64,10 @@ const $workflowService = sinon.createStubInstance(WorkflowService)
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
-      mock: { $workflowService }
+      plugins: [vuetify, CommandMenuPlugin],
+      mock: { $workflowService },
     },
-    ...options
+    ...options,
   })
 
   it('should display the treeitem with valid data', () => {
@@ -86,8 +89,8 @@ describe('TreeItem component', () => {
         props: {
           node,
           filteredOutNodesCache: new WeakMap(),
-          autoExpandTypes: ['cycle']
-        }
+          autoExpandTypes: ['cycle'],
+        },
       })
       expected
         ? expect(wrapper).to.be.expanded()
@@ -100,7 +103,7 @@ describe('TreeItem component', () => {
       props: {
         node: simpleTaskNode,
         filteredOutNodesCache: new WeakMap(),
-      }
+      },
     })
     expect(wrapper).to.not.be.expanded()
     const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
@@ -139,10 +142,10 @@ describe('TreeItem component', () => {
 describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
-      plugins: [createVuetify(), CommandMenuPlugin],
-      mock: { $workflowService }
+      plugins: [vuetify, CommandMenuPlugin],
+      mock: { $workflowService },
     },
-    ...options
+    ...options,
   })
 
   describe('computed properties', () => {
@@ -150,7 +153,7 @@ describe('GScanTreeItem', () => {
       props: {
         node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
         filteredOutNodesCache: new WeakMap(),
-      }
+      },
     })
     it('does not combine descendant latest state tasks', () => {
       expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
@@ -189,7 +192,7 @@ describe('GScanTreeItem', () => {
         props: {
           node: {
             type: 'workflow',
-            tokens: { workflow: 'a/b/c' }
+            tokens: { workflow: 'a/b/c' },
           },
           filteredOutNodesCache: new WeakMap(),
         },

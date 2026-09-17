@@ -11,7 +11,7 @@ the UI.
 
 ## Copyright and Terms of Use
 
-Copyright (C) 2018-<span actions:bind='current-year'>2026</span> NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) 2018-<span actions:bind='current-year'>2026</span> Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 Cylc is free software: you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation,
@@ -58,19 +58,20 @@ yarn run build
 # build for development (rebuilds on change)
 yarn run build:watch
 # and launch using
-cylc gui --ui-build-dir=<cylc-ui-path>/dist/
+cylc gui --CylcUIServer.ui_build_dir=<cylc-ui-path>/dist/
 
 # start dev server in offline mode, using the build instead of source files
 yarn run preview
 ```
 
 Note the incremental rebuild is quite slow so an alternative to `yarn run build:watch` is
-to run the Vite development server while using the Cylc UI Server live data:
+to run the Vite development server to serve the web app while using the Cylc UI Server
+to serve live backend data:
 
 ```bash
 # First launch the gui to authenticate with the URL token
-cylc gui --port=3000 --ServerApp.allow_origin='http://localhost:5173'
-# Close that tab once it's loaded
+cylc gui --new --port=3000 --ServerApp.allow_origin='http://localhost:5173'
+# You can close that tab once it's loaded
 # Now launch using
 yarn run serve:vue --mode development
 # (you must access via http://localhost:5173)
@@ -111,7 +112,8 @@ yarn run coverage:e2e
 ### Mocked Data
 
 The "offline" mode (aka `yarn run serve`) which is also used for the end to end
-tests is powered by a "mock" data server.
+tests is powered by a "mock" JSON data server. This stands in for the backend data
+that would be served by the real Cylc UIServer.
 
 You can find the index of mocked data here:
 [`src/services/mock/json/index.cjs`](src/services/mock/json/index.cjs)
@@ -147,7 +149,7 @@ Its configuration is defined in [`src/plugins/vuetify.js`](src/plugins/vuetify.j
 
 We use [concurrently](https://github.com/open-cli-tools/concurrently) for
 concurrently running the mock data json-server and the Vite dev server, and
-also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.cjs).
+also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.js).
 
 ### Browser compatibility
 

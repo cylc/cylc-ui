@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ describe('Copy Button component', () => {
     cy.vmount(CopyBtn, { props })
     cy.addVuetifyStyles(cy)
   }
-  it('copies text to the clipboard', { browser: 'electron' }, () => {
-    // (Access to the clipboard in Cypress only reliably works in Electron)
+  it('copies text to the clipboard', { browser: { family: 'chromium' } }, () => {
+    // (Access to the clipboard in Cypress only works in Chromium-based browsers)
     const text = 'I am writing this test while on a train'
     mountCopyBtn({ text })
 

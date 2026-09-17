@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ const jsonServer = require('json-server')
 const logger = require('morgan')
 
 const server = jsonServer.create()
+// Cylc UIServer's base path is /cylc/ - match that here:
+server.use(jsonServer.rewriter({ '/cylc/*': '/$1' }))
+
 require('express-ws')(server)
 const router = jsonServer.router({
   userProfile,
@@ -36,8 +39,8 @@ const middlewares = [
   ...jsonServer.defaults({ logger: false }),
   // Customize logger to hide successful XHR requests:
   logger('dev', {
-    skip: (req, res) => res.statusCode < 400
-  })
+    skip: (req, res) => res.statusCode < 400,
+  }),
 ]
 
 server.use(middlewares)

@@ -1,5 +1,5 @@
 <!--
-Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import { mapState, mapGetters } from 'vuex'
 import {
   mdiFormatAlignJustify,
@@ -68,11 +69,11 @@ import {
   mdiPlus,
 } from '@mdi/js'
 import gql from 'graphql-tag'
-import graphqlMixin from '@/mixins/graphql'
+import { useGraphQL } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
@@ -82,8 +83,8 @@ import TaskFilter from '@/components/cylc/viewToolbar/TaskFilter.vue'
 import { matchID, matchState, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
-subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
+subscription Workflow ($workflowID: ID) {
+  deltas (workflows: [$workflowID]) {
     id
     added {
       ...AddedDelta
@@ -149,6 +150,13 @@ fragment FamilyProxyData on FamilyProxy {
   childTasks {
     id
   }
+  isHeld
+  isQueued
+  isRunahead
+  isRetry
+  isWallclock
+  isXtriggered
+  graphDepth
 }
 
 fragment TaskProxyData on TaskProxy {
@@ -170,6 +178,7 @@ fragment TaskProxyData on TaskProxy {
     runMode
   }
   flowNums
+  graphDepth
 }
 
 fragment JobData on Job {
@@ -197,8 +206,7 @@ export default {
   name: 'Tree',
 
   mixins: [
-    graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -208,9 +216,13 @@ export default {
     ViewToolbarBtn,
   },
 
-  props: { initialOptions },
+  props: {
+    initialOptions,
+  },
 
   setup (props, { emit }) {
+    const { workflowIDs, variables } = useGraphQL()
+
     /**
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<Object>}
@@ -221,9 +233,12 @@ export default {
     const flat = useInitialOptions('flat', { props, emit }, false)
 
     return {
+      expandAll: ref(null),
       tasksFilter,
       filterState,
       flat,
+      workflowIDs,
+      variables,
       icons: {
         mdiFormatAlignJustify,
         mdiFormatAlignRight,
@@ -233,17 +248,9 @@ export default {
     }
   },
 
-  data: () => ({
-    expandAll: null,
-  }),
-
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
-
-    workflowIDs () {
-      return [this.workflowId]
-    },
 
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)

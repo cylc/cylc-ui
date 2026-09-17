@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import dns from 'dns'
 import path from 'path'
+import pkg from './package.json'
 
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
@@ -32,7 +33,7 @@ export default defineConfig(({ mode }) => {
     vue(),
     vuetify(),
     eslint({
-      failOnError: mode === 'production'
+      failOnError: mode === 'production',
     }),
     // GraphiQL is a React app:
     react(),
@@ -41,28 +42,25 @@ export default defineConfig(({ mode }) => {
   if (mode !== 'production' && process.env.COVERAGE) {
     plugins.push(
       IstanbulPlugin({
-        forceBuildInstrument: true
+        forceBuildInstrument: true,
       })
     )
   }
 
-  /**
-   * When running the Vite dev server to serve the app, set the proxy for the
-   * mock JSON server data in offline mode else the Cylc UIServer data.
-   */
-  const devProxyTarget = `http://localhost:3000${mode === 'offline' ? '/' : '/cylc/'}`
+  /** Proxy target for the JSON server that provides mock data to stand in for the UIServer in dev mode */
+  const devProxyTarget = 'http://localhost:3000/'
 
   return {
-    base: '',
+    base: '/cylc/',
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        $tests: path.resolve(__dirname, './tests'),
+        '@': path.resolve('./src'),
+        $tests: path.resolve('./tests'),
         lodash: 'lodash-es',
         // GraphiQL is a React app (use Preact as it's smaller):
         react: 'preact/compat',
         'react-dom': 'preact/compat',
-      }
+      },
     },
     plugins,
     optimizeDeps: {
@@ -76,21 +74,21 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        '^/(userprofile|version|graphql)': {
-          target: devProxyTarget,
-          changeOrigin: true
-        },
-        '^/subscriptions': {
+        '^/cylc/(userprofile|version|graphql)': {
           target: devProxyTarget,
           changeOrigin: true,
-          ws: true
-        }
+        },
+        '^/cylc/subscriptions': {
+          target: devProxyTarget,
+          changeOrigin: true,
+          ws: true,
+        },
       },
       watch: {
         ignored: [
-          path.resolve(__dirname, './coverage'),
-          path.resolve(__dirname, '**/.nfs*'),
-        ]
+          path.resolve('./coverage'),
+          path.resolve('./**/.nfs*'),
+        ],
       },
       warmup: {
         clientFiles: [
@@ -98,15 +96,18 @@ export default defineConfig(({ mode }) => {
           './src/App.vue',
           './src/views/Dashboard.vue',
           './src/views/Workspace.vue',
-        ]
-      }
+        ],
+      },
     },
     build: {
       sourcemap: mode !== 'production',
       target: 'baseline-widely-available',
-      rollupOptions: {
-        // Workaround https://github.com/vitejs/vite/issues/19410:
-        maxParallelFileOps: 100,
+      rolldownOptions: {
+        output: {
+          // Disable code splitting if desired by the developer
+          // (can speed up build when using a slow disk, e.g. network drive):
+          codeSplitting: !process.env.DISABLE_CODE_SPLITTING,
+        },
       },
     },
     css: {
@@ -117,8 +118,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
+      __APP_VERSION__: JSON.stringify(pkg.version),
       // Allow vue devtools to work when runing vite build:
-      __VUE_PROD_DEVTOOLS__: mode !== 'production'
+      __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
     // Unit test specific config:
     test: {
@@ -139,9 +141,9 @@ export default defineConfig(({ mode }) => {
           'src/**/*.{js,mjs,jsx,ts,tsx,vue}',
         ],
         exclude: [
-          'src/services/mock/**'
+          'src/services/mock/**',
         ],
-      }
-    }
+      },
+    },
   }
 })

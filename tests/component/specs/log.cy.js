@@ -1,5 +1,5 @@
 /**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,21 @@ const mountOpts = {
       createVuetify(vuetifyOptions),
     ],
   },
-  props: {}
+  props: {},
 }
 
 function logLines (length) {
   return Array.from({ length }, (_, i) => `Line ${i + 1}\n`)
 }
+
+Cypress.Commands.addQuery('isOnScreen', () => {
+  return ($els) => Array.from($els).every(
+    (el) => {
+      const rect = el.getBoundingClientRect()
+      return Cypress.dom.isVisible(el) && rect.bottom > 0 && rect.top < window.innerHeight
+    }
+  )
+})
 
 describe('Log Component', () => {
   it('renders', () => {
@@ -47,7 +56,7 @@ describe('Log Component', () => {
 
     cy.get('span')
       .contains('Line 1')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
   })
 
   it('autoScrolls', () => {
@@ -61,26 +70,26 @@ describe('Log Component', () => {
 
     // should not scroll to bottom
     cy.get('span').contains('Line 30')
-      .should('not.be.visible')
+      .isOnScreen().should('be.false')
 
     // turn autoscroll on
     cy.get('@component').then(({ wrapper }) => {
       wrapper.setProps({
-        autoScroll: true
+        autoScroll: true,
       })
     })
     cy.get('span').contains('Line 30')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
 
     // update the log
     cy.get('@component').then(({ wrapper }) => {
       wrapper.setProps({
-        logs: logLines(50)
+        logs: logLines(50),
       })
     })
     // log file should now have scrolled to the bottom
     cy.get('span').contains('Line 50')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
   })
 
   it('scroll to the top', () => {
@@ -93,9 +102,9 @@ describe('Log Component', () => {
     })).as('component')
     // should be scrolled to bottom initially with autoScroll prop set to true
     cy.get('span').contains('Line 30')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
     cy.get('[data-cy=log-scroll-top').click()
     cy.get('span').contains('Line 1')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
   })
 })

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ const jobLogFiles = [
 ]
 
 const workflowLogFiles = [
+  'config/01-start-01.log',
   'scheduler/01-start-01.log',
   deletedFile,
 ]
@@ -44,9 +45,9 @@ const LogFiles = async ({ id }) => {
       logFiles: {
         files: id == null
           ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
+          : id.includes('//') ? jobLogFiles : workflowLogFiles,
+      },
+    },
   }
 }
 
@@ -55,11 +56,11 @@ const LogFiles = async ({ id }) => {
  *
  * @param {{ id: string }} variables
  */
-const Jobs = async ({ id, workflowId }) => {
-  if (!workflowId.startsWith('~')) {
-    workflowId = `~user/${workflowId}`
+const Jobs = async ({ id, workflowID }) => {
+  if (!workflowID.startsWith('~')) {
+    workflowID = `~user/${workflowID}`
   }
-  const { deltas } = Workflow({ workflowId })
+  const { deltas } = Workflow({ workflowID })
   const searchID = id.replace(
     /\/NN$/, ''
   ).replace(
@@ -69,8 +70,8 @@ const Jobs = async ({ id, workflowId }) => {
   await simulatedDelay(500)
   return {
     data: {
-      jobs: node.state ? [{ id, ...node }] : []
-    }
+      jobs: node.state ? [{ id, ...node }] : [],
+    },
   }
 }
 
