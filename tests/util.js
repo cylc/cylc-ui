@@ -56,3 +56,19 @@ export function getIDMap (filteredOutNodesCache) {
 export function mockRoute (route = { params: { workflowName: 'test' } }) {
   config.global.provide[routeLocationKey] = route
 }
+
+/**
+ * Enable any browser permissions needed for Cypress E2E & Component testing.
+ * Call this in the support file.
+ */
+export function enableBrowserPermissions () {
+  if (Cypress.browser.family === 'chromium') {
+    Cypress.automation('remote:debugger:protocol', {
+      command: 'Browser.grantPermissions',
+      params: {
+        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+        origin: window.location.origin,
+      },
+    })
+  }
+}

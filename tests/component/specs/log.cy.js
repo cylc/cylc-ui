@@ -36,6 +36,15 @@ function logLines (length) {
   return Array.from({ length }, (_, i) => `Line ${i + 1}\n`)
 }
 
+Cypress.Commands.addQuery('isOnScreen', () => {
+  return ($els) => Array.from($els).every(
+    (el) => {
+      const rect = el.getBoundingClientRect()
+      return Cypress.dom.isVisible(el) && rect.bottom > 0 && rect.top < window.innerHeight
+    }
+  )
+})
+
 describe('Log Component', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-vue
@@ -47,7 +56,7 @@ describe('Log Component', () => {
 
     cy.get('span')
       .contains('Line 1')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
   })
 
   it('autoScrolls', () => {
@@ -61,7 +70,7 @@ describe('Log Component', () => {
 
     // should not scroll to bottom
     cy.get('span').contains('Line 30')
-      .should('not.be.visible')
+      .isOnScreen().should('be.false')
 
     // turn autoscroll on
     cy.get('@component').then(({ wrapper }) => {
@@ -70,7 +79,7 @@ describe('Log Component', () => {
       })
     })
     cy.get('span').contains('Line 30')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
 
     // update the log
     cy.get('@component').then(({ wrapper }) => {
@@ -80,7 +89,7 @@ describe('Log Component', () => {
     })
     // log file should now have scrolled to the bottom
     cy.get('span').contains('Line 50')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
   })
 
   it('scroll to the top', () => {
@@ -93,9 +102,9 @@ describe('Log Component', () => {
     })).as('component')
     // should be scrolled to bottom initially with autoScroll prop set to true
     cy.get('span').contains('Line 30')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
     cy.get('[data-cy=log-scroll-top').click()
     cy.get('span').contains('Line 1')
-      .should('be.visible')
+      .isOnScreen().should('be.true')
   })
 })
