@@ -60,11 +60,12 @@ function getBaseUrl (websockets = false, baseOnly = false) {
  * path.
  *
  * @param {string} path - path to be used when creating a new URL (e.g. /users)
- * @param {boolean} websockets - whether the URL will be used for websockets or not
- * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
+ * @param {Object} opts
+ * @param {boolean} opts.websockets - whether the URL will be used for websockets or not
+ * @param {boolean} opts.baseOnly - whether to use only the base URL or not when creating the new URL
  * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
  */
-export function createUrl (path, websockets = false, baseOnly = false) {
+export function createUrl (path, { websockets = false, baseOnly = false } = {}) {
   const baseUrl = getBaseUrl(websockets, baseOnly)
   const url = [baseUrl, path]
     .map(part => part.trim())
@@ -78,7 +79,7 @@ export function createUrl (path, websockets = false, baseOnly = false) {
  * - Adds X-XSRFToken header cookie-based auth.
  */
 export function getXSRFHeaders () {
-  const xsrfToken = document.cookie.match('\\b_xsrf=([^;]*)\\b')
+  const xsrfToken = document.cookie.match(/\b_xsrf=([^;]*)\b/)
   const cylcHeaders = {}
   if (Array.isArray(xsrfToken) && xsrfToken.length > 0) {
     // pick the last match
