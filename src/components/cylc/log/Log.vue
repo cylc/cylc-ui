@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :icon="$options.icons.mdiInvoiceTextOutline"
               :class="{ 'log-mode-toggle__icon--flip': headMode }"
             />
-            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
               <span>{{ headMode ? 'End' : 'Start' }}</span>
               <span>Truncated</span>
             </span>
@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :icon="$options.icons.mdiInvoiceTextOutline"
               :class="{ 'log-mode-toggle__icon--flip': headMode }"
             />
-            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
               <span>{{ headMode ? 'End' : 'Start' }}</span>
               <span>Truncated</span>
             </span>
