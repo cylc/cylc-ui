@@ -36,3 +36,25 @@ export const useWorkflowWarnings = () => useLocalStorage('useWorkflowWarnings', 
 export const useLogWordWrapDefault = () => useLocalStorage('logWordWrap', false)
 
 export const useCompactMode = () => useLocalStorage('compactMode', false)
+
+/** Default and hard cap for the log view "maximum lines" setting. */
+export const LOG_MAX_LINES_DEFAULT = 5000
+export const LOG_MAX_LINES_MAX = 50000
+
+export const useLogMaxLines = () => useLocalStorage('logMaxLines', LOG_MAX_LINES_DEFAULT)
+
+/**
+ * Coerce a maxLines value into a valid integer within the allowed bounds.
+ *
+ * Falls back to the default for invalid/empty input and caps at the maximum.
+ *
+ * @param {*} value
+ * @returns {number}
+ */
+export function normalizeLogMaxLines (value) {
+  const n = parseInt(value, 10)
+  if (!Number.isFinite(n) || n < 1) {
+    return LOG_MAX_LINES_DEFAULT
+  }
+  return Math.min(n, LOG_MAX_LINES_MAX)
+}
