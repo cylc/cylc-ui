@@ -111,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="d-flex flex-column align-center py-1">
               <span
                 v-if="headMode"
-                class="text-caption"
+                class="text-body-small"
               >Truncated</span>
               <v-icon
                 :icon="$options.icons.mdiInvoiceTextOutline"
@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
               <span
                 v-if="!headMode"
-                class="text-caption"
+                class="text-body-small"
               >Truncated</span>
             </div>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             <span
               v-if="headMode"
-              class="text-caption mr-1"
+              class="text-body-small mr-1"
             >Truncated</span>
             <v-icon
               :icon="$options.icons.mdiInvoiceTextOutline"
@@ -144,7 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             />
             <span
               v-if="!headMode"
-              class="text-caption ml-1"
+              class="text-body-small ml-1"
             >Truncated</span>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
           </v-btn> -->
@@ -157,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             data-cy="log-mode-toggle"
           >
             <span class="log-mode-toggle__bubble">
-              {{ headMode ? 'Start truncated' : 'End truncated' }}
+              {{ headMode ? 'End truncated' : 'Start truncated' }}
             </span>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
           </v-btn> -->
@@ -175,7 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :icon="$options.icons.mdiInvoiceTextOutline"
               :class="{ 'log-mode-toggle__icon--flip': headMode }"
             />
-            {{ headMode ? 'Start' : 'End' }}
+            {{ headMode ? 'End' : 'Start' }}
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
           </v-btn> -->
 
@@ -188,8 +188,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="headMode = !headMode"
             data-cy="log-mode-toggle"
           >
-            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
-              <span>{{ headMode ? 'Start' : 'End' }}</span>
+            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
+              <span>{{ headMode ? 'End' : 'Start' }}</span>
               <span>Truncated</span>
             </div>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
@@ -206,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             data-cy="log-mode-toggle"
           >
             <div class="log-mode-toggle__bubble-text d-flex flex-column align-center py-1">
-              <span>{{ headMode ? 'Start' : 'End' }}</span>
+              <span>{{ headMode ? 'End' : 'Start' }}</span>
               <span>Truncated</span>
             </div>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
@@ -223,8 +223,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="headMode = !headMode"
             data-cy="log-mode-toggle"
           >
-            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
-              <span>{{ headMode ? 'Start' : 'End' }}</span>
+            <div class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
+              <span>{{ headMode ? 'End' : 'Start' }}</span>
               <span>Truncated</span>
             </div>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
@@ -247,8 +247,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :icon="$options.icons.mdiInvoiceTextOutline"
               :class="{ 'log-mode-toggle__icon--flip': headMode }"
             />
-            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
-              <span>{{ headMode ? 'Start' : 'End' }}</span>
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
+              <span>{{ headMode ? 'End' : 'Start' }}</span>
               <span>Truncated</span>
             </span>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
@@ -404,6 +404,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :word-wrap="wordWrap"
       :truncated-start="results.truncatedStart"
       :truncated-end="results.truncatedEnd"
+      :head-mode-title="headModeTitle"
+      v-model:headMode="headMode"
       v-model:autoScroll="autoScroll"
     />
   </v-container>

@@ -33,7 +33,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-alert
         v-if="truncatedStart"
         data-cy="log-truncation-start"
-      >{{ $options.truncationMessages.start }}</v-alert>
+      >
+        <template #prepend>
+          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 8 from
+               the toolbar) living in the truncation banner instead. -->
+          <v-btn
+            class="log-mode-toggle"
+            variant="tonal"
+            size="small"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="$emit('update:headMode', !headMode)"
+            data-cy="log-mode-toggle-banner"
+          >
+            <v-icon
+              start
+              size="large"
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'End' : 'Start' }}</span>
+              <span>Truncated</span>
+            </span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn>
+        </template>
+        {{ $options.truncationMessages.start }}
+      </v-alert>
       <pre
         ref="logText"
         :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
@@ -45,7 +72,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-alert
         v-if="truncatedEnd"
         data-cy="log-truncation-end"
-      >{{ $options.truncationMessages.end }}</v-alert>
+      >
+        <template #prepend>
+          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 8 from
+               the toolbar) living in the truncation banner instead. -->
+          <v-btn
+            class="log-mode-toggle"
+            variant="tonal"
+            size="small"
+            height="auto"
+            :color="headMode ? 'blue' : undefined"
+            @click="$emit('update:headMode', !headMode)"
+            data-cy="log-mode-toggle-banner"
+          >
+            <v-icon
+              start
+              size="large"
+              :icon="$options.icons.mdiInvoiceTextOutline"
+              :class="{ 'log-mode-toggle__icon--flip': headMode }"
+            />
+            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-caption py-1">
+              <span>{{ headMode ? 'End' : 'Start' }}</span>
+              <span>Truncated</span>
+            </span>
+            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+          </v-btn>
+        </template>
+        {{ $options.truncationMessages.end }}
+      </v-alert>
     </v-defaults-provider>
     <v-btn
       v-if="logs.length"
@@ -66,6 +120,7 @@ import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils/reactivity'
 import {
+  mdiInvoiceTextOutline,
   mdiMouseMoveUp,
 } from '@mdi/js'
 
@@ -108,10 +163,24 @@ export default {
       required: false,
       default: false,
     },
+    /** Whether the log is in HEAD (start) mode - used by the prototype toggle
+     * in the truncation banner. */
+    headMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    /** Tooltip text for the prototype HEAD/TAIL toggle in the banner. */
+    headModeTitle: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
 
   emits: [
     'update:autoScroll',
+    'update:headMode',
   ],
 
   setup (props, { emit }) {
@@ -200,6 +269,7 @@ export default {
 
   // Misc options
   icons: {
+    mdiInvoiceTextOutline,
     mdiMouseMoveUp,
   },
 
