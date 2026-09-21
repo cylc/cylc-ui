@@ -35,29 +35,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="log-truncation-start"
       >
         <template #prepend>
-          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 8 from
+          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 9 from
                the toolbar) living in the truncation banner instead. -->
-          <v-btn
+          <v-btn-toggle
+            :model-value="headMode"
+            @update:model-value="$emit('update:headMode', $event)"
+            divided
+            mandatory
+            variant="outlined"
+            color="primary"
+            density="comfortable"
             class="log-mode-toggle"
-            variant="tonal"
-            size="small"
-            height="auto"
-            :color="headMode ? 'blue' : undefined"
-            @click="$emit('update:headMode', !headMode)"
             data-cy="log-mode-toggle-banner"
           >
-            <v-icon
-              start
-              size="large"
-              :icon="$options.icons.mdiInvoiceTextOutline"
-              :class="{ 'log-mode-toggle__icon--flip': headMode }"
-            />
-            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
-              <span>{{ headMode ? 'End' : 'Start' }}</span>
-              <span>Truncated</span>
-            </span>
-            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
-          </v-btn>
+            <v-btn :value="false" data-cy="log-mode-start-banner" class="bg-surface">
+              Start
+              <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+            </v-btn>
+            <v-btn :value="true" data-cy="log-mode-end-banner" class="bg-surface">
+              End
+              <v-tooltip activator="parent">{{ tailModeTitle }}</v-tooltip>
+            </v-btn>
+          </v-btn-toggle>
         </template>
         {{ $options.truncationMessages.start }}
       </v-alert>
@@ -74,29 +73,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="log-truncation-end"
       >
         <template #prepend>
-          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 8 from
+          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 9 from
                the toolbar) living in the truncation banner instead. -->
-          <v-btn
+          <v-btn-toggle
+            :model-value="headMode"
+            @update:model-value="$emit('update:headMode', $event)"
+            divided
+            mandatory
+            variant="outlined"
+            color="primary"
+            density="comfortable"
             class="log-mode-toggle"
-            variant="tonal"
-            size="small"
-            height="auto"
-            :color="headMode ? 'blue' : undefined"
-            @click="$emit('update:headMode', !headMode)"
             data-cy="log-mode-toggle-banner"
+            style="margin-inline-end: -10px"
           >
-            <v-icon
-              start
-              size="large"
-              :icon="$options.icons.mdiInvoiceTextOutline"
-              :class="{ 'log-mode-toggle__icon--flip': headMode }"
-            />
-            <span class="log-mode-toggle__stack d-flex flex-column align-center font-weight-bold text-body-small py-1">
-              <span>{{ headMode ? 'End' : 'Start' }}</span>
-              <span>Truncated</span>
-            </span>
-            <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
-          </v-btn>
+            <v-btn :value="false" data-cy="log-mode-start-banner" class="bg-surface">
+              Start
+              <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+            </v-btn>
+            <v-btn :value="true" data-cy="log-mode-end-banner" class="bg-surface">
+              End
+              <v-tooltip activator="parent">{{ tailModeTitle }}</v-tooltip>
+            </v-btn>
+          </v-btn-toggle>
         </template>
         {{ $options.truncationMessages.end }}
       </v-alert>
@@ -275,8 +274,8 @@ export default {
 
   // Warning messages shown when the log file has been truncated
   truncationMessages: {
-    start: 'earlier lines omitted (file truncated)',
-    end: 'later lines omitted (file truncated)',
+    start: 'of the file omitted (start truncated)',
+    end: 'of the file omitted (end truncated)',
   },
 }
 

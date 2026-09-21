@@ -232,7 +232,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
           <!-- LAYOUT 8: LAYOUT 4 (icon + tonal button) but with the label
                stacked over two lines ("Start"/"End" above "Truncated"). -->
-          <v-btn
+          <!-- <v-btn
             class="log-mode-toggle ml-2"
             variant="tonal"
             size="small"
@@ -252,7 +252,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <span>Truncated</span>
             </span>
             <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
-          </v-btn>
+          </v-btn> -->
+
+          <!-- LAYOUT 9: a two-option toggle mirroring the Workflow/Job
+               v-btn-toggle above - "Start" and "End" sit side by side and the
+               active one is highlighted, making the current state obvious. -->
+          <v-btn-toggle
+            v-model="headMode"
+            divided
+            mandatory
+            variant="outlined"
+            color="primary"
+            density="comfortable"
+            class="log-mode-toggle ml-2"
+            data-cy="log-mode-toggle"
+          >
+            <v-btn :value="false" data-cy="log-mode-start">
+              Start
+              <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+            </v-btn>
+            <v-btn :value="true" data-cy="log-mode-end">
+              End
+              <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
+            </v-btn>
+          </v-btn-toggle>
         </v-col>
       </v-row>
 
