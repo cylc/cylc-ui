@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-empty-state
-    image="/img/logo.svg"
+    image="img/logo.svg"
   >
     <template #headline>
       <div class="text-headline-large mt-4">You do not have permission to access this server</div>
