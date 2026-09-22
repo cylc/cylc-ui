@@ -26,6 +26,7 @@ const ganttQuery = require('./ganttQuery.json')
 const InfoViewSubscription = require('./infoView.json')
 
 module.exports = {
+  // NOTE: the names of these exports must match the GraphQL operation (query/mutation/subscription) names
   IntrospectionQuery,
   taskProxy,
   familyProxy,
@@ -34,6 +35,7 @@ module.exports = {
   Jobs,
   App: workflows,
   Workflow,
+  SimpleTreeSubscription: Workflow,
   GraphIQLTest: one,
   analysisTaskQuery: analysisQuery.taskQuery,
   analysisJobQuery: analysisQuery.jobQuery,

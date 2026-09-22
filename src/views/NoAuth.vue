@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     image="/img/logo.svg"
   >
     <template #headline>
-      <div class="text-h4 mt-4">You do not have permission to access this server</div>
+      <div class="text-headline-large mt-4">You do not have permission to access this server</div>
     </template>
   </v-empty-state>
 </template>

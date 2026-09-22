@@ -32,15 +32,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="snack-close"
       />
     </template>
-    <p>
+    <div>
       {{ alert.text }}
-    </p>
-    <p
+    </div>
+    <div
       v-if="alert.detail"
       class="mt-2 opacity-80"
     >
       {{ alert.detail }}
-    </p>
+    </div>
   </v-snackbar>
 </template>
 

@@ -68,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-container fluid>
       <!-- the controls -->
       <v-row
-        dense
+        density="compact"
         class="flex-0-0"
       >
         <v-col class="pt-0">
@@ -281,7 +281,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <!-- the inputs -->
       <v-row
-        dense
+        density="compact"
         class="flex-0-0"
       >
         <v-col cols="8">
@@ -360,7 +360,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <!-- the status line -->
       <v-row
-        dense
+        density="compact"
         class="flex-0-0"
       >
         <v-col
@@ -1030,7 +1030,7 @@ export default {
       }
       // Simultaneously wait for the log file list and the job state result
       await Promise.all(promises)
-      if (!this.jobLog) {
+      if (!this.jobLog && !this.file) {
         this.file = this.getDefaultWorkflowLog()
       }
     },
