@@ -430,7 +430,7 @@ describe('Filters and Options save state', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(stateSaveDelay)
       cy.reload()
-      cy.get('.vue-apexcharts')
+      .get('canvas')
         .should('be.visible')
     })
 
