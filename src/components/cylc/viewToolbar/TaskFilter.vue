@@ -37,16 +37,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :close-on-content-click="false"
     >
       <v-card>
-        <v-btn
-          :prepend-icon="mdiUndo"
-          variant="plain"
-          @click="resetTaskStates()"
-          block
-          spaced="end"
-          :data-cy="`control-taskStateFilter-reset`"
-        >
-          Reset
-        </v-btn>
+        <v-card-actions>
+          <v-btn
+            :prepend-icon="mdiArrowULeftTop"
+            @click="resetTaskStates()"
+            class="flex-grow-1"
+            data-cy="control-taskStateFilter-reset"
+          >
+            Reset
+          </v-btn>
+        </v-card-actions>
         <v-divider></v-divider>
 
         <v-treeview
@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { mdiFilter, mdiMagnify, mdiUndo } from '@mdi/js'
+import { mdiArrowULeftTop, mdiFilter, mdiMagnify } from '@mdi/js'
 import { TaskState, WaitingStateModifierNames } from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task.vue'
 import { computed } from 'vue'
