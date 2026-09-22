@@ -35,28 +35,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="log-truncation-start"
       >
         <template #prepend>
-          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 9 from
-               the toolbar) living in the truncation banner instead. -->
-          <v-btn-toggle
-            :model-value="headMode"
-            @update:model-value="$emit('update:headMode', $event)"
-            divided
-            mandatory
+          <v-btn
+            size="small"
             variant="outlined"
             color="primary"
-            density="comfortable"
-            class="log-mode-toggle"
-            data-cy="log-mode-toggle-banner"
+            data-cy="log-load-start"
+            @click="$emit('update:headMode', true)"
           >
-            <v-btn :value="false" data-cy="log-mode-start-banner" class="bg-surface">
-              Start
-              <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
-            </v-btn>
-            <v-btn :value="true" data-cy="log-mode-end-banner" class="bg-surface">
-              End
-              <v-tooltip activator="parent">{{ tailModeTitle }}</v-tooltip>
-            </v-btn>
-          </v-btn-toggle>
+            Load start
+          </v-btn>
         </template>
         {{ $options.truncationMessages.start }}
       </v-alert>
@@ -73,29 +60,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="log-truncation-end"
       >
         <template #prepend>
-          <!-- Prototype: the HEAD/TAIL toggle (a duplicate of LAYOUT 9 from
-               the toolbar) living in the truncation banner instead. -->
-          <v-btn-toggle
-            :model-value="headMode"
-            @update:model-value="$emit('update:headMode', $event)"
-            divided
-            mandatory
+          <v-btn
+            size="small"
             variant="outlined"
             color="primary"
-            density="comfortable"
-            class="log-mode-toggle"
-            data-cy="log-mode-toggle-banner"
-            style="margin-inline-end: -10px"
+            data-cy="log-load-end"
+            @click="$emit('update:headMode', false)"
           >
-            <v-btn :value="false" data-cy="log-mode-start-banner" class="bg-surface">
-              Start
-              <v-tooltip activator="parent">{{ headModeTitle }}</v-tooltip>
-            </v-btn>
-            <v-btn :value="true" data-cy="log-mode-end-banner" class="bg-surface">
-              End
-              <v-tooltip activator="parent">{{ tailModeTitle }}</v-tooltip>
-            </v-btn>
-          </v-btn-toggle>
+            Load end
+          </v-btn>
         </template>
         {{ $options.truncationMessages.end }}
       </v-alert>
@@ -119,7 +92,6 @@ import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils/reactivity'
 import {
-  mdiInvoiceTextOutline,
   mdiMouseMoveUp,
 } from '@mdi/js'
 
@@ -162,18 +134,13 @@ export default {
       required: false,
       default: false,
     },
-    /** Whether the log is in HEAD (start) mode - used by the prototype toggle
-     * in the truncation banner. */
+    /** Whether the log is in HEAD (start) mode. Part of the `headMode`
+     * two-way binding whose update is emitted by the truncation banner
+     * "Load start"/"Load end" buttons. */
     headMode: {
       type: Boolean,
       required: false,
       default: false,
-    },
-    /** Tooltip text for the prototype HEAD/TAIL toggle in the banner. */
-    headModeTitle: {
-      type: String,
-      required: false,
-      default: '',
     },
   },
 
@@ -268,14 +235,13 @@ export default {
 
   // Misc options
   icons: {
-    mdiInvoiceTextOutline,
     mdiMouseMoveUp,
   },
 
   // Warning messages shown when the log file has been truncated
   truncationMessages: {
-    start: 'of the file omitted (start truncated)',
-    end: 'of the file omitted (end truncated)',
+    start: 'The start of the file has been truncated',
+    end: 'The end of the file has been truncated',
   },
 }
 

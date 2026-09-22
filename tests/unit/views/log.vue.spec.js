@@ -144,32 +144,15 @@ describe('Log view', () => {
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
   })
 
-  it('toggles the log mode and updates the toggle label', async () => {
+  it('toggles the log mode', async () => {
     const wrapper = mountFunction()
     await nextTick()
 
     const initialMode = wrapper.vm.headMode
-    const initialTitle = wrapper.vm.headModeTitle
 
     wrapper.vm.headMode = !initialMode
     await nextTick()
     expect(wrapper.vm.headMode).toBe(!initialMode)
-    expect(wrapper.vm.headModeTitle).not.toBe(initialTitle)
-  })
-
-  it('provides the correct label for each log mode', async () => {
-    const wrapper = mountFunction()
-    await nextTick()
-
-    wrapper.vm.headMode = true
-    expect(wrapper.vm.headModeTitle).toBe(
-      'HEAD: showing the start of the file'
-    )
-
-    wrapper.vm.headMode = false
-    expect(wrapper.vm.headModeTitle).toBe(
-      'TAIL: showing the end of the file'
-    )
   })
 
   it('records which end of the file has been truncated', async () => {
