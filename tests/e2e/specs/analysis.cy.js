@@ -430,7 +430,7 @@ describe('Filters and Options save state', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(stateSaveDelay)
       cy.reload()
-      .get('canvas')
+        .get('canvas')
         .should('be.visible')
     })
 
