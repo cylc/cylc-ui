@@ -50,6 +50,13 @@ export default defineConfig(({ command, mode }) => {
   /** Proxy target for the JSON server that provides mock data to stand in for the UIServer in dev mode */
   const devProxyTarget = 'http://localhost:3000/'
 
+  /** Tests that must be isolated due to reliance on shared state */
+  const isolatedTests = {
+    name: 'isolated',
+    include: ['./tests/unit/**/*.vue.spec.{js,ts}'],
+    isolate: true,
+  }
+
   return {
     // When building for production, use a relative base path.
     // Whereas the dev server should emulate the UIServer by using the '/cylc/' base path.
@@ -124,12 +131,13 @@ export default defineConfig(({ command, mode }) => {
       // Allow vue devtools to work when runing vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
-    // Unit test specific config:
+    /**
+     * Unit test specific config
+     * @type {import('vitest/config').TestUserConfig}
+     */
     test: {
-      include: ['./tests/unit/**/*.spec.{js,ts}'],
-      environment: 'jsdom',
-      // Disable isolation to speed up tests, however this means you should be careful to avoid pollution of globals:
-      isolate: false,
+      environment: 'happy-dom',
+      pool: 'threads', // slightly faster than default forks
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       restoreMocks: true,
@@ -139,6 +147,18 @@ export default defineConfig(({ command, mode }) => {
           inline: ['vuetify'],
         },
       },
+      projects: [
+        {
+          test: {
+            name: 'default',
+            include: ['./tests/unit/**/*.spec.{js,ts}'],
+            // Disable isolation to speed up tests (be careful to avoid pollution of shared state):
+            isolate: false,
+            exclude: isolatedTests.include,
+          },
+        },
+        { test: isolatedTests },
+      ],
       coverage: {
         provider: 'istanbul',
         include: [

@@ -18,7 +18,6 @@
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
-import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import {
@@ -28,10 +27,10 @@ import {
   simpleTaskNode,
 } from './tree.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
-import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 import TaskState from '@/model/TaskState.model'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { merge } from 'lodash-es'
 
 const vuetify = createVuetify(vuetifyOptions)
 
@@ -58,13 +57,10 @@ expect.extend({
   },
 })
 
-const $workflowService = sinon.createStubInstance(WorkflowService)
-
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
       plugins: [vuetify, CommandMenuPlugin],
-      mock: { $workflowService },
     },
     ...options,
   })
@@ -137,25 +133,29 @@ describe('TreeItem component', () => {
 })
 
 describe('GScanTreeItem', () => {
-  const mountFunction = (options) => mount(GScanTreeItem, {
-    global: {
-      plugins: [vuetify, CommandMenuPlugin],
-      mock: { $workflowService },
-    },
-    ...options,
-  })
-
-  describe('computed properties', () => {
-    const wrapper = mountFunction({
+  const mountFunction = (options) => mount(GScanTreeItem, merge(
+    {
+      global: {
+        plugins: [vuetify, CommandMenuPlugin],
+      },
       props: {
-        node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
         filteredOutNodesCache: new WeakMap(),
       },
-    })
-    it('does not combine descendant latest state tasks', () => {
-      expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
-    })
-    it('combines all descendant task totals in the correct order', () => {
+    },
+    options
+  ))
+
+  describe('computed properties', () => {
+    it('has statesInfo', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        },
+        shallow: true,
+      })
+      // does not combine descendant latest state tasks:
+      expect(wrapper.vm.statesInfo.latestTasks).toStrictEqual({})
+      // combines all descendant task totals in the correct order:
       expect(Object.entries(wrapper.vm.statesInfo.stateTotals)).toStrictEqual([
         [TaskState.FAILED.name, 0],
         [TaskState.SUBMIT_FAILED.name, 0],
@@ -163,7 +163,13 @@ describe('GScanTreeItem', () => {
         [TaskState.RUNNING.name, 12],
       ])
     })
+
     it('collapses to the lowest only-child', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        },
+      })
       expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')
       expect(wrapper.vm.node.name).to.equal('double/mid')
       // This should be expanded initially as it contains multiple workflows
@@ -178,7 +184,6 @@ describe('GScanTreeItem', () => {
           node: {
             type: 'barbenheimer',
           },
-          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })
@@ -191,7 +196,6 @@ describe('GScanTreeItem', () => {
             type: 'workflow',
             tokens: { workflow: 'a/b/c' },
           },
-          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })

@@ -21,10 +21,9 @@ import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import Toolbar from '@/components/cylc/Toolbar.vue'
 import WorkflowState from '@/model/WorkflowState.model'
-
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { __drawer as drawerState } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { mdiMenuClose, mdiMenuOpen } from '@mdi/js'
@@ -38,12 +37,6 @@ describe('Toolbar component', () => {
   beforeEach(() => {
     mockRoute()
     store = createStore(storeOptions)
-    store.commit('user/SET_USER', {
-      owner: 'rincewind',
-      permissions: ['play', 'pause', 'resume', 'stop', 'setGraphWindowExtent'],
-      initials: 'RW',
-      username: 'rincewind',
-    })
     drawerState.value = false
     $workflowService = sinon.createStubInstance(WorkflowService)
     store.state.workflows.workflows = [
@@ -60,7 +53,6 @@ describe('Toolbar component', () => {
       global: {
         plugins: [store, vuetify, CommandMenuPlugin],
         mocks: { $workflowService },
-        provide: { versionInfo: null },
       },
     })
     // Drawer closed: '≡>' icon
@@ -79,7 +71,6 @@ describe('Toolbar component', () => {
       global: {
         plugins: [store, vuetify, CommandMenuPlugin],
         mocks: { $workflowService },
-        provide: { versionInfo: null },
       },
     })
     expect(drawerState.value).to.equal(false)
@@ -109,10 +100,9 @@ describe('Toolbar component', () => {
       global: {
         plugins: [store, vuetify, CommandMenuPlugin],
         mocks: { $workflowService },
-        provide: { versionInfo: null },
       },
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('.c-toolbar-title').text()).to.include(expected)
+    expect(wrapper.find('.c-toolbar-title').text()).toEqual(expected)
   })
 })
