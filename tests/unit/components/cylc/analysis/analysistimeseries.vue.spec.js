@@ -27,7 +27,13 @@ const vuetify = createVuetify(vuetifyOptions)
 const analysisJobs = analysisJobQuery.data.jobs
 const $workflowService = sinon.createStubInstance(WorkflowService)
 $workflowService.query2.resolves({
-  data: { tasks: [], jobs: [] },
+  data: {
+    tasks: [
+      { name: 'succeeded' },
+      { name: 'waiting' },
+      { name: 'eventually_succeeded' },
+    ],
+  },
 })
 
 describe('TimeSeries component', () => {
@@ -37,7 +43,6 @@ describe('TimeSeries component', () => {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
-      shallow: true,
       ...options,
     })
   }
@@ -67,17 +72,17 @@ describe('TimeSeries component', () => {
     })
 
     // Retrieve job data and check that nothing is displayed
-    await wrapper.setData({ jobs: analysisJobs })
+    wrapper.vm.jobs = analysisJobs
     expect(wrapper.vm.cyclePoints).to.deep.equal([])
     expect(wrapper.vm.series).to.deep.equal([])
 
     // Select a task and check that cyclePoints and series have been calculated
-    await wrapper.setData({ displayedTasks: ['succeeded'] })
+    wrapper.vm.displayedTasks = ['succeeded']
     expect(wrapper.vm.cyclePoints).not.to.deep.equal([])
     expect(wrapper.vm.series).not.to.deep.equal([])
 
     // Deselect task and check that no data will be displayed again
-    await wrapper.setData({ displayedTasks: [] })
+    wrapper.vm.displayedTasks = []
     expect(wrapper.vm.cyclePoints).to.deep.equal([])
     expect(wrapper.vm.series).to.deep.equal([])
   })
@@ -91,10 +96,8 @@ describe('TimeSeries component', () => {
       },
     })
 
-    await wrapper.setData({
-      jobs: analysisJobs,
-      displayedTasks: ['eventually_succeeded'],
-    })
+    wrapper.vm.jobs = analysisJobs
+    wrapper.vm.displayedTasks = ['eventually_succeeded']
 
     // Check the the raw job data doesn't have the cycle points in order
     expect(wrapper.vm.jobs.filter(
@@ -127,10 +130,8 @@ describe('TimeSeries component', () => {
       },
     })
 
-    await wrapper.setData({
-      jobs: analysisJobs,
-      displayedTasks: ['succeeded', 'waiting'],
-    })
+    wrapper.vm.jobs = analysisJobs
+    wrapper.vm.displayedTasks = ['succeeded', 'waiting']
 
     // succeeded has data on all three cycle points
     expect(wrapper.vm.cyclePoints).to.deep.equal([
@@ -140,7 +141,7 @@ describe('TimeSeries component', () => {
     ])
 
     // waiting only has data on two of the cycle points
-    await wrapper.setData({ displayedTasks: ['waiting'] })
+    wrapper.vm.displayedTasks = ['waiting']
     expect(wrapper.vm.cyclePoints).to.deep.equal([
       '20240101T0000Z',
       '20240102T0000Z',
@@ -156,10 +157,8 @@ describe('TimeSeries component', () => {
       },
     })
 
-    await wrapper.setData({
-      jobs: analysisJobs,
-      displayedTasks: ['succeeded', 'waiting'],
-    })
+    wrapper.vm.jobs = analysisJobs
+    wrapper.vm.displayedTasks = ['succeeded', 'waiting']
 
     // waiting shouldn't have any data for the second cycle point
     expect(wrapper.vm.series[1].data[1].y).to.equal(null)
@@ -174,10 +173,8 @@ describe('TimeSeries component', () => {
       },
     })
 
-    await wrapper.setData({
-      jobs: analysisJobs,
-      displayedTasks: ['waiting'],
-    })
+    wrapper.vm.jobs = analysisJobs
+    wrapper.vm.displayedTasks = ['waiting']
 
     // startedTime should be highest value
     expect(wrapper.vm.series[0].data[1].startedTime).to.equal('2023-01-01T02:02:00Z')
@@ -193,10 +190,8 @@ describe('TimeSeries component', () => {
       },
     })
 
-    await wrapper.setData({
-      jobs: analysisJobs,
-      displayedTasks: ['succeeded'],
-    })
+    wrapper.vm.jobs = analysisJobs
+    wrapper.vm.displayedTasks = ['succeeded']
 
     expect(wrapper.vm.series[0].data[0].y).to.equal(60)
 
