@@ -140,13 +140,13 @@ function formatRSS (value) {
     return undefined
   } else if (value / 1024 < 1000) {
     const kilobytes = value / 1024
-    return kilobytes.toPrecision(3) + ' KB'
+    return kilobytes.toPrecision(3) + ' KiB'
   } else if (value / 1048576 < 1000) {
     const megabytes = value / 1048576
-    return megabytes.toPrecision(3) + ' MB'
+    return megabytes.toPrecision(3) + ' MiB'
   } else {
     const gigabytes = value / 1073741824
-    return gigabytes.toPrecision(3) + ' GB'
+    return gigabytes.toPrecision(3) + ' GiB'
   }
 }
 
