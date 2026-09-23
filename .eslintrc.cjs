@@ -35,6 +35,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:vue/vue3-essential',
     'plugin:vuetify/base',
+    'plugin:vuetify/recommended-v4',
     'plugin:cypress/recommended',
   ],
   rules: {
@@ -80,5 +81,8 @@ module.exports = {
     'cypress/unsafe-to-chain-command': [
       'off',
     ],
+  },
+  globals: {
+    __APP_VERSION__: 'readonly',
   },
 }

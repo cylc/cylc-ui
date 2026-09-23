@@ -18,7 +18,7 @@
 import userprofile from '@/services/mock/json/userprofile.json'
 
 export function patchUserprofile () {
-  cy.intercept('/userprofile', {
+  cy.intercept('/cylc/userprofile', {
     body: {
       ...userprofile,
       permissions: [

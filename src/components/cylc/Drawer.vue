@@ -86,7 +86,6 @@ import { useDisplay } from 'vuetify'
 import Header from '@/components/cylc/Header.vue'
 import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiInformationOutline } from '@mdi/js'
-import pkg from '@/../package.json'
 import { when } from '@/utils/reactivity'
 import { useDrawer } from '@/utils/toolbar'
 
@@ -161,7 +160,7 @@ export default {
       drawer,
       drawerWidth,
       resizeBar,
-      UIVersion: pkg.version,
+      UIVersion: __APP_VERSION__,
       cylcVersionInfo,
       mdiInformationOutline,
       mdiHome,

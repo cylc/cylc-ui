@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-empty-state
     :headline="$t('NotFound.title')"
     :title="$t('NotFound.message')"
-    image="/img/logo.svg"
+    image="img/logo.svg"
   >
     <template #actions>
       <v-defaults-provider :defaults="defaults">
