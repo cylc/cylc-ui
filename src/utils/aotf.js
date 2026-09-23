@@ -584,30 +584,24 @@ export function filterAssociations (nodes, mutations, permissions) {
     }
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
-    let applies = mutation._appliesTo
-      ? nodes.every((n) => mutation._appliesTo.includes(n.type))
-      : false
+    let applies = nodes.every((n) => mutation._appliesTo?.includes(n.type))
     for (const arg of mutation.args) {
       if (arg._cylcObjects) {
         if (nodes.every((n) => arg._cylcObjects.includes(n.type))) {
           // this is the object type we are filtering for
           applies = true
-          if (nodes.length > 1 || (
+        }
+        if (applies) {
+          requiresInfo ||= (nodes.length > 1 || (
             arg._required && !arg._cylcObjects.some((t) => nodes[0].tokens[t])
-          )) {
-            // this cannot be satisfied by the context
-            requiresInfo = true
-          }
+          ))
         }
       } else if (arg._required) {
         // this is a required argument
         requiresInfo = true
       }
       // is there an alternate cylc object which can satisfy this field?
-      if (nodes.every((n) => alternateFields[arg._cylcType] === n.type)) {
-        // this might not be the object type we're filtering for, but it'll do
-        applies = true
-      }
+      applies ||= nodes.every((n) => n.type === alternateFields[arg._cylcType])
     }
     if (!applies) {
       continue

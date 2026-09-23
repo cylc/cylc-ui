@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { computedWithControl } from '@vueuse/core'
 import { mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
@@ -83,7 +83,6 @@ import {
 } from '@/utils/initialOptions'
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
-import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
@@ -189,7 +188,6 @@ export default {
     TableComponent,
     TaskFilter,
     ViewToolbar,
-    ViewToolbarBtn,
   },
 
   emits: [updateInitialOptionsEvent],
@@ -227,8 +225,8 @@ export default {
 
     const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
 
-    const enableSelect = useInitialOptions('enableSelect', { props, emit }, false)
-    const selection = useInitialOptions('selection', { props, emit }, [])
+    const enableSelect = ref(false)
+    const selection = ref([])
 
     // const cylcTree = computed(() => store.state.workflows.cylcTree)
     const getNodes = store.getters['workflows/getNodes']
