@@ -45,7 +45,7 @@ disableFragmentWarnings()
  */
 export function createGraphQLUrls () {
   const httpUrl = createUrl('graphql')
-  const wsUrl = createUrl('subscriptions', true)
+  const wsUrl = createUrl('subscriptions', { websockets: true })
   return {
     httpUrl,
     wsUrl,
