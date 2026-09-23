@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,117 +17,55 @@
 
 // Code related to GraphiQL
 
-import { parse } from 'graphql'
+import { onBeforeUnmount } from 'vue'
+import { createGraphiQLFetcher } from '@graphiql/toolkit'
 import { createGraphQLUrls } from '@/graphql/index'
 import { getXSRFHeaders } from '@/utils/urls'
-
-// TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
-//       the functions hasSubscriptionOperation and graphQLFetcher are both from
-//       the graphiql-subscriptions-fetcher. Unfortunately that project is archived
-//       on GitHub, and is using the old API for subscription-transport-ws, which
-//       is a dependency of Cylc UI. As we cannot use an older version, instead we
-//       have the two functions here, patched as per issue to work with newer API.
+import { createClient } from 'graphql-ws'
+import { uniqueId } from 'lodash-es'
 
 /**
- * Tell whether it is a query or subscription.
+ * Composable that creates a unified GraphiQL fetcher supporting queries, mutations,
+ * and modern graphql-transport-ws subscriptions natively.
  *
- * @private
- * @param {{
- *   query: string
- * }}graphQlParams
- * @returns {boolean} true if the params contain a subscription, false otherwise
+ * @returns {import('@graphiql/toolkit').Fetcher} GraphiQL compatible fetcher
  */
-const hasSubscriptionOperation = function (graphQlParams) {
-  const queryDoc = parse(graphQlParams.query)
-  for (let _i = 0, _a = queryDoc.definitions; _i < _a.length; _i++) {
-    const definition = _a[_i]
-    if (definition.kind === 'OperationDefinition') {
-      const operation = definition.operation
-      if (operation === 'subscription') {
-        return true
-      }
-    }
-  }
-  return false
-}
+export function useGraphiQLFetcher () {
+  const { httpUrl, wsUrl } = createGraphQLUrls()
 
-/**
- * @typedef SubscribableComponent
- * @property {?Object} subscription - GraphQL subscription
- */
+  /**
+   * Simpler version of the usual subscription client for GraphiQL.
+   *
+   * Note: this lazily starts a new socket connection for subscriptions.
+   * */
+  const subscriptionClient = createClient({
+    url: wsUrl,
+    on: {
+      error: console.error,
+    },
+    generateID: (payload) => uniqueId(`graphiql-${payload.operationName ?? ''}`),
+  })
 
-/**
- * The GraphQL fetcher function.
- *
- * @param {?Object} subscriptionsClient
- * @param {function} fallbackFetcher
- * @param {SubscribableComponent} component
- * @returns {function}
- */
-const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component) {
-  component.subscription = null
-  return function (graphQLParams) {
-    if (subscriptionsClient && component.subscription !== null) {
-      subscriptionsClient.unsubscribe(component.subscription)
-    }
-    if (subscriptionsClient && hasSubscriptionOperation(graphQLParams)) {
-      return {
-        subscribe: function (observer) {
-          observer.next('Your subscription data will appear here after server publication!')
-          const subscription = subscriptionsClient.request({
-            query: graphQLParams.query,
-            variables: graphQLParams.variables,
-          }, function (error, result) {
-            if (error) {
-              observer.error(error)
-            } else {
-              observer.next(result)
-            }
-          })
-          component.subscription = subscription.subscribe((result, err) => {
-            if (err) {
-              observer.error(err)
-            } else {
-              observer.next(result)
-            }
-          })
-          return component.subscription
+  onBeforeUnmount(() => {
+    // Tidy up
+    subscriptionClient.dispose()
+  })
+
+  return createGraphiQLFetcher({
+    url: httpUrl,
+    fetch: (input, init) => {
+      // Inject standard custom XSRF headers & credentials needed by Cylc
+      const modifiedInit = {
+        ...init,
+        credentials: 'include',
+        headers: {
+          ...init.headers,
+          ...getXSRFHeaders(),
         },
       }
-    } else {
-      return fallbackFetcher(graphQLParams)
-    }
-  }
-}
-
-/**
- * Fallback GraphQL fetcher.
- *
- * @param {*} graphQLParams
- * @returns {Promise<any | string>}
- */
-function fallbackGraphQLFetcher (graphQLParams) {
-  // re-using same method UI uses to create GraphQL URL's used by its client with createGraphQLUrls()
-  return fetch(
-    createGraphQLUrls().httpUrl,
-    {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        ...getXSRFHeaders(),
-      },
-      body: JSON.stringify(graphQLParams),
-      credentials: 'include',
-    }
-  ).then(function (response) {
-    return response.json().catch(function () {
-      return response.text()
-    })
+      return fetch(input, modifiedInit)
+    },
+    // Pass the graphql-ws client to native handler
+    wsClient: subscriptionClient,
   })
-}
-
-export {
-  graphQLFetcher,
-  fallbackGraphQLFetcher,
 }

@@ -47,7 +47,7 @@ class Subscription {
   constructor (query, debug = false) {
     this.query = query
     /**
-     * @type {ZenObservable}
+     * @type {import('zen-observable-ts').Subscription}
      */
     this.observable = null
     /**

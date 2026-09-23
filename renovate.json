@@ -128,7 +128,6 @@
       "groupName": "tests packages",
       "matchPackageNames": [
         "@vue/test-utils",
-        "cross-fetch",
         "jsdom",
         "nyc",
         "sinon",
