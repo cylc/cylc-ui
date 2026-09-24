@@ -15,19 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { createStore } from 'vuex'
 import { mount } from '@vue/test-utils'
 import Menu from '@/components/cylc/commandMenu/Menu.vue'
 import { Tokens } from '@/utils/uid'
+import storeOptions from '@/store/options'
+import { routerKey } from 'vue-router'
 
 describe('Command menu', () => {
-  it('has a title with the node ID excluding the username', () => {
-    const wrapper = mount(Menu, { shallow: true })
+  it('has a title with the node ID excluding the username', async () => {
+    const wrapper = mount(Menu, {
+      shallow: true,
+      global: {
+        plugins: [createStore(storeOptions)],
+        provide: {
+          workflowService: {},
+          [routerKey]: {},
+        },
+      },
+    })
     wrapper.vm.target = { dataset: {} }
     const id = '~neil.armstrong/apollo//11/eagle'
-    wrapper.vm.node = {
+    wrapper.vm.nodes.push({
       id,
       tokens: new Tokens(id),
-    }
-    expect(wrapper.vm.title).toEqual('apollo//11/eagle')
+    })
+    expect(wrapper.vm.title).toBe('apollo//11/eagle')
   })
 })

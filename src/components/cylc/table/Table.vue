@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-model:sort-by="sortBy"
     v-model:page="page"
     v-model:items-per-page="itemsPerPage"
-    :items="tasks"
+    :items="items"
     v-bind="{ headers, showSelect }"
     item-value="task.id"
     multi-sort
@@ -178,6 +178,16 @@ const sortBy = defineModel('sortBy')
 const page = defineModel('page')
 const itemsPerPage = defineModel('itemsPerPage')
 
+const items = computed(
+  () => props.tasks.map(
+    (task) => ({
+      task,
+      latestJob: task.children[0],
+      previousJob: task.children[1],
+    })
+  )
+)
+
 const headers = ref([
   {
     title: 'Task',
@@ -275,7 +285,7 @@ for (const header of headers.value) {
 
 /** Data for the run time column, for each task's latest job. */
 const taskRunTimes = computed(() => new Map(
-  props.tasks.map(({ task, latestJob }) => [
+  items.value.map(({ task, latestJob }) => [
     task.id,
     {
       actual: getRunTime(latestJob?.node),

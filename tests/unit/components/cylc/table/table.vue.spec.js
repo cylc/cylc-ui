@@ -49,7 +49,23 @@ describe('Table component', () => {
         tasks: simpleTableTasks,
       },
     })
-    expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
+    expect(wrapper.vm.items).toMatchObject([
+      {
+        task: { id: '~cylc/workflow//20000101T0000Z/taskA' },
+        latestJob: { id: '~cylc/workflow//20000101T0000Z/taskA/01' },
+        previousJob: { id: '~cylc/workflow//20000101T0000Z/taskA/02' },
+      },
+      {
+        task: { id: '~cylc/workflow//20000102T0000Z/taskB' },
+        latestJob: undefined,
+        previousJob: undefined,
+      },
+      {
+        task: { id: '~cylc/workflow//20000103T0000Z/taskC' },
+        latestJob: undefined,
+        previousJob: undefined,
+      },
+    ])
     expect(wrapper.find('div')).to.not.equal(null)
   })
 
@@ -67,13 +83,13 @@ describe('Table component', () => {
       const min = '20000101T0000Z'
       const max = '20000103T0000Z'
       // check the the raw task data has the cycle points from lowest to highest
-      expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal(min)
-      expect(wrapper.vm.tasks[wrapper.vm.tasks.length - 1].task.tokens.cycle).to.equal(max)
+      expect(wrapper.vm.items[0].task.tokens.cycle).to.equal(min)
+      expect(wrapper.vm.items[wrapper.vm.items.length - 1].task.tokens.cycle).to.equal(max)
 
       // check that the html have the cycle points in the right order
       await wrapper.vm.$nextTick()
       expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal(order === 'asc' ? min : max)
-      expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.tasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal(order === 'asc' ? max : min)
+      expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.items.length}) > td:nth-child(3)`).element.innerHTML).to.equal(order === 'asc' ? max : min)
     })
 
     describe('nullSorter', () => {
