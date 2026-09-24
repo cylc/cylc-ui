@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           text="Select"
           @click="() => enableSelect = true"
           :prepend-icon="mdiSelect"
+          data-cy="enable-select"
         />
         <template v-else>
           <v-btn
@@ -38,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :prepend-icon="mdiPencilBoxMultiple"
             :disabled="!selectedIDs.length"
             color="primary"
+            data-cy="enact"
           >
             <template #append>
               <v-badge
@@ -45,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 :content="selectedIDs.length"
                 inline
                 color="primary"
+                data-cy="selected-count"
               />
             </template>
           </v-btn>
@@ -52,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             text="Cancel"
             @click="() => enableSelect = false"
             :prepend-icon="mdiSelectOff"
+            data-cy="cancel-select"
           />
         </template>
       </template>
