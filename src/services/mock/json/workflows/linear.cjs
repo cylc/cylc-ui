@@ -19,6 +19,11 @@
 
 const { simulatedDelay } = require('../util.cjs')
 
+/** Time task takes to run (ms) */
+const runTime = 5e3
+/** Time task spends in submitted state (ms) */
+const submitTime = 2e3
+
 function timestamp (date = new Date()) {
   return `${date.toISOString().slice(0, -5)}Z`
 }
@@ -42,7 +47,7 @@ const runtime = {
 }
 
 const task = {
-  meanElapsedTime: 10,
+  meanElapsedTime: runTime * 1e-3,
   __typename: 'Task',
 }
 
@@ -147,9 +152,9 @@ const initial = {
           jobId: '',
           platform: 'simulation',
           startedTime: timestamp(),
-          submittedTime: timestamp(new Date(Date.now() + 2e3)),
+          submittedTime: timestamp(new Date(Date.now() + submitTime)),
           finishedTime: '',
-          estimatedFinishTime: timestamp(new Date(Date.now() + 10e3)),
+          estimatedFinishTime: timestamp(new Date(Date.now() + runTime)),
           state: 'running',
           submitNum: 1,
           messages: [
@@ -362,9 +367,9 @@ const startCycle = (cycle) => {
             jobId: '',
             platform: 'simulation',
             startedTime: timestamp(),
-            submittedTime: timestamp(new Date(now + 2e3)),
+            submittedTime: timestamp(new Date(now + submitTime)),
             finishedTime: '',
-            estimatedFinishTime: timestamp(new Date(now + 10e3)),
+            estimatedFinishTime: timestamp(new Date(now + runTime)),
             state: 'running',
             submitNum: 1,
             messages: ['started'],
@@ -444,9 +449,9 @@ const startCycle = (cycle) => {
 async function* next () {
   yield initial
   for (let cycle = 1; cycle < 100; cycle++) {
-    await simulatedDelay(10e3, { cy: 500 })
+    await simulatedDelay(runTime, { cy: 500 })
     yield finishCycle(cycle)
-    await simulatedDelay(2e3, { cy: 200 })
+    await simulatedDelay(submitTime, { cy: 200 })
     yield startCycle(cycle + 1)
   }
 }
