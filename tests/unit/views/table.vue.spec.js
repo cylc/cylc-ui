@@ -16,17 +16,42 @@
  */
 
 import { nextTick, ref } from 'vue'
+import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Table from '@/views/Table.vue'
 import { WorkflowService } from '@/services/workflow.service'
-import { simpleTableTasks } from '@/../tests/unit/components/cylc/table/table.data'
+import { simpleTableWorkflows } from '@/../tests/unit/components/cylc/table/table.data'
 import TaskState from '@/model/TaskState.model'
 import { mockRoute } from '$tests/util'
+import { merge } from 'lodash-es'
+import * as wv from '@/mixins/graphql'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 
 chai.config.truncateThreshold = 0
+
+const fooJobs = [
+  {
+    id: '~user/one//1/foo/3',
+    children: [],
+  },
+  {
+    id: '~user/one//1/foo/2',
+    children: [],
+  },
+  {
+    id: '~user/one//1/foo/1',
+    children: [],
+  },
+]
+const barJobs = [
+  {
+    id: '~user/one//1/bar/1',
+    children: [],
+  },
+]
 
 const workflows = [
   {
@@ -36,30 +61,12 @@ const workflows = [
         id: '~user/one//1',
         children: [
           {
-            id: '~user/one//1/eventually_succeeded',
-            children: [
-              {
-                id: '~user/one//1/eventually_succeeded/3',
-                children: [],
-              },
-              {
-                id: '~user/one//1/eventually_succeeded/2',
-                children: [],
-              },
-              {
-                id: '~user/one//1/eventually_succeeded/1',
-                children: [],
-              },
-            ],
+            id: '~user/one//1/foo',
+            children: fooJobs,
           },
           {
-            id: '~user/one//1/failed',
-            children: [
-              {
-                id: '~user/one//1/failed/1',
-                children: [],
-              },
-            ],
+            id: '~user/one//1/bar',
+            children: barJobs,
           },
         ],
       },
@@ -69,33 +76,41 @@ const workflows = [
 
 describe('Table view', () => {
   mockRoute({ params: { workflowName: 'one' } })
-  let store, $workflowService
+  let store
 
   beforeEach(() => {
     store = createStore(storeOptions)
-    $workflowService = sinon.createStubInstance(WorkflowService)
+    store.commit('workflows/CREATE')
   })
 
+  function mountFunc (options = {}) {
+    return mount(Table, merge(
+      {
+        shallow: true,
+        global: {
+          plugins: [store, CommandMenuPlugin],
+          mocks: {
+            $workflowService: sinon.createStubInstance(WorkflowService),
+          },
+        },
+      },
+      options
+    ))
+  }
+
   it('computes tasks', async () => {
-    const wrapper = mount(Table, {
-      shallow: true,
-      global: {
-        plugins: [store],
-        mocks: { $workflowService },
-      },
+    vi.spyOn(wv, 'useWorkflowVariables').mockReturnValue({
+      workflows: ref(workflows),
     })
-
-    wrapper.vm.workflows = ref(workflows)
-
-    expect(wrapper.vm.tasks).toMatchObject([
+    const wrapper = mountFunc()
+    expect(wrapper.vm.filteredTasks).toEqual([
       {
-        task: { id: '~user/one//1/eventually_succeeded' },
-        latestJob: { id: '~user/one//1/eventually_succeeded/3' },
-        previousJob: { id: '~user/one//1/eventually_succeeded/2' },
+        id: '~user/one//1/foo',
+        children: fooJobs,
       },
       {
-        task: { id: '~user/one//1/failed' },
-        latestJob: { id: '~user/one//1/failed/1' },
+        id: '~user/one//1/bar',
+        children: barJobs,
       },
     ])
   })
@@ -103,14 +118,10 @@ describe('Table view', () => {
   describe('Filter', () => {
     let wrapper
     beforeEach(async () => {
-      wrapper = mount(Table, {
-        shallow: true,
-        global: {
-          plugins: [store],
-          mocks: { $workflowService },
-        },
+      vi.spyOn(wv, 'useWorkflowVariables').mockReturnValue({
+        workflows: ref(simpleTableWorkflows),
       })
-      await wrapper.setData({ tasks: simpleTableTasks })
+      wrapper = mountFunc()
     })
 
     it('should not filter by ID or task state by default', () => {
