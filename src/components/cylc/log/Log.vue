@@ -20,14 +20,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ref="scrollWrapper"
     class="h-100 overflow-auto px-4 pb-2"
   >
-    <pre
-      ref="logText"
-      :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
-      data-cy="log-text"
-    ><span
-      v-for="(log, index) in computedLogs"
-      :key="index"
-    >{{ log }}</span></pre>
+    <v-defaults-provider
+      :defaults="{
+        VAlert: {
+          type: 'warning',
+          variant: 'tonal',
+          density: 'compact',
+          class: 'my-2',
+        },
+      }"
+    >
+      <v-alert
+        v-if="truncatedStart"
+        data-cy="log-truncation-start"
+      >
+        <template #prepend>
+          <v-btn
+            size="small"
+            variant="outlined"
+            color="primary"
+            data-cy="log-load-start"
+            @click="$emit('update:headMode', true)"
+          >
+            Load start
+          </v-btn>
+        </template>
+        {{ $options.truncationMessages.start }}
+      </v-alert>
+      <!-- TEMP DEBUG: line-number gutter (count of lines on screen, NOT the
+           file line number). Remove when finished debugging. -->
+      <pre
+        ref="logText"
+        :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
+        data-cy="log-text"
+      ><span
+        v-for="(log, index) in computedLogs"
+        :key="index"
+      ><span class="text-disabled">{{ (index + 1).toString().padStart(6) }} </span>{{ log }}</span></pre>
+      <v-alert
+        v-if="truncatedEnd"
+        data-cy="log-truncation-end"
+      >
+        <template #prepend>
+          <v-btn
+            size="small"
+            variant="outlined"
+            color="primary"
+            data-cy="log-load-end"
+            @click="$emit('update:headMode', false)"
+          >
+            Load end
+          </v-btn>
+        </template>
+        {{ $options.truncationMessages.end }}
+      </v-alert>
+    </v-defaults-provider>
     <v-btn
       v-if="logs.length"
       position="fixed"
@@ -75,12 +122,33 @@ export default {
     autoScroll: {
       type: Boolean,
       required: false,
+      default: true,
+    },
+    /** Whether the start of the file has been truncated (earlier lines omitted). */
+    truncatedStart: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    /** Whether the end of the file has been truncated (later lines omitted). */
+    truncatedEnd: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    /** Whether the log is in HEAD (start) mode. Part of the `headMode`
+     * two-way binding whose update is emitted by the truncation banner
+     * "Load start"/"Load end" buttons. */
+    headMode: {
+      type: Boolean,
+      required: false,
       default: false,
     },
   },
 
   emits: [
     'update:autoScroll',
+    'update:headMode',
   ],
 
   setup (props, { emit }) {
@@ -170,6 +238,12 @@ export default {
   // Misc options
   icons: {
     mdiMouseMoveUp,
+  },
+
+  // Warning messages shown when the log file has been truncated
+  truncationMessages: {
+    start: 'The start of the file has been truncated',
+    end: 'The end of the file has been truncated',
   },
 }
 
