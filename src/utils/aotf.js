@@ -621,7 +621,7 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
  *
  * @yields {GQLType} Type objects of the same form as the type argument.
  */
-export function * iterateType (type) {
+export function* iterateType (type) {
   while (type) {
     yield type
     type = type.ofType
