@@ -361,7 +361,7 @@ export class LogsCallback extends DeltasCallback {
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
-      this.trim()
+      // this.trim()
     }
     if (added.truncated != null) {
       // record which end of the file has been truncated (drives the warning)

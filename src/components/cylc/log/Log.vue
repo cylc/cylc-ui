@@ -47,6 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
         {{ $options.truncationMessages.start }}
       </v-alert>
+      <!-- TEMP DEBUG: line-number gutter (count of lines on screen, NOT the
+           file line number). Remove when finished debugging. -->
       <pre
         ref="logText"
         :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
@@ -54,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       ><span
         v-for="(log, index) in computedLogs"
         :key="index"
-      >{{ log }}</span></pre>
+      ><span class="text-disabled">{{ (index + 1).toString().padStart(6) }} </span>{{ log }}</span></pre>
       <v-alert
         v-if="truncatedEnd"
         data-cy="log-truncation-end"
