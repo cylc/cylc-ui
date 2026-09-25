@@ -20,15 +20,16 @@ const process = require('process')
 /**
  * Simulate a loading delay.
  *
- * NOTE: skips the delay if the CI env var is set so as not to slow down tests.
- *
  * @param {number} delay - in ms
+ * @param {object} options
+ * @param {number} options.CI - the delay to use if running in CI (default: 0)
  * @returns {Promise}
  */
-function simulatedDelay (delay) {
-  return process.env.CI
-    ? Promise.resolve()
-    : new Promise((resolve) => setTimeout(resolve, delay))
+function simulatedDelay (delay, { CI = 0 } = {}) {
+  return new Promise((resolve) => setTimeout(
+    resolve,
+    process.env.CI ? CI : delay,
+  ))
 }
 
 module.exports = {

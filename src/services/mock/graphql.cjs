@@ -49,15 +49,16 @@ function getOperationName (query) {
  * Get the response for a given GraphQL query operation name.
  *
  * @param {string} operationName - GraphQL query operation name (e.g. GScanQuery, WorkflowTableQuery, etc)
- * @param {?Record<string, *>} variables - GraphQL query variables
- * @returns {*|Promise<*>} GraphQL response
+ * @param {?Record<string, any>} variables - GraphQL query variables
  */
-async function getGraphQLQueryResponse (operationName, variables) {
+async function* getGraphQLQueryResponse (operationName, variables) {
   const res = data[operationName] || {}
-  if (typeof res === 'function') {
-    return await res(variables)
+  const value = typeof res === 'function' ? res(variables) : res
+  if (typeof value?.[Symbol.iterator] === 'function' || typeof value?.[Symbol.asyncIterator] === 'function') {
+    yield* value
+  } else {
+    yield value
   }
-  return res
 }
 
 /**
@@ -65,18 +66,17 @@ async function getGraphQLQueryResponse (operationName, variables) {
  * and returning the valid response (if any).
  *
  * @param {*} request - Express HTTP GraphQL request
- * @returns {*|Promise<*>} GraphQL response
  */
-async function handleGraphQLRequest (request) {
+async function* handleGraphQLRequest (request) {
   const isSchemaQuery = request.body.query.includes('__schema')
   const operationName = isSchemaQuery
     ? 'IntrospectionQuery'
     : getOperationName(request.body.query)
   try {
-    return await getGraphQLQueryResponse(operationName, request.body.variables)
+    yield* getGraphQLQueryResponse(operationName, request.body.variables)
   } catch (err) {
     console.error(err)
-    return {
+    yield {
       errors: [{
         message: err.message,
         extensions: {

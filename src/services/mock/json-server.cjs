@@ -60,22 +60,24 @@ server.ws('/subscriptions', (ws) => {
  * @param {import('express').Response} res - express HTTP response
  */
 router.render = async (req, res) => {
-  // This is the original response.
-  let responseData = res.locals.data || {}
   // Here we want to customize the response for GraphQL requests.
   // req.body is a key-value pairs of data submitted, or undefined.
   if (req.originalUrl === '/graphql' && req.body) {
-    if (req.method === 'GET') {
-      responseData = { errors: [{ message: 'Must provide query string.' }] }
-    } else {
-      responseData = await graphql.handleGraphQLRequest(req)
-    }
     // NB: json-server returns 404 for requests that are not in the router
     // but we have dynamic requests for the /graphql endpoint (i.e. no single
     // data response) hence the status(200) below.
     res.status(200)
+    if (req.method === 'GET') {
+      res.jsonp({ errors: [{ message: 'Must provide query string.' }] })
+      return
+    }
+    for await (const chunk of graphql.handleGraphQLRequest(req)) {
+      res.jsonp(chunk)
+    }
+    return
   }
-  res.jsonp(responseData)
+  // This is the original response.
+  res.jsonp(res.locals.data || {})
 }
 
 server.use(router)
