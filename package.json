@@ -19,7 +19,7 @@
     "serve:vue": "vite --mode offline",
     "serve:jupyterhub": "nodemon src/services/mock/json-server.cjs --watch src/services/mock/",
     "test:component": "cypress open --component",
-    "test:e2e": "yarn run serve e2e:open",
+    "test:e2e": "CYPRESS=true yarn run serve e2e:open",
     "test:unit": "vitest",
     "test": "vitest run && yarn run serve cy:run"
   },
