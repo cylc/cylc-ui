@@ -17,11 +17,25 @@
 
 const one = require('./one')
 const multi = require('./multi')
+const linear = require('./linear.cjs')
 
-const workflows = [one, ...multi]
+const workflows = [one, ...multi, linear.initial]
 
-function Workflow ({ workflowID }) {
-  return workflows.find(({ deltas }) => deltas.id === workflowID) || {}
+/**
+ * Continuously yield the deltas for a workflow subscription.
+ *
+ * Supports both a single static deltas object (yielded once, as in
+ * one.json/multi.json), and an array of deltas to be yielded in sequence
+ * (e.g. to simulate updates received over time).
+ *
+ * @param {{ workflowID: string }} variables
+ */
+async function* Workflow ({ workflowID }) {
+  if (workflowID === linear.initial.deltas.id) {
+    yield* linear.next()
+  } else {
+    yield workflows.find(({ deltas }) => deltas.id === workflowID) || {}
+  }
 }
 
 module.exports = {
