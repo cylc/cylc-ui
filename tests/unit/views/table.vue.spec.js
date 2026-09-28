@@ -115,6 +115,29 @@ describe('Table view', () => {
     ])
   })
 
+  describe('Selection mode', () => {
+    it('freezes the list of tasks', async () => {
+      const workflowsRef = ref(workflows)
+      vi.spyOn(wv, 'useWorkflowVariables').mockReturnValue({
+        workflows: workflowsRef,
+      })
+      const wrapper = mountFunc()
+      // Selection mode is initially disabled, so the list of tasks should update
+      workflowsRef.value[0].children.push({
+        id: '~user/one//2',
+        children: [{ id: '~user/one//2/baz', children: [] }],
+      })
+      expect(wrapper.vm.filteredTasks.length).toEqual(3)
+      // Enable selection mode; the list of tasks should freeze
+      wrapper.vm.enableSelect = true
+      workflowsRef.value[0].children.shift()
+      expect(wrapper.vm.filteredTasks.length).toEqual(3)
+      // Disable selection mode; the list of tasks should update
+      wrapper.vm.enableSelect = false
+      expect(wrapper.vm.filteredTasks.length).toEqual(1)
+    })
+  })
+
   describe('Filter', () => {
     let wrapper
     beforeEach(async () => {
