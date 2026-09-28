@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createUrl } from '@/utils/urls'
 
 describe('urls', () => {
@@ -26,89 +27,70 @@ describe('urls', () => {
     host: HOST,
     pathname: PATHNAME,
   }
-  it('should create new URLs', () => {
-    const tests = [
-      {
-        path: '',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}`,
-        location: DEFAULT_LOCATION,
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it.each([
+    {
+      path: '',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}`,
+    },
+    {
+      path: '',
+      opts: { websockets: false, baseOnly: true },
+      expected: `${PROTOCOL}//${HOST}/`,
+    },
+    {
+      path: 'subscriptions',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
+    },
+    {
+      path: 'subscriptions',
+      opts: { websockets: true },
+      expected: `wss://${HOST}/${PATHNAME}subscriptions`,
+    },
+    {
+      path: 'subscriptions',
+      opts: { websockets: true },
+      expected: `ws://${HOST}/${PATHNAME}subscriptions`,
+      location: {
+        protocol: 'http:',
+        host: HOST,
+        pathname: PATHNAME,
       },
-      {
-        path: '',
-        websockets: false,
-        baseOnly: true,
-        expected: `${PROTOCOL}//${HOST}/`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: 'subscriptions',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: 'subscriptions',
-        websockets: true,
-        expected: `wss://${HOST}/${PATHNAME}subscriptions`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: 'subscriptions',
-        websockets: true,
-        expected: `ws://${HOST}/${PATHNAME}subscriptions`,
-        location: {
-          protocol: 'http:',
-          host: HOST,
-          pathname: PATHNAME,
-        },
-      },
-      {
-        path: '//subscriptions',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: '//graphql/endpoint//subscriptions',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: '//graphql/endpoint//subscriptions///',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions/`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: '     ',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}`,
-        location: DEFAULT_LOCATION,
-      },
-      {
-        path: ' graphql/endpoint//  ',
-        websockets: false,
-        expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/`,
-        location: DEFAULT_LOCATION,
-      },
-    ]
-    tests.forEach((test) => {
-      const originalWindow = global.window
-      try {
-        global.window = {
-          location: test.location,
-        }
-        // || false just to prevent accidental undefined values
-        const url = createUrl(
-          test.path,
-          test.websockets || false,
-          test.baseOnly || false)
-        expect(url).to.equal(test.expected)
-      } finally {
-        global.window = originalWindow
-      }
-    })
+    },
+    {
+      path: '//subscriptions',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
+    },
+    {
+      path: '//graphql/endpoint//subscriptions',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions`,
+    },
+    {
+      path: '//graphql/endpoint//subscriptions///',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions/`,
+    },
+    {
+      path: '     ',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}`,
+    },
+    {
+      path: ' graphql/endpoint//  ',
+      opts: { websockets: false },
+      expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/`,
+    },
+  ])('%# createURL($path, ...)', ({ path, location = DEFAULT_LOCATION, opts, expected }) => {
+    vi.stubGlobal('window', { location })
+
+    expect(createUrl(path, opts)).toBe(expected)
   })
 })

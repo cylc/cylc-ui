@@ -17,9 +17,7 @@
 
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { mount } from '@vue/test-utils'
-import { Assertion } from 'chai'
 import { createVuetify } from 'vuetify'
-import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import {
@@ -29,43 +27,40 @@ import {
   simpleTaskNode,
 } from './tree.data'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
-import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 import TaskState from '@/model/TaskState.model'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { merge } from 'lodash-es'
 
 const vuetify = createVuetify(vuetifyOptions)
 
 /**
- * Helper function for expecting TreeItem to be expanded.
+ * Matcher for expecting a TreeItem wrapper to be expanded.
  * Usage:
- *   expect(wrapper).to.be.expanded()
+ *   expect(wrapper).toBeExpanded()
  *   // or expect it to be collapsed:
- *   expect(wrapper).to.not.be.expanded()
+ *   expect(wrapper).not.toBeExpanded()
  */
-Assertion.addMethod('expanded', function () {
-  // this._obj is the TreeItem Wrapper
-  const wrapper = this._obj
-  this.assert(
-    wrapper.vm.isExpanded === true,
-    'expected the isExpanded data property to be true',
-    'expected the isExpanded data property to be false'
-  )
-  const nodeDiv = wrapper.find('.node')
-  this.assert(
-    nodeDiv.classes('expanded') === true,
-    'expected the .node DOM element to have the "expanded" class',
-    'expected the .node DOM element not to have the "expanded" class'
-  )
+expect.extend({
+  toBeExpanded (wrapper) {
+    // Extract primitive values only; never hand the wrapper/vm proxy itself
+    // to the message/diff machinery or it will trip Vue's ownKeys warning.
+    const { isExpanded } = wrapper.vm
+    const hasExpandedClass = wrapper.find('.node').classes('expanded')
+    const pass = isExpanded === true && hasExpandedClass === true
+    return {
+      pass,
+      message: () =>
+        `expected isExpanded to be ${this.isNot ? 'false' : 'true'} (got ${isExpanded}) ` +
+        `and the .node element ${this.isNot ? 'not ' : ''}to have the "expanded" class (got ${hasExpandedClass})`,
+    }
+  },
 })
-
-const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
       plugins: [vuetify, CommandMenuPlugin],
-      mock: { $workflowService },
     },
     ...options,
   })
@@ -93,27 +88,25 @@ describe('TreeItem component', () => {
         },
       })
       expected
-        ? expect(wrapper).to.be.expanded()
-        : expect(wrapper).to.not.be.expanded()
+        ? expect(wrapper).toBeExpanded()
+        : expect(wrapper).not.toBeExpanded()
     })
   })
 
-  describe('expand/collapse button click', () => {
-    const wrapper = mountFunction({
-      props: {
-        node: simpleTaskNode,
-        filteredOutNodesCache: new WeakMap(),
-      },
-    })
-    expect(wrapper).to.not.be.expanded()
-    const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
-    it('should expand if currently collapsed', async () => {
+  describe('expand/collapse button', () => {
+    it('expands/collapses', async () => {
+      const wrapper = mountFunction({
+        props: {
+          node: simpleTaskNode,
+          filteredOutNodesCache: new WeakMap(),
+        },
+      })
+      expect(wrapper).not.toBeExpanded()
+      const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
       await expandCollapseBtn.trigger('click')
-      expect(wrapper).to.be.expanded()
-    })
-    it('should collapse if currently expanded', async () => {
+      expect(wrapper).toBeExpanded()
       await expandCollapseBtn.trigger('click')
-      expect(wrapper).to.not.be.expanded()
+      expect(wrapper).not.toBeExpanded()
     })
   })
 
@@ -140,25 +133,29 @@ describe('TreeItem component', () => {
 })
 
 describe('GScanTreeItem', () => {
-  const mountFunction = (options) => mount(GScanTreeItem, {
-    global: {
-      plugins: [vuetify, CommandMenuPlugin],
-      mock: { $workflowService },
-    },
-    ...options,
-  })
-
-  describe('computed properties', () => {
-    const wrapper = mountFunction({
+  const mountFunction = (options) => mount(GScanTreeItem, merge(
+    {
+      global: {
+        plugins: [vuetify, CommandMenuPlugin],
+      },
       props: {
-        node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
         filteredOutNodesCache: new WeakMap(),
       },
-    })
-    it('does not combine descendant latest state tasks', () => {
-      expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
-    })
-    it('combines all descendant task totals in the correct order', () => {
+    },
+    options
+  ))
+
+  describe('computed properties', () => {
+    it('has statesInfo', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        },
+        shallow: true,
+      })
+      // does not combine descendant latest state tasks:
+      expect(wrapper.vm.statesInfo.latestTasks).toStrictEqual({})
+      // combines all descendant task totals in the correct order:
       expect(Object.entries(wrapper.vm.statesInfo.stateTotals)).toStrictEqual([
         [TaskState.FAILED.name, 0],
         [TaskState.SUBMIT_FAILED.name, 0],
@@ -166,7 +163,13 @@ describe('GScanTreeItem', () => {
         [TaskState.RUNNING.name, 12],
       ])
     })
+
     it('collapses to the lowest only-child', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        },
+      })
       expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')
       expect(wrapper.vm.node.name).to.equal('double/mid')
       // This should be expanded initially as it contains multiple workflows
@@ -181,7 +184,6 @@ describe('GScanTreeItem', () => {
           node: {
             type: 'barbenheimer',
           },
-          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })
@@ -194,7 +196,6 @@ describe('GScanTreeItem', () => {
             type: 'workflow',
             tokens: { workflow: 'a/b/c' },
           },
-          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })

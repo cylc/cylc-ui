@@ -28,7 +28,7 @@ import pkg from './package.json'
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const plugins = [
     vue(),
     vuetify(),
@@ -50,8 +50,17 @@ export default defineConfig(({ mode }) => {
   /** Proxy target for the JSON server that provides mock data to stand in for the UIServer in dev mode */
   const devProxyTarget = 'http://localhost:3000/'
 
+  /** Tests that must be isolated due to reliance on shared state */
+  const isolatedTests = {
+    name: 'isolated',
+    include: ['./tests/unit/**/*.vue.spec.{js,ts}'],
+    isolate: true,
+  }
+
   return {
-    base: '/cylc/',
+    // When building for production, use a relative base path.
+    // Whereas the dev server should emulate the UIServer by using the '/cylc/' base path.
+    base: command === 'build' ? '' : '/cylc/',
     resolve: {
       alias: {
         '@': path.resolve('./src'),
@@ -122,10 +131,13 @@ export default defineConfig(({ mode }) => {
       // Allow vue devtools to work when runing vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
-    // Unit test specific config:
+    /**
+     * Unit test specific config
+     * @type {import('vitest/config').TestUserConfig}
+     */
     test: {
-      include: ['./tests/unit/**/*.spec.{js,ts}'],
-      environment: 'jsdom',
+      environment: 'happy-dom',
+      pool: 'threads', // slightly faster than default forks
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       restoreMocks: true,
@@ -135,6 +147,18 @@ export default defineConfig(({ mode }) => {
           inline: ['vuetify'],
         },
       },
+      projects: [
+        {
+          test: {
+            name: 'default',
+            include: ['./tests/unit/**/*.spec.{js,ts}'],
+            // Disable isolation to speed up tests (be careful to avoid pollution of shared state):
+            isolate: false,
+            exclude: isolatedTests.include,
+          },
+        },
+        { test: isolatedTests },
+      ],
       coverage: {
         provider: 'istanbul',
         include: [

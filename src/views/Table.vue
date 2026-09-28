@@ -71,10 +71,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
 import { computedWithControl } from '@vueuse/core'
 import { mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -84,7 +83,7 @@ import {
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import TaskFilter from '@/components/cylc/viewToolbar/TaskFilter.vue'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
@@ -197,9 +196,7 @@ export default {
   },
 
   setup (props, { emit }) {
-    const store = useStore()
-
-    const { workflowIDs, variables } = useGraphQL()
+    const { workflows, variables } = useWorkflowVariables()
 
     /**
      * The job id input and selected task filter state.
@@ -227,13 +224,6 @@ export default {
 
     const enableSelect = ref(false)
     const selection = ref([])
-
-    // const cylcTree = computed(() => store.state.workflows.cylcTree)
-    const getNodes = store.getters['workflows/getNodes']
-
-    const workflows = computed(
-      () => getNodes('workflow', workflowIDs.value)
-    )
 
     const tasks = computedWithControl(
       // Freeze the list of tasks when selection is enabled, to stop selected tasks disappearing
@@ -274,7 +264,7 @@ export default {
       itemsPerPage,
       tasksFilter,
       filterState,
-      workflowIDs,
+      workflows,
       variables,
       enableSelect,
       selection,
@@ -285,7 +275,6 @@ export default {
   },
 
   computed: {
-
     query () {
       return new SubscriptionQuery(
         QUERY,
@@ -293,12 +282,8 @@ export default {
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
     },
-
   },
 }
 </script>
