@@ -36,6 +36,10 @@ import '@cypress/code-coverage/support'
 // Import commands.js using ES2015 syntax:
 import './commands'
 
+import { enableBrowserPermissions } from '$tests/util'
+
+enableBrowserPermissions()
+
 beforeEach(() => {
   // Cypress test isolation does not include CacheStorage, so we need to clear it ourselves:
   cy.clearLayoutsCache()

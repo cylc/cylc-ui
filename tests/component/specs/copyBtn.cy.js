@@ -22,8 +22,8 @@ describe('Copy Button component', () => {
     cy.vmount(CopyBtn, { props })
     cy.addVuetifyStyles(cy)
   }
-  it('copies text to the clipboard', { browser: 'electron' }, () => {
-    // (Access to the clipboard in Cypress only reliably works in Electron)
+  it('copies text to the clipboard', { browser: { family: 'chromium' } }, () => {
+    // (Access to the clipboard in Cypress only works in Chromium-based browsers)
     const text = 'I am writing this test while on a train'
     mountCopyBtn({ text })
 

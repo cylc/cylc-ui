@@ -1,13 +1,12 @@
 # Mock data for Cylc UI
 
-The files in this directory include:
+The files in this directory include mock responses for GraphQL requests that the [json-server](https://github.com/typicode/json-server) will serve.
+JSON modules are static responses, but it is also possible to have dynamic responses by using JS modules.
 
-- `*.json` these a [json-server](https://github.com/typicode/json-server) database
-  files. For each of these, when exported, you should have an entry in the `/db`
-  endpoint.
-- `index.cjs` this is a JS module that exports the imported JSON files. The names
-  used in the export section drive the value that appears in the `json-server`
-  endpoints (see `/db` to inspect what values are available).
+`index.cjs` collects all the mock responses and exports them as a single module to be imported by the json-server.
+
+> [!IMPORTANT]
+> Keep the mock responses up to date with the real Cylc GraphQL schema.
 
 ## Introspection query
 

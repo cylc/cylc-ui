@@ -235,7 +235,6 @@ export default {
     },
     flat: {
       type: Boolean,
-      requried: false,
       default: false,
     },
   },

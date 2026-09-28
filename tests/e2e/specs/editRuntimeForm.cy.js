@@ -23,7 +23,7 @@ describe('Edit Runtime form', () => {
   beforeEach(() => {
     receivedMutations.splice(0)
     // Patch graphql responses
-    cy.intercept('/graphql', (req) => {
+    cy.intercept('/cylc/graphql', (req) => {
       const { body } = req
       if (body.query.startsWith('mutation')) {
         req.alias = 'mutation' // equivalent to `.as('mutation')`

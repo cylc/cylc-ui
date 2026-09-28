@@ -71,7 +71,7 @@ describe('Mutations component', () => {
     beforeEach(() => {
       mockMutations()
       // Patch graphql responses
-      cy.intercept('/graphql', (req) => {
+      cy.intercept('/cylc/graphql', (req) => {
         const { query } = req.body
         if (query.startsWith('mutation')) {
           console.log(req)
@@ -119,7 +119,7 @@ describe('Mutations component', () => {
 
     it('should stay open while submitting', () => {
       const deferred = new Deferred()
-      cy.intercept('/graphql', req => {
+      cy.intercept('/cylc/graphql', req => {
         if (req.body.query.startsWith('mutation')) {
           // Cypress will await promise before continuing with the request
           return deferred.promise

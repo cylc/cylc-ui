@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createUrl } from '@/utils/urls'
 
 describe('urls', () => {
@@ -26,6 +27,11 @@ describe('urls', () => {
     host: HOST,
     pathname: PATHNAME,
   }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it.each([
     {
       path: '',
@@ -83,14 +89,8 @@ describe('urls', () => {
       expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/`,
     },
   ])('%# createURL($path, ...)', ({ path, location = DEFAULT_LOCATION, opts, expected }) => {
-    const originalWindow = global.window
-    try {
-      global.window = {
-        location,
-      }
-      expect(createUrl(path, opts)).to.equal(expected)
-    } finally {
-      global.window = originalWindow
-    }
+    vi.stubGlobal('window', { location })
+
+    expect(createUrl(path, opts)).toBe(expected)
   })
 })
