@@ -84,7 +84,7 @@ describe('WorkflowService subscriptions', () => {
 describe('WorkflowService mutations', () => {
   it('handles asynchronously loaded mutations properly', () => {
     const deferred = new Deferred()
-    cy.intercept('/graphql', req => {
+    cy.intercept('/cylc/graphql', req => {
       if (req.body.query?.startsWith('mutation')) {
         // equivalent to `.as('mutation')`:
         req.alias = 'mutation'
