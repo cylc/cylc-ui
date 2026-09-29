@@ -253,9 +253,11 @@ export default {
      * Track selected nodes based on selected IDs.
      * This is because the source for the node changes when a task is pruned, but the ID remains the same.
     */
-    const selectedNodes = computed(() => selectedIDs.value.map(
-      (id) => getIndex(id) ?? prunedTasks.value.get(id)
-    ))
+    const selectedNodes = computed(
+      () => selectedIDs.value.map(
+        (id) => getIndex(id) ?? prunedTasks.value.get(id)
+      )
+    )
 
     whenever(() => !enableSelect.value, () => {
       prunedTasks.value.clear()
@@ -272,8 +274,7 @@ export default {
       if (enableSelect.value) {
         // Freeze the list of tasks when selection is enabled, to stop selected tasks disappearing.
         return previous.map(
-          // If any tasks have been pruned from the data store, use the captured data to stop jobs etc disappearing.
-          (task) => prunedTasks.value.get(task.id) ?? task
+          (task) => getIndex(task.id) ?? prunedTasks.value.get(task.id)
         )
       }
       return workflows.value.flatMap(
