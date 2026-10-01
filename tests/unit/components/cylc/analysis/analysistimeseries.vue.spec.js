@@ -33,6 +33,8 @@ $workflowService.query2.resolves({
       { name: 'waiting' },
       { name: 'eventually_succeeded' },
     ],
+    // The jobs query (debounced) also uses query2 and expects `jobs`
+    jobs: [],
   },
 })
 
