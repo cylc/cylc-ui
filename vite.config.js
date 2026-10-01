@@ -28,7 +28,7 @@ import pkg from './package.json'
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const plugins = [
     vue(),
     vuetify(),
@@ -51,7 +51,9 @@ export default defineConfig(({ mode }) => {
   const devProxyTarget = 'http://localhost:3000/'
 
   return {
-    base: '/cylc/',
+    // When building for production, use a relative base path.
+    // Whereas the dev server should emulate the UIServer by using the '/cylc/' base path.
+    base: command === 'build' ? '' : '/cylc/',
     resolve: {
       alias: {
         '@': path.resolve('./src'),
@@ -125,9 +127,10 @@ export default defineConfig(({ mode }) => {
     // Unit test specific config:
     test: {
       include: ['./tests/unit/**/*.spec.{js,ts}'],
-      environment: 'jsdom',
+      environment: 'happy-dom',
       // Disable isolation to speed up tests, however this means you should be careful to avoid pollution of globals:
       isolate: false,
+      pool: 'threads', // slightly faster than default forks
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       restoreMocks: true,

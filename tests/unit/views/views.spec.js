@@ -15,18 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { afterAll, describe, expect, it } from 'vitest'
 import { TREE, useDefaultView } from '@/views/views.js'
 import { nextTick } from 'vue'
 
 describe('useDefaultView composable', () => {
-  afterEach(() => {
-    // As we are using a singleton for the defaultView, we need to reset
-    // its value after each test.
-    useDefaultView().value = TREE
+  afterAll(() => {
+    localStorage.clear()
   })
 
   it(`returns the ${TREE} view if not set in localStorage`, () => {
-    delete localStorage.defaultView
+    localStorage.clear()
     expect(useDefaultView().value).to.equal(TREE)
   })
 
