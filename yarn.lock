@@ -2514,13 +2514,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yr/monotone-cubic-spline@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@yr/monotone-cubic-spline@npm:1.0.3"
-  checksum: 10c0/6098d2138dcf8b722c80f2e9167d24a064184c37fb5b3276e34c717351b496735777b71f7e69c3fa6b94f8a81eba309c4a1e37349a26b8541113b1afa84d7bf8
-  languageName: node
-  linkType: hard
-
 "abbrev@npm:^3.0.0":
   version: 3.0.1
   resolution: "abbrev@npm:3.0.1"
