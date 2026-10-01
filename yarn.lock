@@ -3756,7 +3756,7 @@ __metadata:
     eslint-plugin-no-only-tests: "npm:3.4.0"
     eslint-plugin-promise: "npm:6.6.0"
     eslint-plugin-vue: "npm:9.33.0"
-    eslint-plugin-vuetify: "npm:2.7.2"
+    eslint-plugin-vuetify: "npm:2.7.3"
     express: "npm:5.2.1"
     express-ws: "npm:5.0.2"
     graphiql: "npm:4.1.2"
@@ -4701,16 +4701,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vuetify@npm:2.7.2":
-  version: 2.7.2
-  resolution: "eslint-plugin-vuetify@npm:2.7.2"
+"eslint-plugin-vuetify@npm:2.7.3":
+  version: 2.7.3
+  resolution: "eslint-plugin-vuetify@npm:2.7.3"
   dependencies:
     eslint-plugin-vue: "npm:^10.8.0"
     requireindex: "npm:^1.2.0"
   peerDependencies:
     eslint: ^8.0.0 || ^9.0.0 || ^10.0.0
     vuetify: ^3.0.0 || ^4.0.0
-  checksum: 10c0/7d1d44ef44e8110cb8627865291352fb3e6c955b4ba3c567d4b15b937b17d216037e93fc983f3753fac7e36350f5577cba971a3f52491b1a6caddc2f2c748198
+  checksum: 10c0/6fae14c792aade9e38c53d694357fffae6976e46ce181608db97d1aa1b408a4e531a8e7437cd36dc9c98cd7e8b3cfc0473cda388b0ed54be50565ad28e86c787
   languageName: node
   linkType: hard
 
