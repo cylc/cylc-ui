@@ -70,7 +70,7 @@
     "eslint-plugin-no-only-tests": "3.4.0",
     "eslint-plugin-promise": "6.6.0",
     "eslint-plugin-vue": "9.33.0",
-    "eslint-plugin-vuetify": "2.7.2",
+    "eslint-plugin-vuetify": "2.7.3",
     "express": "5.2.1",
     "express-ws": "5.0.2",
     "happy-dom": "20.14.5",
