@@ -285,7 +285,10 @@ export default {
         'node-data': true,
         [`node-data-${this.node.type}`]: true,
         // dim nodes (tasks & families) that are outside the n=0 window
-        dimmed: this.node.node?.graphDepth,
+        dimmed: (
+          this.node.node?.graphDepth ||
+          this.node?.familyTree?.[0].node?.graphDepth
+        ),
       }
     },
     expandCollapseBtnStyle () {
