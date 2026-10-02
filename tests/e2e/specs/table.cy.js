@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TaskState from '@/model/TaskState.model'
-
 // Get cell text for a column by header name, as an array
 Cypress.Commands.add('getColumnValues', (header) => {
   return cy.get('.c-table th')
@@ -71,7 +69,7 @@ describe('Table view', () => {
         .click()
       cy
         .get('.v-list-item')
-        .contains(TaskState.RUNNING.name)
+        .contains('Running')
         .click({ force: true })
       cy
         .get('td [data-cy-task-name=checkpoint]')
@@ -91,7 +89,7 @@ describe('Table view', () => {
         .click()
       cy
         .get('.v-list-item')
-        .contains(TaskState.SUCCEEDED.name)
+        .contains('Succeeded')
         .click({ force: true })
       cy
         .get('.c-table table > tbody > tr')
@@ -200,7 +198,7 @@ describe('State saving', () => {
     cy
       .get('.v-list-item')
       .filter(':visible')
-      .contains('.v-list-item', 'succeeded')
+      .contains('.v-list-item', 'Succeeded')
       .click({ force: true })
     cy
       .get('.c-table table > tbody > tr')
