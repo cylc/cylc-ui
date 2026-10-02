@@ -15,35 +15,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { shallowRef } from 'vue'
 import { createSubscriptionClient, createGraphQLUrls } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
 import { fetchData } from '@/utils/urls'
+import { useAsyncState } from '@vueuse/core'
+import { User } from '@/model/User.model'
+
+/** @typedef {import('vue').App} App */
 
 /**
  * A plugin that loads the application services.
+ * @type {import('vue').Plugin}
  */
-export default {
+class ServicesPlugin {
+  #user
   /**
-   * @param {Object} app - Vue application
+   * @param {App} app - Vue application
+   * @param {Object} options
+   * @param {import('vue-router').Router} options.router - Vue Router instance
    */
-  install (app) {
-    this._installWorkflowService(app)
+  install (app, { router }) {
+    this.#installWorkflowService(app)
 
-    const versionInfo = shallowRef(null)
-    app.provide('versionInfo', versionInfo)
-    fetchData('version').then((data) => { versionInfo.value = data })
-  },
+    // Provide cylc-flow & uis version info as a ref that will update once the fetch is complete.
+    app.provide('versionInfo', useAsyncState(fetchData('version'), {}).state)
+
+    // The user info is crucial for the app to function.
+    // It is more ergonomic to await it here and provide the object directly rather than providing a promise or ref.
+    // When components inject the user, it is guaranteed to be available because we await the same promise
+    // in the router beforeEach() guard.
+    this.getUser().then((user) => {
+      app.provide('user', user)
+    })
+    router.beforeEach(async (to, from) => {
+      const user = await this.getUser()
+      // TODO: catch error getting user profile and redirect to static error page
+      if (!user.permissions?.includes('read')) {
+        if (to.name !== 'NoAuth') { // Avoid infinite redirect?
+          return { name: 'NoAuth' }
+        }
+      } else if (to.name === 'NoAuth') {
+        // If authorized, redirect no-auth page to home page
+        return { path: '/' }
+      }
+    })
+  }
 
   /**
    * Creates a workflow service for the application.
    *
-   * The service is available as `vm.$workflowService`.
+   * The service is available via injection or as `vm.$workflowService`.
    *
-   * @private
-   * @param {Object} app - Vue application
+   * @param {App} app - Vue application
    */
-  _installWorkflowService (app) {
+  #installWorkflowService (app) {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
     const workflowService = new SubscriptionWorkflowService(
@@ -54,5 +79,24 @@ export default {
     app.provide('workflowService', workflowService)
     // Options API (legacy):
     app.config.globalProperties.$workflowService = workflowService
-  },
+  }
+
+  async #fetchUserProfile () {
+    return Object.freeze(
+      new User(await fetchData('userprofile'))
+    )
+  }
+
+  /**
+   * Return the user profile, fetching it from the backend server if it hasn't already been loaded.
+   * @returns {Promise<User>}
+   */
+  getUser () {
+    return (this.#user ??= this.#fetchUserProfile())
+  }
 }
+
+export const servicesPlugin = new ServicesPlugin()
+
+// For testing
+export { ServicesPlugin as __ServicesPlugin }
