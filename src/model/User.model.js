@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export default class User {
+export class User {
   constructor ({ username, owner, permissions, mode, initials, color, extensions }) {
     /**
      * @type {string}
@@ -31,10 +31,9 @@ export default class User {
      * list of permissions
      * @type {string[]}
      */
-    this.permissions = permissions
+    this.permissions = Object.freeze(permissions)
     /**
-     * single or multi user mode
-     * @type {string}
+     * @type {'multi user'|'single user'}
      */
     this.mode = mode
     /**
@@ -48,8 +47,9 @@ export default class User {
      */
     this.color = color
     /**
-      * Jupyter server extensions.
-      */
-    this.extensions = extensions
+     * Jupyter server extensions.
+     * @type {string[]}
+     */
+    this.extensions = Object.freeze(extensions)
   }
 }

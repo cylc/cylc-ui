@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-combobox
           class="w-100"
           id="cylc-owner-combobox"
-          :disabled="store.state.user.user.mode !== 'multi user'"
+          :disabled="!multiUserMode"
           label="server owner"
           :default="owner"
           :items="Array.from(owners)"
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :title="item"
               v-bind="props"
             >
-              <template v-slot:append v-if="item !== ownerOnLoad">
+              <template #append v-if="item !== user.owner">
                 <v-icon
                   @click.stop="owners.delete(item)"
                   color="pink-accent-4"
@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-combobox
           class="w-100"
           id="cylc-deployment-combobox"
-          :disabled="store.state.user.user.mode !== 'multi user'"
+          :disabled="!multiUserMode"
           label="deployment"
           :default="deployment"
           :items="Array.from(deployments)"
@@ -74,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :title="item"
               v-bind="props"
             >
-              <template v-slot:append v-if="item !== deploymentOnLoad">
+              <template #append v-if="item !== host">
                 <v-icon
                   @click.stop="deployments.delete(item)"
                   color="pink-accent-4"
@@ -102,30 +102,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useStore } from 'vuex'
 import { useLocalStorage } from '@vueuse/core'
 import {
   mdiClose,
 } from '@mdi/js'
+import { useUserService } from '@/services/user.service'
 
-const store = useStore()
+const { user, multiUserMode } = useUserService()
 
-const ownerOnLoad = store.state.user.user.owner
-const owner = ref(ownerOnLoad)
-const owners = useLocalStorage('owners', new Set([ownerOnLoad]))
+const owner = ref(user.owner)
+const owners = useLocalStorage('owners', new Set([user.owner]))
 
-const deploymentOnLoad = window.location.host
-const deployment = ref(deploymentOnLoad)
-const deployments = useLocalStorage('deployments', new Set([deploymentOnLoad]))
+const { host } = window.location
+const deployment = ref(host)
+const deployments = useLocalStorage('deployments', new Set([host]))
 
 const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
 
 const isNewRoute = computed(() => {
-  return deployment.value !== deploymentOnLoad || owner.value !== ownerOnLoad
+  return deployment.value !== host || owner.value !== user.owner
 })
 
 const showGoButton = computed(() => (
-  store.state.user.user.mode !== 'single user' &&
+  multiUserMode &&
   owner.value &&
   deployment.value &&
   isNewRoute.value
