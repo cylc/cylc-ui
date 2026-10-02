@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, watchEffect } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import {
   mdiChartGantt,
@@ -125,8 +125,10 @@ export const allViews = new Map([
 export const useDefaultView = () => {
   const defaultView = useLocalStorage('defaultView', TREE)
   // Check if the view is implemented (in case we remove/rename a view in future)
-  if (!allViews.has(defaultView.value)) {
-    defaultView.value = TREE
-  }
+  watchEffect(() => {
+    if (!allViews.has(defaultView.value)) {
+      defaultView.value = TREE
+    }
+  })
   return defaultView
 }

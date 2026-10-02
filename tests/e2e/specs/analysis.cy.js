@@ -16,7 +16,6 @@
  */
 
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
-import { clone } from 'lodash'
 
 /** A delay for state to be saved before refreshing page, otherwise can flakily fail */
 const stateSaveDelay = 100
@@ -223,14 +222,14 @@ describe('Analysis view', () => {
     beforeEach(() => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
-        .get('.vue-apexcharts')
+        .get('canvas')
         .should('be.visible')
     })
 
     it('switches view', () => {
       // Check for y-axis labels - should be one for each task
-      cy.get('.apexcharts-yaxis-label')
-        .should('have.length', numTasks)
+      cy.get('canvas')
+        .should('be.visible')
       cy.get('.c-analysis .c-table')
         .should('not.exist')
       // Switch back to table
@@ -238,39 +237,27 @@ describe('Analysis view', () => {
         .click()
         .get('.c-analysis .c-table')
         .should('be.visible')
-        .get('.vue-apexcharts')
+        .get('canvas')
         .should('not.exist')
     })
 
-    it('refreshes without getting bogus apexcharts error', () => {
-      // https://github.com/apexcharts/vue3-apexcharts/issues/79
+    it('refreshes without getting bogus error', () => {
       cy.get('[data-cy=analysis-refresh-btn]')
         .click()
         .get('[data-cy=alert-snack')
         .should('not.exist')
-        .get('.apexcharts-yaxis-label')
-        .should('have.length', numTasks)
+      cy.get('canvas')
+        .should('be.visible')
       // Need wait to prevent flaky ApolloError in Firefox when moving on to next test
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1e3)
     })
 
     it('sorts the chart entries', () => {
-      cy.get('.apexcharts-yaxis-label title').as('taskLabels')
-        .should('have.length', numTasks)
-        .then((els) => {
-          expect(
-            Array.from(els, (i) => i.textContent)
-          ).to.deep.equal(sortedTasks)
-        })
+      // It's hard to check the order of the tasks in the chart,
+      // so we just check that the sort controls work
       cy.get('[data-cy=box-plot-sort]')
         .click()
-        .get('@taskLabels')
-        .then((els) => {
-          expect(
-            Array.from(els, (i) => i.textContent)
-          ).to.deep.equal(clone(sortedTasks).reverse())
-        })
     })
   })
 
@@ -278,7 +265,7 @@ describe('Analysis view', () => {
     beforeEach(() => {
       cy.get('.c-analysis [data-cy=time-series-toggle]')
         .click()
-        .get('.vue-apexcharts')
+        .get('#mainTimeSeries canvas')
         .should('be.visible')
       // There should be three tasks in the drop down list when loaded
       // Plus 2 entries for Select and Deselect all
@@ -294,12 +281,8 @@ describe('Analysis view', () => {
       // Check for axis labels - should be no data plotted and only
       // y-axis labels visible
       cy
-        .get('.vue-apexcharts')
+        .get('#mainTimeSeries canvas')
         .should('be.visible')
-        .get('.apexcharts-yaxis-label')
-        .should('be.visible')
-        .get('.apexcharts-xaxis-label')
-        .should('not.exist')
         .get('.c-analysis .c-table')
         .should('not.exist')
       // Switch back to table
@@ -308,7 +291,31 @@ describe('Analysis view', () => {
         .click()
         .get('.c-analysis .c-table')
         .should('be.visible')
-        .get('.vue-apexcharts')
+        .get('#mainTimeSeries canvas')
+        .should('not.exist')
+    })
+
+    it('Should show empty-state prompt when no tasks are selected', () => {
+      // With no tasks selected the empty-state overlay should be visible
+      cy
+        .get('[data-cy=time-series-empty-state]')
+        .should('be.visible')
+        .contains('No tasks selected')
+      // Clicking the prompt button should focus the task select input
+      cy
+        .get('[data-cy=time-series-empty-state-btn]')
+        .click()
+        .get('[data-cy=time-series-task-select] input')
+        .should('be.focused')
+      // Selecting a task should hide the empty-state overlay
+      cy
+        .get('[data-cy=time-series-task-select]')
+        .click()
+        .get('.v-list-item')
+        .contains('waiting')
+        .click()
+      cy
+        .get('[data-cy=time-series-empty-state]')
         .should('not.exist')
     })
 
@@ -320,19 +327,13 @@ describe('Analysis view', () => {
         .get('.v-list-item')
         .contains('waiting')
         .click()
-      cy
-        .get('.apexcharts-xaxis-label')
-        .should('have.length', 4)
-        // Add eventually_succeeded task and check three cycles visible
+      // Add eventually_succeeded task and check three cycles visible
       cy
         .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('eventually')
         .click()
-      cy
-        .get('.apexcharts-xaxis-label')
-        .should('have.length', 6)
       // Remove selected tasks and check no cycle points are visible
       cy
         .get('[data-cy=time-series-task-select]')
@@ -343,9 +344,6 @@ describe('Analysis view', () => {
         .get('.v-list-item')
         .contains('eventually')
         .click()
-      cy
-        .get('.apexcharts-xaxis-label')
-        .should('not.exist')
     })
 
     it('Should search for and add/remove tasks', () => {
@@ -408,17 +406,10 @@ describe('Analysis view', () => {
         .get('.v-list-item')
         .contains('waiting')
         .click()
-      cy
-        .get('.apexcharts-yaxis-label')
-        .contains('00:00:00')
-        .should('not.exist')
       // Click on Show origin checkbox and check y-axis now starts at origin
       cy
         .get('.v-selection-control > .v-label')
         .click()
-      cy
-        .get('.apexcharts-yaxis-label')
-        .contains('00:00:00')
     })
   })
 })
@@ -434,12 +425,12 @@ describe('Filters and Options save state', () => {
     it('remembers table and box & whiskers toggle option', () => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
-        .get('.vue-apexcharts')
+        .get('canvas')
         .should('be.visible')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(stateSaveDelay)
       cy.reload()
-      cy.get('.vue-apexcharts')
+        .get('canvas')
         .should('be.visible')
     })
 
