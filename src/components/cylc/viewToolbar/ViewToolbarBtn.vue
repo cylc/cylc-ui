@@ -16,16 +16,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
   <v-btn
-    v-bind="{ ...$attrs, ...btnProps, icon }"
+    icon
+    v-bind="{ ...$attrs, ...btnProps }"
     :color="active && highlight ? activeColor : undefined"
   >
-    <template #default v-if="$slots.default">
-      <slot name="icon" v-if="icon">
-        <!-- Separate named slot to ensure icon is still rendered when parent overrides default slot -->
-        <v-icon :icon="displayIcon"/>
-      </slot>
-      <slot/>
-    </template>
+    <slot name="icon">
+      <!-- Separate named slot to ensure icon is still rendered when parent overrides default slot -->
+      <v-icon :icon="displayIcon"/>
+    </slot>
+    <slot/>
   </v-btn>
 </template>
 
@@ -39,8 +38,8 @@ defineOptions({
 
 const props = defineProps({
   icon: {
-    type: [String, Boolean],
-    default: false,
+    type: String,
+    required: true,
   },
   /** Whether to highlight the button when active */
   highlight: {
