@@ -162,14 +162,6 @@ const singleNode = computed(
   () => nodes.value.length === 1 ? nodes.value[0] : null
 )
 
-const homogenousNodeType = computed(
-  () => singleNode.value?.type ?? (
-    nodes.value.every((n) => n.type === nodes.value[0].type)
-      ? nodes.value[0].type
-      : undefined
-  )
-)
-
 const primaryMutations = computed(
   () => workflowService.primaryMutations[singleNode.value?.type] || []
 )
