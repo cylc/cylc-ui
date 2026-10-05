@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-card-subtitle>
       <v-divider v-if="primaryMutations.length || displayMutations.length" />
       <v-skeleton-loader
-        v-if="isLoadingMutations && primaryMutations.length"
+        v-if="isLoading && primaryMutations.length"
         type="list-item-avatar-two-line@3"
         min-width="400"
         class="my-2"
@@ -87,31 +87,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-list-item>
       </v-list>
     </v-card>
-    <v-dialog
-      v-if="dialogMutation"
-      v-model="dialog"
-      :width="dialogMutation._dialogWidth ?? '700px'"
-      max-width="100%"
+    <CommandDialog
+      ref="dialog"
+      v-bind="{ types }"
+      @close-menu="() => showMenu = false"
       theme="light"
-      content-class="c-mutation-dialog mx-0"
-    >
-      <Mutation
-        :initialOptions="{
-          mutation: dialogMutation,
-          cylcObject: nodes,
-          data: initialData(dialogMutation),
-          types: types,
-        }"
-        @close="() => dialog = false"
-        @success="() => showMenu = false"
-        :key="dialogKey /* Enables re-render of component each time dialog opened */"
-      />
-    </v-dialog>
+    />
   </v-menu>
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, computed, inject } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, computed, inject, useTemplateRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import {
@@ -119,7 +105,7 @@ import {
   getMutationArgsFromTokens,
   mutate,
 } from '@/utils/aotf'
-import Mutation from '@/components/cylc/Mutation.vue'
+import CommandDialog from '@/components/cylc/commandMenu/CommandDialog.vue'
 import {
   mdiPencil,
 } from '@mdi/js'
@@ -137,13 +123,12 @@ const workflowService = inject('workflowService')
 
 const { user } = useUserService()
 
-const dialog = ref(false)
-const dialogMutation = ref(null)
-const dialogKey = ref(false)
+const dialog = useTemplateRef('dialog')
+
 const expanded = ref(false)
 const nodes = ref([])
 const mutations = ref([])
-const isLoadingMutations = ref(true)
+const isLoading = ref(true)
 const showMenu = ref(false)
 const types = ref([])
 const target = ref(null)
@@ -243,10 +228,7 @@ function isDisabled (mutation, authorised) {
 }
 
 function openDialog (mutation) {
-  dialog.value = true
-  dialogMutation.value = mutation
-  // Tell Vue to re-render the dialog component:
-  dialogKey.value = !dialogKey.value
+  dialog.value.open({ nodes: nodes.value, mutation })
 }
 
 /* Call a mutation using only the tokens for args. */
@@ -292,7 +274,7 @@ function callMutationFromContext (mutation) {
   } else {
     mutate(
       mutation,
-      initialData(mutation),
+      getMutationArgsFromTokens(mutation, ...nodes.value.map((n) => n.tokens)),
       workflowService.apolloClient
     )
   }
@@ -310,7 +292,7 @@ async function showMutationsMenu (e) {
   const introspection = await workflowService.introspection
   // if mutations are slow to load then there will be a delay before they are reactively
   // displayed in the menu (this is what the skeleton-loader is for)
-  isLoadingMutations.value = false
+  isLoading.value = false
   types.value = introspection.types
   mutations.value = filterAssociations(
     e.nodes,
@@ -319,10 +301,6 @@ async function showMutationsMenu (e) {
   ).sort(
     (a, b) => a.mutation.name.localeCompare(b.mutation.name)
   )
-}
-
-function initialData (mutation) {
-  return getMutationArgsFromTokens(mutation, ...nodes.value.map((n) => n.tokens))
 }
 
 function enact (mutation, requiresInfo) {

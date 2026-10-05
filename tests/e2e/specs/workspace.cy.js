@@ -29,7 +29,7 @@ describe('Workspace view and component/widget', () => {
   })
 
   afterEach(() => {
-    cy.get('.v-alert')
+    cy.get('[data-cy=alert-snack]')
       .should('not.exist')
   })
 

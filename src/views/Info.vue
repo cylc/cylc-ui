@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <InfoComponent
     v-if="taskNode.id"
     :task="taskNode"
-    :panelExpansion="panelExpansion"
-    @update:panelExpansion="updatePanelExpansion"
+    v-model:panelExpansion="panelExpansion"
   />
 </template>
 
@@ -222,12 +221,6 @@ export default {
           },
         }
       )
-    },
-  },
-
-  methods: {
-    updatePanelExpansion (value) {
-      this.panelExpansion = value
     },
   },
 }

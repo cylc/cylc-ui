@@ -20,18 +20,16 @@ import { mount } from '@vue/test-utils'
 import Menu from '@/components/cylc/commandMenu/Menu.vue'
 import { Tokens } from '@/utils/uid'
 import storeOptions from '@/store/options'
-import { routerKey } from 'vue-router'
+import { mockRouter } from '$tests/util'
 
 describe('Command menu', () => {
-  it('has a title with the node ID excluding the username', async () => {
+  it('has a title with the node ID excluding the username', () => {
+    mockRouter()
     const wrapper = mount(Menu, {
       shallow: true,
       global: {
         plugins: [createStore(storeOptions)],
-        provide: {
-          workflowService: {},
-          [routerKey]: {},
-        },
+        provide: { workflowService: {} },
       },
     })
     wrapper.vm.target = { dataset: {} }
