@@ -128,7 +128,7 @@
       "groupName": "tests packages",
       "matchPackageNames": [
         "@vue/test-utils",
-        "jsdom",
+        "happy-dom",
         "nyc",
         "sinon",
         "/^@?cypress/",

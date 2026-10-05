@@ -65,12 +65,13 @@ yarn run preview
 ```
 
 Note the incremental rebuild is quite slow so an alternative to `yarn run build:watch` is
-to run the Vite development server while using the Cylc UI Server live data:
+to run the Vite development server to serve the web app while using the Cylc UI Server
+to serve live backend data:
 
 ```bash
 # First launch the gui to authenticate with the URL token
-cylc gui --port=3000 --ServerApp.allow_origin='http://localhost:5173'
-# Close that tab once it's loaded
+cylc gui --new --port=3000 --ServerApp.allow_origin='http://localhost:5173'
+# You can close that tab once it's loaded
 # Now launch using
 yarn run serve:vue --mode development
 # (you must access via http://localhost:5173)
@@ -111,7 +112,8 @@ yarn run coverage:e2e
 ### Mocked Data
 
 The "offline" mode (aka `yarn run serve`) which is also used for the end to end
-tests is powered by a "mock" data server.
+tests is powered by a "mock" JSON data server. This stands in for the backend data
+that would be served by the real Cylc UIServer.
 
 You can find the index of mocked data here:
 [`src/services/mock/json/index.cjs`](src/services/mock/json/index.cjs)

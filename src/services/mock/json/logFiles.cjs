@@ -28,6 +28,7 @@ const jobLogFiles = [
 ]
 
 const workflowLogFiles = [
+  'config/01-start-01.log',
   'scheduler/01-start-01.log',
   deletedFile,
 ]
