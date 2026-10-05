@@ -150,7 +150,7 @@ describe('Analysis view', () => {
           .click({ force: true })
         cy
           .get('td')
-          .contains('MB')
+          .contains('MiB')
         cy
           .get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
@@ -239,7 +239,7 @@ describe('Analysis view', () => {
           .click({ force: true })
         cy
           .get('td')
-          .contains('MB')
+          .contains('MiB')
           .should('be.visible')
         cy
           .get('.c-analysis table > tbody > tr')
@@ -304,7 +304,7 @@ describe('Analysis view', () => {
         .should('have.length', numTasks)
       cy
         .get('.apexcharts-xaxis-label')
-        .contains('MB')
+        .contains('MiB')
         .should('be.visible')
     })
     it('Should show CPU Time', () => {
