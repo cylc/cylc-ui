@@ -17,7 +17,7 @@
 
 describe('Command Menu component', () => {
   const collapsedWorkflowMenuLength = 4
-  const expandedWorkflowMenuLength = 21
+  const expandedWorkflowMenuLength = 23
 
   beforeEach(() => {
     cy.visit('/#/workspace/one')
