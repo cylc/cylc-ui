@@ -15,13 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import User from '@/model/User.model'
-import { fetchData } from '@/utils/urls'
+import { inject } from 'vue'
+import { createSharedComposable } from '@vueuse/core'
+import { createUrl } from '@/utils/urls'
 
-/**
- * Gets the user profile from the backend server.
- * @returns {Promise<User>}
- */
-export async function getUserProfile () {
-  return new User(await fetchData('userprofile'))
-}
+export const useUserService = createSharedComposable(() => {
+  /** @type {import('@/model/User.model').User} */
+  const user = inject('user')
+
+  const multiUserMode = user.mode === 'multi user'
+
+  const hubURL = multiUserMode ? createUrl('/hub/home', { baseOnly: true }) : null
+
+  const versionInfo = inject('versionInfo')
+
+  return {
+    user,
+    multiUserMode,
+    hubURL,
+    versionInfo,
+  }
+})
