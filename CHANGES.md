@@ -12,6 +12,20 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.15.0 (Released 2026-10-08)
+
+### 🚀 Enhancements
+
+[#2347](https://github.com/cylc/cylc-ui/pull/2347) - Added "Reinstall Reload"/"Reinstall Restart" to the workflow command menu (equivalent to `cylc vr`).
+
+[#2491](https://github.com/cylc/cylc-ui/pull/2491) - Updated the Vuetify component library to v4, bringing some minor visual changes.
+
+[#2583](https://github.com/cylc/cylc-ui/pull/2583) - Uncaught errors are now presented to users
+
+### 🔧 Fixes
+
+[#2640](https://github.com/cylc/cylc-ui/pull/2640) - Fixed the log view losing the previously selected workflow log file on navigation.
+
 ## cylc-ui-2.14.0 (Released 2026-05-06)
 
 ### 🔧 Fixes
