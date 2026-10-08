@@ -16,3 +16,13 @@ showcontent = true
 directory = "fix"
 name = "🔧 Fixes"
 showcontent = true
+
+[tool.codespell]
+skip = "logData.cjs,./src/lang/pt-BR"
+ignore-words-list = [
+    "afterAll",
+    "eles",
+    "muti",
+    "onTop",
+    "re-use", "re-using",
+]

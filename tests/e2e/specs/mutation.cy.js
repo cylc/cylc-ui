@@ -102,7 +102,7 @@ describe('Mutations component', () => {
         // click on the submit button
         .get('[data-cy="submit"]')
         .click()
-        // form should close on successfull submission
+        // form should close on successful submission
         .get('.c-mutation-dialog')
         .should('not.exist')
 

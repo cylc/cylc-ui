@@ -309,7 +309,7 @@ Tree view: show mean run time in job details.
 
 [#1340](https://github.com/cylc/cylc-ui/pull/1340) -
 Fixed bug in tree view where tasks belonging to families would disappear
-and reappear eroneously.
+and reappear erroneously.
 
 [#1312](https://github.com/cylc/cylc-ui/pull/1312) -
 Fixed incorrect latest job info in table view.

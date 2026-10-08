@@ -112,7 +112,7 @@ export default {
       required: false,
     },
     mostRecentJobScale: {
-      // the size of the most recent job icon relative to any previos jobs
+      // the size of the most recent job icon relative to any previous jobs
       default: 1.2,
       required: false,
     },
