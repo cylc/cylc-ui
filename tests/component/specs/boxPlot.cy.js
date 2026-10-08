@@ -113,4 +113,16 @@ describe('BoxPlot', () => {
       .get('.apexcharts-yaxis title')
       .should('have.length', 3)
   })
+  it('shows tooltip', () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(BoxPlot, merge(mountOpts, {
+      props: {
+        tasks: [task1, task2],
+      },
+    }))
+    cy.get('.vue-apexcharts')
+      .trigger('mousemove', { clientX: 100, clientY: 100 })
+      .get('.apexcharts-tooltip')
+      .should('be.visible')
+  })
 })
