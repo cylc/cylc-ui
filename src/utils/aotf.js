@@ -292,7 +292,6 @@ export const dummyMutations = [
     _appliesTo: [cylcObjects.Task, cylcObjects.Family, cylcObjects.CyclePoint],
     _requiresInfo: true,
     _validStates: [WorkflowState.RUNNING.name, WorkflowState.PAUSED.name],
-    _dialogWidth: '1200px',
   },
   {
     name: 'log',
@@ -563,7 +562,7 @@ export function getIntrospectionQuery () {
  * @param {string[]} permissions - List of permissions for the user.
  * @returns {FilteredMutation[]}
  */
-export function filterAssociations (cylcObject, tokens, mutations, permissions) {
+export function filterAssociations (nodes, mutations, permissions) {
   const ret = []
   permissions = [
     ...permissions.map(x => x.toLowerCase()),
@@ -574,32 +573,34 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
     ),
   ]
   for (const mutation of mutations) {
-    if (cylcObject === 'cycle' && mutation.name === 'play') {
+    if (mutation.name === 'play' && nodes.some((n) => n.type === 'cycle')) {
       // Don't show 'play' on cycle points as the cycle point options that get auto-filled don't apply for restarting a workflow.
+      continue
+    }
+    if (nodes.length > 1 && ['editRuntime', 'log', 'info'].includes(mutation.name)) {
+      // Some commands can't accept multiple nodes
       continue
     }
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
-    let applies = mutation._appliesTo?.includes(cylcObject)
+    let applies = nodes.every((n) => mutation._appliesTo?.includes(n.type))
     for (const arg of mutation.args) {
       if (arg._cylcObjects) {
-        if (arg._cylcObjects.includes(cylcObject)) {
+        if (nodes.every((n) => arg._cylcObjects.includes(n.type))) {
           // this is the object type we are filtering for
           applies = true
         }
-        if (arg._required && !arg._cylcObjects.some((t) => tokens[t])) {
-          // this cannot be satisfied by the context
-          requiresInfo = true
+        if (applies) {
+          requiresInfo ||= (nodes.length > 1 || (
+            arg._required && !arg._cylcObjects.some((t) => nodes[0].tokens[t])
+          ))
         }
       } else if (arg._required) {
         // this is a required argument
         requiresInfo = true
       }
       // is there an alternate cylc object which can satisfy this field?
-      if (alternateFields[arg._cylcType] === cylcObject) {
-        // this might not be the object type we're filtering for, but it'll do
-        applies = true
-      }
+      applies ||= nodes.every((n) => n.type === alternateFields[arg._cylcType])
     }
     if (!applies) {
       continue
@@ -623,7 +624,7 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
  *
  * @yields {GQLType} Type objects of the same form as the type argument.
  */
-export function * iterateType (type) {
+export function* iterateType (type) {
   while (type) {
     yield type
     type = type.ofType
@@ -798,11 +799,11 @@ export function constructQueryStr (query) {
  * information we can from the context tokens.
  *
  * @param {Mutation} mutation
- * @param {Object} tokens
+ * @param {...Tokens} tokensList
  *
  * @returns {Object}
  * */
-export function getMutationArgsFromTokens (mutation, tokens) {
+export function getMutationArgsFromTokens (mutation, ...tokensList) {
   const argspec = {}
   for (const arg of mutation.args) {
     if (
@@ -814,18 +815,24 @@ export function getMutationArgsFromTokens (mutation, tokens) {
       // the schema without creating a compatibility issue with the UIS.
       arg.name !== 'cutoff'
     ) {
-      let value
-      if (arg._cylcType in compoundFields) {
-        value = compoundFields[arg._cylcType](tokens)
-      } else {
-        const alternate = alternateFields[arg._cylcType]
-        const token = arg._cylcObjects.includes(alternate)
-          ? alternate
-          : arg._cylcObjects.find((t) => tokens[t])
-        value = tokens[token]
+      const value = new Set()
+      for (const tokens of tokensList) {
+        if (arg._cylcType in compoundFields) {
+          value.add(compoundFields[arg._cylcType](tokens))
+        } else {
+          const alternate = alternateFields[arg._cylcType]
+          const token = arg._cylcObjects.includes(alternate)
+            ? alternate
+            : arg._cylcObjects.find((t) => tokens[t])
+          value.add(tokens[token])
+        }
       }
-      if (value) {
-        argspec[arg.name] = arg._multiple ? [value] : value
+      if (value.size) {
+        if (arg._multiple) {
+          argspec[arg.name] = Array.from(value)
+        } else {
+          argspec[arg.name] = value.values().next().value
+        }
       }
     }
     argspec[arg.name] ||= arg._default

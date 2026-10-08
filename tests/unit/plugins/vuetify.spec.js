@@ -15,32 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
-import storeOptions from '@/store/options'
+import { btnIconFontSize } from '@/plugins/vuetify'
 
-/**
- * Tests for the store/user module.
- */
-describe('user', () => {
-  const store = createStore(storeOptions)
-  /**
-   * Tests for store.user.
-   */
-  describe('user', () => {
-    const resetState = () => {
-      store.state.user.user = null
-    }
-    beforeEach(resetState)
-    it('should start with no user', () => {
-      expect(store.state.user.user).to.equal(null)
-    })
-    it('should set user', () => {
-      const user = {
-        id: 1,
-        username: 'cylc',
-      }
-      store.commit('user/SET_USER', user)
-      expect(store.state.user.user).to.deep.equal(user)
-    })
+describe('btnIconFontSize', () => {
+  it.each([
+    { size: '28', expected: '0.75rem' },
+    { size: '40', expected: '1rem' },
+    { size: '48', expected: '1.25rem' },
+    { size: 'large', expected: undefined },
+  ])('btnIconFontSize($size) -> $expected', ({ size, expected }) => {
+    expect(btnIconFontSize(size)).toBe(expected)
   })
 })

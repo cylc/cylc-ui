@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { uniqueId } from 'lodash-es'
+import { isArray, uniqueId } from 'lodash-es'
 import { eventBus } from '@/services/eventBus'
 
 /** Reference to closure listeners (needed as we are using variables from another scope) */
@@ -28,7 +28,7 @@ function bind (el, binding, vnode) {
   const listener = function (e) {
     e.stopPropagation() // prevents click event from bubbling up to parents
     eventBus.emit('show-mutations-menu', {
-      node: binding.value,
+      nodes: isArray(binding.value) ? binding.value : [binding.value],
       target: el,
     })
   }
