@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { shallowMount } from '@vue/test-utils'
-import { createStore } from 'vuex'
-import User from '@/model/User.model'
-import storeOptions from '@/store/options'
-import { useGraphQL } from '@/mixins/graphql'
-import { defineComponent } from 'vue'
 import { mockRoute } from '$tests/util'
+import { useWorkflowVariables } from '@/mixins/graphql'
+import { User } from '@/model/User.model'
+import storeOptions from '@/store/options'
+import { shallowMount } from '@vue/test-utils'
+import { defineComponent } from 'vue'
+import { createStore } from 'vuex'
 
 describe('GraphQL composables', () => {
   const store = createStore(storeOptions)
@@ -30,16 +30,16 @@ describe('GraphQL composables', () => {
 
   it('creates the GraphQL Query variables and computed properties', () => {
     const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
-    store.commit('user/SET_USER', user)
     const Component = defineComponent({
       setup () {
-        return useGraphQL()
+        return useWorkflowVariables()
       },
       render: () => null,
     })
     const component = shallowMount(Component, {
       global: {
         plugins: [store],
+        provide: { user },
       },
     })
     const expectedID = `~${user.owner}/${workflowName}`

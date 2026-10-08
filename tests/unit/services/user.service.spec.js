@@ -16,9 +16,13 @@
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getUserProfile } from '@/services/user.service'
+import { __ServicesPlugin } from '@/services/plugin'
 
 describe('getUserProfile', () => {
+  let servicesPlugin
+  beforeEach(() => {
+    servicesPlugin = new __ServicesPlugin()
+  })
   afterEach(() => {
     vi.unstubAllGlobals()
   })
@@ -35,12 +39,12 @@ describe('getUserProfile', () => {
       other_stuff: null,
     })
     vi.stubGlobal('fetch', () => ({ ok: true, json: () => response }))
-    const user = await getUserProfile()
+    const user = await servicesPlugin.getUser()
     expect(user).toMatchObject(expected)
   })
 
   it('rejects on HTTP error', async () => {
     vi.stubGlobal('fetch', () => ({ ok: false, status: 500, statusText: 'Test Status' }))
-    await expect(getUserProfile()).rejects.toThrow('Failed to fetch userprofile: 500 (Test Status)')
+    await expect(servicesPlugin.getUser()).rejects.toThrow('Failed to fetch userprofile: 500 (Test Status)')
   })
 })

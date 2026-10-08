@@ -54,9 +54,7 @@ export function getIDMap (filteredOutNodesCache) {
  * NOTE: this applies for the rest of the test suite/file, but can be overriden by subsequent calls.
  */
 export function mockRoute (route = { params: { workflowName: 'test' } }) {
-  config.global.provide = {
-    [routeLocationKey]: route,
-  }
+  config.global.provide[routeLocationKey] = route
 }
 
 /**
