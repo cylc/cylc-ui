@@ -22,6 +22,8 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 [#2583](https://github.com/cylc/cylc-ui/pull/2583) - Uncaught errors are now presented to users
 
+[#2585](https://github.com/cylc/cylc-ui/pull/2585), [#2676](https://github.com/cylc/cylc-ui/pull/2676) - Tasks outside of the [N=0 window](https://cylc.github.io/cylc-doc/stable/html/user-guide/running-workflows/tasks-jobs-ui.html#n-window) are now shown as dimmed, to make it clear which tasks are currently active.
+
 ### 🔧 Fixes
 
 [#2640](https://github.com/cylc/cylc-ui/pull/2640) - Fixed the log view losing the previously selected workflow log file on navigation.
