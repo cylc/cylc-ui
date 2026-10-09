@@ -21,6 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Check spelling
+        uses: codespell-project/actions-codespell@v2
+        # If a false-positive is triggered, modify pyproject.toml [tool.codespell]
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:

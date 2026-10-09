@@ -50,7 +50,7 @@ function filterNodes (wrapper, filteredOutNodesCache) {
 describe('GScan component', () => {
   describe('Sorting', () => {
     it('sets workflow sort order by status', () => {
-      // for each worflow state ...
+      // for each workflow state ...
       for (const workflowState of WorkflowState) {
         // it should associate a workflow with the correct sort order
         expect(

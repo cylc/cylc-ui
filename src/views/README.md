@@ -75,7 +75,7 @@ In addition to this there are a number of rules that a subscription must match:
   The `reloaded` field is a special signal to the data store that tells it to
   wipe all objects of the above type within the workflow and rebuild from
   scratch. This happens when a workflow is reloaded or restarted to handle
-  configuration chages (it's easier than trying to get the scheduler to
+  configuration changes (it's easier than trying to get the scheduler to
   send the appropriate updated and pruned deltas).
 
 
