@@ -15,7 +15,7 @@
 
 # NOTE: The deltas-subscription for the tree view cannot be used here as
 #       cylc-client wouldn't give us a single response payload; but we
-#       can re-use the fragments. If the query for the tree view changes,
+#       can reuse the fragments. If the query for the tree view changes,
 #       just copy the new fragment below, or tweak the query as fit.
 query = '''
 query ($workflowID: ID) {

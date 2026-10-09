@@ -21,8 +21,5 @@ showcontent = true
 skip = "logData.cjs,./src/lang/pt-BR"
 ignore-words-list = [
     "afterAll",
-    "eles",
-    "muti",
     "onTop",
-    "re-use", "re-using",
 ]
