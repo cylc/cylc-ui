@@ -2449,6 +2449,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vuetify/v0@npm:^1.2.1":
+  version: 1.2.3
+  resolution: "@vuetify/v0@npm:1.2.3"
+  peerDependencies:
+    "@adobe/leonardo-contrast-colors": ">=1.0.0"
+    "@ant-design/colors": ">=7.0.0"
+    "@flagsmith/flagsmith": ">=11.0.0"
+    "@floating-ui/dom": ">=1.8.0"
+    "@js-temporal/polyfill": ">=0.5.0"
+    "@material/material-color-utilities": ">=0.3.0"
+    launchdarkly-js-client-sdk: ^3.0.0
+    posthog-js: ^1.0.0
+    vue: ">=3.5.0 || >=3.6.0-0"
+    vue-i18n: ">=10.0.0"
+  peerDependenciesMeta:
+    "@adobe/leonardo-contrast-colors":
+      optional: true
+    "@ant-design/colors":
+      optional: true
+    "@flagsmith/flagsmith":
+      optional: true
+    "@floating-ui/dom":
+      optional: true
+    "@js-temporal/polyfill":
+      optional: true
+    "@material/material-color-utilities":
+      optional: true
+    launchdarkly-js-client-sdk:
+      optional: true
+    posthog-js:
+      optional: true
+    vue-i18n:
+      optional: true
+  checksum: 10c0/882ec8069b7a2ca5a78403fc876ca5d6b4cbccac7c4ff06b6ddbf32484ebf7cc16fb2c16264f8774e84f399c88f660b49002768754b9e6b3b99a741c2dd275c3
+  languageName: node
+  linkType: hard
+
 "@vueuse/core@npm:14.1.0":
   version: 14.1.0
   resolution: "@vueuse/core@npm:14.1.0"
@@ -3788,7 +3825,7 @@ __metadata:
     vue-router: "npm:5.3.1"
     vue-the-mask: "npm:0.11.1"
     vue3-apexcharts: "npm:1.8.0"
-    vuetify: "npm:4.0.3"
+    vuetify: "npm:4.2.4"
     vuex: "npm:4.1.0"
   dependenciesMeta:
     cypress:
@@ -10823,13 +10860,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:4.0.3":
-  version: 4.0.3
-  resolution: "vuetify@npm:4.0.3"
+"vuetify@npm:4.2.4":
+  version: 4.2.4
+  resolution: "vuetify@npm:4.2.4"
+  dependencies:
+    "@vuetify/v0": "npm:^1.2.1"
   peerDependencies:
     typescript: ">=4.7"
     vite-plugin-vuetify: ">=2.1.0"
-    vue: ^3.5.0
+    vue: ^3.5.0 || ^3.6.0-0
     webpack-plugin-vuetify: ">=3.1.0"
   peerDependenciesMeta:
     typescript:
@@ -10838,7 +10877,7 @@ __metadata:
       optional: true
     webpack-plugin-vuetify:
       optional: true
-  checksum: 10c0/bcecdf1639c971ef7228ca6b30d65173b2ab10d463549b926b5f8cc8b226c207a9127dfcffdc8d5f64b78dc41fcc8526cb3a0821f062ad7ace2b4d23554652fd
+  checksum: 10c0/08b96b81725c27b65800b2776f6580b399d041c083b86c446e9fa25d993362f4d57c948da84a23931a6d76328d7c43c912e61df65e00803b2da190ad43c0a033
   languageName: node
   linkType: hard
 
