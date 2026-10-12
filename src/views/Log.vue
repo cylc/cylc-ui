@@ -15,52 +15,43 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<style lang="scss">
-// make the toolbar sit alongside the workflow|job selector
-// and put some space between them
-.c-log .c-view-toolbar {
-  display: inline-block;
-  margin-left: 1em;
-}
-</style>
-
 <template>
   <v-container
     class="c-log h-100 pa-0 d-flex flex-column"
     fluid
   >
-    <v-container fluid>
+    <div class="pa-2">
       <!-- the controls -->
-      <v-row
-        density="compact"
-        class="flex-0-0"
-      >
-        <v-col class="pt-0">
-          <v-btn-toggle
-            v-model="jobLog"
-            divided
-            mandatory
-            variant="outlined"
-            color="primary"
-            density="comfortable"
-          >
-            <v-btn data-cy="workflow-toggle">Workflow</v-btn>
-            <v-btn data-cy="job-toggle">Job</v-btn>
-          </v-btn-toggle>
-          <ViewToolbar
-            :groups="controlGroups"
-            @setOption="setOption"
-            :size="toolbarBtnSize"
-          />
-        </v-col>
-      </v-row>
+      <ViewToolbar>
+        <v-btn-toggle
+          v-model="jobLog"
+          mandatory
+        >
+          <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+          <v-btn data-cy="job-toggle">Job</v-btn>
+        </v-btn-toggle>
+        <ViewToolbarBtn
+          v-model:active.toggle="timestamps"
+          :icon="icons.mdiClockOutline"
+          v-tooltip="'Timestamps'"
+          data-cy="control-timestamps"
+        />
+        <ViewToolbarBtn
+          v-model:active.toggle="wordWrap"
+          :icon="icons.mdiWrap"
+          v-tooltip="'Word wrap'"
+          data-cy="control-wordWrap"
+        />
+        <ViewToolbarBtn
+          v-model:active.toggle="autoScroll"
+          :icon="icons.mdiMouseMoveDown"
+          v-tooltip="'Auto scroll'"
+        />
+      </ViewToolbar>
 
       <!-- the inputs -->
-      <v-row
-        density="compact"
-        class="flex-0-0"
-      >
-        <v-col cols="8">
+      <ViewToolbar class="my-2">
+        <div class="group" style="flex-basis: 60%;">
           <v-text-field
             v-if="jobLog"
             data-cy="job-id-input"
@@ -73,13 +64,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template #prepend-inner>
               <v-btn
                 :disabled="!relativeTokens || jobNode === false"
-                v-bind="toolbarBtnProps"
                 size="medium"
                 variant="plain"
                 @click="() => jobNode ?? fetchJobData()"
+                icon
+                density="compact"
                 data-cy="job-info-btn"
               >
-                <v-icon :icon="$options.icons.mdiInformationOutline"/>
+                <v-icon :icon="icons.mdiInformationOutline"/>
                 <v-menu
                   activator="parent"
                   :close-on-content-click="false"
@@ -110,11 +102,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="workflowID"
             disabled
           />
-        </v-col>
-        <v-col
-          cols="4"
-          class="d-flex align-start col-gap-2"
-        >
+        </div>
+        <div class="group flex-1-0">
+          <div></div>
           <v-select
             data-cy="file-input"
             :label="fileLabel"
@@ -123,16 +113,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="file"
             :menu-props="{ 'data-cy': 'file-input-menu' }"
           />
-          <v-btn
-            @click="() => this.updateLogFileList()"
-            v-bind="toolbarBtnProps"
+          <ViewToolbarBtn
+            @click="updateLogFileList()"
             data-cy="refresh-files"
-          >
-            <v-icon :icon="$options.icons.mdiFolderRefresh"/>
-            <v-tooltip>Refresh file list</v-tooltip>
-          </v-btn>
-        </v-col>
-      </v-row>
+            :icon="icons.mdiFolderRefresh"
+            v-tooltip="'Refresh file list'"
+          />
+        </div>
+      </ViewToolbar>
 
       <!-- the status line -->
       <v-row
@@ -149,10 +137,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="flex-shrink-0"
             v-bind="results.connected ? {
               color: 'success',
-              prependIcon: $options.icons.mdiPowerPlug,
+              prependIcon: icons.mdiPowerPlug,
             } : {
               color: 'error',
-              prependIcon: $options.icons.mdiPowerPlugOff,
+              prependIcon: icons.mdiPowerPlugOff,
               onClick: updateQuery,
             }"
           >
@@ -180,19 +168,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         variant="tonal"
         density="compact"
         class="mt-2"
-        :icon="$options.icons.mdiFileAlertOutline"
+        :icon="icons.mdiFileAlertOutline"
       >
         <span class="text-pre-wrap text-break">
           {{ results.error }}
         </span>
       </v-alert>
-    </v-container>
+    </div>
 
     <!-- the log file viewer -->
     <v-skeleton-loader
       v-if="id && file && results.connected == null"
       type="text@5"
-      class="align-content-start"
+      class="align-content-start ml-n2 mt-n2"
     />
     <log-component
       v-else
@@ -201,6 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :timestamps="timestamps"
       :word-wrap="wordWrap"
       v-model:autoScroll="autoScroll"
+      class="pa-2 pt-0"
     />
   </v-container>
 </template>
@@ -219,8 +208,7 @@ import {
   mdiMouseMoveDown,
   mdiInformationOutline,
 } from '@mdi/js'
-import { btnProps } from '@/utils/viewToolbar'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -228,11 +216,11 @@ import {
   useInitialOptions,
 } from '@/utils/initialOptions'
 import LogComponent from '@/components/cylc/log/Log.vue'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import { Tokens } from '@/utils/uid'
 import gql from 'graphql-tag'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
-import DeltasCallback from '@/services/callbacks'
+import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
+import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
@@ -290,11 +278,6 @@ query Jobs($id: ID!, $workflowID: ID!) {
 }
 `
 
-/**
- * The preferred file to start with as a list of patterns.
- * The first pattern with a matching file name will be chosen.
- */
-
 class Results {
   constructor () {
     /** @type {string[]} */
@@ -310,36 +293,6 @@ class Results {
   }
 }
 
-/** Callback for assembling the log file from the subscription */
-class LogsCallback extends DeltasCallback {
-  /**
-   * @param {Results} results
-   */
-  constructor (results) {
-    super()
-    this.results = results
-  }
-
-  onAdded (added, store, errors) {
-    if (this.results.connected === false) {
-      // We have reconnected; clear the current lines otherwise they will be duplicated
-      this.results.lines = []
-    }
-    if (added.lines) {
-      this.results.lines.push(...added.lines)
-    }
-    if (added.connected != null) {
-      this.results.connected = added.connected
-    }
-    if (added.error != null) {
-      this.results.error = added.error
-    }
-    if (added.path != null) {
-      [this.results.host, this.results.path] = added.path.split(':', 2)
-    }
-  }
-}
-
 export default {
   name: 'Log',
 
@@ -351,6 +304,7 @@ export default {
     CopyBtn,
     LogComponent,
     ViewToolbar,
+    ViewToolbarBtn,
     JobDetails,
   },
   emits: [
@@ -370,7 +324,7 @@ export default {
   setup (props, { emit }) {
     const store = useStore()
 
-    const { workflowID, variables } = useGraphQL()
+    const { workflowID, variables } = useWorkflowVariables()
 
     /**
      * The task/job ID.
@@ -430,6 +384,26 @@ export default {
       results.value = new Results()
     }
 
+    /** Callback for assembling the log file from the subscription */
+    function onAdded (added) {
+      if (results.value.connected === false) {
+      // We have reconnected; clear the current lines otherwise they will be duplicated
+        results.value.lines = []
+      }
+      if (added.lines) {
+        results.value.lines.push(...added.lines)
+      }
+      if (added.connected != null) {
+        results.value.connected = added.connected
+      }
+      if (added.error != null) {
+        results.value.error = added.error
+      }
+      if (added.path != null) {
+        [results.value.host, results.value.path] = added.path.split(':', 2)
+      }
+    }
+
     /** The path of the log file parent dir minus the trailing slash. */
     const parentPath = computed(
       () => results.value.path?.substring(0, results.value.path.length - file.value.length - 1)
@@ -442,9 +416,6 @@ export default {
 
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
-
-    /** View toolbar button size */
-    const toolbarBtnSize = '40'
 
     return {
       // the log subscription query
@@ -471,11 +442,20 @@ export default {
       wordWrap,
       autoScroll,
       reset,
-      toolbarBtnSize,
-      toolbarBtnProps: btnProps(toolbarBtnSize),
       jobNode: ref(null),
       workflowID,
       variables,
+      onAdded,
+      icons: {
+        mdiClockOutline,
+        mdiFileAlertOutline,
+        mdiFolderRefresh,
+        mdiInformationOutline,
+        mdiMouseMoveDown,
+        mdiPowerPlugOff,
+        mdiPowerPlug,
+        mdiWrap,
+      },
     }
   },
 
@@ -522,43 +502,9 @@ export default {
       }
       return this.workflowID
     },
-    controlGroups () {
-      return [
-        {
-          title: 'Log',
-          controls: [
-            {
-              title: 'Timestamps',
-              icon: mdiClockOutline,
-              action: 'toggle',
-              value: this.timestamps,
-              key: 'timestamps',
-            },
-            {
-              title: 'Word wrap',
-              icon: mdiWrap,
-              action: 'toggle',
-              value: this.wordWrap,
-              key: 'wordWrap',
-            },
-            {
-              title: 'Auto scroll',
-              icon: mdiMouseMoveDown,
-              action: 'toggle',
-              value: this.autoScroll,
-              key: 'autoScroll',
-            },
-          ],
-        },
-      ]
-    },
   },
 
   methods: {
-    setOption (option, value) {
-      // used by the ViewToolbar to update settings
-      this[option] = value
-    },
     updateQuery () {
       // update the subscription query
       // wipe the log lines from any previous subscription
@@ -573,11 +519,13 @@ export default {
         LOGS_SUBSCRIPTION,
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
-        [
-          new LogsCallback(this.results),
-        ],
-        /* isDelta */ false,
-        /* isGlobalCallback */ false
+        (response) => {
+          if (!response.data?.logs) {
+            console.error(response.errors ?? 'No data received from log subscription')
+            return
+          }
+          this.onAdded(response.data.logs)
+        },
       )
     },
     /**
@@ -696,15 +644,6 @@ export default {
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
     },
-  },
-
-  // Misc options
-  icons: {
-    mdiFolderRefresh,
-    mdiPowerPlug,
-    mdiPowerPlugOff,
-    mdiFileAlertOutline,
-    mdiInformationOutline,
   },
 }
 </script>

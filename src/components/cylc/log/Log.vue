@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     ref="scrollWrapper"
-    class="h-100 overflow-auto px-4 pb-2"
+    class="h-100 overflow-auto"
   >
     <pre
       ref="logText"

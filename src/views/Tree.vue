@@ -19,9 +19,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div class="c-tree h-100 overflow-auto">
     <ViewToolbar
       class="toolbar"
-      :groups="controlGroups"
-      @setOption="setOption"
-    />
+    >
+      <template #filter>
+        <TaskFilter v-model="tasksFilter"/>
+      </template>
+      <template #tree>
+        <ViewToolbarBtn
+          v-model:active.toggle="flat"
+          :icon="icons.mdiFormatAlignRight"
+          :active-icon="icons.mdiFormatAlignJustify"
+          :highlight="false"
+          v-tooltip="'Toggle Families'"
+          data-cy="control-flat"
+        />
+        <ViewToolbarBtn
+          @click="treeExpandAll()"
+          :icon="icons.mdiPlus"
+          v-tooltip="'Expand All'"
+          data-cy="control-ExpandAll"
+        />
+        <ViewToolbarBtn
+          @click="treeCollapseAll()"
+          :icon="icons.mdiMinus"
+          v-tooltip="'Collapse All'"
+          data-cy="control-CollapseAll"
+        />
+      </template>
+    </ViewToolbar>
     <TreeComponent
       class="tree"
       :workflows="workflows"
@@ -37,7 +61,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { ref } from 'vue'
-import { mapState, mapGetters } from 'vuex'
 import {
   mdiFormatAlignJustify,
   mdiFormatAlignRight,
@@ -45,15 +68,17 @@ import {
   mdiPlus,
 } from '@mdi/js'
 import gql from 'graphql-tag'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   useInitialOptions,
 } from '@/utils/initialOptions'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
+import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
+import TaskFilter from '@/components/cylc/viewToolbar/TaskFilter.vue'
 import { matchID, matchState, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
@@ -185,7 +210,9 @@ export default {
 
   components: {
     TreeComponent,
+    TaskFilter,
     ViewToolbar,
+    ViewToolbarBtn,
   },
 
   props: {
@@ -193,7 +220,7 @@ export default {
   },
 
   setup (props, { emit }) {
-    const { workflowIDs, variables } = useGraphQL()
+    const { workflows, variables } = useWorkflowVariables()
 
     /**
      * The job id input and selected task filter state.
@@ -209,93 +236,28 @@ export default {
       tasksFilter,
       filterState,
       flat,
-      workflowIDs,
+      workflows,
       variables,
+      icons: {
+        mdiFormatAlignJustify,
+        mdiFormatAlignRight,
+        mdiMinus,
+        mdiPlus,
+      },
     }
   },
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
-    ...mapGetters('workflows', ['getNodes']),
-
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
-    },
-
     query () {
       return new SubscriptionQuery(
         QUERY,
         this.variables,
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
-    },
-
-    controlGroups () {
-      return [
-        {
-          title: 'Filter',
-          controls: [
-            {
-              title: 'Filter By ID',
-              action: 'taskIDFilter',
-              key: 'taskIDFilter',
-              value: this.tasksFilter.id,
-            },
-            {
-              title: 'Filter By State',
-              action: 'taskStateFilter',
-              key: 'taskStateFilter',
-              value: this.tasksFilter.states,
-            },
-          ],
-        },
-        {
-          title: 'Tree',
-          controls: [
-            {
-              title: 'Toggle Families',
-              icon: {
-                true: mdiFormatAlignJustify,
-                false: mdiFormatAlignRight,
-              },
-              action: 'toggle',
-              value: this.flat,
-              key: 'flat',
-            },
-            {
-              title: 'Expand All',
-              key: 'ExpandAll',
-              icon: mdiPlus,
-              action: 'callback',
-              callback: this.treeExpandAll,
-            },
-            {
-              title: 'Collapse All',
-              key: 'CollapseAll',
-              icon: mdiMinus,
-              action: 'callback',
-              callback: this.treeCollapseAll,
-            },
-          ],
-        },
-      ]
     },
   },
 
   methods: {
-    setOption (option, value) {
-      if (option === 'taskStateFilter') {
-        this.tasksFilter.states = value
-      } else if (option === 'taskIDFilter') {
-        this.tasksFilter.id = value
-      } else {
-        this[option] = value
-      }
-    },
-
     treeExpandAll () {
       this.expandAll = ['workflow', 'cycle', 'family']
     },
@@ -343,13 +305,6 @@ export default {
       filteredOutNodesCache.set(node, !isMatch)
       return isMatch
     },
-  },
-
-  icons: {
-    mdiFormatAlignJustify,
-    mdiFormatAlignRight,
-    mdiMinus,
-    mdiPlus,
   },
 }
 </script>

@@ -17,15 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-data-table
-    :headers="headers"
-    :items="tasks"
-    item-value="task.id"
-    multi-sort
+    v-model="selection"
     v-model:sort-by="sortBy"
-    show-expand
-    density="compact"
     v-model:page="page"
     v-model:items-per-page="itemsPerPage"
+    :items="items"
+    v-bind="{ headers, showSelect }"
+    item-value="task.id"
+    multi-sort
+    show-expand
+    density="compact"
     fixed-header
   >
     <template #item.task.name="{ item }">
@@ -57,7 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
     </template>
     <template #item.latestJob.node.finishedTime="{ item, value }">
+      <!-- Use key to workaround https://github.com/vuetifyjs/vuetify/issues/23123 -->
       <EstimatedTime
+        key="taskFinishTime"
         :actual="value"
         :estimate="item.latestJob?.node.estimatedFinishTime"
       />
@@ -92,6 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="(job, index) in item.task.children"
         class="expanded-row bg-grey-lighten-5"
       >
+        <td v-if="showSelect"></td> <!-- Empty cell for select column -->
         <td :colspan="3">
           <div class="d-flex align-content-center flex-nowrap">
             <div v-bind="jobIconParentProps" :style="{ marginLeft: jobIconParentProps.style.width }">
@@ -110,7 +114,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ job.node.submittedTime }}</td>
         <td>{{ job.node.startedTime }}</td>
         <td>
+          <!-- Use key to workaround https://github.com/vuetifyjs/vuetify/issues/23123 -->
           <EstimatedTime
+            key="jobFinishTime"
             :actual="job.node.finishedTime"
             :estimate="job.node.estimatedFinishTime"
           />
@@ -161,11 +167,26 @@ const props = defineProps({
     type: [Object, null],
     default: null,
   },
+  showSelect: {
+    type: Boolean,
+    default: false,
+  },
 })
 
+const selection = defineModel('selection')
 const sortBy = defineModel('sortBy')
 const page = defineModel('page')
 const itemsPerPage = defineModel('itemsPerPage')
+
+const items = computed(
+  () => props.tasks.map(
+    (task) => ({
+      task,
+      latestJob: task.children[0],
+      previousJob: task.children[1],
+    })
+  )
+)
 
 const headers = ref([
   {
@@ -264,7 +285,7 @@ for (const header of headers.value) {
 
 /** Data for the run time column, for each task's latest job. */
 const taskRunTimes = computed(() => new Map(
-  props.tasks.map(({ task, latestJob }) => [
+  items.value.map(({ task, latestJob }) => [
     task.id,
     {
       actual: getRunTime(latestJob?.node),

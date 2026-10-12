@@ -20,17 +20,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     fluid
     class="c-table pa-2 pb-0 h-100 flex-column d-flex"
   >
-    <ViewToolbar
-      :groups="controlGroups"
-      @setOption="setOption"
-    />
+    <ViewToolbar>
+      <template #filters>
+        <TaskFilter v-model="tasksFilter"/>
+      </template>
+      <template #select>
+        <v-btn
+          v-if="!enableSelect"
+          text="Select"
+          @click="() => enableSelect = true"
+          :prepend-icon="mdiSelect"
+          data-cy="enable-select"
+        />
+        <template v-else>
+          <v-btn
+            text="Enact"
+            v-command-menu="selectedNodes"
+            :prepend-icon="mdiPencilBoxMultiple"
+            :disabled="!selectedIDs.length"
+            color="primary"
+            data-cy="enact"
+          >
+            <template #append>
+              <v-badge
+                v-if="selectedIDs.length"
+                :content="selectedIDs.length"
+                inline
+                color="primary"
+                data-cy="selected-count"
+              />
+            </template>
+          </v-btn>
+          <v-btn
+            text="Cancel"
+            @click="() => enableSelect = false"
+            :prepend-icon="mdiSelectOff"
+            data-cy="cancel-select"
+          />
+        </template>
+      </template>
+    </ViewToolbar>
+    <v-fade-transition hide-on-leave>
+      <div v-show="enableSelect">
+        <v-alert
+          :icon="mdiInformationOutline"
+          text="Selection mode enabled. The list of displayed tasks will not update. Any selection will be lost if you leave this workflow."
+          type="info"
+          variant="tonal"
+          density="compact"
+          class="my-2"
+        />
+      </div>
+    </v-fade-transition>
     <div class="overflow-hidden">
       <TableComponent
         :tasks="filteredTasks"
+        v-model:selection="selectedIDs"
         v-model:sort-by="sortBy"
         v-model:page="page"
         v-model:items-per-page="itemsPerPage"
         v-bind="{ filterState }"
+        :show-select="enableSelect"
         class="mh-100"
       />
     </div>
@@ -38,8 +88,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-import { useGraphQL } from '@/mixins/graphql'
+import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
+import { whenever } from '@vueuse/core'
+import { mdiInformationOutline, mdiPencilBoxMultiple, mdiSelect, mdiSelectOff } from '@mdi/js'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -47,11 +100,13 @@ import {
   useInitialOptions,
 } from '@/utils/initialOptions'
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
+import TaskFilter from '@/components/cylc/viewToolbar/TaskFilter.vue'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
+import { cloneDeep } from 'lodash-es'
 
 const QUERY = gql`
 subscription Workflow ($workflowID: ID) {
@@ -150,6 +205,7 @@ export default {
 
   components: {
     TableComponent,
+    TaskFilter,
     ViewToolbar,
   },
 
@@ -160,12 +216,16 @@ export default {
   },
 
   setup (props, { emit }) {
-    const { workflowIDs, variables } = useGraphQL()
+    const store = useStore()
+
+    const getIndex = store.getters['workflows/getIndex']
+
+    const { workflows, variables } = useWorkflowVariables()
 
     /**
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<object>}
-     */
+      */
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, {})
     const filterState = useTasksFilterState(tasksFilter)
 
@@ -186,39 +246,82 @@ export default {
 
     const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
 
+    const enableSelect = ref(false)
+    /** Track selected tasks by ID. */
+    const selectedIDs = ref([])
+    /**
+     * Track selected nodes based on selected IDs.
+     * This is because the source for the node changes when a task is pruned, but the ID remains the same.
+    */
+    const selectedNodes = computed(
+      () => selectedIDs.value.map(
+        (id) => getIndex(id) ?? prunedTasks.value.get(id)
+      )
+    )
+
+    whenever(() => !enableSelect.value, () => {
+      prunedTasks.value.clear()
+      selectedIDs.value = []
+    })
+
+    /**
+     * When in selection mode, keep references to nodes pruned from data store, to stop them disappearing from the table.
+     * @type {import('vue').Ref<Map<string, Object>>}
+     */
+    const prunedTasks = ref(new Map())
+
+    const tasks = computed((previous) => {
+      if (enableSelect.value) {
+        // Freeze the list of tasks when selection is enabled, to stop selected tasks disappearing.
+        return previous.map(
+          (task) => getIndex(task.id) ?? prunedTasks.value.get(task.id)
+        )
+      }
+      return workflows.value.flatMap(
+        (workflow) => workflow.children.flatMap(
+          (cycle) => cycle.children
+        )
+      )
+    })
+
+    const filteredTasks = computed(() => {
+      if (!filterState.value) {
+        return tasks.value
+      }
+      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
+        tasksFilter.value.states ?? []
+      )
+      return tasks.value.filter((task) => matchNode(
+        task,
+        globToRegex(tasksFilter.value.id),
+        states,
+        waitingStateModifiers,
+        genericModifiers
+      ))
+    })
+
     return {
+      getIndex,
+      filteredTasks,
       sortBy,
       page,
       itemsPerPage,
       tasksFilter,
       filterState,
-      workflowIDs,
+      workflows,
       variables,
+      enableSelect,
+      selectedIDs,
+      selectedNodes,
+      prunedTasks,
+      mdiSelect,
+      mdiSelectOff,
+      mdiPencilBoxMultiple,
+      mdiInformationOutline,
     }
   },
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
-    ...mapGetters('workflows', ['getNodes']),
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
-    },
-    tasks () {
-      const ret = []
-      for (const workflow of this.workflows) {
-        for (const cycle of workflow.children) {
-          for (const task of cycle.children) {
-            ret.push({
-              task,
-              latestJob: task.children[0],
-              previousJob: task.children[1],
-            })
-          }
-        }
-      }
-      return ret
-    },
-
     query () {
       return new SubscriptionQuery(
         QUERY,
@@ -226,57 +329,17 @@ export default {
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
-      )
-    },
-
-    filteredTasks () {
-      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
-        this.tasksFilter.states?.length ? this.tasksFilter.states : []
-      )
-      return this.tasks.filter(({ task }) => matchNode(
-        task,
-        globToRegex(this.tasksFilter.id),
-        states,
-        waitingStateModifiers,
-        genericModifiers
-      ))
-    },
-
-    controlGroups () {
-      return [
         {
-          title: 'Filter',
-          controls: [
-            {
-              title: 'Filter By ID',
-              action: 'taskIDFilter',
-              key: 'taskIDFilter',
-              value: this.tasksFilter.id,
-            },
-            {
-              title: 'Filter By State',
-              action: 'taskStateFilter',
-              key: 'taskStateFilter',
-              value: this.tasksFilter.states,
-            },
-          ],
-        },
-      ]
-    },
-  },
-
-  methods: {
-    setOption (option, value) {
-      if (option === 'taskStateFilter') {
-        this.tasksFilter.states = value
-      } else if (option === 'taskIDFilter') {
-        this.tasksFilter.id = value
-      } else {
-        this[option] = value
-      }
+          onBeforeDelta: ({ pruned }) => {
+            // Grab task nodes just before they are removed from the store
+            if (this.enableSelect && pruned?.taskProxies?.length) {
+              for (const id of pruned.taskProxies) {
+                this.prunedTasks.set(id, cloneDeep(this.getIndex(id)))
+              }
+            }
+          },
+        }
+      )
     },
   },
 }
