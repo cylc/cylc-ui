@@ -107,7 +107,7 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component
  * @returns {Promise<any | string>}
  */
 function fallbackGraphQLFetcher (graphQLParams) {
-  // re-using same method UI uses to create GraphQL URL's used by its client with createGraphQLUrls()
+  // reusing same method UI uses to create GraphQL URL's used by its client with createGraphQLUrls()
   return fetch(
     createGraphQLUrls().httpUrl,
     {

@@ -236,7 +236,7 @@ function cleanParents (state, node) {
 }
 
 /**
- * Build the familyTree based on the family information containined
+ * Build the familyTree based on the family information contained
  * in this node.
  */
 function applyInheritance (state, node) {

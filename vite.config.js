@@ -121,7 +121,7 @@ export default defineConfig(({ command, mode }) => {
     },
     define: {
       __APP_VERSION__: JSON.stringify(pkg.version),
-      // Allow vue devtools to work when runing vite build:
+      // Allow vue devtools to work when running vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
     // Unit test specific config:

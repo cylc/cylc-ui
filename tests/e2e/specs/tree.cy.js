@@ -169,11 +169,11 @@ describe('Tree view', () => {
 
     function checkFilteredTasks (expectedNames) {
       cy.get('.c-tree .node-data-task:visible')
-        .then((eles) => {
+        .then((elements) => {
           const names = []
-          for (const ele of eles) {
+          for (const element of elements) {
             names.push(
-              Cypress.$(ele).find('.mx-1:first').text()
+              Cypress.$(element).find('.mx-1:first').text()
             )
           }
           expect(names.sort()).to.deep.equal(expectedNames.sort())

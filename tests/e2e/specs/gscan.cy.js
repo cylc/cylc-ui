@@ -212,7 +212,7 @@ describe('GScan component', () => {
       // NOTE: Log events may be duplicated in offline-mode due to the way the
       // mock data is loaded. This does not apply to production.
 
-      // id="other/muti/run2" type="workflow"
+      // id="other/multi/run2" type="workflow"
       cy.get('[data-node-name="run2"] .c-warn:first')
         .should('have.class', 'active') // warning active
         .find('svg')
@@ -223,7 +223,7 @@ describe('GScan component', () => {
             .and('contain', 'SOS')
         })
 
-      // id="other/muti" type="workflow-part"
+      // id="other/multi" type="workflow-part"
       cy.get('[data-node-name="other/multi"] .c-warn:first')
         .should('have.class', 'active') // warning has bubbled up from run2
         .find('svg')
@@ -238,11 +238,11 @@ describe('GScan component', () => {
       cy.get('[data-node-name="run2"] .c-warn:first svg')
         .click({ force: true })
 
-      // id="other/muti/run2" type="workflow"
+      // id="other/multi/run2" type="workflow"
       cy.get('[data-node-name="run2"] .c-warn:first')
         .should('not.have.class', 'active') // warning dismissed
 
-      // id="other/muti" type="workflow-part"
+      // id="other/multi" type="workflow-part"
       cy.get('[data-node-name="other/multi"] .c-warn:first')
         .should('not.have.class', 'active') // warning dismissed
     })

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div class="c-info">
     <!-- The task summary
 
-    * The "-40" comes from the GraphNode offset, see the GraphNode compoent.
+    * The "-40" comes from the GraphNode offset, see the GraphNode component.
     * The height is "200" + "40".
     * The "99999" is the maximum component width (because we don't know
       how wide it will be until we render it).
@@ -333,7 +333,7 @@ export default {
     },
 
     prerequisites () {
-      // Task prerequsite information.
+      // Task prerequisite information.
       return this.task?.node?.prerequisites || {}
     },
 
@@ -428,7 +428,7 @@ export default {
       content: ''; /* blank */
     }
 
-    // for prerequsite task "aliases" (used in conditional expressions)
+    // for prerequisite task "aliases" (used in conditional expressions)
     .prerequisite-alias {
       font-style: italic;
       color: rgb(100, 100, 255);
