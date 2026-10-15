@@ -109,7 +109,7 @@ if (import.meta.env.MODE !== 'production') {
  * Each view in this map will be available from the Toolbar to be added as
  * a widget to the workspace view.
  *
- * Note for peformance reasons this should not be made reactive as they are
+ * Note for performance reasons this should not be made reactive as they are
  * already Vue components.
  *
  * @type {Map<string, CylcView>}

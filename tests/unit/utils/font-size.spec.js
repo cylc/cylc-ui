@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 import {
   decreaseFontSize, getCurrentFontSize, increaseFontSize, INCREMENT, resetFontSize,
 } from '@/utils/font-size'
@@ -24,8 +25,12 @@ describe('Font Size', () => {
   const initialFontSize = 16
 
   beforeEach(() => {
-    delete localStorage.fontSize
+    localStorage.clear()
     document.documentElement.style.fontSize = `${initialFontSize}px`
+  })
+
+  afterAll(() => {
+    localStorage.clear()
   })
 
   it('gets the current font size', () => {

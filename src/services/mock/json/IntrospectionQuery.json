@@ -1947,7 +1947,7 @@
           },
           {
             "name": "setVerbosity",
-            "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running workflows.",
+            "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
                 "name": "level",
@@ -2483,7 +2483,7 @@
             "args": [
               {
                 "name": "flow",
-                "description": "\"Remove the task(s) from the specified flows. \"\n\nThis should be a list of flow numbers, or 'all'\nto remove the task(s) from all flows they belong to\n(which is the default).",
+                "description": "\"Remove the tasks from the specified flows.\"\n\nThis should be a list of flow numbers.\nBy default, tasks will be removed from all flows.",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -2500,7 +2500,19 @@
                   },
                   "__typename": "__Type"
                 },
-                "defaultValue": "[\"all\"]",
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "noSpawn",
+                "description": "Remove the leading instance of a parentless task without\nspawning its next instance.\n\nThis only affects leading instances of parentless sequential\nxtriggered tasks and parentless tasks waiting at the\nrunahead-limit.\n\nWARNING: this is a low-level intervention that cuts tasks from\nthe future graph; it could cause your workflow to shut down\nprematurely as complete.\n\nIf `false` the scheduler will spawn the next task instance\nas normal (default).\n\nIf `true` the scheduler will not spawn the next task instance.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
                 "__typename": "__InputValue"
               },
               {
@@ -2564,7 +2576,7 @@
             "args": [
               {
                 "name": "flow",
-                "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
+                "description": "The flow(s) to set or trigger these tasks in.\n\nBy default, active tasks (n=0) stay in their assigned flow(s) and\ninactive tasks (n>0) will be assigned to all active flows.\n\nOtherwise give a list of integers or one of the following strings:\n* new - an automatically generated new flow number\n* none - activity won't flow on (ignored for active tasks)",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -2703,7 +2715,7 @@
             "args": [
               {
                 "name": "flow",
-                "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
+                "description": "The flow(s) to set or trigger these tasks in.\n\nBy default, active tasks (n=0) stay in their assigned flow(s) and\ninactive tasks (n>0) will be assigned to all active flows.\n\nOtherwise give a list of integers or one of the following strings:\n* new - an automatically generated new flow number\n* none - activity won't flow on (ignored for active tasks)",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -3034,6 +3046,420 @@
             "type": {
               "kind": "OBJECT",
               "name": "Play",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
+          },
+          {
+            "name": "reinstallReload",
+            "description": "Validate, reinstall, then reload the workflow.\n\nThis command updates a workflow to reflect any new changes made in\nthe workflow source directory since it was installed.\n\nValid for: paused, running workflows.",
+            "args": [
+              {
+                "name": "clearRoseInstallOptions",
+                "description": "Clear options previous set by cylc-rose.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "reloadGlobal",
+                "description": "Reload global config as well as the workflow config",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "roseOptConfKeys",
+                "description": "Add Rose optional configurations (if Rose is used).",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "roseSuiteDefines",
+                "description": "Each of these overrides the `[SECTION]KEY` setting in a\n`rose-suite.conf` file.\n\nCan be used to disable a setting using the syntax\n`[SECTION]!KEY` or even `[!SECTION]`.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "roseTemplateVariables",
+                "description": "Define a Rose `[template variable]`s e.g, `FOO=1`.\n\nNote: Specifying `FOO=1` to this argument is equivalent to\nspecifying `[template variables]FOO=1` to the `define`\nargument.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "workflows",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "WorkflowID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ReinstallReload",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
+          },
+          {
+            "name": "reinstallRestart",
+            "description": "Validate, reinstall, then restart the workflow.\n\nThis command updates a workflow to reflect any new changes made in\nthe workflow source directory since it was installed.\n\nValid for: stopped workflows.",
+            "args": [
+              {
+                "name": "abortIfAnyTaskFails",
+                "description": "If set workflow will abort with status 1 if any task fails.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "clearRoseInstallOptions",
+                "description": "Clear options previous set by cylc-rose.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "cylcVersion",
+                "description": "Set the Cylc version that the workflow starts with.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "CylcVersion",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "debug",
+                "description": "Output developer information and show exception tracebacks.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "finalCyclePoint",
+                "description": "Set the final cycle point. This command line option overrides\nthe workflow config option `[scheduling]final cycle point`.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "CyclePoint",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "holdCyclePoint",
+                "description": "Hold all tasks after this cycle point.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "CyclePoint",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "host",
+                "description": "Specify the host on which to start-up the workflow. If not\nspecified, a host will be selected using the\n`[scheduler]run hosts` global config.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "initialCyclePoint",
+                "description": "Set the initial cycle point.\n\nRequired if not defined in flow.cylc.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "CyclePoint",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "mainLoop",
+                "description": "Specify an additional plugin to run in the main loop. These\nare used in combination with those specified in\n`[scheduler][main loop]plugins`. Can be used multiple times.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "mode",
+                "description": null,
+                "type": {
+                  "kind": "ENUM",
+                  "name": "WorkflowRunMode",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "Live",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "noTimestamp",
+                "description": "Don't timestamp logged messages.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "pause",
+                "description": "Pause workflow immediately on starting.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "roseOptConfKeys",
+                "description": "Add Rose optional configurations (if Rose is used).",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "roseSuiteDefines",
+                "description": "Each of these overrides the `[SECTION]KEY` setting in a\n`rose-suite.conf` file.\n\nCan be used to disable a setting using the syntax\n`[SECTION]!KEY` or even `[!SECTION]`.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "roseTemplateVariables",
+                "description": "Define a Rose `[template variable]`s e.g, `FOO=1`.\n\nNote: Specifying `FOO=1` to this argument is equivalent to\nspecifying `[template variables]FOO=1` to the `define`\nargument.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "set",
+                "description": "Set the value of a Jinja2 template variable in the workflow\ndefinition. Values should be valid Python literals so strings\nmust be quoted e.g. `STR=\"string\"`, `INT=43`, `BOOL=True`.\nThis option can be used multiple  times on the command line.\nNOTE: these settings persist across workflow restarts, but can\nbe set again on the `cylc play` command line if they need to be\noverridden.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "setFile",
+                "description": "Set the value of Jinja2 template variables in the workflow\ndefinition from a file containing NAME=VALUE pairs (one per\nline). As with \"set\" values should be valid Python literals so\nstrings must be quoted e.g.  `STR='string'`. NOTE: these\nsettings persist across workflow restarts, but can be set again\non the `cylc play` command line if they need to be overridden.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "startCyclePoint",
+                "description": "Set the start cycle point, which may be after the initial cycle\npoint.\n\nIf the specified start point is not in the sequence, the next\non-sequence point will be used.\n\n(Not to be confused with the initial cycle point).\n\nThis replaces the Cylc 7 --warm option.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "CyclePoint",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "stopCyclePoint",
+                "description": "Set the stop cycle point. Shut down after all tasks have PASSED\nthis cycle point. (Not to be confused with the final cycle\npoint.) This command line option overrides the workflow config\noption `[scheduling]stop after cycle point`.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "CyclePoint",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "upgrade",
+                "description": "Allow the workflow to be restarted with a newer\nversion of Cylc.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "workflows",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "WorkflowID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ReinstallRestart",
               "ofType": null,
               "__typename": "__Type"
             },
@@ -6045,7 +6471,7 @@
             },
             {
               "name": "isHeldTotal",
-              "description": "The number of \"held\" tasks.",
+              "description": "The number of \"held\" tasks.\n\nDeprecated: Use `contains_held`.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6053,17 +6479,45 @@
                 "ofType": null,
                 "__typename": "__Type"
               },
-              "isDeprecated": false,
-              "deprecationReason": null,
+              "isDeprecated": true,
+              "deprecationReason": "unused",
               "__typename": "__Field"
             },
             {
               "name": "isQueuedTotal",
-              "description": "The number of queued tasks.",
+              "description": "The number of queued tasks.\n\nDeprecated: No replacement.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": true,
+              "deprecationReason": "unused",
+              "__typename": "__Field"
+            },
+            {
+              "name": "isRunaheadTotal",
+              "description": "The number of tasks which are held back by the runahead limit.\n\nDeprecated: No replacement.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": true,
+              "deprecationReason": "unused",
+              "__typename": "__Field"
+            },
+            {
+              "name": "containsHeld",
+              "description": "True if the n=0 window contains any held tasks.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -6072,12 +6526,12 @@
               "__typename": "__Field"
             },
             {
-              "name": "isRunaheadTotal",
-              "description": "The number of tasks which are held back by the runahead limit.",
+              "name": "containsRetry",
+              "description": "True if the n=0 window contains any tasks waiting automatic retry.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -6087,7 +6541,7 @@
             },
             {
               "name": "stateTotals",
-              "description": "The number of tasks in each state as a JSON object.",
+              "description": "The number of n=0 tasks in each state as a JSON object.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6432,214 +6886,6 @@
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "proxies",
-              "description": "Associated cycle point proxies",
-              "args": [
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "states",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exstates",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isHeld",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isQueued",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isRunahead",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "graphDepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "null",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "TaskProxy",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -7278,7 +7524,7 @@
             },
             {
               "name": "Simulation",
-              "description": "Simulates job submission with configurable exection time and succeeded/failed outcomes (but does not submit real jobs).",
+              "description": "Simulates job submission with configurable execution time and succeeded/failed outcomes (but does not submit real jobs).",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -7305,6 +7551,569 @@
           "kind": "SCALAR",
           "name": "Float",
           "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Family",
+          "description": "Task definition, static fields.",
+          "fields": [
+            {
+              "name": "id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "meta",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "depth",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "parents",
+              "description": "Families that this family directly inherits from.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "null",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Family",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "childTasks",
+              "description": "Tasks that inherit from this family.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "null",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Task",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "childFamilies",
+              "description": "Families that inherit from this family.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "null",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Family",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "firstParent",
+              "description": "Family first parent.",
+              "args": [
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Family",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "INPUT_OBJECT",
+          "name": "SortArgs",
+          "description": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "name": "keys",
+              "description": null,
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "defaultValue": "[\"id\"]",
+              "__typename": "__InputValue"
+            },
+            {
+              "name": "reverse",
+              "description": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "defaultValue": "false",
+              "__typename": "__InputValue"
+            }
+          ],
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "SCALAR",
+          "name": "Boolean",
+          "description": "The `Boolean` scalar type represents `true` or `false`.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -8626,17 +9435,6 @@
           "__typename": "__Type"
         },
         {
-          "kind": "SCALAR",
-          "name": "Boolean",
-          "description": "The `Boolean` scalar type represents `true` or `false`.",
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
           "kind": "OBJECT",
           "name": "Output",
           "description": "Task output.",
@@ -8700,47 +9498,6 @@
           ],
           "inputFields": null,
           "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "INPUT_OBJECT",
-          "name": "SortArgs",
-          "description": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "name": "keys",
-              "description": null,
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "defaultValue": "[\"id\"]",
-              "__typename": "__InputValue"
-            },
-            {
-              "name": "reverse",
-              "description": null,
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "defaultValue": "false",
-              "__typename": "__InputValue"
-            }
-          ],
-          "interfaces": null,
           "enumValues": null,
           "possibleTypes": null,
           "__typename": "__Type"
@@ -9195,6 +9952,20 @@
             {
               "name": "finishedTime",
               "description": "The time this job finished running (if it has yet).",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "estimatedFinishTime",
+              "description": "The estimated time this job will finish, if applicable. This is based on the task's mean run time, or if not available, the execution time limit.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -10465,725 +11236,6 @@
         },
         {
           "kind": "OBJECT",
-          "name": "Family",
-          "description": "Task definition, static fields.",
-          "fields": [
-            {
-              "name": "id",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "meta",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "NodeMeta",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "runtime",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "Runtime",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "depth",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "proxies",
-              "description": "Associated family proxy instances.",
-              "args": [
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "states",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exstates",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isHeld",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isQueued",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isRunahead",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "graphDepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "null",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "FamilyProxy",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "parents",
-              "description": "Families that this family directly inherits from.",
-              "args": [
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "null",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Family",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "childTasks",
-              "description": "Tasks that inherit from this family.",
-              "args": [
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "null",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Task",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "childFamilies",
-              "description": "Families that inherit from this family.",
-              "args": [
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "null",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Family",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "firstParent",
-              "description": "Family first parent.",
-              "args": [
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "Family",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "OBJECT",
           "name": "Edges",
           "description": "Dependency edge.",
           "fields": [
@@ -12004,6 +12056,20 @@
               "__typename": "__Field"
             },
             {
+              "name": "estimatedFinishTime",
+              "description": "The estimated time this job will finish, if applicable. This is based on the task's mean run time, or if not available, the execution time limit.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "jobId",
               "description": "The ID of this job in the job runner it was submitted to.",
               "args": [],
@@ -12238,214 +12304,6 @@
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "proxies",
-              "description": "Associated cycle point proxies",
-              "args": [
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "states",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exstates",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isHeld",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isQueued",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "isRunahead",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "graphDepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "null",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaStore",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "deltaType",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "\"added\"",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "TaskProxy",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -13345,7 +13203,7 @@
             },
             {
               "name": "setVerbosity",
-              "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running workflows.",
+              "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
                   "name": "level",
@@ -13881,7 +13739,7 @@
               "args": [
                 {
                   "name": "flow",
-                  "description": "\"Remove the task(s) from the specified flows. \"\n\nThis should be a list of flow numbers, or 'all'\nto remove the task(s) from all flows they belong to\n(which is the default).",
+                  "description": "\"Remove the tasks from the specified flows.\"\n\nThis should be a list of flow numbers.\nBy default, tasks will be removed from all flows.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -13898,7 +13756,19 @@
                     },
                     "__typename": "__Type"
                   },
-                  "defaultValue": "[\"all\"]",
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "noSpawn",
+                  "description": "Remove the leading instance of a parentless task without\nspawning its next instance.\n\nThis only affects leading instances of parentless sequential\nxtriggered tasks and parentless tasks waiting at the\nrunahead-limit.\n\nWARNING: this is a low-level intervention that cuts tasks from\nthe future graph; it could cause your workflow to shut down\nprematurely as complete.\n\nIf `false` the scheduler will spawn the next task instance\nas normal (default).\n\nIf `true` the scheduler will not spawn the next task instance.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
                   "__typename": "__InputValue"
                 },
                 {
@@ -13962,7 +13832,7 @@
               "args": [
                 {
                   "name": "flow",
-                  "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
+                  "description": "The flow(s) to set or trigger these tasks in.\n\nBy default, active tasks (n=0) stay in their assigned flow(s) and\ninactive tasks (n>0) will be assigned to all active flows.\n\nOtherwise give a list of integers or one of the following strings:\n* new - an automatically generated new flow number\n* none - activity won't flow on (ignored for active tasks)",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -14101,7 +13971,7 @@
               "args": [
                 {
                   "name": "flow",
-                  "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
+                  "description": "The flow(s) to set or trigger these tasks in.\n\nBy default, active tasks (n=0) stay in their assigned flow(s) and\ninactive tasks (n>0) will be assigned to all active flows.\n\nOtherwise give a list of integers or one of the following strings:\n* new - an automatically generated new flow number\n* none - activity won't flow on (ignored for active tasks)",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -14432,6 +14302,420 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "Play",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "reinstallReload",
+              "description": "Validate, reinstall, then reload the workflow.\n\nThis command updates a workflow to reflect any new changes made in\nthe workflow source directory since it was installed.\n\nValid for: paused, running workflows.",
+              "args": [
+                {
+                  "name": "clearRoseInstallOptions",
+                  "description": "Clear options previous set by cylc-rose.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "reloadGlobal",
+                  "description": "Reload global config as well as the workflow config",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "roseOptConfKeys",
+                  "description": "Add Rose optional configurations (if Rose is used).",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "roseSuiteDefines",
+                  "description": "Each of these overrides the `[SECTION]KEY` setting in a\n`rose-suite.conf` file.\n\nCan be used to disable a setting using the syntax\n`[SECTION]!KEY` or even `[!SECTION]`.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "roseTemplateVariables",
+                  "description": "Define a Rose `[template variable]`s e.g, `FOO=1`.\n\nNote: Specifying `FOO=1` to this argument is equivalent to\nspecifying `[template variables]FOO=1` to the `define`\nargument.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "workflows",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "LIST",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "WorkflowID",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReinstallReload",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "reinstallRestart",
+              "description": "Validate, reinstall, then restart the workflow.\n\nThis command updates a workflow to reflect any new changes made in\nthe workflow source directory since it was installed.\n\nValid for: stopped workflows.",
+              "args": [
+                {
+                  "name": "abortIfAnyTaskFails",
+                  "description": "If set workflow will abort with status 1 if any task fails.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "clearRoseInstallOptions",
+                  "description": "Clear options previous set by cylc-rose.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "cylcVersion",
+                  "description": "Set the Cylc version that the workflow starts with.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "CylcVersion",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "debug",
+                  "description": "Output developer information and show exception tracebacks.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "finalCyclePoint",
+                  "description": "Set the final cycle point. This command line option overrides\nthe workflow config option `[scheduling]final cycle point`.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "CyclePoint",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "holdCyclePoint",
+                  "description": "Hold all tasks after this cycle point.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "CyclePoint",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "host",
+                  "description": "Specify the host on which to start-up the workflow. If not\nspecified, a host will be selected using the\n`[scheduler]run hosts` global config.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "initialCyclePoint",
+                  "description": "Set the initial cycle point.\n\nRequired if not defined in flow.cylc.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "CyclePoint",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mainLoop",
+                  "description": "Specify an additional plugin to run in the main loop. These\nare used in combination with those specified in\n`[scheduler][main loop]plugins`. Can be used multiple times.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mode",
+                  "description": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "WorkflowRunMode",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "Live",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "noTimestamp",
+                  "description": "Don't timestamp logged messages.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "pause",
+                  "description": "Pause workflow immediately on starting.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "roseOptConfKeys",
+                  "description": "Add Rose optional configurations (if Rose is used).",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "roseSuiteDefines",
+                  "description": "Each of these overrides the `[SECTION]KEY` setting in a\n`rose-suite.conf` file.\n\nCan be used to disable a setting using the syntax\n`[SECTION]!KEY` or even `[!SECTION]`.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "roseTemplateVariables",
+                  "description": "Define a Rose `[template variable]`s e.g, `FOO=1`.\n\nNote: Specifying `FOO=1` to this argument is equivalent to\nspecifying `[template variables]FOO=1` to the `define`\nargument.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "set",
+                  "description": "Set the value of a Jinja2 template variable in the workflow\ndefinition. Values should be valid Python literals so strings\nmust be quoted e.g. `STR=\"string\"`, `INT=43`, `BOOL=True`.\nThis option can be used multiple  times on the command line.\nNOTE: these settings persist across workflow restarts, but can\nbe set again on the `cylc play` command line if they need to be\noverridden.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "setFile",
+                  "description": "Set the value of Jinja2 template variables in the workflow\ndefinition from a file containing NAME=VALUE pairs (one per\nline). As with \"set\" values should be valid Python literals so\nstrings must be quoted e.g.  `STR='string'`. NOTE: these\nsettings persist across workflow restarts, but can be set again\non the `cylc play` command line if they need to be overridden.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "startCyclePoint",
+                  "description": "Set the start cycle point, which may be after the initial cycle\npoint.\n\nIf the specified start point is not in the sequence, the next\non-sequence point will be used.\n\n(Not to be confused with the initial cycle point).\n\nThis replaces the Cylc 7 --warm option.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "CyclePoint",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stopCyclePoint",
+                  "description": "Set the stop cycle point. Shut down after all tasks have PASSED\nthis cycle point. (Not to be confused with the final cycle\npoint.) This command line option overrides the workflow config\noption `[scheduling]stop after cycle point`.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "CyclePoint",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "upgrade",
+                  "description": "Allow the workflow to be restarted with a newer\nversion of Cylc.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "workflows",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "LIST",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "WorkflowID",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReinstallRestart",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -14780,7 +15064,7 @@
         {
           "kind": "OBJECT",
           "name": "SetVerbosity",
-          "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running workflows.",
+          "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -15052,7 +15336,7 @@
         {
           "kind": "SCALAR",
           "name": "NamespaceIDGlob",
-          "description": "A task or family ID e.g. `2000/foo`.\n\nGlobs can be used to match active tasks or families.\n\nE.g `2*/foo*` might match `2000/foot`.",
+          "description": "A task or family ID e.g. `2000/foo`.\n\nGlobs can be used to match tasks or families, e.g, `2*/foo*` might match\n`2000/foot`. Cycle point globs will only match active cycles.\n\nSelectors can be used to match active tasks by state, e.g, `*:failed` will\nmatch all failed tasks.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -15167,7 +15451,7 @@
         {
           "kind": "SCALAR",
           "name": "Flow",
-          "description": "An integer or one of all, new or none.",
+          "description": "An integer or new or none.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -15295,8 +15579,8 @@
           "interfaces": null,
           "enumValues": [
             {
-              "name": "Dummy",
-              "description": "Submits real jobs with empty scripts.",
+              "name": "Simulation",
+              "description": "Simulates job submission with configurable execution time and succeeded/failed outcomes (but does not submit real jobs).",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -15309,13 +15593,65 @@
               "__typename": "__EnumValue"
             },
             {
-              "name": "Simulation",
-              "description": "Simulates job submission with configurable exection time and succeeded/failed outcomes (but does not submit real jobs).",
+              "name": "Dummy",
+              "description": "Submits real jobs with empty scripts.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             }
           ],
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ReinstallReload",
+          "description": "Validate, reinstall, then reload the workflow.\n\nThis command updates a workflow to reflect any new changes made in\nthe workflow source directory since it was installed.\n\nValid for: paused, running workflows.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "ReinstallRestart",
+          "description": "Validate, reinstall, then restart the workflow.\n\nThis command updates a workflow to reflect any new changes made in\nthe workflow source directory since it was installed.\n\nValid for: stopped workflows.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
           "possibleTypes": null,
           "__typename": "__Type"
         },
@@ -21003,7 +21339,7 @@
             },
             {
               "name": "subscriptionType",
-              "description": "If this server support subscription, the type that subscription operations will be rooted at.",
+              "description": "If this server supports subscription, the type that subscription operations will be rooted at.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -21018,7 +21354,25 @@
             {
               "name": "directives",
               "description": "A list of all directives supported by this server.",
-              "args": [],
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                }
+              ],
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -21283,6 +21637,20 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "__Type",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isOneOf",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -21820,6 +22188,39 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "isDeprecated",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "deprecationReason",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -21965,6 +22366,13 @@
             {
               "name": "INPUT_FIELD_DEFINITION",
               "description": "Location adjacent to an input object field definition.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "DIRECTIVE_DEFINITION",
+              "description": "Location adjacent to a directive definition.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"

@@ -150,7 +150,7 @@ describe('Workspace view and component/widget', () => {
       .type('GOOD')
     // Give a moment for the input to be saved, otherwise can flakily fail
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(100)
+    cy.wait(500)
     expectRememberedLayout()
 
     // Navigate to another workflow

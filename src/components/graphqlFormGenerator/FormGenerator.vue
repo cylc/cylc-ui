@@ -98,7 +98,7 @@ export default {
       default: () => { return {} }, // for ease of testing
     },
 
-    // the inital state of the form - i.e, what it will be restored back to
+    // the initial state of the form - i.e, what it will be restored back to
     // when the reset button is pushed
     initialData: {
       type: Object,
