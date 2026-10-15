@@ -123,7 +123,7 @@ export default {
       default: true,
     },
     /** Whether the start of the file has been truncated (earlier lines omitted).
-     * It's is not completley reliable, it actually states we are in tail from end mode,
+     * It's is not completely reliable, it actually states we are in tail from end mode,
      * and the file is over max_lines in length.  However, a viewer left open from
      * before the file reached max_lines would get true here once the file reaches
      * max_lines in length, even if the first lines are still displayed.
