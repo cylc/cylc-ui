@@ -203,6 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :word-wrap="wordWrap"
       :truncated-start="results.truncatedStart"
       :truncated-end="results.truncatedEnd"
+      :lines-truncated="results.linesTruncated"
       v-model:headMode="headMode"
       v-model:autoScroll="autoScroll"
     />
@@ -335,6 +336,13 @@ export class Results {
      * @type {boolean}
      */
     this.truncatedEnd = false
+    /** Whether any lines have been truncated (either start or end).
+     * Used to override the truncation warning in the case where
+     * the file has reached max_lines, but no lines have been truncated due
+     * to the viewer being left open
+     * @type {boolean}
+    */
+    this.linesTruncated = true
   }
 }
 
@@ -361,6 +369,7 @@ export class LogsCallback extends DeltasCallback {
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
+      this.results.linesTruncated = this.truncatedCheck()
       // this.trim()
     }
     if (added.truncated != null) {
@@ -389,6 +398,19 @@ export class LogsCallback extends DeltasCallback {
     const maxLines = this.getMaxLines?.()
     if (maxLines != null && this.results.lines.length > maxLines) {
       this.results.lines.splice(0, this.results.lines.length - maxLines)
+      this.results.linesTruncated = true
+    }
+  }
+
+  truncatedCheck () {
+    if ((this.results.lines[0].includes('Workflow :') ||
+    this.results.lines[1].includes('Workflow :')) &&
+    (this.results.lines[1].includes('Job :') ||
+    this.results.lines[2].includes('Job :')) &&
+    this.results.truncatedStart) {
+      return false
+    } else {
+      return true
     }
   }
 }

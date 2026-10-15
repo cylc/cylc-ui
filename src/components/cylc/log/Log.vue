@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       }"
     >
       <v-alert
-        v-if="truncatedStart"
+        v-if="truncatedStart && linesTruncated"
         data-cy="log-truncation-start"
       >
         <template #prepend>
@@ -47,8 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
         {{ $options.truncationMessages.start }}
       </v-alert>
-      <!-- TEMP DEBUG: line-number gutter (count of lines on screen, NOT the
-           file line number). Remove when finished debugging. -->
       <pre
         ref="logText"
         :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
@@ -56,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       ><span
         v-for="(log, index) in computedLogs"
         :key="index"
-      ><span class="text-disabled">{{ (index + 1).toString().padStart(6) }} </span>{{ log }}</span></pre>
+      >{{ log }}</span></pre>
       <v-alert
         v-if="truncatedEnd"
         data-cy="log-truncation-end"
@@ -124,7 +122,12 @@ export default {
       required: false,
       default: true,
     },
-    /** Whether the start of the file has been truncated (earlier lines omitted). */
+    /** Whether the start of the file has been truncated (earlier lines omitted).
+     * It's is not completley reliable, it actually states we are in tail from end mode,
+     * and the file is over max_lines in length.  However, a viewer left open from
+     * before the file reached max_lines would get true here once the file reaches
+     * max_lines in length, even if the first lines are still displayed.
+    */
     truncatedStart: {
       type: Boolean,
       required: false,
@@ -143,6 +146,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    linesTruncated: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
 
