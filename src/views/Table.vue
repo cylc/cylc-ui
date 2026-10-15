@@ -38,8 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -49,7 +48,7 @@ import {
 import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
@@ -160,7 +159,7 @@ export default {
   },
 
   setup (props, { emit }) {
-    const { workflowIDs, variables } = useGraphQL()
+    const { workflows, variables } = useWorkflowVariables()
 
     /**
      * The job id input and selected task filter state.
@@ -192,17 +191,12 @@ export default {
       itemsPerPage,
       tasksFilter,
       filterState,
-      workflowIDs,
+      workflows,
       variables,
     }
   },
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
-    ...mapGetters('workflows', ['getNodes']),
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
-    },
     tasks () {
       const ret = []
       for (const workflow of this.workflows) {
@@ -226,9 +220,6 @@ export default {
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
     },
 

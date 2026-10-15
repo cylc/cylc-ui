@@ -18,7 +18,7 @@
 import sinon from 'sinon'
 import { mount } from '@vue/test-utils'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { cloneDeep } from 'lodash'
 
 describe('Subscription Component mixin', () => {

@@ -106,9 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 
 // Any fields that our view will use (e.g. TaskProxy.status) must be requested
 // in the query.
@@ -193,10 +193,10 @@ export default {
 
   setup (props) {
     // This is a helper function that provides us with some computed properties.
-    const { workflowIDs, variables } = useGraphQL()
+    const { workflows, variables } = useWorkflowVariables()
 
     return {
-      workflowIDs,
+      workflows,
       variables,
     }
   },
@@ -206,21 +206,23 @@ export default {
     ...mapState('workflows', ['cylcTree']),
 
     // This gives us a convenient way to filter for the nodes we want from the
-    // store:
+    // store, if we need it:
     ...mapGetters('workflows', ['getNodes']),
-
-    // Get workflow nodes from the store.
-    workflows () {
-      // This returns all nodes of type "workflow" with ids which are in
-      // this.workflowIDs
-      return this.getNodes('workflow', this.workflowIDs)
-    },
 
     // This registers the query with the WorkflowService, once registered, the
     // WorkflowService promises to make the data defined by the query available
     // in the store and to keep it up to date.
     query () {
-      return new SubscriptionQuery(QUERY, this.variables, 'workflow', [])
+      return new SubscriptionQuery(
+        QUERY,
+        this.variables,
+        'workflow',
+        {
+          // We can define hooks here to run when the subscription receives data
+          // (empty as no need in this case, but showing for demo purposes):
+          onDelta ({ added, updated, pruned }) { },
+        }
+      )
     },
   },
 
