@@ -19,7 +19,6 @@ import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
-import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
 import { getIDMap, mockRoute } from '$tests/util'
@@ -80,8 +79,6 @@ describe('Tree view', () => {
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
-    const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
-    store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
         plugins: [store],

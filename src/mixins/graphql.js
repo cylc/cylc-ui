@@ -15,9 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
 
 /*
  * A mixin that contains data used for a GraphQL subscription, such as the
@@ -29,16 +28,16 @@ import { useStore } from 'vuex'
 
 export function useGraphQL () {
   const route = useRoute()
-  const store = useStore()
+  const user = inject('user')
 
   const workflowName = computed(() => route.params?.workflowName)
 
   /**
    * Compute the workflow ID using the Vue route parameter
-   * `workflowName` and the user from the store.
+   * `workflowName` and the user.
    */
   const workflowID = computed(
-    () => `~${store.state.user.user.owner}/${workflowName.value}`
+    () => `~${user.owner}/${workflowName.value}`
   )
 
   /**
