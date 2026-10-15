@@ -15,11 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { afterAll, describe, expect, it } from 'vitest'
 import { TREE, useDefaultView } from '@/views/views.js'
 
 describe('useDefaultView composable', () => {
+  afterAll(() => {
+    localStorage.clear()
+  })
+
   it(`returns the ${TREE} view if not set in localStorage`, () => {
-    delete localStorage.defaultView
+    localStorage.clear()
     expect(useDefaultView().value).to.equal(TREE)
   })
 

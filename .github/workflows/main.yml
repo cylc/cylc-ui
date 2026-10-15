@@ -21,6 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Check spelling
+        uses: codespell-project/actions-codespell@v2
+        # If a false-positive is triggered, modify pyproject.toml [tool.codespell]
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
@@ -86,7 +90,7 @@ jobs:
       - name: Test (E2E)
         uses: cypress-io/github-action@v7
         env:
-          BASE_URL: http://localhost:4173/
+          BASE_URL: http://localhost:4173/cylc/
         with:
           build: yarn run build --mode offline
           start: yarn run preview

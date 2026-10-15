@@ -519,7 +519,7 @@ class WorkflowService {
         // normalizer these names and because we have two subscriptions and the
         // normalized callback names are assigned to these independently, from
         // what looks like a predefined set of possible options [t,n] So this
-        // block wont work as it compares and decides it already exists when it
+        // block won't work as it compares and decides it already exists when it
         // doesn't
         if (!subscription.callbacks.find(element => {
           const elementObjectKeys = Object.keys(element)

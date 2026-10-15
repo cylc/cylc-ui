@@ -214,7 +214,7 @@ function mergeArguments (argumentsA, argumentsB) {
  * Utility function used to remove the loc (location) property. This property
  * is set by the GraphQL parser/lexer, and while useful for the GraphQL engine,
  * it is inconvenient for us since it breaks comparison tests. It is exported
- * here since the unit tests also re-use this function.
+ * here since the unit tests also reuse this function.
  *
  * Will remove the .loc property recursively in an object or array.
  *
