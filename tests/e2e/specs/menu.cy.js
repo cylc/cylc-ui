@@ -17,7 +17,7 @@
 
 describe('Command Menu component', () => {
   const collapsedWorkflowMenuLength = 4
-  const expandedWorkflowMenuLength = 21
+  const expandedWorkflowMenuLength = 23
 
   beforeEach(() => {
     cy.visit('/#/workspace/one')
@@ -128,8 +128,8 @@ describe('Command Menu component', () => {
       .should('not.exist')
   })
 
-  it("copies the object's name to the clipboard", { browser: 'electron' }, () => {
-    // (Access to the clipboard in Cypress only reliably works in Electron)
+  it("copies the object's name to the clipboard", { browser: { family: 'chromium' } }, () => {
+    // (Access to the clipboard in Cypress only works in Chromium-based browsers)
     cy.get('.node-data-task:first [data-c-interactive]:first')
       .click()
       .get('.c-mutation-menu')

@@ -129,7 +129,7 @@
       "matchPackageNames": [
         "@vue/test-utils",
         "cross-fetch",
-        "jsdom",
+        "happy-dom",
         "nyc",
         "sinon",
         "/^@?cypress/",

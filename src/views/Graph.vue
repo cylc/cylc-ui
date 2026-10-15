@@ -453,7 +453,7 @@ export default {
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
       // if initialLoad is true we want to set a refresh interval
-      // regardles of autoRefresh state.
+      // regardless of autoRefresh state.
       if (this.autoRefresh || this.initialLoad) {
         this.refreshTimer = setInterval(this.refresh, 2000)
       } else {

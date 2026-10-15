@@ -63,7 +63,7 @@ function mockWorkflowService () {
 describe('Api On The Fly', () => {
   beforeEach(() => {
     patchUserprofile()
-    cy.intercept('/graphql', req => {
+    cy.intercept('/cylc/graphql', req => {
       if (req.body.query.includes('__schema')) {
         req.alias = 'IntrospectQuery' // equivalent to `.as('IntrospectQuery')`
       }

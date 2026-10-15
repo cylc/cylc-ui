@@ -28,7 +28,7 @@ describe('GraphiQL', () => {
     cy.visit('/#/graphiql')
       .get('#graphiql')
       .should('be.visible')
-    cy.intercept('/graphql*').as('GraphQLQuery')
+    cy.intercept('/cylc/graphql*').as('GraphQLQuery')
     cy.get('.CodeMirror')
       .should('have.length', 4)
       .then((editors) => {

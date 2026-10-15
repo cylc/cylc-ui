@@ -168,7 +168,7 @@ export default {
                 action: String
 
                 // for use with action='callback'
-                callback: Fuction
+                callback: Function
 
                 // props to be set on the control
                 props: Object

@@ -52,7 +52,7 @@ describe('Toolbar component', () => {
 
 describe('Toolbar Component authenticated user', () => {
   beforeEach(() => {
-    cy.intercept('/userprofile', {
+    cy.intercept('/cylc/userprofile', {
       body: {
         username: 'user',
         name: 'user',

@@ -675,7 +675,7 @@ export default {
       }
       // Simultaneously wait for the log file list and the job state result
       await Promise.all(promises)
-      if (!this.jobLog) {
+      if (!this.jobLog && !this.file) {
         this.file = this.getDefaultWorkflowLog()
       }
     },

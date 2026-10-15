@@ -28,6 +28,12 @@ import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
 import { store } from '@/store/index'
 import { createUrl, getXSRFHeaders } from '@/utils/urls'
+import { disableFragmentWarnings } from 'graphql-tag'
+
+// graphql-tag warns about fragments with the same name, as if they end up in the same GraphQL document, it will cause an error.
+// However, we have logic to merge subscription documents that means we shouldn't have two fragments with the same name in the same document.
+// See https://github.com/cylc/cylc-ui/issues/1757
+disableFragmentWarnings()
 
 /** @typedef {import('subscriptions-transport-ws').ClientOptions} ClientOptions */
 

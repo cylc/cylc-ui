@@ -51,8 +51,24 @@ export function getIDMap (filteredOutNodesCache) {
 /**
  * Provide a mock route to use in tests.
  *
- * NOTE: this applies for the rest of the test suite/file, but can be overriden by subsequent calls.
+ * NOTE: this applies for the rest of the test suite/file, but can be overridden by subsequent calls.
  */
 export function mockRoute (route = { params: { workflowName: 'test' } }) {
   config.global.provide[routeLocationKey] = route
+}
+
+/**
+ * Enable any browser permissions needed for Cypress E2E & Component testing.
+ * Call this in the support file.
+ */
+export function enableBrowserPermissions () {
+  if (Cypress.browser.family === 'chromium') {
+    Cypress.automation('remote:debugger:protocol', {
+      command: 'Browser.grantPermissions',
+      params: {
+        permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+        origin: window.location.origin,
+      },
+    })
+  }
 }
