@@ -18,6 +18,9 @@
 import { shallowMount } from '@vue/test-utils'
 import Log from '@/components/cylc/log/Log.vue'
 
+// Render the defaults-provider's slot without needing a full Vuetify instance
+const stubs = { VDefaultsProvider: { template: '<div><slot /></div>' } }
+
 describe('Log component', () => {
   const wrapper = shallowMount(Log, {
     props: {
@@ -40,5 +43,53 @@ describe('Log component', () => {
     it(`returns '${expected}'`, () => {
       expect(wrapper.vm.stripTimestamp(line)).toEqual(expected)
     })
+  })
+
+  it('shows a warning alert when the end of the file is truncated', () => {
+    const truncatedWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+        truncatedEnd: true,
+      },
+      global: { stubs },
+    })
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncation-end"]').exists()
+    ).toBe(true)
+    // the start-of-file warning should not be shown
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncation-start"]').exists()
+    ).toBe(false)
+  })
+
+  it('shows a warning alert when the start of the file is truncated', () => {
+    const truncatedWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+        truncatedStart: true,
+      },
+      global: { stubs },
+    })
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncation-start"]').exists()
+    ).toBe(true)
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncation-end"]').exists()
+    ).toBe(false)
+  })
+
+  it('shows no truncation warnings by default', () => {
+    const plainWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+      },
+      global: { stubs },
+    })
+    expect(
+      plainWrapper.find('[data-cy="log-truncation-start"]').exists()
+    ).toBe(false)
+    expect(
+      plainWrapper.find('[data-cy="log-truncation-end"]').exists()
+    ).toBe(false)
   })
 })
