@@ -17,6 +17,7 @@
 
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
+import { nextTick, reactive } from 'vue'
 import { cloneDeep } from 'lodash'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
@@ -74,6 +75,47 @@ describe('Tree component', () => {
       expect(nodeFilter.mock.calls).toEqual([
         [newWorkflows[0].children[0], wrapper.vm.filteredOutNodesCache],
       ])
+    })
+    it('does not traverse the tree nodes when no filter is active', async () => {
+      // The filter watcher is deep; if it watched the nodes while no filter
+      // was active it would read every property of every node in the store
+      // on every delta, which kills performance for large workflows.
+      const workflows = cloneDeep(simpleWorkflowTree4Nodes)
+      const node = workflows[0].children[0].node
+      const state = node.state
+      const getter = vi.fn(() => state)
+      Object.defineProperty(node, 'state', { get: getter, enumerable: true })
+      const reactiveWorkflows = reactive(workflows)
+      const wrapper = mountFunction({
+        workflows: reactiveWorkflows,
+        nodeFilterFunc: vi.fn(),
+        filterState: null,
+      })
+      await nextTick()
+      // (ignore any reads made by test-utils when mounting)
+      getter.mockClear()
+      // simulate a delta updating a different property of the node
+      reactiveWorkflows[0].children[0].node.isHeld = true
+      await nextTick()
+      expect(getter).not.toHaveBeenCalled()
+      // ...but the nodes should be watched once a filter is applied
+      await wrapper.setProps({ filterState: {} })
+      expect(getter).toHaveBeenCalled()
+    })
+    it('re-runs filtering on deep changes to the nodes while a filter is active', async () => {
+      const nodeFilter = vi.fn()
+      const workflows = reactive(cloneDeep(simpleWorkflowTree4Nodes))
+      mountFunction({
+        workflows,
+        nodeFilterFunc: nodeFilter,
+        filterState: {},
+      })
+      await nextTick()
+      nodeFilter.mockClear()
+      // mutate a nested property in place (as the data store does)
+      workflows[0].children[0].node.state = 'frobnicated'
+      await nextTick()
+      expect(nodeFilter).toHaveBeenCalledTimes(1)
     })
   })
 })

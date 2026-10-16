@@ -108,7 +108,18 @@ onMounted(() => {
   // Reactively run filtering
   if (props.nodeFilterFunc) {
     watch(
-      () => [props.filterState, rootChildren.value],
+      // Only include the tree nodes in the watch source while a filter is
+      // active. This watcher is deep, so watching the nodes means traversing
+      // (and tracking) every property of every node in the data store
+      // (workflows > cycles > tasks > jobs). That traversal re-runs whenever
+      // any of those properties changes, i.e. on every delta. For large
+      // workflows this can saturate the main thread, even when no filter is
+      // applied and the callback has nothing to do.
+      () => (
+        props.filterState
+          ? [props.filterState, rootChildren.value]
+          : [null, null]
+      ),
       ([active, nodes], [wasActive, oldNodes]) => {
         if (active) {
           for (const node of rootChildren.value) {
