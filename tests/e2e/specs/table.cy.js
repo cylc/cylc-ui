@@ -234,9 +234,8 @@ describe('State saving', () => {
       .should('not.have.class', sortedClass)
       .click()
       .should('have.class', sortedClass)
-    cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
-      .as('itemsPerPage')
-      .find('input')
+    cy.get('.c-table .v-data-table-footer__items-per-page .v-select').as('itemsPerPage')
+      .find('input[role=combobox]').as('itemsPerPageInput')
       .should('not.have.value', 'All')
       .get('@itemsPerPage')
       .click()
@@ -245,7 +244,7 @@ describe('State saving', () => {
       .click()
       // Wait for menu to close
       .should('not.exist')
-      .get('@itemsPerPage').find('input')
+      .get('@itemsPerPageInput')
       .should('have.value', 'All')
     // Navigate away
     cy.visit('/#/')
@@ -254,7 +253,7 @@ describe('State saving', () => {
     cy.visit('/#/workspace/one')
     cy.get('@platformCol')
       .should('have.class', sortedClass)
-    cy.get('@itemsPerPage').find('input')
+    cy.get('@itemsPerPageInput')
       .should('have.value', 'All')
   })
 
