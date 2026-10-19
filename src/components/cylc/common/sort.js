@@ -28,24 +28,17 @@
 
 // Reusing a single Collator is much faster than String.prototype.localeCompare.
 const COLLATOR = new Intl.Collator(undefined, {
-  numeric: true,        // Natural sort order ("1" < "2" < "10")
-  sensitivity: 'base',  // Case insensitive comparison.
+  numeric: true, // Natural sort order ("1" < "2" < "10")
+  sensitivity: 'base', // Case insensitive comparison.
 })
 
 /**
  * The default comparator used to compare strings for cycle points, family proxies names,
  * task proxies names, and jobs.
  *
- * @param {string} left
- * @param {string} right
  * @returns {number}
- * @constructor
  */
-export const DEFAULT_COMPARATOR = (left, right) => {
-  // Math.sign normalises the result to -1/0/1 (Intl.Collator.compare is only
-  // guaranteed to return a negative/zero/positive number).
-  return Math.sign(COLLATOR.compare(left, right))
-}
+export const DEFAULT_COMPARATOR = COLLATOR.compare
 
 /**
  * Declare function used in sortedIndexBy for creating the iteratee.
