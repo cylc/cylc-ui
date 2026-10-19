@@ -26,7 +26,7 @@
  * @returns {boolean} - true if leftValue is higher than rightValue
  */
 
-// Reusing a single Collator is much faster than String.prototype.localeCompare.
+// A single, reusable collator instance for case-insensitive comparisons.
 const COLLATOR = new Intl.Collator(undefined, {
   numeric: true, // Natural sort order ("1" < "2" < "10")
   sensitivity: 'base', // Case insensitive comparison.
