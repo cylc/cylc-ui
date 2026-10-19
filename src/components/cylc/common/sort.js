@@ -36,6 +36,8 @@ const COLLATOR = new Intl.Collator(undefined, {
  * The default comparator used to compare strings for cycle points, family proxies names,
  * task proxies names, and jobs.
  *
+ * @param {string} x
+ * @param {string} y
  * @returns {number}
  */
 export const DEFAULT_COMPARATOR = COLLATOR.compare
