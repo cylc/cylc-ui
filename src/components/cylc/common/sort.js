@@ -26,23 +26,10 @@
  * @returns {boolean} - true if leftValue is higher than rightValue
  */
 
-/**
- * A single, reusable collator instance.
- *
- * Constructing an `Intl.Collator` once and reusing its `compare` method is
- * much faster (~20x in benchmarks) than calling
- * `String.prototype.localeCompare` with options, which has to resolve the
- * locale/options on every call. This matters because this comparator
- * sits in two hot paths which run over thousands of nodes:
- *   - sorted insertion into the data store (see `sortedIndexBy` / `addChild`)
- *   - the table view's client-side sort (re-run over every row on each delta)
- *
- * `sensitivity: 'base'` makes the comparison case-insensitive, so we no longer
- * need to allocate lower-cased copies of each string before comparing.
- */
+// Reusing a single Collator is much faster than String.prototype.localeCompare.
 const COLLATOR = new Intl.Collator(undefined, {
-  numeric: true,
-  sensitivity: 'base',
+  numeric: true,        // Natural sort order ("1" < "2" < "10")
+  sensitivity: 'base',  // Case insensitive comparison.
 })
 
 /**
