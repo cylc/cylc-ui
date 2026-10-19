@@ -26,25 +26,21 @@
  * @returns {boolean} - true if leftValue is higher than rightValue
  */
 
+/** A single, reusable collator instance for case-insensitive comparisons. */
+const COLLATOR = new Intl.Collator(undefined, {
+  numeric: true, // Natural sort order ("1" < "2" < "10")
+  sensitivity: 'base', // Case insensitive comparison.
+})
+
 /**
  * The default comparator used to compare strings for cycle points, family proxies names,
  * task proxies names, and jobs.
  *
- * @param {string} left
- * @param {string} right
+ * @param {string} x
+ * @param {string} y
  * @returns {number}
- * @constructor
  */
-export const DEFAULT_COMPARATOR = (left, right) => {
-  return left.toLowerCase().localeCompare(
-    right.toLowerCase(),
-    undefined,
-    {
-      numeric: true,
-      sensitivity: 'base',
-    }
-  )
-}
+export const DEFAULT_COMPARATOR = COLLATOR.compare
 
 /**
  * Declare function used in sortedIndexBy for creating the iteratee.
@@ -60,7 +56,7 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * index where the value can be inserted, so that the list remains
  * sorted.
  *
- * This function uses localeCompare, which will respect the numeric
+ * By default this uses DEFAULT_COMPARATOR, which will respect the numeric
  * collation.
  *
  * This is a simplified version of lodash's function with the same
