@@ -22,6 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <link rel="icon" href="favicon.png">
     <link rel="stylesheet" href="fonts.css">
     <title>Cylc UI</title>
+    <style>
+      /*
+      Workaround https://github.com/vitejs/vite/issues/21903
+      See also https://vuetifyjs.com/en/getting-started/upgrade-guide/#custom-layer-order
+      */
+      @layer vuetify-core, vuetify-components, vuetify-overrides, vuetify-utilities, vuetify-final;
+    </style>
   </head>
   <body>
     <noscript>
