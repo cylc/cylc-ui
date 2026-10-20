@@ -17,6 +17,7 @@
 
 import { afterAll, describe, expect, it } from 'vitest'
 import { TREE, useDefaultView } from '@/views/views.js'
+import { nextTick } from 'vue'
 
 describe('useDefaultView composable', () => {
   afterAll(() => {
@@ -29,14 +30,17 @@ describe('useDefaultView composable', () => {
   })
 
   it('returns the view that has been set in localStorage', () => {
-    localStorage.defaultView = 'Table'
-    expect(useDefaultView().value).to.equal('Table')
-    localStorage.defaultView = 'Graph'
-    expect(useDefaultView().value).to.equal('Graph')
+    const defaultView = useDefaultView()
+    defaultView.value = 'Table'
+    expect(defaultView.value).to.equal('Table')
+    defaultView.value = 'Graph'
+    expect(defaultView.value).to.equal('Graph')
   })
 
-  it(`returns the ${TREE} view if the view set in localStorage is not available`, () => {
-    localStorage.defaultView = 'NotAView'
-    expect(useDefaultView().value).to.equal(TREE)
+  it(`returns the ${TREE} view if the view set in localStorage is not available`, async () => {
+    const defaultView = useDefaultView()
+    defaultView.value = 'NotAView'
+    await nextTick()
+    expect(defaultView.value).to.equal(TREE)
   })
 })

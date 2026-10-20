@@ -22,14 +22,14 @@ describe('Gantt view', () => {
   describe('Gantt view', () => {
     it('Should display the mocked workflow', () => {
       cy
-        .get('.vue-apexcharts')
+        .get('.gantt-container')
         .should('be.visible')
     })
   })
 })
 
 describe('Filter save state', () => {
-  // Its hard to test the gantt chart is displaying what we expect as it is rendered as svg
+  // Its hard to test the gantt chart is displaying what we expect as it is rendered as canvas (eCharts)
   // Instead we can check the filter values remain the same when navigating away and back again
 
   function addView (view) {
