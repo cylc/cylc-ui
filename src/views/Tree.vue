@@ -328,11 +328,9 @@ export default {
       const idMatch = parentsIDMatch || matchID(node, globToRegex(this.tasksFilter.id))
       let isMatch = stateMatch && idMatch
 
-      let { children } = node
-      if (node.type === 'cycle') {
-        // follow the family tree from cycle point nodes
-        children = node.familyTree[0]?.children
-      }
+      const children = node.type === 'cycle'
+        ? node.rootFamily?.children
+        : node.children
       if (children) {
         for (const child of children) {
           isMatch = this.filterNode(child, filteredOutNodesCache, idMatch) || isMatch
