@@ -21,14 +21,14 @@ import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { discardFromArray } from '@/utils/general'
 
-const NODE_TYPES = [
+const NODE_TYPES = Object.freeze([
   'user',
   'workflow-part',
   'workflow',
   'cycle',
   'task',
   'job',
-]
+])
 
 const state = () => ({
   cylcTree: {
@@ -172,17 +172,18 @@ function removeChild (state, node, parentNode = null) {
   discardFromArray(parentNode[key], node)
 }
 
-/* Recursively remove a node and anything underneath it.
+/**
+ * Recursively remove everything underneath a node.
  *
- * Set removeParent to also remove the parent node (convenience method to avoid
+ * @param {boolean} inclusive Also remove the node itself (convenience method to avoid
  * parent lookup).
- * */
-function removeTree (state, node, removeParent = true) {
+ */
+function removeTree (state, node, inclusive = true) {
   const stack = [
     ...node.children || [],
   ]
   if (node.rootFamily) stack.push(node.rootFamily)
-  const removeIndicies = [
+  const removeIndices = [
     ...node.$namespaces || [],
     ...node.$edges || [],
   ]
@@ -195,19 +196,19 @@ function removeTree (state, node, removeParent = true) {
       ...(pointer.children || []),
     )
     if (pointer.rootFamily) stack.push(pointer.rootFamily)
-    removeIndicies.push(
+    removeIndices.push(
       ...(pointer.$namespaces || []),
       ...(pointer.$edges || []),
     )
     removeNodes.push(pointer)
   }
-  for (const pointer of [...removeIndicies, ...removeNodes.reverse()]) {
-    // remove indexes first, then remove tree nodes from the bottom up
+  for (const pointer of [...removeIndices, ...removeNodes.reverse()]) {
+    // remove index-only items first, then remove tree nodes from the bottom up
     removeIndex(state, pointer.id)
     removeChild(state, pointer)
   }
-  if (removeParent) {
-    // remove the parent of the provided node if requested
+  if (inclusive) {
+    // remove the provided node if requested
     removeIndex(state, node.id)
     removeChild(state, node)
   }
@@ -555,18 +556,18 @@ const mutations = {
   // remove all IDs contained in a delta
   REMOVE_DELTAS (state, pruned) {
     // console.log('@ REMOVE')
-    Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach(prunedKey => {
+    for (const prunedKey of Object.keys(pick(pruned, PRUNED_KEYS_MULT))) {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
           remove(state, prunedID)
         }
       }
-    })
-    Object.keys(pick(pruned, PRUNED_KEYS_SING)).forEach(prunedKey => {
+    }
+    for (const prunedKey of Object.keys(pick(pruned, PRUNED_KEYS_SING))) {
       if (pruned[prunedKey]) {
         remove(state, pruned[prunedKey])
       }
-    })
+    }
     // console.log('@@')
   },
   // remove all children of a node
@@ -584,12 +585,12 @@ const mutations = {
 // NOTE: deltas are applied in the order listed here
 // NOTE: we must create tasks before families (note cycles ARE families
 // because of the way we request them)
-const KEYS = ['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges']
+const KEYS = Object.freeze(['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges'])
 
 // Pruned keys which return arrays of pruned IDs
-const PRUNED_KEYS_MULT = ['taskProxies', 'familyProxies', 'jobs', 'edges']
+const PRUNED_KEYS_MULT = Object.freeze(['taskProxies', 'familyProxies', 'jobs', 'edges'])
 // Pruned keys which contain single pruned IDs
-const PRUNED_KEYS_SING = ['workflow']
+const PRUNED_KEYS_SING = Object.freeze(['workflow'])
 
 const actions = {}
 
