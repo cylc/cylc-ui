@@ -513,9 +513,8 @@ function remove (state, prunedID) {
   } else if (treeNode.type === '$namespace') {
     discardFromArray(parentNode.$namespaces, treeNode)
   } else if (treeNode.type === 'family') {
-    const firstParent = getIndex(state, treeNode.node.ancestors.slice(-1).id)
     // remove family proxy node
-    removeChild(state, treeNode, firstParent)
+    removeChild(state, treeNode, parentNode)
   } else {
     if (treeNode.type === 'task' && treeNode.node.firstParent) {
       // remove task from its primary family
