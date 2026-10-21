@@ -135,7 +135,8 @@ function addChild (parentNode, childNode) {
   } else if (childNode.type === '$edge') {
     key = '$edges'
   } else if (parentNode.type === 'cycle' && childNode.type === 'family') {
-    key = 'familyTree'
+    parentNode.rootFamily = childNode
+    return
   }
 
   if (childNode.type === 'workflow') {
@@ -176,11 +177,10 @@ function removeChild (state, node, parentNode = null) {
  * parent lookup).
  * */
 function removeTree (state, node, removeParent = true) {
-  let pointer
   const stack = [
     ...node.children || [],
-    ...node.familyTree || [],
   ]
+  if (node.rootFamily) stack.push(node.rootFamily)
   const removeIndicies = [
     ...node.$namespaces || [],
     ...node.$edges || [],
@@ -189,18 +189,18 @@ function removeTree (state, node, removeParent = true) {
   while (stack.length) {
     // walk the tree under the provided node to list nodes and indices for
     // deletion
-    pointer = stack.pop()
+    const pointer = stack.pop()
     stack.push(
       ...(pointer.children || []),
-      ...(pointer.familyTree || []),
     )
+    if (pointer.rootFamily) stack.push(pointer.rootFamily)
     removeIndicies.push(
       ...(pointer.$namespaces || []),
       ...(pointer.$edges || []),
     )
     removeNodes.push(pointer)
   }
-  for (pointer of [...removeIndicies, ...removeNodes.reverse()]) {
+  for (const pointer of [...removeIndicies, ...removeNodes.reverse()]) {
     // remove indexes first, then remove tree nodes from the bottom up
     removeIndex(state, pointer.id)
     removeChild(state, pointer)
@@ -359,7 +359,8 @@ function update (state, updatedData) {
   collateState(state, treeItem, updatedData, true)
 }
 
-/* Return the family hierarchy leading to a node.
+/**
+ * Return the family hierarchy leading to a node.
  *
  * This is the family equivalent to "Tokens.tree".
  */
@@ -377,16 +378,27 @@ function getFamilyTree (tokens, node) {
     }
   }
 
-  // Add family levels below the cycle point:
   // N.B. guarding against node.ancestors being undefined sometimes, which shouldn't really happen -
   // possibly caused by https://github.com/cylc/cylc-uiserver/issues/767
-  for (let i = node.ancestors?.length ?? 0; i > 0; i--) {
-    const { name } = node.ancestors[i - 1]
-    ret.push([
-      'family',
-      name,
-      lastTokens.clone({ task: name }),
-    ])
+  if (!node.ancestors) {
+    if (tokens.task !== 'root') {
+      // Guess that the root family is the only ancestor if not explicitly listed
+      ret.push([
+        'family',
+        'root',
+        lastTokens.clone({ task: 'root' }),
+      ])
+    }
+  } else {
+    // Add family levels below the cycle point:
+    for (let i = node.ancestors.length; i > 0; i--) {
+      const { name } = node.ancestors[i - 1]
+      ret.push([
+        'family',
+        name,
+        lastTokens.clone({ task: name }),
+      ])
+    }
   }
 
   // add the family itself
@@ -438,16 +450,10 @@ function createTreeNode (state, id, tokens, node) {
 
   let pointer = state.cylcTree
   let intermediateItem
-  let childAttribute
   for (const [partType, partName, partTokens] of tree) {
-    if (pointer.type === 'cycle' && type === 'family') {
-      childAttribute = 'familyTree'
-    } else {
-      childAttribute = 'children'
-    }
-    const child = pointer[childAttribute].find(
-      ({ name }) => name === partName
-    )
+    const child = pointer.type === 'cycle' && type === 'family'
+      ? pointer.rootFamily
+      : pointer.children.find(({ name }) => name === partName)
     if (!child) {
       // create intermediate node...
       // ...add a tree item
@@ -464,7 +470,6 @@ function createTreeNode (state, id, tokens, node) {
         tokens: partTokens,
         type: partType,
         children: [],
-        familyTree: partType === 'cycle' ? [] : undefined,
       }
       // add child to the tree
       addChild(pointer, intermediateItem)
@@ -484,8 +489,6 @@ function createTreeNode (state, id, tokens, node) {
     parent: pointer.id,
     node,
     children: [],
-    familyTree: type === 'cycle' ? [] : undefined,
-
   }
   return [pointer, treeNode]
 }
@@ -513,7 +516,7 @@ function remove (state, prunedID) {
   } else if (treeNode.type === '$namespace') {
     discardFromArray(parentNode.$namespaces, treeNode)
   } else if (treeNode.type === 'family') {
-    // remove family proxy node
+    // Remove family from its parent family
     removeChild(state, treeNode, parentNode)
   } else {
     if (treeNode.type === 'task' && treeNode.node.firstParent) {

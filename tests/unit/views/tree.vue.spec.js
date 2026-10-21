@@ -39,37 +39,35 @@ const workflowNode = {
       ...expandID('~user/workflow1//1'),
       type: 'cycle',
       children: [],
-      familyTree: [
-        {
-          ...expandID('~user/workflow1//1/root'),
-          type: 'family',
-          children: [
-            {
-              ...expandID('~user/workflow1//1/FAM'),
-              type: 'family',
-              children: [
-                {
-                  ...expandID('~user/workflow1//1/foo'),
-                  type: 'task',
-                  node: { state: 'failed', isHeld: true },
-                  children: [
-                    {
-                      ...expandID('~user/workflow1//1/foo/1'),
-                      type: 'job',
-                    },
-                  ],
-                },
-                {
-                  ...expandID('~user/workflow1//1/bar'),
-                  type: 'task',
-                  node: { state: 'waiting' },
-                  children: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      rootFamily: {
+        ...expandID('~user/workflow1//1/root'),
+        type: 'family',
+        children: [
+          {
+            ...expandID('~user/workflow1//1/FAM'),
+            type: 'family',
+            children: [
+              {
+                ...expandID('~user/workflow1//1/foo'),
+                type: 'task',
+                node: { state: 'failed', isHeld: true },
+                children: [
+                  {
+                    ...expandID('~user/workflow1//1/foo/1'),
+                    type: 'job',
+                  },
+                ],
+              },
+              {
+                ...expandID('~user/workflow1//1/bar'),
+                type: 'task',
+                node: { state: 'waiting' },
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
     },
   ],
 }
