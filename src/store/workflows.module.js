@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { toRaw } from 'vue'
 import pick from 'lodash/pick'
 import isArray from 'lodash/isArray'
 import { Tokens } from '@/utils/uid'
@@ -240,11 +241,11 @@ function cleanParents (state, node) {
  * in this node.
  */
 function applyInheritance (state, node) {
-  if (node.type === 'family' && node.node.childTasks) {
-    // build a mapping of {childID: childNode} for faster lookup
-    const childIDs = node.children.reduce((map, obj) => { map[obj.id] = obj; return map }, {})
-    for (const child of node.node.childTasks) {
-      if (!(child.id in childIDs)) {
+  if (node.type === 'family' && node.node.childTasks?.length) {
+    // build a set of child IDs for faster lookup
+    const childIDs = new Set(toRaw(node).children.map((obj) => obj.id))
+    for (const child of toRaw(node).node.childTasks) {
+      if (!childIDs.has(child.id)) {
         // add any new tasks to the family
         const childNode = getIndex(state, child.id)
         if (childNode) {
