@@ -93,6 +93,7 @@ const components = {
 }
 
 const cyclePointsOrderDesc = useCyclePointsOrderDesc()
+
 /**
  * Map of nodes' filtered status.
  *

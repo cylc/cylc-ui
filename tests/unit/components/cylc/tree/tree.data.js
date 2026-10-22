@@ -238,64 +238,62 @@ export const simpleWorkflowTree4Nodes = [
           state: 'failed',
         },
         children: ['stub'],
-        familyTree: [
-          {
-            id: '~user/workflow1//20100101T0000Z/root',
-            name: 'root',
-            tokens: new Tokens('~user/workflow1//20100101T0000Z/root'),
-            type: 'family',
-            node: {
-              state: 'failed',
-            },
-            children: [
-              {
-                id: '~user/workflow1//20100101T0000Z/foo',
-                name: 'foo',
-                tokens: new Tokens('~user/workflow1//20100101T0000Z/foo'),
-                type: 'task',
-                node: {
-                  __typename: 'TaskProxy',
-                  state: 'failed',
-                },
-                children: [
-                  {
-                    id: '~user/workflow1//20100101T0000Z/foo/02',
-                    name: '02',
-                    tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/02'),
-                    type: 'job',
-                    node: {
-                      __typename: 'Job',
-                      startedTime: '2019-08-19T22:51:06Z',
-                      state: 'submit-failed',
-                      submitNum: 2,
-                      customOutputs: [],
-                    },
-                    children: [],
-                  },
-                  {
-                    id: '~user/workflow1//20100101T0000Z/foo/01',
-                    name: '01',
-                    tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/01'),
-                    type: 'job',
-                    node: {
-                      __typename: 'Job',
-                      startedTime: '2019-08-19T22:44:42Z',
-                      state: 'failed',
-                      submitNum: 1,
-                      customOutputs: [
-                        {
-                          label: 'out1',
-                          message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.',
-                        },
-                      ],
-                    },
-                    children: [],
-                  },
-                ],
-              },
-            ],
+        rootFamily: {
+          id: '~user/workflow1//20100101T0000Z/root',
+          name: 'root',
+          tokens: new Tokens('~user/workflow1//20100101T0000Z/root'),
+          type: 'family',
+          node: {
+            state: 'failed',
           },
-        ],
+          children: [
+            {
+              id: '~user/workflow1//20100101T0000Z/foo',
+              name: 'foo',
+              tokens: new Tokens('~user/workflow1//20100101T0000Z/foo'),
+              type: 'task',
+              node: {
+                __typename: 'TaskProxy',
+                state: 'failed',
+              },
+              children: [
+                {
+                  id: '~user/workflow1//20100101T0000Z/foo/02',
+                  name: '02',
+                  tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/02'),
+                  type: 'job',
+                  node: {
+                    __typename: 'Job',
+                    startedTime: '2019-08-19T22:51:06Z',
+                    state: 'submit-failed',
+                    submitNum: 2,
+                    customOutputs: [],
+                  },
+                  children: [],
+                },
+                {
+                  id: '~user/workflow1//20100101T0000Z/foo/01',
+                  name: '01',
+                  tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/01'),
+                  type: 'job',
+                  node: {
+                    __typename: 'Job',
+                    startedTime: '2019-08-19T22:44:42Z',
+                    state: 'failed',
+                    submitNum: 1,
+                    customOutputs: [
+                      {
+                        label: 'out1',
+                        message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.',
+                      },
+                    ],
+                  },
+                  children: [],
+                },
+              ],
+            },
+          ],
+        },
       },
     ],
   },
@@ -303,7 +301,7 @@ export const simpleWorkflowTree4Nodes = [
 
 export const simpleWorkflowNode = simpleWorkflowTree4Nodes[0]
 export const simpleCyclepointNode = simpleWorkflowTree4Nodes[0].children[0]
-export const simpleTaskNode = simpleCyclepointNode.familyTree[0].children[0]
+export const simpleTaskNode = simpleCyclepointNode.rootFamily.children[0]
 export const simpleJobNode = simpleTaskNode.children.at(-1)
 
 export const sampleWorkflow1 = {
