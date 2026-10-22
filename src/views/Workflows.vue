@@ -16,11 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <GScan :workflowTree="cylcTree" :isLoading="isLoading" />
+  <GScan :isLoading="isLoading" />
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan.vue'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -97,10 +96,6 @@ export default {
         []
       ),
     }
-  },
-
-  computed: {
-    ...mapState('workflows', ['cylcTree']),
   },
 }
 </script>
