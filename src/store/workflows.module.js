@@ -454,7 +454,7 @@ function createTreeNode (state, id, tokens, node) {
   for (const [partType, partName, partTokens] of tree) {
     const child = pointer.type === 'cycle' && type === 'family'
       ? pointer.rootFamily
-      : pointer.children.find(({ name }) => name === partName)
+      : getIndex(state, partTokens.id)
     if (!child) {
       // create intermediate node...
       // ...add a tree item
