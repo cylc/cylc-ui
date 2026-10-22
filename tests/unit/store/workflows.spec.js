@@ -17,6 +17,10 @@
 
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
+import {
+  __removeTree as removeTree,
+  __cleanParents as cleanParents,
+} from '@/store/workflows.module'
 
 function getTree (store) {
   const cylcTree = store.state.workflows.cylcTree
@@ -289,6 +293,76 @@ describe('cylc tree', () => {
       store.commit('workflows/REMOVE', '~u/w//1/a')
 
       expect(A().children).toStrictEqual([])
+    })
+  })
+
+  describe('cleanParents()', () => {
+    it('prunes a childless node', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a' })
+      store.commit('workflows/UPDATE', { id: '~u/w//1/b' })
+      cleanParents(store.state.workflows, getNode('~u/w//1/a'))
+      expect(getTree(store)).toEqual({ u: { w: { 1: { b: {} } } } })
+      expect(getIndex()).toEqual(['~u', '~u/w', '~u/w//1', '~u/w//1/b'])
+    })
+
+    it('prunes all childless ancestors up to the workflow', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a/01' })
+      cleanParents(store.state.workflows, getNode('~u/w//1/a/01'))
+      expect(getTree(store)).toEqual({ u: { w: {} } })
+      expect(getIndex()).toEqual(['~u', '~u/w'])
+    })
+
+    it('stops at the first node that has children', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a/01' })
+      store.commit('workflows/UPDATE', { id: '~u/w//1/b' })
+      cleanParents(store.state.workflows, getNode('~u/w//1/a/01'))
+      expect(getTree(store)).toEqual({ u: { w: { 1: { b: {} } } } })
+      expect(getIndex()).toEqual(['~u', '~u/w', '~u/w//1', '~u/w//1/b'])
+    })
+
+    it('does nothing if the node has children', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a' })
+      cleanParents(store.state.workflows, getNode('~u/w//1'))
+      expect(getIndex()).toEqual(['~u', '~u/w', '~u/w//1', '~u/w//1/a'])
+    })
+
+    it.each([
+      { id: '~u/w', expectedIndex: ['~u', '~u/w'] },
+      { id: '~u/x/y', expectedIndex: ['~u', '~u/x', '~u/x/y'] },
+    ])('does not prune workflow $id or anything above it', ({ id, expectedIndex }) => {
+      store.commit('workflows/UPDATE', { id })
+      cleanParents(store.state.workflows, getNode(id))
+      expect(getIndex()).toEqual(expectedIndex)
+    })
+
+    it('handles nodes without a parent', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w' })
+      cleanParents(store.state.workflows, undefined)
+      cleanParents(store.state.workflows, store.state.workflows.cylcTree)
+      expect(getIndex()).toEqual(['~u', '~u/w'])
+    })
+
+    it('cleans childless workflow-parts', () => {
+      store.commit('workflows/UPDATE', { id: '~u/l/m/n' })
+      // Remove n so m is childless
+      removeTree(store.state.workflows, getNode('~u/l/m/n'))
+      expect(store.state.workflows.cylcTree.children).toMatchObject([{
+        type: 'user',
+        children: [{
+          name: 'l',
+          type: 'workflow-part',
+          children: [
+            {
+              name: 'm',
+              type: 'workflow-part',
+              children: [],
+            },
+          ],
+        }],
+      }])
+      cleanParents(store.state.workflows, getNode('~u/l/m'))
+      expect(getTree(store)).toEqual({ u: { } })
+      expect(getIndex()).toEqual(['~u'])
     })
   })
 
