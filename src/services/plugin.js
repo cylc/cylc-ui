@@ -50,6 +50,7 @@ class ServicesPlugin {
     router.beforeEach(async (to, from) => {
       const user = await this.getUser()
       // TODO: catch error getting user profile and redirect to static error page
+      // https://github.com/cylc/cylc-ui/issues/2707
       if (!user.permissions?.includes('read')) {
         if (to.name !== 'NoAuth') { // Avoid infinite redirect?
           return { name: 'NoAuth' }
