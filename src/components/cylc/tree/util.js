@@ -19,7 +19,7 @@ export function getNodeChildren (node, cyclePointsOrderDesc, flat) {
   if (node.type === 'workflow' && !cyclePointsOrderDesc) {
     // a user configuration has configured the sort order for cycle points to
     // be reversed
-    return [...node.children].reverse()
+    return node.children.toReversed()
   } else if (node.type === 'cycle' && !flat) {
     // display tasks in the inheritance tree
     return node.rootFamily?.children ?? []
