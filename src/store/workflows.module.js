@@ -308,10 +308,9 @@ function collateState (state, node, update, newlyCreated) {
  */
 function update (state, updatedData) {
   const tokens = new Tokens(updatedData.id)
-  const id = tokens.id
-  // console.log(`@ += ${id}`)
+  // console.log(`@ += ${tokens.id}`)
 
-  let treeItem = getIndex(state, id)
+  let treeItem = getIndex(state, tokens.id)
   if (treeItem) {
     // node already exists -> update it
     collateState(state, treeItem, updatedData, false)
@@ -322,14 +321,14 @@ function update (state, updatedData) {
 
   // create a new tree item
   let treeParent
-  [treeParent, treeItem] = createTreeNode(state, id, tokens, updatedData)
+  [treeParent, treeItem] = createTreeNode(state, tokens, updatedData)
 
   // add the new item to the tree
   addChild(treeParent, treeItem)
   applyInheritance(state, treeItem)
 
   // add an entry for this item into the index
-  addIndex(state, id, treeItem)
+  addIndex(state, tokens.id, treeItem)
   collateState(state, treeItem, updatedData, true)
 }
 
@@ -375,13 +374,6 @@ function getFamilyTree (tokens, node) {
     }
   }
 
-  // add the family itself
-  ret.push([
-    'family',
-    tokens[tokens.lowestToken()],
-    tokens,
-  ])
-
   return ret
 }
 
@@ -396,11 +388,12 @@ function deque (node, key, values, maxLength) {
   }
 }
 
-/* Create a node for insertion into the tree.
+/**
+ * Create a node for insertion into the tree.
  *
  * This will create any parent nodes that are not present in the tree.
  */
-function createTreeNode (state, id, tokens, node) {
+function createTreeNode (state, tokens, node) {
   let tree = tokens.tree()
   let type
   let name
@@ -416,14 +409,11 @@ function createTreeNode (state, id, tokens, node) {
     type = 'family'
     name = tokens.task
     tree = getFamilyTree(tokens, node)
-    tokens = tree.pop()[2]
-    id = tokens.id
   } else {
     [type, name] = tree.pop()
   }
 
   let pointer = state.cylcTree
-  let intermediateItem
   for (const [partType, partName, partTokens] of tree) {
     const child = pointer.type === 'cycle' && type === 'family'
       ? pointer.rootFamily
@@ -431,7 +421,7 @@ function createTreeNode (state, id, tokens, node) {
     if (!child) {
       // create intermediate node...
       // ...add a tree item
-      intermediateItem = {
+      const intermediateItem = {
         id: partTokens.id,
         name: partName,
         node: {
@@ -456,7 +446,7 @@ function createTreeNode (state, id, tokens, node) {
   }
 
   const treeNode = {
-    id,
+    id: tokens.id,
     tokens,
     name,
     type,
