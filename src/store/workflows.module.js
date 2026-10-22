@@ -186,26 +186,26 @@ function removeTree (state, node, inclusive = true) {
   }
 }
 
-/* Remove any childless parents above this node.
+/**
+ * Remove this node if childless, and its childless ancestors, stopping at the workflow level.
  *
- * This removes tasks / cycles / families etc, but stops at workflows.
- * */
+ * If this node is a workflow-part, continue up and stop at the user level.
+ */
 function cleanParents (state, node) {
-  let pointer = node
-  while (pointer?.parent) {
-    if (pointer.type !== 'workflow') {
+  while (node?.parent) {
+    if (node.type !== 'workflow') {
       // don't prune workflow nodes
       // (this requires an explicit instruction to do so)
-      if (!pointer.children.length) {
+      if (!node.children.length) {
         // node has no children -> prune it
         removeIndex(state, node.id)
-        removeChild(state, pointer)
+        removeChild(state, node)
       } else {
         // node has children stop here
         break
       }
     }
-    pointer = getIndex(state, pointer.parent)
+    node = getIndex(state, node.parent)
   }
 }
 
@@ -570,4 +570,10 @@ export const workflows = {
   getters,
   mutations,
   actions,
+}
+
+// For testing:
+export {
+  cleanParents as __cleanParents,
+  removeTree as __removeTree,
 }
