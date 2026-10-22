@@ -78,29 +78,6 @@ const getters = {
   },
 }
 
-/* Initialise the data store. */
-function createTree (state) {
-  // console.log('@@ Create')
-  if (state.cylcTree) {
-    return
-  }
-  state.cylcTree = {
-    $index: {},
-    id: '$root',
-    children: [],
-  }
-  // console.log('@@')
-}
-
-/* Wipe everything in the store. */
-function clearTree (state) {
-  // console.log('@@ CLEAR')
-  for (const child of state.cylcTree.children) {
-    remove(state, child.id)
-  }
-  // console.log('@@')
-}
-
 /* Add a node to the global $index (flat lookup). */
 function addIndex (state, id, treeNode) {
   if (state.cylcTree.$index[id] === undefined) {
@@ -110,19 +87,14 @@ function addIndex (state, id, treeNode) {
   }
 }
 
-/* Remove a node from the global $index (flat lookup). */
+/** Remove a node from the global $index (flat lookup). */
 function removeIndex (state, id) {
   // console.log(`$i -- ${id}`)
   delete state.cylcTree.$index[id]
 }
 
-/* Retrieve a node from the global $index (flat lookup). */
+/** Retrieve a node from the global $index (flat lookup). */
 function getIndex (state, id) {
-  if (id === '$root') {
-    // speial ID maps onto the tree root element
-    // (note this avoids a circular reference which VueX does not like)
-    return state.cylcTree
-  }
   return state.cylcTree.$index[id]
 }
 
@@ -537,7 +509,6 @@ function remove (state, prunedID) {
 
 const mutations = {
   // the new cylc tree methods
-  CREATE: createTree,
   UPDATE: update,
   UPDATE_DELTAS (state, updated) {
     // console.log('@ UPDATE')
@@ -579,7 +550,6 @@ const mutations = {
     }
     // console.log('@@')
   },
-  CLEAR: clearTree,
 }
 
 // NOTE: deltas are applied in the order listed here

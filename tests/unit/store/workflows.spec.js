@@ -45,11 +45,10 @@ function getTree (store) {
 }
 
 describe('cylc tree', () => {
-  const store = createStore(storeOptions)
-  const resetState = () => {
-    store.state.workflows.cylcTree = undefined
-  }
-  beforeEach(resetState)
+  let store = createStore(storeOptions)
+  beforeEach(() => {
+    store = createStore(storeOptions)
+  })
 
   function getNode (id) {
     return store.state.workflows.cylcTree.$index[id]
@@ -58,9 +57,7 @@ describe('cylc tree', () => {
     return Object.keys(store.state.workflows.cylcTree.$index).sort()
   }
 
-  it('initiates and clears', () => {
-    // CREATE should initialise the store
-    store.commit('workflows/CREATE')
+  it('initiates', () => {
     const tree = store.state.workflows.cylcTree
     expect(tree.children).to.deep.equal([])
     expect(Object.keys(tree.$index)).to.deep.equal([])
@@ -79,18 +76,10 @@ describe('cylc tree', () => {
         },
       },
     })
-
-    // CLEAR should wipe the store
-    store.commit('workflows/CLEAR')
-    expect(tree.children).to.deep.equal([]) // children removed at top level
-    expect(Object.keys(tree.$index)).to.deep.equal([]) // tree empty
-    expect(getTree(store)).to.deep.equal({}) // index empty
   })
 
   it('adds', () => {
     // new nodes should be added to the correct place in the tree
-    store.commit('workflows/CREATE')
-
     // add a job
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/01' })
     expect(getTree(store)).to.deep.equal({
@@ -163,22 +152,19 @@ describe('cylc tree', () => {
 
   /** it should remove nodes and housekeep the tree via the REMOVE interface */
   describe('remove()', () => {
-    beforeEach(() => {
-      store.commit('workflows/CREATE')
-    })
-
     it.each([
-      {
-        type: 'user',
-        id: '~a',
-        expectedTree: {},
-        expectedIndex: [],
-      },
+      // In reality, user nodes are not pruned, so this test case is commented out.
+      // {
+      //   type: 'user',
+      //   id: '~a',
+      //   expectedTree: { a: {} },
+      //   expectedIndex: ['~a'],
+      // },
       {
         type: 'workflow',
         id: '~a/b',
-        expectedTree: {},
-        expectedIndex: [],
+        expectedTree: { a: {} },
+        expectedIndex: ['~a'],
       },
       {
         type: 'cycle',
@@ -309,8 +295,6 @@ describe('cylc tree', () => {
   it('updates', () => {
     // existing nodes can be updated when new data becomes available
     // adding/updating is performed via the same UPDATE interface
-    store.commit('workflows/CREATE')
-
     // add a node
     store.commit(
       'workflows/UPDATE',
@@ -344,14 +328,11 @@ describe('cylc tree', () => {
   })
 
   it('handles multiple updates', () => {
-    store.commit('workflows/CREATE')
-
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/01', a: 1 })
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/01', a: 2 })
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/01', a: 2 })
 
     const _tree = store.state.workflows.cylcTree
-    expect(_tree.id).to.equal('$root')
     expect(_tree.type).to.equal(undefined)
     expect(_tree.children.length).to.equal(1)
 
@@ -381,8 +362,6 @@ describe('cylc tree', () => {
     //   ~user/workflow//cycle[/FAMILY...]/task/job
     // but some things don't e.g. edges and namespaces (aka task/fam definitions)
     // for these things we maintain addition indexes at the workflow level
-    store.commit('workflows/CREATE')
-
     // add a workflow
     store.commit('workflows/UPDATE', { id: '~a/b' })
     // add a task definition for a task called "foo"
@@ -418,8 +397,6 @@ describe('cylc tree', () => {
   it('sorts', () => {
     // new nodes should be added to the tree in sort order
     // (note the $index is not sorted)
-    store.commit('workflows/CREATE')
-
     // insert users
     store.commit('workflows/UPDATE', { id: '~b' })
     store.commit('workflows/UPDATE', { id: '~a' })
@@ -499,8 +476,6 @@ describe('cylc tree', () => {
   })
 
   it('has family values', () => {
-    store.commit('workflows/CREATE')
-
     // insert a nested family in a single operation
     store.commit(
       'workflows/UPDATE',
@@ -622,8 +597,6 @@ describe('cylc tree', () => {
   })
 
   it('has family divisions', () => {
-    store.commit('workflows/CREATE')
-
     // add a family and some tasks
     store.commit('workflows/UPDATE', { id: '~u/w//1/adelie' })
     store.commit('workflows/UPDATE', { id: '~u/w//1/gentoo' })
@@ -666,8 +639,6 @@ describe('cylc tree', () => {
     // family
     // we need to ensure that these cycle point nodes don't mess with family
     // logic
-    store.commit('workflows/CREATE')
-
     // add a family and some tasks
     store.commit(
       'workflows/UPDATE',
@@ -687,8 +658,6 @@ describe('cylc tree', () => {
     // We have per-workflow and global subscriptions, both of which will
     // request workflow data. We need to make sure these don't result in
     // duplicated nodes.
-    store.commit('workflows/CREATE')
-
     store.commit(
       'workflows/UPDATE',
       {
