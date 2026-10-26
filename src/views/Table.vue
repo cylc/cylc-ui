@@ -53,6 +53,47 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
+/**
+ * Cache of table rows, keyed by task node.
+ *
+ * @type {WeakMap<Object, Object>}
+ */
+const taskRows = new WeakMap()
+
+/**
+ * Return the table row for a task node.
+ *
+ * Rows are cached so that the same row object is returned for a given task.
+ * The latest/previous jobs are getters (rather than values captured when the
+ * row was built) so that the list of rows only needs to be rebuilt when tasks
+ * are added or removed, not every time a job is added to any task.
+ *
+ * The getters are non-enumerable because Vuetify's data table spreads each
+ * row when sorting; enumerable getters would be called for every row,
+ * making the sort depend on (and re-run whenever there is a change to)
+ * every task's jobs.
+ *
+ * @param {Object} task - task node from the store.
+ * @returns {{ task: Object, latestJob: ?Object, previousJob: ?Object }}
+ */
+export function getTaskRow (task) {
+  let row = taskRows.get(task)
+  if (!row) {
+    row = Object.defineProperties({ task }, {
+      latestJob: {
+        get: () => task.children[0],
+        enumerable: false,
+      },
+      previousJob: {
+        get: () => task.children[1],
+        enumerable: false,
+      },
+    })
+    taskRows.set(task, row)
+  }
+  return row
+}
+
 const QUERY = gql`
 subscription Workflow ($workflowID: ID) {
   deltas (workflows: [$workflowID]) {
@@ -208,11 +249,7 @@ export default {
       for (const workflow of this.workflows) {
         for (const cycle of workflow.children) {
           for (const task of cycle.children) {
-            ret.push({
-              task,
-              latestJob: task.children[0],
-              previousJob: task.children[1],
-            })
+            ret.push(getTaskRow(task))
           }
         }
       }
