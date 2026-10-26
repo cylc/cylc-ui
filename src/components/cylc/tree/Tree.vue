@@ -121,13 +121,6 @@ const rootChildren = computed(() => {
 
 /**
  * Reactively run filtering.
- *
- * Rather than deep-watching the whole data store (which would re-run the
- * filter on every delta, e.g. job messages, and traverse every property of
- * every node down to the job level), we let Vue's dependency tracking work
- * out exactly what to watch: only the properties that the filter function
- * actually reads (e.g. node state, name, children) become dependencies, so
- * changes to irrelevant fields do not trigger re-filtering.
  */
 let filterWasActive = false
 if (props.nodeFilterFunc) {
