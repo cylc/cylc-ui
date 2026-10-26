@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { onMounted, ref, watch, computed } from 'vue'
+import { ref, watchEffect, computed } from 'vue'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import { getNodeChildren } from '@/components/cylc/tree/util'
@@ -104,26 +104,6 @@ const cyclePointsOrderDesc = useCyclePointsOrderDesc()
  */
 const filteredOutNodesCache = ref(new WeakMap())
 
-onMounted(() => {
-  // Reactively run filtering
-  if (props.nodeFilterFunc) {
-    watch(
-      () => [props.filterState, rootChildren.value],
-      ([active, nodes], [wasActive, oldNodes]) => {
-        if (active) {
-          for (const node of rootChildren.value) {
-            props.nodeFilterFunc(node, filteredOutNodesCache.value)
-          }
-        } else if (wasActive) {
-          // Filters are no longer active - wipe the cache
-          filteredOutNodesCache.value = new WeakMap()
-        }
-      },
-      { deep: true }
-    )
-  }
-})
-
 /** Array of nodes at the top of the tree */
 const rootChildren = computed(() => {
   if (
@@ -138,6 +118,34 @@ const rootChildren = computed(() => {
   // nodes to allow us to differentiate between them
   return props.workflows
 })
+
+/**
+ * Reactively run filtering.
+ *
+ * Rather than deep-watching the whole data store (which would re-run the
+ * filter on every delta, e.g. job messages, and traverse every property of
+ * every node down to the job level), we let Vue's dependency tracking work
+ * out exactly what to watch: only the properties that the filter function
+ * actually reads (e.g. node state, name, children) become dependencies, so
+ * changes to irrelevant fields do not trigger re-filtering.
+ */
+let filterWasActive = false
+if (props.nodeFilterFunc) {
+  watchEffect(() => {
+    if (props.filterState) {
+      const cache = filteredOutNodesCache.value
+      for (const node of rootChildren.value) {
+        props.nodeFilterFunc(node, cache)
+      }
+      filterWasActive = true
+    } else if (filterWasActive) {
+      // Filters are no longer active - wipe the cache
+      // (note: no reactive reads in this branch, so no deps on the store)
+      filteredOutNodesCache.value = new WeakMap()
+      filterWasActive = false
+    }
+  })
+}
 
 const allFilteredOut = computed(() => (
   props.filterState &&
