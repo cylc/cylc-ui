@@ -94,7 +94,8 @@ function createTree (state) {
 /* Wipe everything in the store. */
 function clearTree (state) {
   // console.log('@@ CLEAR')
-  for (const child of state.cylcTree.children) {
+  // (iterate over a copy as remove() modifies the list)
+  for (const child of [...state.cylcTree.children]) {
     remove(state, child.id)
   }
   // console.log('@@')
@@ -166,7 +167,12 @@ function removeChild (state, node, parentNode = null) {
     // parent node no longer in the store (this should not happen)
     return
   }
-  const key = ['$namespace', '$edge'].includes(node.type) ? `${node.type}s` : 'children'
+  let key = 'children'
+  if (['$namespace', '$edge'].includes(node.type)) {
+    key = `${node.type}s`
+  } else if (parentNode.type === 'cycle' && node.type === 'family') {
+    key = 'familyTree'
+  }
   discardFromArray(parentNode[key], node)
 }
 
@@ -223,9 +229,9 @@ function cleanParents (state, node) {
       // don't prune workflow nodes
       // (this requires an explicit instruction to do so)
       if (!pointer.children.length) {
-        // node has no children -> prune it
-        removeIndex(state, node.id)
-        removeChild(state, pointer)
+        // node has no children -> prune it (along with anything else
+        // underneath it, e.g. a cycle's familyTree)
+        removeTree(state, pointer)
       } else {
         // node has children stop here
         break
