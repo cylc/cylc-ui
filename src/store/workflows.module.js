@@ -123,13 +123,17 @@ function addChild (parentNode, childNode) {
     ? (n) => `${n.type}-${n.name}` // (this makes families sort before tasks in the tree)
     : (n) => n.name
   const reverse = ['cycle', 'job'].includes(childNode.type)
+  // NOTE: to fix a performance bottleneck, splice the underlying raw array instead of the reactive proxy
+  // - see https://github.com/cylc/cylc-ui/pull/2718 for more info & caveats
+  const rawChildren = toRaw(parentNode)[key].slice() // native copy, no Vue reactivity overhead
   const index = sortedIndexBy(
-    parentNode[key],
+    rawChildren,
     childNode,
     iteratee,
     { reverse }
   )
-  parentNode[key].splice(index, 0, childNode)
+  rawChildren.splice(index, 0, childNode)
+  parentNode[key] = rawChildren // single update of reactive proxy
 }
 
 /** Remove a child node from a parent node. */
