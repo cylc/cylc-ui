@@ -73,7 +73,7 @@
     "eslint-plugin-vuetify": "2.7.3",
     "express": "5.3.0",
     "express-ws": "5.0.2",
-    "happy-dom": "20.14.6",
+    "happy-dom": "21.0.4",
     "istanbul-lib-coverage": "3.2.2",
     "json-server": "0.17.4",
     "nodemon": "3.1.14",
