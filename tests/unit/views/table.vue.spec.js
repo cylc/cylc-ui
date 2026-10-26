@@ -19,9 +19,10 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
-import Table from '@/views/Table.vue'
+import Table, { getTaskRow } from '@/views/Table.vue'
 import WorkflowService from '@/services/workflow.service'
-import { nextTick } from 'vue'
+import { nextTick, reactive } from 'vue'
+import { cloneDeep } from 'lodash'
 import { simpleTableTasks } from '@/../tests/unit/components/cylc/table/table.data'
 import TaskState from '@/model/TaskState.model'
 import { mockRoute } from '$tests/util'
@@ -97,6 +98,51 @@ describe('Table view', () => {
         latestJob: { id: '~user/one//1/failed/1' },
       },
     ])
+  })
+
+  it('creates cached rows with non-enumerable job getters', () => {
+    const task = { id: '~u/w//1/a', children: [{ id: '~u/w//1/a/02' }, { id: '~u/w//1/a/01' }] }
+    const row = getTaskRow(task)
+    expect(getTaskRow(task)).toBe(row)
+    expect(row.latestJob).toBe(task.children[0])
+    expect(row.previousJob).toBe(task.children[1])
+    // Vuetify spreads rows when sorting - the job getters must not be
+    // enumerable, otherwise sorting would depend on every task's jobs
+    expect(Object.keys(row)).toEqual(['task'])
+  })
+
+  it('does not rebuild the rows when a job is added', async () => {
+    const wrapper = mount(Table, {
+      shallow: true,
+      global: {
+        plugins: [store],
+        mocks: { $workflowService },
+      },
+    })
+    const reactiveWorkflows = reactive(cloneDeep(workflows))
+    await wrapper.setData({ workflows: reactiveWorkflows })
+    const rowsBefore = wrapper.vm.tasks
+    expect(rowsBefore.length).to.equal(2)
+
+    // add a new job to an existing task
+    const failedTask = reactiveWorkflows[0].children[0].children[1]
+    failedTask.children.unshift({ id: '~user/one//1/failed/2', children: [] })
+    await nextTick()
+    // the list of rows should not have been rebuilt...
+    expect(wrapper.vm.tasks).toBe(rowsBefore)
+    // ...but the row should reflect the new job
+    expect(wrapper.vm.tasks[1]).toMatchObject({
+      latestJob: { id: '~user/one//1/failed/2' },
+      previousJob: { id: '~user/one//1/failed/1' },
+    })
+
+    // adding a task should rebuild the list, reusing the existing rows
+    reactiveWorkflows[0].children[0].children.push({ id: '~user/one//1/new', children: [] })
+    await nextTick()
+    expect(wrapper.vm.tasks).not.toBe(rowsBefore)
+    expect(wrapper.vm.tasks.length).to.equal(3)
+    expect(wrapper.vm.tasks[0]).toBe(rowsBefore[0])
+    expect(wrapper.vm.tasks[1]).toBe(rowsBefore[1])
   })
 
   describe('Filter', () => {
