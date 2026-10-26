@@ -76,7 +76,6 @@ export function createSubscriptionClient (url) {
       error (error) {
         console.error(error)
         store.commit('SET_OFFLINE', true)
-        // TODO: store.commit('SET_ALERT') with the error details?
       },
     },
     generateID: (payload) => uniqueId(payload.operationName),
