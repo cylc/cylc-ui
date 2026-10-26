@@ -104,6 +104,32 @@ const cyclePointsOrderDesc = useCyclePointsOrderDesc()
  */
 const filteredOutNodesCache = ref(new WeakMap())
 
+onMounted(() => {
+  // Reactively run filtering
+  if (props.nodeFilterFunc) {
+    watch(
+      // Do not include rootChildren in the deep watcher source when no filters are active,
+      // as it would unnecessarily track changes down the job level on every delta
+      () => (
+        props.filterState
+          ? [props.filterState, rootChildren.value]
+          : [null, null]
+      ),
+      ([active, nodes], [wasActive, oldNodes]) => {
+        if (active) {
+          for (const node of rootChildren.value) {
+            props.nodeFilterFunc(node, filteredOutNodesCache.value)
+          }
+        } else if (wasActive) {
+          // Filters are no longer active - wipe the cache
+          filteredOutNodesCache.value = new WeakMap()
+        }
+      },
+      { deep: true }
+    )
+  }
+})
+
 /** Array of nodes at the top of the tree */
 const rootChildren = computed(() => {
   if (

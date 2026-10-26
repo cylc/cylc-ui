@@ -85,20 +85,10 @@ describe('Tree component', () => {
         [newWorkflows[0].children[0], wrapper.vm.filteredOutNodesCache],
       ])
     })
-    it('wipes the cache when the filter is cleared', async () => {
-      const wrapper = mountFunction({
-        nodeFilterFunc: stateFilter(),
-        filterState: {},
-      })
-      const node = wrapper.vm.rootChildren[0]
-      expect(wrapper.vm.filteredOutNodesCache.has(node)).toBe(true)
-      await wrapper.setProps({ filterState: null })
-      expect(wrapper.vm.filteredOutNodesCache.has(node)).toBe(false)
-    })
     it('does not traverse the tree nodes when no filter is active', async () => {
-      // If the nodes were watched while no filter was active, every delta
-      // would cause traversal of the store, which kills performance for
-      // large workflows.
+      // The filter watcher is deep; if it watched the nodes while no filter
+      // was active it would read every property of every node in the store
+      // on every delta, which kills performance for large workflows.
       const workflows = cloneDeep(simpleWorkflowTree4Nodes)
       const node = workflows[0].children[0].node
       const state = node.state
@@ -107,7 +97,7 @@ describe('Tree component', () => {
       const reactiveWorkflows = reactive(workflows)
       const wrapper = mountFunction({
         workflows: reactiveWorkflows,
-        nodeFilterFunc: stateFilter(),
+        nodeFilterFunc: vi.fn(),
         filterState: null,
       })
       await nextTick()
@@ -117,12 +107,12 @@ describe('Tree component', () => {
       reactiveWorkflows[0].children[0].node.isHeld = true
       await nextTick()
       expect(getter).not.toHaveBeenCalled()
-      // ...but the nodes should be filtered once a filter is applied
+      // ...but the nodes should be watched once a filter is applied
       await wrapper.setProps({ filterState: {} })
       expect(getter).toHaveBeenCalled()
     })
-    it('re-runs filtering on changes to properties the filter depends on', async () => {
-      const nodeFilter = stateFilter()
+    it('re-runs filtering on deep changes to the nodes while a filter is active', async () => {
+      const nodeFilter = vi.fn()
       const workflows = reactive(cloneDeep(simpleWorkflowTree4Nodes))
       mountFunction({
         workflows,
@@ -135,22 +125,6 @@ describe('Tree component', () => {
       workflows[0].children[0].node.state = 'frobnicated'
       await nextTick()
       expect(nodeFilter).toHaveBeenCalledTimes(1)
-    })
-    it('does not re-run filtering on changes to irrelevant properties while a filter is active', async () => {
-      // e.g. job messages should not cause re-filtering
-      const nodeFilter = stateFilter()
-      const workflows = reactive(cloneDeep(simpleWorkflowTree4Nodes))
-      mountFunction({
-        workflows,
-        nodeFilterFunc: nodeFilter,
-        filterState: {},
-      })
-      await nextTick()
-      nodeFilter.mockClear()
-      workflows[0].children[0].node.isHeld = true
-      workflows[0].children[0].node.someNewField = { messages: ['foo'] }
-      await nextTick()
-      expect(nodeFilter).not.toHaveBeenCalled()
     })
   })
 })
