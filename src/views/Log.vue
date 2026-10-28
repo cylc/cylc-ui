@@ -370,7 +370,6 @@ export class LogsCallback extends DeltasCallback {
     if (added.lines) {
       this.results.lines.push(...added.lines)
       this.results.linesTruncated = this.truncatedCheck()
-      // this.trim()
     }
     if (added.truncated != null) {
       // record which end of the file has been truncated (drives the warning)
@@ -391,26 +390,17 @@ export class LogsCallback extends DeltasCallback {
     }
   }
 
-  /**
-   * In "pop" mode, discard the oldest lines to stay within the limit.
-   */
-  trim () {
-    const maxLines = this.getMaxLines?.()
-    if (maxLines != null && this.results.lines.length > maxLines) {
-      this.results.lines.splice(0, this.results.lines.length - maxLines)
-      this.results.linesTruncated = true
-    }
-  }
-
   truncatedCheck () {
-    if ((this.results.lines[0].includes('Workflow :') ||
-    this.results.lines[1].includes('Workflow :')) &&
-    (this.results.lines[1].includes('Job :') ||
-    this.results.lines[2].includes('Job :')) &&
-    this.results.truncatedStart) {
-      return false
-    } else {
+    /**
+     * Dummy function:
+     * Some magic to determine if the start of the log has actually been
+     * truncated.  Else a truncation warning is shown whenever the file is
+     * longer than max_lines, even if all lines are displayed.
+     */
+    if (this.magic) {
       return true
+    } else {
+      return false
     }
   }
 }
