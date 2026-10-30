@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { toRaw } from 'vue'
 import pick from 'lodash/pick'
 import isArray from 'lodash/isArray'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
-import { discardFromArray } from '@/utils/general'
 
 const NODE_TYPES = [
   'user',
@@ -94,7 +94,8 @@ function createTree (state) {
 /* Wipe everything in the store. */
 function clearTree (state) {
   // console.log('@@ CLEAR')
-  for (const child of state.cylcTree.children) {
+  // (iterate over a copy as remove() modifies the list)
+  for (const child of [...state.cylcTree.children]) {
     remove(state, child.id)
   }
   // console.log('@@')
@@ -123,6 +124,50 @@ function getIndex (state, id) {
     return state.cylcTree
   }
   return state.cylcTree.$index[id]
+}
+
+/**
+ * Splicing a reactive array in place triggers a reactive update for every
+ * element that gets shifted, so inserting into / removing from near the start
+ * of large lists (e.g. a cycle with thousands of tasks) is very slow.
+ *
+ * If more than this number of elements would be shifted, we instead splice a
+ * raw copy of the list and assign it back, which is a single reactive update.
+ */
+const MAX_IN_PLACE_SHIFT = 32
+
+/** Splice one of a node's child lists (see MAX_IN_PLACE_SHIFT). */
+function spliceList (parentNode, key, index, deleteCount, ...items) {
+  // always store raw items (parentNode may not be reactive yet, e.g. when
+  // called on a newly created node, so we can't rely on Vue to do this)
+  const rawItems = items.map((item) => toRaw(item))
+  const rawList = toRaw(parentNode[key])
+  if (rawList.length - index <= MAX_IN_PLACE_SHIFT) {
+    parentNode[key].splice(index, deleteCount, ...rawItems)
+  } else {
+    const list = rawList.slice()
+    list.splice(index, deleteCount, ...rawItems)
+    parentNode[key] = list
+  }
+}
+
+/** Insert an item into one of a node's child lists at the given index. */
+function insertIntoList (parentNode, key, index, item) {
+  spliceList(parentNode, key, index, 0, item)
+}
+
+/**
+ * Remove an item from one of a node's child lists.
+ *
+ * @returns {boolean} True if the item was found and removed.
+ */
+function removeFromList (parentNode, key, item) {
+  const index = toRaw(parentNode[key])?.indexOf(toRaw(item)) ?? -1
+  if (index < 0) {
+    return false
+  }
+  spliceList(parentNode, key, index, 1)
+  return true
 }
 
 /** Add a child node under a parent Node */
@@ -155,7 +200,7 @@ function addChild (parentNode, childNode) {
     iteratee,
     { reverse }
   )
-  parentNode[key].splice(index, 0, childNode)
+  insertIntoList(parentNode, key, index, childNode)
 }
 
 /** Remove a child node from a parent node. */
@@ -166,8 +211,13 @@ function removeChild (state, node, parentNode = null) {
     // parent node no longer in the store (this should not happen)
     return
   }
-  const key = ['$namespace', '$edge'].includes(node.type) ? `${node.type}s` : 'children'
-  discardFromArray(parentNode[key], node)
+  let key = 'children'
+  if (['$namespace', '$edge'].includes(node.type)) {
+    key = `${node.type}s`
+  } else if (parentNode.type === 'cycle' && node.type === 'family') {
+    key = 'familyTree'
+  }
+  removeFromList(parentNode, key, node)
 }
 
 /* Recursively remove a node and anything underneath it.
@@ -223,9 +273,9 @@ function cleanParents (state, node) {
       // don't prune workflow nodes
       // (this requires an explicit instruction to do so)
       if (!pointer.children.length) {
-        // node has no children -> prune it
-        removeIndex(state, node.id)
-        removeChild(state, pointer)
+        // node has no children -> prune it (along with anything else
+        // underneath it, e.g. a cycle's familyTree)
+        removeTree(state, pointer)
       } else {
         // node has children stop here
         break
@@ -438,16 +488,11 @@ function createTreeNode (state, id, tokens, node) {
 
   let pointer = state.cylcTree
   let intermediateItem
-  let childAttribute
   for (const [partType, partName, partTokens] of tree) {
-    if (pointer.type === 'cycle' && type === 'family') {
-      childAttribute = 'familyTree'
-    } else {
-      childAttribute = 'children'
-    }
-    const child = pointer[childAttribute].find(
-      ({ name }) => name === partName
-    )
+    // Look up existing intermediate nodes via the index (O(1)) rather than
+    // scanning the parent's children (O(n) - this made adding nodes under
+    // large parents, e.g. jobs in a cycle with many tasks, O(n^2))
+    const child = getIndex(state, partTokens.id)
     if (!child) {
       // create intermediate node...
       // ...add a tree item
@@ -509,9 +554,9 @@ function remove (state, prunedID) {
 
   const parentNode = getIndex(state, treeNode.parent)
   if (treeNode.type === '$edge') {
-    discardFromArray(parentNode.$edges, treeNode)
+    removeFromList(parentNode, '$edges', treeNode)
   } else if (treeNode.type === '$namespace') {
-    discardFromArray(parentNode.$namespaces, treeNode)
+    removeFromList(parentNode, '$namespaces', treeNode)
   } else if (treeNode.type === 'family') {
     const firstParent = getIndex(state, treeNode.node.ancestors.slice(-1).id)
     // remove family proxy node
