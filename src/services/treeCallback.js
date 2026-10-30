@@ -17,13 +17,7 @@
 import DeltasCallback from '@/services/callbacks'
 
 class CylcTreeCallback extends DeltasCallback {
-  init (store, errors) {
-    if (!this.inited) {
-      // only init once
-      store.commit('workflows/CREATE')
-      this.inited = true
-    }
-  }
+  init (store, errors) {}
 
   before (deltas, store, errors) {
     // Wipe all child nodes from a workflow in the data store if a reloaded

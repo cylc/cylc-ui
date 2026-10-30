@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { createStore } from 'vuex'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import GScan from '@/components/cylc/gscan/GScan.vue'
@@ -28,7 +29,7 @@ import {
   getWorkflowTreeSortValue,
   sortedWorkflowTree,
 } from '@/components/cylc/gscan/sort.js'
-
+import storeOptions from '@/store/options'
 import {
   TEST_TREE,
   listTree,
@@ -95,16 +96,21 @@ describe('GScan component', () => {
   })
 
   describe('Filters', () => {
-    const mountFunction = (options) => mount(GScan, {
-      global: {
-        plugins: [vuetify, CommandMenuPlugin],
-      },
-      props: {
-        workflowTree: TEST_TREE,
-        isLoading: false,
-      },
-      ...options,
-    })
+    const mountFunction = (options) => {
+      const store = createStore(storeOptions)
+      const wrapper = mount(GScan, {
+        global: {
+          plugins: [vuetify, CommandMenuPlugin, store],
+        },
+        props: {
+          workflowTree: TEST_TREE,
+          isLoading: false,
+        },
+        ...options,
+      })
+      store.state.workflows.cylcTree = TEST_TREE
+      return wrapper
+    }
 
     it('has null filterState when filters are empty', async () => {
       const wrapper = mountFunction()

@@ -124,6 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
 import { TaskStateNames } from '@/model/TaskState.model'
 import { WorkflowStateNames } from '@/model/WorkflowState.model'
@@ -142,10 +143,6 @@ export default {
   },
 
   props: {
-    workflowTree: {
-      type: Object,
-      required: true,
-    },
     isLoading: {
       type: Boolean,
       required: true,
@@ -171,12 +168,13 @@ export default {
   }),
 
   computed: {
+    ...mapState('workflows', ['cylcTree']),
     workflows () {
-      if (!this.workflowTree?.children.length) {
+      if (!this.cylcTree?.children.length) {
         // no user in the data store (i.e. data loading)
         return []
       }
-      return sortedWorkflowTree(this.workflowTree)
+      return sortedWorkflowTree(this.cylcTree)
     },
 
     numFilters () {
