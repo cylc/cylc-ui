@@ -196,10 +196,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
     <log-component
       v-else
+      ref="logComponent"
       data-cy="log-viewer"
       :logs="results.lines"
       :timestamps="timestamps"
       :word-wrap="wordWrap"
+      :truncated-start="results.truncatedStart"
+      :truncated-end="results.truncatedEnd"
+      v-model:headMode="headMode"
       v-model:autoScroll="autoScroll"
     />
   </v-container>
@@ -238,8 +242,19 @@ import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
 import JobDetails from '@/components/cylc/common/JobDetails.vue'
-import { useLogWordWrapDefault } from '@/composables/localStorage'
+import { useLogWordWrapDefault, useLogMaxLines, normalizeLogMaxLines } from '@/composables/localStorage'
 import { eventBus } from '@/services/eventBus'
+
+/**
+ * Log view modes.
+ *
+ * These map to the `--mode` values of `cylc cat-log`. "HEAD" is presented to
+ * the user but corresponds to the "tail" cat-log mode (follow the file from
+ * the start); "TAIL" corresponds to the "tail-end" cat-log mode (follow the
+ * file from the end).
+ */
+const LOG_MODE_HEAD = 'tail'
+const LOG_MODE_TAIL = 'tail-end'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -247,12 +262,13 @@ import { eventBus } from '@/services/eventBus'
  * @type {DocumentNode}
 */
 const LOGS_SUBSCRIPTION = gql`
-subscription LogData ($id: ID!, $file: String!) {
-  logs (id: $id, file: $file) {
+subscription LogData ($id: ID!, $file: String!, $mode: String, $maxLines: Int) {
+  logs (id: $id, file: $file, mode: $mode, maxLines: $maxLines) {
     lines
     connected
     path
     error
+    truncated
   }
 }
 `
@@ -295,7 +311,7 @@ query Jobs($id: ID!, $workflowID: ID!) {
  * The first pattern with a matching file name will be chosen.
  */
 
-class Results {
+export class Results {
   constructor () {
     /** @type {string[]} */
     this.lines = []
@@ -307,11 +323,23 @@ class Results {
     this.connected = null
     /** @type {?string} */
     this.error = null
+    /**
+     * Whether the *start* of the file has been truncated (some earlier lines
+     * are not shown). Drives the truncation warning above the log.
+     * @type {boolean}
+     */
+    this.truncatedStart = false
+    /**
+     * Whether the *end* of the file has been truncated (some later lines are
+     * not shown). Drives the truncation warning below the log.
+     * @type {boolean}
+     */
+    this.truncatedEnd = false
   }
 }
 
 /** Callback for assembling the log file from the subscription */
-class LogsCallback extends DeltasCallback {
+export class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
@@ -324,9 +352,19 @@ class LogsCallback extends DeltasCallback {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
       this.results.lines = []
+      this.results.truncatedStart = false
+      this.results.truncatedEnd = false
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
+    }
+    if (added.truncated != null) {
+      // record which end of the file has been truncated (drives the warning)
+      if (added.truncated === 'start') {
+        this.results.truncatedStart = true
+      } else {
+        this.results.truncatedEnd = true
+      }
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -443,6 +481,23 @@ export default {
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
+    /**
+     * Whether the log view is in HEAD mode:
+     * HEAD (cat-log "tail" mode) shows the start of the file and follows it;
+     * TAIL (cat-log "tail-end" mode) shows the end.
+     */
+    const headMode = useInitialOptions('headMode', { props, emit }, false)
+
+    /**
+     * The maximum number of log lines to fetch/display.
+     *
+     * This is a global, per-user setting (edited on the User Profile page),
+     * not a per-workflow view option. Changing it re-subscribes (raising it
+     * needs the backend) and also acts as the cap for "pop" mode.
+     * @type {import('vue').Ref<number>}
+     */
+    const maxLines = useLogMaxLines()
+
     /** View toolbar button size */
     const toolbarBtnSize = '40'
 
@@ -470,6 +525,8 @@ export default {
       timestamps,
       wordWrap,
       autoScroll,
+      headMode,
+      maxLines,
       reset,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
@@ -507,6 +564,26 @@ export default {
       },
       { immediate: true }
     )
+
+    // re-subscribe when the log view mode is changed
+    this.$watch(() => this.headMode, (headMode) => {
+      if (!headMode) {
+        // TAIL mode follows the end of the file, so jump to the end and
+        // follow new lines
+        this.autoScroll = true
+      } else {
+        // HEAD mode shows the start of the file, so stop following and jump
+        // to the top
+        this.autoScroll = false
+        this.$refs.logComponent?.scrollToTop()
+      }
+      this.updateQuery()
+    })
+
+    // re-subscribe when the maximum number of lines is changed
+    this.$watch(() => this.maxLines, () => {
+      this.updateQuery()
+    })
   },
 
   computed: {
@@ -571,10 +648,17 @@ export default {
       // update the subscription
       this.query = new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
-        { id: this.id, file: this.file },
+        {
+          id: this.id,
+          file: this.file,
+          mode: this.headMode ? LOG_MODE_HEAD : LOG_MODE_TAIL,
+          maxLines: normalizeLogMaxLines(this.maxLines),
+        },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results),
+          new LogsCallback(
+            this.results,
+          ),
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false
