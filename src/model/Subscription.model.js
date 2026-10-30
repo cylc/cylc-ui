@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,9 @@
 import { toRaw } from 'vue'
 import ViewState from '@/model/ViewState.model'
 import { Alert } from '@/model/Alert.model'
+import { store } from '@/store/index'
+
+/** @typedef {import('@/model/SubscriptionQuery.model').SubscriptionQuery} SubscriptionQuery */
 
 /**
  * @typedef {Vue} View
@@ -30,7 +33,7 @@ import { Alert } from '@/model/Alert.model'
  * that will be used to create a Subscription.
  *
  * A Subscription may contain one or more SubscriptionQuery's. It accumulates the subscribers (views
- * or components), as well as callbacks (Vuex actions).
+ * or components), as well as callbacks (an object containing methods to run upon receiving deltas, usually Vuex actions).
  *
  * The WorkflowService service will use this Subscription to create a GraphQL Subscription using
  * WebSockets. So any Subscription object created from this class will have a .observable property
@@ -39,49 +42,35 @@ import { Alert } from '@/model/Alert.model'
  * @see SubscriptionQuery
  * @see WorkflowService
  */
-class Subscription {
+export class Subscription {
   /**
    * @param {SubscriptionQuery} query
    * @param {boolean} debug
    */
-  constructor (query, debug = false) {
+  constructor (query) {
     this.query = query
     /**
-     * @type {ZenObservable}
+     * @type {import('zen-observable-ts').Subscription}
      */
     this.observable = null
     /**
-     * @type {{ [componentOrViewUID: string]: View }}
+     * @type {Map<[componentOrViewUID: string], View>}
      */
-    this.subscribers = {}
-    /**
-     * @type {DeltasCallback[]}
-     */
-    this.callbacks = []
+    this.subscribers = new Map()
     this.reload = false
-    this.debug = debug
   }
 
   /**
    * @param {ViewState} viewState
-   * @param {*} context
+   * @param {{ message?: Error | string }} context
    */
-  handleViewState (viewState, context) {
-    if (toRaw(viewState) !== ViewState.ERROR) {
-      Object.values(this.subscribers).forEach((subscriber) => {
-        subscriber.viewState = viewState
-      })
-    } else {
-      Object.values(this.subscribers).forEach((subscriber) => {
-        subscriber.viewState = viewState
-        subscriber.setAlert(new Alert(context.message, 'error'))
-        if (this.debug) {
-          // eslint-disable-next-line no-console
-          console.debug(`Subscription error: ${context.message}`, toRaw(viewState), context)
-        }
-      })
+  handleViewState (viewState, context = {}) {
+    for (const subscriber of this.subscribers.values()) {
+      subscriber.viewState = viewState
+    }
+    if (toRaw(viewState) === ViewState.ERROR) {
+      store.dispatch('setAlert', new Alert(context.message, 'error'))
+      console.error(context)
     }
   }
 }
-
-export default Subscription
