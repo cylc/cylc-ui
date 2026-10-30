@@ -92,7 +92,6 @@ class WorkflowService {
 
     // create & start the global callback
     this.globalCallback = new CylcTreeCallback()
-    this.globalCallback.init(store, [])
   }
 
   // --- Mutations

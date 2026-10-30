@@ -50,10 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               We don't use this for the v-command-menu as that would set the node
               type to family. -->
             <Task
+              v-if="node.rootFamily"
               v-command-menu="node"
-              v-if="node.familyTree?.length"
               :key="node.id"
-              :task="node.familyTree[0].node"
+              :task="node.rootFamily.node"
             />
             <span class="mx-1">{{ node.name }}</span>
           </template>
@@ -287,7 +287,7 @@ export default {
         // dim nodes (tasks & families) that are outside the n=0 window
         dimmed: (
           this.node.node?.graphDepth ||
-          this.node.familyTree?.[0]?.node.graphDepth
+          this.node.rootFamily?.node.graphDepth
         ),
       }
     },
