@@ -489,16 +489,6 @@ export default {
     const headMode = useInitialOptions('headMode', { props, emit }, false)
 
     /**
-     * Pop mode? (true = only keep the most recent `maxLines` lines,
-     * discarding the oldest as new lines arrive; false = keep all lines).
-     * UI-only, so changing it does not require re-subscribing.
-     *
-     * There is no user-facing control for this: we always pop so the view
-     * stays bounded. Kept as an option so it can be flipped for development.
-     */
-    const popMode = useInitialOptions('popMode', { props, emit }, true)
-
-    /**
      * The maximum number of log lines to fetch/display.
      *
      * This is a global, per-user setting (edited on the User Profile page),
@@ -536,7 +526,6 @@ export default {
       wordWrap,
       autoScroll,
       headMode,
-      popMode,
       maxLines,
       reset,
       toolbarBtnSize,
@@ -589,18 +578,6 @@ export default {
         this.$refs.logComponent?.scrollToTop()
       }
       this.updateQuery()
-    })
-
-    // apply the pop limit immediately when it is enabled (otherwise it only
-    // takes effect as new lines arrive)
-    this.$watch(() => this.popMode, (popMode) => {
-      const maxLines = normalizeLogMaxLines(this.maxLines)
-      if (popMode && this.results.lines.length > maxLines) {
-        this.results.lines.splice(
-          0,
-          this.results.lines.length - maxLines
-        )
-      }
     })
 
     // re-subscribe when the maximum number of lines is changed
@@ -681,7 +658,6 @@ export default {
         [
           new LogsCallback(
             this.results,
-            () => this.popMode ? normalizeLogMaxLines(this.maxLines) : null
           ),
         ],
         /* isDelta */ false,
