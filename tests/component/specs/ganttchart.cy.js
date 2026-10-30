@@ -72,7 +72,7 @@ describe('GanttChart correctly', () => {
     cy.get('.apexcharts-tooltip-candlestick')
       .should('exist')
       .should('be.visible')
-    cy.get('[data-test="v-pagination-item"]')
+    cy.get('[data-testid="v-pagination-item"]')
       .should('have.length', 1)
   })
   it('paginates correctly', () => {
@@ -83,7 +83,7 @@ describe('GanttChart correctly', () => {
         jobs,
       },
     }))
-    cy.get('[data-test="v-pagination-item"]')
+    cy.get('[data-testid="v-pagination-item"]')
       .should('have.length', 2)
     cy.get('.vue-apexcharts')
       .should('be.visible')

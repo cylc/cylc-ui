@@ -17,7 +17,7 @@
 
 import { shallowMount } from '@vue/test-utils'
 import { createStore } from 'vuex'
-import User from '@/model/User.model'
+import { User } from '@/model/User.model'
 import storeOptions from '@/store/options'
 import { useGraphQL } from '@/mixins/graphql'
 import { defineComponent } from 'vue'
@@ -30,7 +30,6 @@ describe('GraphQL composables', () => {
 
   it('creates the GraphQL Query variables and computed properties', () => {
     const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
-    store.commit('user/SET_USER', user)
     const Component = defineComponent({
       setup () {
         return useGraphQL()
@@ -40,6 +39,7 @@ describe('GraphQL composables', () => {
     const component = shallowMount(Component, {
       global: {
         plugins: [store],
+        provide: { user },
       },
     })
     const expectedID = `~${user.owner}/${workflowName}`
