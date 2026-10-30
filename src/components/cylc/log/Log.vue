@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       }"
     >
       <v-alert
-        v-if="truncatedStart && linesTruncated"
+        v-if="truncatedStart"
         data-cy="log-truncation-start"
       >
         <template #prepend>
@@ -147,11 +147,6 @@ export default {
       required: false,
       default: false,
     },
-    linesTruncated: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
   },
 
   emits: [
@@ -250,7 +245,7 @@ export default {
 
   // Warning messages shown when the log file has been truncated
   truncationMessages: {
-    start: 'The start of the file has been truncated',
+    start: 'The start of the file may have been truncated',
     end: 'The end of the file has been truncated',
   },
 }

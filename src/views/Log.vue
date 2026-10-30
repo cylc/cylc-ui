@@ -203,7 +203,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :word-wrap="wordWrap"
       :truncated-start="results.truncatedStart"
       :truncated-end="results.truncatedEnd"
-      :lines-truncated="results.linesTruncated"
       v-model:headMode="headMode"
       v-model:autoScroll="autoScroll"
     />
@@ -336,13 +335,6 @@ export class Results {
      * @type {boolean}
      */
     this.truncatedEnd = false
-    /** Whether any lines have been truncated (either start or end).
-     * Used to override the truncation warning in the case where
-     * the file has reached max_lines, but no lines have been truncated due
-     * to the viewer being left open
-     * @type {boolean}
-    */
-    this.linesTruncated = true
   }
 }
 
@@ -350,14 +342,10 @@ export class Results {
 export class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
-   * @param {() => (?number)} getMaxLines
-   *   Returns the maximum number of lines to keep (discarding the oldest as
-   *   new lines arrive), or null/undefined to keep all lines.
    */
-  constructor (results, getMaxLines) {
+  constructor (results) {
     super()
     this.results = results
-    this.getMaxLines = getMaxLines
   }
 
   onAdded (added, store, errors) {
@@ -369,7 +357,6 @@ export class LogsCallback extends DeltasCallback {
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
-      this.results.linesTruncated = this.truncatedCheck()
     }
     if (added.truncated != null) {
       // record which end of the file has been truncated (drives the warning)
@@ -387,20 +374,6 @@ export class LogsCallback extends DeltasCallback {
     }
     if (added.path != null) {
       [this.results.host, this.results.path] = added.path.split(':', 2)
-    }
-  }
-
-  truncatedCheck () {
-    /**
-     * Dummy function:
-     * Some magic to determine if the start of the log has actually been
-     * truncated.  Else a truncation warning is shown whenever the file is
-     * longer than max_lines, even if all lines are displayed.
-     */
-    if (this.magic) {
-      return true
-    } else {
-      return false
     }
   }
 }
