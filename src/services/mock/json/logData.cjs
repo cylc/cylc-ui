@@ -46,20 +46,51 @@ const workflowLogLines = [
  *   file: string,
  * }} variables
  */
-const LogData = async ({ id, file }) => {
+async function* LogData ({ id, file }) {
   const isJob = id.includes('//')
-  const path = `${logDirPath}/${file}`
+  const path = `my-host:${logDirPath}/${file}`
   await simulatedDelay(1e3)
-  return {
+  if (file === deletedFile) {
+    yield {
+      logs: {
+        connected: false,
+        error: 'No such file or directory',
+        path,
+      },
+    }
+    return
+  }
+  yield {
     logs: {
-      connected: file !== deletedFile,
-      error: file === deletedFile
-        ? 'No such file or directory'
-        : undefined,
-      path: `my-host:${path}`,
+      connected: true,
+      path,
       lines: isJob ? jobLogLines : workflowLogLines,
     },
   }
+  if (!isJob && id.endsWith('linear')) {
+    for (let i = 1; i < 50; i++) {
+      await simulatedDelay(2e3)
+      yield {
+        logs: {
+          lines: newLogLines(),
+        },
+      }
+    }
+  }
+}
+
+function newLogLines () {
+  const timestamp = `${new Date().toISOString().slice(0, -5)}+01:00`
+  return [
+    `${timestamp} INFO - [20240101T0000+0100/get_observations/01:running] => succeeded\n`,
+    `${timestamp} INFO - [20240101T0300+0100/get_observations/01:running] => succeeded\n`,
+    `${timestamp} INFO - [20240101T0000+0100/consolidate_observations:waiting(runahead)] => waiting\n`,
+    `${timestamp} INFO - [20240101T0300+0100/consolidate_observations:waiting(runahead)] => waiting\n`,
+    `${timestamp} INFO - xtrigger succeeded: wall_clock = wall_clock(trigger_time=1704063600)\n`,
+    `${timestamp} INFO - [20240101T0000+0100/consolidate_observations:waiting] => waiting(queued)\n`,
+    `${timestamp} INFO - xtrigger succeeded: wall_clock = wall_clock(trigger_time=1704074400)\n`,
+    `${timestamp} INFO - [20240101T0300+0100/consolidate_observations:waiting] => waiting(queued)\n`,
+  ]
 }
 
 module.exports = {
