@@ -255,7 +255,7 @@ import {
   useReducedAnimation,
   useWorkflowWarnings,
   normalizeLogMaxLines,
-  LOG_MAX_LINES_MAX,
+  LOG_MAX_LINES_LIMIT,
 } from '@/composables/localStorage'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { workflowViews, useDefaultView } from '@/views/views.js'
@@ -314,7 +314,7 @@ export default {
     'colour_blind',
   ],
 
-  logMaxLinesMax: LOG_MAX_LINES_MAX,
+  logMaxLinesMax: LOG_MAX_LINES_LIMIT,
 
   icons: {
     settings: mdiCog,
