@@ -20,59 +20,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ref="scrollWrapper"
     class="h-100 overflow-auto px-4 pb-2"
   >
-    <v-defaults-provider
-      :defaults="{
-        VAlert: {
-          type: 'warning',
-          variant: 'tonal',
-          density: 'compact',
-          class: 'my-2',
-        },
-      }"
+    <!-- Renders here for start truncation, moved below the log for end truncation -->
+    <Teleport
+      v-if="endTarget && (truncatedStart || truncatedEnd)"
+      :to="endTarget"
+      :disabled="!truncatedEnd"
     >
-      <v-alert
-        v-if="truncatedStart"
-        data-cy="log-truncation-start"
-        elevation="2"
-        :hover-elevation="5"
-        style="cursor: pointer;"
-        role="button"
-        tabindex="0"
-        :icon="$options.icons.mdiReload"
-        @click="$emit('update:headMode', true)"
-        @keydown.enter="$emit('update:headMode', true)"
-        @keydown.space.prevent="$emit('update:headMode', true)"
+      <button
+        type="button"
+        class="log-truncation"
+        :class="`log-truncation--${truncationPosition}`"
+        :data-cy="`log-truncation-${truncationPosition}`"
+        @click="$emit('update:headMode', !truncatedEnd)"
       >
-        {{ truncationMessages.start }}
-      </v-alert>
-      <pre
-        ref="logText"
-        :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
-        data-cy="log-text"
-      ><span
-        v-for="(log, index) in computedLogs"
-        :key="index"
-      >{{ log }}</span></pre>
-      <v-alert
-        v-if="truncatedEnd"
-        data-cy="log-truncation-end"
-      >
-        <template #prepend>
-          <v-btn
-            size="small"
-            variant="outlined"
-            elevation="4"
-            color="primary"
-            style="background-color:white;"
-            data-cy="log-load-end"
-            @click="$emit('update:headMode', false)"
-          >
-            Load end
-          </v-btn>
-        </template>
-        {{ truncationMessages.end }}
-      </v-alert>
-    </v-defaults-provider>
+        <v-icon :icon="$options.icons.mdiReload" aria-hidden="true" />
+        <span>{{ truncationMessages[truncationPosition] }}</span>
+      </button>
+    </Teleport>
+
+    <pre
+      ref="logText"
+      :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
+      data-cy="log-text"
+    ><span
+    v-for="(log, index) in computedLogs"
+    :key="index"
+    >{{ log }}</span></pre>
+
+    <div ref="endTarget"></div>
+
     <v-btn
       v-if="logs.length"
       position="fixed"
@@ -164,6 +140,7 @@ export default {
     const logText = useTemplateRef('logText')
     const scrollWrapper = useTemplateRef('scrollWrapper')
     const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+    const endTarget = useTemplateRef('endTarget')
 
     const autoScroll = useVModel(props, 'autoScroll', emit)
     const { arrivedState, directions } = useScroll(scrollWrapper)
@@ -214,6 +191,7 @@ export default {
 
     return {
       scrollToTop,
+      endTarget,
     }
   },
 
@@ -228,6 +206,10 @@ export default {
       } else {
         return []
       }
+    },
+
+    truncationPosition () {
+      return this.truncatedEnd ? 'end' : 'start'
     },
 
     truncationMessages () {
@@ -259,3 +241,60 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.log-truncation {
+  --banner-background: #eceff1;
+  --size: 16px;
+  --angle: 90deg;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--banner-background);
+  color: #263238;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.log-truncation:hover {
+  --banner-background: #dce2e5;
+}
+
+.log-truncation:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+.log-truncation::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  height: calc(var(--size) / 2);
+  background: var(--banner-background);
+  pointer-events: none;
+  mask:
+    conic-gradient(
+      from calc(var(--angle) / -2) at bottom,
+      #0000,
+      #000 1deg calc(var(--angle) - 1deg),
+      #0000 var(--angle)
+    ) 50% / var(--size) 100%;
+}
+
+.log-truncation--start::after {
+  bottom: 100%;
+  transform: rotate(180deg);
+}
+
+.log-truncation--end::after {
+  top: 100%;
+}
+</style>

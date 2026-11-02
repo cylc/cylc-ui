@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { nextTick } from 'vue'
 import { shallowMount } from '@vue/test-utils'
 import Log from '@/components/cylc/log/Log.vue'
 
-// Render the defaults-provider's slot without needing a full Vuetify instance
-const stubs = { VDefaultsProvider: { template: '<div><slot /></div>' } }
+// shallowMount stubs Teleport without rendering its content by default
+const stubs = { teleport: false }
 
 describe('Log component', () => {
   const wrapper = shallowMount(Log, {
@@ -45,7 +46,7 @@ describe('Log component', () => {
     })
   })
 
-  it('shows a warning alert when the end of the file is truncated', () => {
+  it('shows a warning alert when the end of the file is truncated', async () => {
     const truncatedWrapper = shallowMount(Log, {
       props: {
         logs: ['line-1'],
@@ -53,6 +54,7 @@ describe('Log component', () => {
       },
       global: { stubs },
     })
+    await nextTick()
     expect(
       truncatedWrapper.find('[data-cy="log-truncation-end"]').exists()
     ).toBe(true)
@@ -62,7 +64,7 @@ describe('Log component', () => {
     ).toBe(false)
   })
 
-  it('shows a warning alert when the start of the file is truncated', () => {
+  it('shows a warning alert when the start of the file is truncated', async () => {
     const truncatedWrapper = shallowMount(Log, {
       props: {
         logs: ['line-1'],
@@ -70,6 +72,7 @@ describe('Log component', () => {
       },
       global: { stubs },
     })
+    await nextTick()
     expect(
       truncatedWrapper.find('[data-cy="log-truncation-start"]').exists()
     ).toBe(true)
@@ -78,13 +81,14 @@ describe('Log component', () => {
     ).toBe(false)
   })
 
-  it('shows no truncation warnings by default', () => {
+  it('shows no truncation warnings by default', async () => {
     const plainWrapper = shallowMount(Log, {
       props: {
         logs: ['line-1'],
       },
       global: { stubs },
     })
+    await nextTick()
     expect(
       plainWrapper.find('[data-cy="log-truncation-start"]').exists()
     ).toBe(false)
