@@ -203,6 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :word-wrap="wordWrap"
       :truncated-start="results.truncatedStart"
       :truncated-end="results.truncatedEnd"
+      :max-lines="maxLines"
       v-model:headMode="headMode"
       v-model:autoScroll="autoScroll"
     />

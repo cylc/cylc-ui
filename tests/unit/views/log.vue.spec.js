@@ -163,7 +163,6 @@ describe('Log view', () => {
     startCallback.onAdded({ truncated: 'start' })
     expect(startResults.truncatedStart).toBe(true)
     expect(startResults.truncatedEnd).toBe(false)
-    // markers are no longer injected into the log lines
     expect(startResults.lines).toEqual(['line-1', 'line-2'])
 
     // end-of-file truncation

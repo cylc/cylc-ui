@@ -33,19 +33,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-alert
         v-if="truncatedStart"
         data-cy="log-truncation-start"
+        elevation="2"
+        :hover-elevation="5"
+        style="cursor: pointer;"
+        role="button"
+        tabindex="0"
+        :icon="$options.icons.mdiReload"
+        @click="$emit('update:headMode', true)"
+        @keydown.enter="$emit('update:headMode', true)"
+        @keydown.space.prevent="$emit('update:headMode', true)"
       >
-        <template #prepend>
-          <v-btn
-            size="small"
-            variant="outlined"
-            color="primary"
-            data-cy="log-load-start"
-            @click="$emit('update:headMode', true)"
-          >
-            Load start
-          </v-btn>
-        </template>
-        {{ $options.truncationMessages.start }}
+        {{ truncationMessages.start }}
       </v-alert>
       <pre
         ref="logText"
@@ -63,14 +61,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-btn
             size="small"
             variant="outlined"
+            elevation="4"
             color="primary"
+            style="background-color:white;"
             data-cy="log-load-end"
             @click="$emit('update:headMode', false)"
           >
             Load end
           </v-btn>
         </template>
-        {{ $options.truncationMessages.end }}
+        {{ truncationMessages.end }}
       </v-alert>
     </v-defaults-provider>
     <v-btn
@@ -93,6 +93,7 @@ import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils/reactivity'
 import {
   mdiMouseMoveUp,
+  mdiReload,
 } from '@mdi/js'
 
 export default {
@@ -138,6 +139,11 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+    maxLines: {
+      type: Number,
+      required: false,
+      default: 5000,
     },
     /** Whether the log is in HEAD (start) mode. Part of the `headMode`
      * two-way binding whose update is emitted by the truncation banner
@@ -223,6 +229,13 @@ export default {
         return []
       }
     },
+
+    truncationMessages () {
+      return {
+        start: `The file is over ${this.maxLines} lines. The start of the file may have been truncated. Click to view from the top`,
+        end: 'The end of the file has been truncated. Click to view from the bottom',
+      }
+    },
   },
 
   methods: {
@@ -241,12 +254,7 @@ export default {
   // Misc options
   icons: {
     mdiMouseMoveUp,
-  },
-
-  // Warning messages shown when the log file has been truncated
-  truncationMessages: {
-    start: 'The start of the file may have been truncated',
-    end: 'The end of the file has been truncated',
+    mdiReload,
   },
 }
 
