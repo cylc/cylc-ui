@@ -161,6 +161,17 @@ describe('cylc tree', () => {
     ])
   })
 
+  it('clears multiple top-level nodes', () => {
+    store.commit('workflows/CREATE')
+    store.commit('workflows/UPDATE', { id: '~a/x' })
+    store.commit('workflows/UPDATE', { id: '~b/y' })
+    store.commit('workflows/UPDATE', { id: '~c/z' })
+    expect(store.state.workflows.cylcTree.children.length).to.equal(3)
+    store.commit('workflows/CLEAR')
+    expect(store.state.workflows.cylcTree.children).to.deep.equal([])
+    expect(getIndex()).to.deep.equal([])
+  })
+
   /** it should remove nodes and housekeep the tree via the REMOVE interface */
   describe('remove()', () => {
     beforeEach(() => {
@@ -295,14 +306,68 @@ describe('cylc tree', () => {
           a: {},
         },
       })
-      const A = () => store.state.workflows.cylcTree.$index['~u/w//1/A']
-      expect(A().children).toMatchObject([
+      const A = store.state.workflows.cylcTree.$index['~u/w//1/A']
+      expect(A.children).toMatchObject([
         { id: '~u/w//1/a' },
       ])
 
       store.commit('workflows/REMOVE', '~u/w//1/a')
 
-      expect(A().children).toStrictEqual([])
+      expect(A.children).toStrictEqual([])
+    })
+
+    it('removes all emptied parents from the index', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w' })
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a' })
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a/01' })
+      // removing the job empties both the task and the cycle
+      store.commit('workflows/REMOVE', '~u/w//1/a/01')
+      expect(getTree(store)).to.deep.equal({ u: { w: {} } })
+      expect(getIndex()).to.deep.equal(['~u', '~u/w'])
+    })
+
+    it('updates a cycle that has been pruned and re-added', () => {
+      store.commit('workflows/UPDATE', { id: '~u/w' })
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a' })
+      store.commit('workflows/UPDATE', { id: '~u/w//1/a/01' })
+      store.commit('workflows/REMOVE', '~u/w//1/a/01')
+      // a new task arrives in the same cycle
+      store.commit('workflows/UPDATE', { id: '~u/w//1/b' })
+      const workflow = getNode('~u/w')
+      expect(workflow.children.length).to.equal(1)
+      const cycle = workflow.children[0]
+      // the index must point at the node in the tree (not a stale one)
+      expect(getNode('~u/w//1')).to.equal(cycle)
+      // so that updates to the cycle reach the tree
+      store.commit('workflows/UPDATE', { id: '~u/w//1', state: 'running' })
+      expect(cycle.node.state).to.equal('running')
+    })
+
+    it("removes a pruned cycle's family tree", () => {
+      const addTaskAndRoot = () => {
+        store.commit('workflows/UPDATE', {
+          id: '~u/w//1/a',
+          firstParent: { id: '~u/w//1/root' },
+          __typename: 'TaskProxy',
+        })
+        store.commit('workflows/UPDATE', {
+          id: '~u/w//1/root',
+          ancestors: [],
+          childTasks: [{ id: '~u/w//1/a' }],
+          __typename: 'FamilyProxy',
+        })
+      }
+      addTaskAndRoot()
+      expect(getNode('~u/w//1').familyTree.map(({ id }) => id)).to.deep.equal(['~u/w//1/root'])
+      // removing the only task prunes the cycle and its family tree
+      store.commit('workflows/REMOVE', '~u/w//1/a')
+      expect(getIndex()).to.deep.equal(['~u', '~u/w'])
+      // re-adding them should rebuild the family tree from scratch
+      addTaskAndRoot()
+      const cycle = getNode('~u/w//1')
+      expect(cycle.familyTree.map(({ id }) => id)).to.deep.equal(['~u/w//1/root'])
+      expect(cycle.familyTree[0]).to.equal(getNode('~u/w//1/root'))
+      expect(cycle.familyTree[0].children.map(({ id }) => id)).to.deep.equal(['~u/w//1/a'])
     })
   })
 
