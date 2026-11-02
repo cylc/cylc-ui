@@ -287,7 +287,7 @@ export default {
         // dim nodes (tasks & families) that are outside the n=0 window
         dimmed: (
           this.node.node?.graphDepth ||
-          this.node?.familyTree?.[0].node?.graphDepth
+          this.node.familyTree?.[0]?.node.graphDepth
         ),
       }
     },

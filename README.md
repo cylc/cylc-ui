@@ -159,28 +159,25 @@ operator (`?.`)?)
 - API calls (e.g. does the browser support `Array.prototype.at()`?)
 
 The former is [handled by Vite](https://vitejs.dev/guide/build.html#browser-compatibility).
-It uses [esbuild](https://esbuild.github.io/api/#target) to transform instances
+It uses [rolldown](https://rolldown.rs/reference/InputOptions.transform#target) to transform instances
 of newer syntax when building.
 
 However, new APIs are not handled and must be polyfilled if deemed necessary.
 
 We define a specification for browser compatibility in
 [`.browserslistrc`](.browserslistrc). See https://github.com/browserslist/browserslist.
-- We are not currently using it for the Vite/esbuild configuration because the
+- We are not currently using it for the Vite configuration because the
 default is good enough (but we could do in future using a plugin such as
 [esbuild-plugin-browserslist](https://www.npmjs.com/package/esbuild-plugin-browserslist)).
 - For polyfilling newer APIs, we could use
 [Babel + core-js](https://babeljs.io/docs/babel-preset-env#usebuiltins) which
-uses the browserslist specification. Or perhaps the simplest solution is to
-use [polyfill.io](https://polyfill.io/v3/) which merely requires adding a
-`<script>` tag to [`index.html`](index.html) which will fetch the listed
-polyfills only if needed by the user's browser. We could even leave it up to
+uses the browserslist specification. We could even leave it up to
 sites to patch their Cylc UI builds with the polyfills they require.
 
 Remember it is not just our source code that must meet our back-compat
 specification, but our bundled dependencies (e.g.
 [Vuetify](https://vuetifyjs.com/en/getting-started/browser-support/)) too!
-Vite/esbuild handles syntax for bundled dependencies.
+Vite handles syntax for bundled dependencies.
 
 However the bottom line is that as of 2023, browser support is much less of an
 issue than it was even a couple of years ago, due to the proliferation of

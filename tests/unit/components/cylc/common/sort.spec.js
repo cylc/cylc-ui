@@ -28,7 +28,8 @@ describe('DEFAULT_COMPARATOR', () => {
     ['01', '1', 0],
     ['20000101T0000Z', '20000101T0001Z', -1],
   ])('(%o, %o) -> %o', (a, b, expected) => {
-    expect(DEFAULT_COMPARATOR(a, b)).toEqual(expected)
+    // Only the sign of the comparator result is guaranteed
+    expect(Math.sign(DEFAULT_COMPARATOR(a, b))).toEqual(expected)
   })
 })
 
