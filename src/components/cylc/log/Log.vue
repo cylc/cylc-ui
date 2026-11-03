@@ -214,7 +214,7 @@ export default {
 
     truncationMessages () {
       return {
-        start: `The file is over ${this.maxLines} lines. The start of the file may have been truncated. Click to view from the top`,
+        start: `The file is over ${this.maxLines} lines and may have been truncated. Click to view from the top`,
         end: 'The end of the file has been truncated. Click to view from the bottom',
       }
     },
@@ -251,16 +251,16 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
   width: 100%;
-  margin: 1rem 0;
-  padding: 0.75rem 1rem;
+  margin: 1rem 0 0 0;
+  padding: 0.5rem 1rem 1rem 1rem;
   border: 0;
-  border-radius: 0;
-  background: var(--banner-background);
+  background: linear-gradient(var(--fade-direction), var(--banner-background) 20%, #fff 95%);
   color: #263238;
   font: inherit;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -287,6 +287,14 @@ export default {
       #000 1deg calc(var(--angle) - 1deg),
       #0000 var(--angle)
     ) 50% / var(--size) 100%;
+}
+
+.log-truncation--start {
+  --fade-direction: to bottom;
+}
+
+.log-truncation--end {
+  --fade-direction: to top;
 }
 
 .log-truncation--start::after {
