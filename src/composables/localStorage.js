@@ -39,7 +39,7 @@ export const useCompactMode = () => useLocalStorage('compactMode', false)
 
 /** Default and hard cap for the log view "maximum lines" setting. */
 export const LOG_MAX_LINES_DEFAULT = 5000
-export const LOG_MAX_LINES_LIMIT = 50000
+export const LOG_MAX_LINES_LIMIT = 100000
 
 export const useLogMaxLines = () => useLocalStorage('logMaxLines', LOG_MAX_LINES_DEFAULT)
 
