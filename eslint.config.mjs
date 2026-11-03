@@ -38,6 +38,8 @@ const commaDangle = [
   },
 ]
 
+const objectCurlyNewline = ['error', { consistent: true }]
+
 export default defineConfig([
   // NOTE: neostandard includes various plugins
   ...neostandard({
@@ -71,15 +73,29 @@ export default defineConfig([
       '@stylistic/comma-dangle': commaDangle,
       'vue/comma-dangle': commaDangle,
 
+      '@stylistic/object-curly-newline': objectCurlyNewline,
+      'vue/object-curly-newline': objectCurlyNewline,
+
       'vue/html-indent': [
         'error',
         2,
         { alignAttributesVertically: false },
       ],
 
+      'vue/html-quotes': ['error', 'double'],
+
+      'vue/mustache-interpolation-spacing': ['error'],
+      'vue/array-bracket-spacing': ['error'],
+      'vue/object-curly-spacing': ['error', 'always'],
+      'vue/no-spaces-around-equal-signs-in-attribute': ['error'],
+      'vue/no-multi-spaces': ['error'],
+      'vue/space-in-parens': ['error'],
+
       'no-console': ['error', {
         allow: ['warn', 'error'],
       }],
+
+      'vue/this-in-template': ['error'],
 
       'vue/multi-word-component-names': ['off'],
 

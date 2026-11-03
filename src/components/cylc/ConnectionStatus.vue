@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-snackbar
     :model-value="isOffline"
-    :timeout=-1
+    :timeout="-1"
     class="justify-center"
     color="red"
     location="top"
