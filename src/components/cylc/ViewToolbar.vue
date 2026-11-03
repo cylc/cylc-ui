@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-btn
               v-else
               class="control-btn"
-              v-bind="{...$attrs, ...props, ...btnProps}"
+              v-bind="{ ...$attrs, ...props, ...btnProps }"
               @click="(e) => {iControl.action === 'menu' ? null : iControl.callback(e)}"
               :disabled="iControl.disabled"
               :aria-checked="iControl.value"
