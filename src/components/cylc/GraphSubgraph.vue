@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       alignment-baseline="middle" text-anchor="middle"
       font-size="60px"
       fill="black"
-      stroke-width=5
+      stroke-width="5"
       paint-order="stroke"
       stroke="white"
     >
