@@ -18,36 +18,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     ref="scrollWrapper"
-    class="h-100 overflow-auto px-4 pb-2"
+    class="d-flex flex-column h-100 overflow-auto px-4 pb-2"
   >
-    <!-- Renders here for start truncation, moved below the log for end truncation -->
-    <Teleport
+    <button
       v-if="truncated"
-      :to="endTarget"
-      :disabled="!headMode || !endTarget"
+      type="button"
+      class="log-truncation"
+      :class="[
+        `log-truncation--${truncationPosition}`,
+        headMode ? 'order-1' : 'order-0',
+      ]"
+      data-cy="log-truncated-btn"
+      @click="() => { headMode = !headMode }"
     >
-      <button
-        type="button"
-        class="log-truncation"
-        :class="`log-truncation--${truncationPosition}`"
-        data-cy="log-truncated-btn"
-        @click="() => { headMode = !headMode }"
-      >
-        <v-icon :icon="mdiReload" aria-hidden="true" />
-        <span>{{ truncationMessage }}</span>
-      </button>
-    </Teleport>
+      <v-icon :icon="mdiReload" aria-hidden="true" />
+      <span>{{ truncationMessage }}</span>
+    </button>
 
     <pre
       ref="logText"
       :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
       data-cy="log-text"
     ><span
-    v-for="(log, index) in computedLogs"
-    :key="index"
+      v-for="(log, index) in computedLogs"
+      :key="index"
     >{{ log }}</span></pre>
-
-    <div ref="endTarget"></div>
 
     <v-btn
       v-if="logs.length"
@@ -56,10 +51,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="ma-5"
       @click="scrollToTop"
       :icon="mdiMouseMoveUp"
+      style="z-index: 1;"
       data-cy="log-scroll-top"
     />
     <!-- a div to use for autoscrolling -->
-    <div ref="autoScrollEnd"></div>
+    <div ref="autoScrollEnd" class="order-2"></div>
   </div>
 </template>
 
@@ -121,7 +117,6 @@ const headMode = defineModel('headMode', {
 const logText = useTemplateRef('logText')
 const scrollWrapper = useTemplateRef('scrollWrapper')
 const autoScrollEndRef = useTemplateRef('autoScrollEnd')
-const endTarget = useTemplateRef('endTarget')
 
 const { arrivedState, directions } = useScroll(scrollWrapper)
 

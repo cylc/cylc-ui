@@ -19,9 +19,6 @@ import { nextTick } from 'vue'
 import { shallowMount } from '@vue/test-utils'
 import Log from '@/components/cylc/log/Log.vue'
 
-// shallowMount stubs Teleport without rendering its content by default
-const stubs = { teleport: false }
-
 describe('Log component', () => {
   it('shows a warning alert when the end of the file is truncated', async () => {
     const truncatedWrapper = shallowMount(Log, {
@@ -30,7 +27,6 @@ describe('Log component', () => {
         truncated: true,
         headMode: true,
       },
-      global: { stubs },
     })
     await nextTick()
     expect(
@@ -49,7 +45,6 @@ describe('Log component', () => {
         truncated: true,
         headMode: false,
       },
-      global: { stubs },
     })
     await nextTick()
     expect(
@@ -65,7 +60,6 @@ describe('Log component', () => {
       props: {
         logs: ['line-1'],
       },
-      global: { stubs },
     })
     await nextTick()
     expect(
