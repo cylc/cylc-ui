@@ -17,18 +17,12 @@
 
 import { nextTick } from 'vue'
 import { shallowMount } from '@vue/test-utils'
-import Log from '@/components/cylc/log/Log.vue'
+import Log, { stripTimestamp } from '@/components/cylc/log/Log.vue'
 
 // shallowMount stubs Teleport without rendering its content by default
 const stubs = { teleport: false }
 
 describe('Log component', () => {
-  const wrapper = shallowMount(Log, {
-    props: {
-      logs: [],
-    },
-  })
-
   describe.each([
     { line: '' },
     { line: '  ' },
@@ -42,7 +36,7 @@ describe('Log component', () => {
   ])('stripTimestamp($line)', ({ line, expected }) => {
     expected ??= line
     it(`returns '${expected}'`, () => {
-      expect(wrapper.vm.stripTimestamp(line)).toEqual(expected)
+      expect(stripTimestamp(line)).toEqual(expected)
     })
   })
 

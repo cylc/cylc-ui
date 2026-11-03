@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :data-cy="`log-truncation-${truncationPosition}`"
         @click="$emit('update:headMode', !truncatedEnd)"
       >
-        <v-icon :icon="$options.icons.mdiReload" aria-hidden="true" />
+        <v-icon :icon="icons.mdiReload" aria-hidden="true" />
         <span>{{ truncationMessages[truncationPosition] }}</span>
       </button>
     </Teleport>
@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       location="bottom right"
       class="ma-5"
       @click="scrollToTop"
-      :icon="$options.icons.mdiMouseMoveUp"
+      :icon="icons.mdiMouseMoveUp"
       data-cy="log-scroll-top"
     />
     <!-- a div to use for autoscrolling -->
@@ -64,13 +64,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
+import { computed, useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils/reactivity'
 import {
   mdiMouseMoveUp,
   mdiReload,
 } from '@mdi/js'
+
+export function stripTimestamp (logLine) {
+  const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
+  return logLine.match(regex)?.[1] ?? logLine
+}
 
 export default {
   name: 'LogComponent',
@@ -189,54 +194,31 @@ export default {
       ro.disconnect()
     })
 
+    const computedLogs = computed(() => {
+      if (props.logs.length) {
+        return props.timestamps ? props.logs : props.logs.map(stripTimestamp)
+      }
+      return props.placeholder ? [props.placeholder] : []
+    })
+
+    const truncationPosition = computed(() => props.truncatedEnd ? 'end' : 'start')
+
+    const truncationMessages = computed(() => ({
+      start: `The file is over ${props.maxLines} lines and may have been truncated. Click to view from the top`,
+      end: 'The end of the file has been truncated. Click to view from the bottom',
+    }))
+
     return {
       scrollToTop,
       endTarget,
+      computedLogs,
+      truncationPosition,
+      truncationMessages,
+      icons: {
+        mdiMouseMoveUp,
+        mdiReload,
+      },
     }
-  },
-
-  computed: {
-    computedLogs () {
-      if (this.logs.length > 0) {
-        if (!this.timestamps) {
-          return this.updateLogs()
-        } else return this.logs
-      } else if (this.placeholder) {
-        return [this.placeholder]
-      } else {
-        return []
-      }
-    },
-
-    truncationPosition () {
-      return this.truncatedEnd ? 'end' : 'start'
-    },
-
-    truncationMessages () {
-      return {
-        start: `The file is over ${this.maxLines} lines and may have been truncated. Click to view from the top`,
-        end: 'The end of the file has been truncated. Click to view from the bottom',
-      }
-    },
-  },
-
-  methods: {
-    updateLogs () {
-      return this.logs.map((logLine) => {
-        return this.stripTimestamp(logLine)
-      })
-    },
-
-    stripTimestamp (logLine) {
-      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      return logLine.match(regex)?.[1] ?? logLine
-    },
-  },
-
-  // Misc options
-  icons: {
-    mdiMouseMoveUp,
-    mdiReload,
   },
 }
 
