@@ -230,7 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-model.number="logMaxLines"
                     type="number"
                     :min="1"
-                    :max="$options.logMaxLinesMax"
+                    :max="LOG_MAX_LINES_LIMIT"
                     @blur="logMaxLines = normalizeLogMaxLines(logMaxLines)"
                     data-cy="input-log-max-lines"
                   />
@@ -284,6 +284,7 @@ export default {
       compactMode: useCompactMode(),
       logMaxLines: useLogMaxLines(),
       normalizeLogMaxLines,
+      LOG_MAX_LINES_LIMIT,
       upperFirst,
       workflowViews,
     }
@@ -313,8 +314,6 @@ export default {
     'greyscale',
     'colour_blind',
   ],
-
-  logMaxLinesMax: LOG_MAX_LINES_LIMIT,
 
   icons: {
     settings: mdiCog,
