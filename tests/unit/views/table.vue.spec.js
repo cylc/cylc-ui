@@ -15,14 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { nextTick, ref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Table from '@/views/Table.vue'
-import WorkflowService from '@/services/workflow.service'
-import User from '@/model/User.model'
-import { nextTick } from 'vue'
+import { WorkflowService } from '@/services/workflow.service'
 import { simpleTableTasks } from '@/../tests/unit/components/cylc/table/table.data'
 import TaskState from '@/model/TaskState.model'
 import { mockRoute } from '$tests/util'
@@ -71,10 +70,9 @@ const workflows = [
 describe('Table view', () => {
   mockRoute({ params: { workflowName: 'one' } })
   let store, $workflowService
+
   beforeEach(() => {
     store = createStore(storeOptions)
-    const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
-    store.commit('user/SET_USER', user)
     $workflowService = sinon.createStubInstance(WorkflowService)
   })
 
@@ -87,7 +85,7 @@ describe('Table view', () => {
       },
     })
 
-    await wrapper.setData({ workflows })
+    wrapper.vm.workflows = ref(workflows)
 
     expect(wrapper.vm.tasks).toMatchObject([
       {

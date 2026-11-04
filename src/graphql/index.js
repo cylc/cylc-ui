@@ -45,7 +45,7 @@ disableFragmentWarnings()
  */
 export function createGraphQLUrls () {
   const httpUrl = createUrl('graphql')
-  const wsUrl = createUrl('subscriptions', true)
+  const wsUrl = createUrl('subscriptions', { websockets: true })
   return {
     httpUrl,
     wsUrl,
@@ -98,30 +98,24 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
 }
 
 /**
- * Create an ApolloClient using the given URI's.
- *
- * If a `queryUri` is provided, it will be used for handling Query operations.
- *
- * If a `subscriptionUri` is provided, it will be used for handling Subscription operations.
- *
- * If no `subscriptionUri` is provided, any Subscription operation will fail, as we will be
- * using an empty link (a simple instance of `ApolloLink`).
+ * Create an ApolloClient.
  *
  * The link object is actually a split function (from the `apollo-link` module). This function
  * works similarly to a ternary operator. Based on the operation, it will return a Query or
  * a Subscription link.
  *
  * @public
- * @param {string} httpUrl
- * @param {SubscriptionClient|null} subscriptionClient
- * @returns {ApolloClient} an ApolloClient
+ * @param {string} httpUrl - HTTP URL for GraphQL queries
+ * @param {SubscriptionClient=} subscriptionClient - WebSocket subscription client for handling GraphQL subscriptions.
+ * If no subscription client is provided (e.g. in unit tests), fall back to an empty link.
+ * @returns {ApolloClient}
  */
 export function createApolloClient (httpUrl, subscriptionClient) {
   const httpLink = new HttpLink({
     uri: httpUrl,
   })
 
-  const wsLink = subscriptionClient !== null
+  const wsLink = subscriptionClient
     ? new WebSocketLink(subscriptionClient)
     : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 

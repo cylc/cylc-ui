@@ -108,7 +108,13 @@ onMounted(() => {
   // Reactively run filtering
   if (props.nodeFilterFunc) {
     watch(
-      () => [props.filterState, rootChildren.value],
+      // Do not include rootChildren in the deep watcher source when no filters are active,
+      // as it would unnecessarily track changes down the job level on every delta
+      () => (
+        props.filterState
+          ? [props.filterState, rootChildren.value]
+          : [null, null]
+      ),
       ([active, nodes], [wasActive, oldNodes]) => {
         if (active) {
           for (const node of rootChildren.value) {

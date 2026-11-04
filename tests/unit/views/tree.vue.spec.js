@@ -19,8 +19,7 @@ import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
-import User from '@/model/User.model'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
 import { getIDMap, mockRoute } from '$tests/util'
 
@@ -40,37 +39,35 @@ const workflowNode = {
       ...expandID('~user/workflow1//1'),
       type: 'cycle',
       children: [],
-      familyTree: [
-        {
-          ...expandID('~user/workflow1//1/root'),
-          type: 'family',
-          children: [
-            {
-              ...expandID('~user/workflow1//1/FAM'),
-              type: 'family',
-              children: [
-                {
-                  ...expandID('~user/workflow1//1/foo'),
-                  type: 'task',
-                  node: { state: 'failed', isHeld: true },
-                  children: [
-                    {
-                      ...expandID('~user/workflow1//1/foo/1'),
-                      type: 'job',
-                    },
-                  ],
-                },
-                {
-                  ...expandID('~user/workflow1//1/bar'),
-                  type: 'task',
-                  node: { state: 'waiting' },
-                  children: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      rootFamily: {
+        ...expandID('~user/workflow1//1/root'),
+        type: 'family',
+        children: [
+          {
+            ...expandID('~user/workflow1//1/FAM'),
+            type: 'family',
+            children: [
+              {
+                ...expandID('~user/workflow1//1/foo'),
+                type: 'task',
+                node: { state: 'failed', isHeld: true },
+                children: [
+                  {
+                    ...expandID('~user/workflow1//1/foo/1'),
+                    type: 'job',
+                  },
+                ],
+              },
+              {
+                ...expandID('~user/workflow1//1/bar'),
+                type: 'task',
+                node: { state: 'waiting' },
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
     },
   ],
 }
@@ -80,8 +77,6 @@ describe('Tree view', () => {
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
-    const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
-    store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
         plugins: [store],

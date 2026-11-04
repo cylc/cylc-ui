@@ -208,7 +208,7 @@ import {
   mdiMouseMoveDown,
   mdiInformationOutline,
 } from '@mdi/js'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
@@ -216,12 +216,11 @@ import {
   useInitialOptions,
 } from '@/utils/initialOptions'
 import LogComponent from '@/components/cylc/log/Log.vue'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import { Tokens } from '@/utils/uid'
 import gql from 'graphql-tag'
 import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
 import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
-import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
@@ -279,11 +278,6 @@ query Jobs($id: ID!, $workflowID: ID!) {
 }
 `
 
-/**
- * The preferred file to start with as a list of patterns.
- * The first pattern with a matching file name will be chosen.
- */
-
 class Results {
   constructor () {
     /** @type {string[]} */
@@ -296,36 +290,6 @@ class Results {
     this.connected = null
     /** @type {?string} */
     this.error = null
-  }
-}
-
-/** Callback for assembling the log file from the subscription */
-class LogsCallback extends DeltasCallback {
-  /**
-   * @param {Results} results
-   */
-  constructor (results) {
-    super()
-    this.results = results
-  }
-
-  onAdded (added, store, errors) {
-    if (this.results.connected === false) {
-      // We have reconnected; clear the current lines otherwise they will be duplicated
-      this.results.lines = []
-    }
-    if (added.lines) {
-      this.results.lines.push(...added.lines)
-    }
-    if (added.connected != null) {
-      this.results.connected = added.connected
-    }
-    if (added.error != null) {
-      this.results.error = added.error
-    }
-    if (added.path != null) {
-      [this.results.host, this.results.path] = added.path.split(':', 2)
-    }
   }
 }
 
@@ -360,7 +324,7 @@ export default {
   setup (props, { emit }) {
     const store = useStore()
 
-    const { workflowID, variables } = useGraphQL()
+    const { workflowID, variables } = useWorkflowVariables()
 
     /**
      * The task/job ID.
@@ -420,6 +384,26 @@ export default {
       results.value = new Results()
     }
 
+    /** Callback for assembling the log file from the subscription */
+    function onAdded (added) {
+      if (results.value.connected === false) {
+      // We have reconnected; clear the current lines otherwise they will be duplicated
+        results.value.lines = []
+      }
+      if (added.lines) {
+        results.value.lines.push(...added.lines)
+      }
+      if (added.connected != null) {
+        results.value.connected = added.connected
+      }
+      if (added.error != null) {
+        results.value.error = added.error
+      }
+      if (added.path != null) {
+        [results.value.host, results.value.path] = added.path.split(':', 2)
+      }
+    }
+
     /** The path of the log file parent dir minus the trailing slash. */
     const parentPath = computed(
       () => results.value.path?.substring(0, results.value.path.length - file.value.length - 1)
@@ -461,6 +445,7 @@ export default {
       jobNode: ref(null),
       workflowID,
       variables,
+      onAdded,
       icons: {
         mdiClockOutline,
         mdiFileAlertOutline,
@@ -534,11 +519,13 @@ export default {
         LOGS_SUBSCRIPTION,
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
-        [
-          new LogsCallback(this.results),
-        ],
-        /* isDelta */ false,
-        /* isGlobalCallback */ false
+        (response) => {
+          if (!response.data?.logs) {
+            console.error(response.errors ?? 'No data received from log subscription')
+            return
+          }
+          this.onAdded(response.data.logs)
+        },
       )
     },
     /**
