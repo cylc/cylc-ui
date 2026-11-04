@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { isArray } = require('lodash')
 const graphql = require('./graphql.cjs')
 
 /**
@@ -57,8 +56,7 @@ async function sendWSResponse (ws, msg) {
       const operationName = (
         parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
       )
-      const responseData = await graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
-      for (const item of isArray(responseData) ? responseData : [responseData]) {
+      for await (const item of graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)) {
         ws.send(wsResponse(parsed.id, 'data', item))
       }
       return
