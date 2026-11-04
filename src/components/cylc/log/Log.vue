@@ -188,22 +188,9 @@ defineExpose({
 
 .log-truncation {
   --banner-background: #{map.get(settings.$grey, 'lighten-3')};
-  --page-edge: #{map.get(settings.$grey, 'lighten-3')};
   --size: 16px;
   --angle: 90deg;
-  /* Width of the zigzag gap between the banner's and the page's torn edges */
-  --gap: 12px;
-  /* How far the page's torn edge colour fades into the log */
-  --page-fade: 5rem;
-  --tear-space: calc(var(--gap) + (var(--page-fade) / 3));
-  /* Downward-pointing teeth; rotate 180deg for upward */
-  --teeth:
-    conic-gradient(
-      from calc(var(--angle) / -2) at bottom,
-      #0000,
-      #000 1deg calc(var(--angle) - 1deg),
-      #0000 var(--angle)
-    );
+  --tear-space: calc(var(--size) / 2 + 0.5rem);
 
   position: relative;
   display: flex;
@@ -229,7 +216,7 @@ defineExpose({
   outline-offset: 3px;
 }
 
-/* Banner's torn edge, facing the log */
+/* Torn edge facing the log; teeth point down, rotate 180deg for up */
 .log-truncation::after {
   content: '';
   position: absolute;
@@ -237,29 +224,20 @@ defineExpose({
   height: calc(var(--size) / 2);
   background: var(--banner-background);
   pointer-events: none;
-  mask: var(--teeth) 50% / var(--size) 100%;
-}
-
-/* Page's torn edge, offset half a tooth so it would interlock with the banner's */
-.log-truncation::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  height: calc(var(--size) / 2 + var(--page-fade));
-  background: linear-gradient(transparent, var(--page-edge) calc(100% - var(--size) / 2));
-  pointer-events: none;
   mask:
-    var(--teeth) calc(50% + var(--size) / 2) 100% / var(--size) calc(var(--size) / 2) repeat-x,
-    linear-gradient(#000 0 0) 0 0 / 100% calc(100% - var(--size) / 2) no-repeat;
+    conic-gradient(
+      from calc(var(--angle) / -2) at bottom,
+      #0000,
+      #000 1deg calc(var(--angle) - 1deg),
+      #0000 var(--angle)
+    ) 50% / var(--size) 100%;
 }
 
 .log-truncation--start {
-  --fade-direction: to top;
   margin: 0.5rem 0 var(--tear-space) -0.25rem;
 }
 
 .log-truncation--end {
-  --fade-direction: to bottom;
   margin: var(--tear-space) 0 0.5rem -0.25rem;
 }
 
@@ -267,17 +245,8 @@ defineExpose({
   top: 100%;
 }
 
-.log-truncation--start::before {
-  top: calc(100% + var(--gap));
-  transform: rotate(180deg);
-}
-
 .log-truncation--end::after {
   bottom: 100%;
   transform: rotate(180deg);
-}
-
-.log-truncation--end::before {
-  bottom: calc(100% + var(--gap));
 }
 </style>
