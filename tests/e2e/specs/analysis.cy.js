@@ -19,9 +19,17 @@ import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
 import { clone } from 'lodash'
 
 /** A delay for state to be saved before refreshing page, otherwise can flakily fail */
-const stateSaveDelay = 100
+const stateSaveDelay = 150
 
 const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
+
+Cypress.Commands.add('getDropdownMenu', { prevSubject: true }, (subject) => {
+  const input = subject.is('input')
+    ? cy.wrap(subject)
+    : cy.wrap(subject).find('input[role=combobox]')
+  return input.invoke('attr', 'aria-controls')
+    .then((dropdownID) => cy.get(`#${dropdownID}`))
+})
 
 describe('Analysis view', () => {
   const numTasks = sortedTasks.length
@@ -32,187 +40,152 @@ describe('Analysis view', () => {
 
   describe('Table view', () => {
     it('Should display the mocked workflow', () => {
-      cy
-        .get('.c-analysis table  > tbody > tr')
+      cy.get('.c-analysis table  > tbody > tr')
         .should('have.length', numTasks)
         .should('be.visible')
     })
 
     describe('Filters', () => {
       it('Should display total times and not filter by default', () => {
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
           .should('be.visible')
-        cy
-          .get('#c-analysis-filter-task-name')
+        cy.get('#c-analysis-filter-task-name')
           .should('be.empty')
-        cy
-          .get('input#c-analysis-filter-task-platforms')
+        cy.get('[data-cy=analysis-filter-task-platforms] input[role=combobox]')
           .should('have.value', 'All')
-        cy
-          .get('input#c-analysis-filter-task-timings')
+        cy.get('[data-cy=analysis-filter-task-timings] input[role=combobox]')
           .should('have.value', 'Total times')
       })
 
       it('Should filter by task name', () => {
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
           .should('be.visible')
-        cy
-          .get('td')
+        cy.get('.c-analysis table td')
           .contains('eventually')
           .should('be.visible')
-        cy
-          .get('#c-analysis-filter-task-name')
+        cy.get('#c-analysis-filter-task-name')
           .click()
-          .get('.v-list-item')
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('waiting')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('waiting')
           .should('be.visible')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', 1)
           .should('be.visible')
       })
 
       it('Should filter by task platform', () => {
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
           .should('be.visible')
-        cy
-          .get('td')
+        cy.get('.c-analysis table td')
           .contains('platform_1')
           .should('be.visible')
-        cy
-          .get('#c-analysis-filter-task-platforms')
-          .click({ force: true })
-        cy
-          .get('.v-list-item')
+        cy.get('[data-cy=analysis-filter-task-platforms]')
+          .click()
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('platform_2')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('eventually')
           .should('be.visible')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', 1)
           .should('be.visible')
       })
 
       it('Should display the correct timings', () => {
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
-        cy
-          .get('td')
+        cy.get('.c-analysis table td')
           .contains('00:00:30')
         // Show run times
-        cy
-          .get('#c-analysis-filter-task-timings')
-          .click({ force: true })
-        cy
-          .get('.v-list-item')
+        cy.get('[data-cy=analysis-filter-task-timings]')
+          .click()
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('Run')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('00:00:21')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
         // Show queue times
-        cy
-          .get('#c-analysis-filter-task-timings')
-          .click({ force: true })
-        cy
-          .get('.v-list-item')
+        cy.get('[data-cy=analysis-filter-task-timings]')
+          .click()
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('Queue')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('00:00:12')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
       })
 
       it('Should filter by task name, platform and timings', () => {
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
           .should('be.visible')
-        cy
-          .get('td')
+        cy.get('.c-analysis table td')
           .contains('30')
           .should('be.visible')
         // Show only task on platform_1
-        cy
-          .get('#c-analysis-filter-task-platforms')
-          .click({ force: true })
-        cy
-          .get('.v-list-item')
+        cy.get('[data-cy=analysis-filter-task-platforms]')
+          .click()
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('platform_1')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('waiting')
           .should('be.visible')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', 2)
           .should('be.visible')
         // Show run times
-        cy
-          .get('#c-analysis-filter-task-timings')
-          .click({ force: true })
-        cy
-          .get('.v-list-item')
+        cy.get('[data-cy=analysis-filter-task-timings]')
+          .click()
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('Run')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('00:00:21')
           .should('be.visible')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', 2)
           .should('be.visible')
         // Show task names containing 'wait'
-        cy
-          .get('#c-analysis-filter-task-name')
+        cy.get('#c-analysis-filter-task-name')
           .click()
-          .get('.v-list-item')
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('waiting')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('waiting')
           .should('be.visible')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', 1)
           .should('be.visible')
         // Show queue times
-        cy
-          .get('#c-analysis-filter-task-timings')
-          .click({ force: true })
-        cy
-          .get('.v-list-item')
+        cy.get('[data-cy=analysis-filter-task-timings]')
+          .click()
+          .getDropdownMenu()
+          .find('.v-list-item')
           .contains('Queue')
-          .click({ force: true })
-        cy
-          .get('td')
+          .click()
+        cy.get('.c-analysis table td')
           .contains('00:00:12')
           .should('be.visible')
-        cy
-          .get('.c-analysis table > tbody > tr')
+        cy.get('.c-analysis table > tbody > tr')
           .should('have.length', 1)
           .should('be.visible')
       })
@@ -282,10 +255,10 @@ describe('Analysis view', () => {
         .should('be.visible')
       // There should be three tasks in the drop down list when loaded
       // Plus 2 entries for Select and Deselect all
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu()
+        .find('.v-list-item')
         .its('length')
         .should('eq', 3, { timeout: 10000 })
     })
@@ -293,8 +266,7 @@ describe('Analysis view', () => {
     it('Should switch view', () => {
       // Check for axis labels - should be no data plotted and only
       // y-axis labels visible
-      cy
-        .get('.vue-apexcharts')
+      cy.get('.vue-apexcharts')
         .should('be.visible')
         .get('.apexcharts-yaxis-label')
         .should('be.visible')
@@ -303,8 +275,7 @@ describe('Analysis view', () => {
         .get('.c-analysis .c-table')
         .should('not.exist')
       // Switch back to table
-      cy
-        .get('.c-analysis [data-cy=table-toggle]')
+      cy.get('.c-analysis [data-cy=table-toggle]')
         .click()
         .get('.c-analysis .c-table')
         .should('be.visible')
@@ -314,37 +285,34 @@ describe('Analysis view', () => {
 
     it('Should select tasks from the autocomplete drop down list', () => {
       // Add waiting task and check only two cycles visible on both graphs
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('waiting')
         .click()
-      cy
-        .get('.apexcharts-xaxis-label')
+      cy.get('.apexcharts-xaxis-label')
         .should('have.length', 4)
         // Add eventually_succeeded task and check three cycles visible
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('eventually')
         .click()
-      cy
-        .get('.apexcharts-xaxis-label')
+      cy.get('.apexcharts-xaxis-label')
         .should('have.length', 6)
       // Remove selected tasks and check no cycle points are visible
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu().as('dropdown')
+        .find('.v-list-item')
         .contains('waiting')
         .click()
-        .get('.v-list-item')
+        .get('@dropdown').find('.v-list-item')
         .contains('eventually')
         .click()
-      cy
-        .get('.apexcharts-xaxis-label')
+      cy.get('.apexcharts-xaxis-label')
         .should('not.exist')
     })
 
@@ -352,12 +320,13 @@ describe('Analysis view', () => {
       // Before searching, the options to add/remove all tasks should exist
       cy.get('[data-cy=time-series-task-select]')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu().as('dropdown')
+        .find('.v-list-item')
         .contains('succeeded')
-        .get('.v-card-actions')
+        .get('@dropdown').find('.v-card-actions')
         .contains('Select all')
         .should('exist')
-        .get('.v-card-actions')
+        .get('@dropdown').find('.v-card-actions')
         .contains('Deselect all')
         .should('exist')
       // Select all tasks that contain succeeded
@@ -397,22 +366,19 @@ describe('Analysis view', () => {
 
     it('Should show origin, when selected', () => {
       // Add waiting task and check y-axis doesn't start at origin
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('waiting')
         .click()
-      cy
-        .get('.apexcharts-yaxis-label')
+      cy.get('.apexcharts-yaxis-label')
         .contains('00:00:00')
         .should('not.exist')
       // Click on Show origin checkbox and check y-axis now starts at origin
-      cy
-        .get('.v-selection-control > .v-label')
+      cy.get('.v-selection-control > .v-label')
         .click()
-      cy
-        .get('.apexcharts-yaxis-label')
+      cy.get('.apexcharts-yaxis-label')
         .contains('00:00:00')
     })
   })
@@ -440,44 +406,40 @@ describe('Filters and Options save state', () => {
 
     it('remembers task name, platform and timings', () => {
       // Check default options
-      cy
-        .get('.c-analysis table > tbody > tr')
+      cy.get('.c-analysis table > tbody > tr')
         .should('have.length', numTasks)
         .should('be.visible')
 
       // Set platform filter options
-      cy
-        .get('#c-analysis-filter-task-platforms')
-        .click({ force: true })
-      cy
-        .get('.v-list-item')
+      cy.get('[data-cy=analysis-filter-task-platforms]')
+        .click()
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('platform_1')
-        .click({ force: true })
+        .click()
 
       // Set queue task name filter options
-      cy
-        .get('#c-analysis-filter-task-name')
+      cy.get('#c-analysis-filter-task-name')
         .click()
-        .get('.v-list-item')
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('waiting')
-        .click({ force: true })
+        .click()
 
       // Set task times filter options
-      cy
-        .get('#c-analysis-filter-task-timings')
-        .click({ force: true })
-      cy
-        .get('.v-list-item')
+      cy.get('[data-cy=analysis-filter-task-timings]')
+        .click()
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('Queue')
-        .click({ force: true })
+        .click()
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(stateSaveDelay)
       cy.reload()
 
       // Check number of tasks
-      cy
-        .get('.v-data-table__tr')
+      cy.get('.v-data-table__tr')
         .should('have.length', 1)
         .contains('waiting')
         .should('be.visible')
@@ -517,9 +479,10 @@ describe('Filters and Options save state', () => {
         .click()
       cy.get('[data-cy="box-plot-sort-select"]')
         .click()
-      cy.get('.v-list-item')
+        .getDropdownMenu()
+        .find('.v-list-item')
         .contains('Count')
-        .click({ force: true })
+        .click()
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(stateSaveDelay)
       cy.reload()
