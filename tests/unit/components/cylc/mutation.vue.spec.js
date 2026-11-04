@@ -20,7 +20,7 @@ import Mutation from '@/components/cylc/Mutation.vue'
 import { createVuetify } from 'vuetify'
 import { vuetifyOptions } from '@/plugins/vuetify'
 
-const cylcObject = { id: '~u/w//1/t', isFamily: false }
+const nodes = [{ id: '~u/w//1/t', isFamily: false }]
 
 const BASIC_MUTATION = {
   name: 'myMutation',
@@ -64,7 +64,7 @@ describe('Mutation Component', () => {
   it('should display mutation name and description', () => {
     const wrapper = mountFunction({
       props: {
-        cylcObject,
+        nodes,
         mutation: BASIC_MUTATION,
       },
     })
@@ -76,7 +76,7 @@ describe('Mutation Component', () => {
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
       props: {
-        cylcObject,
+        nodes,
         mutation: {
           name: 'Darmok',
           description: desc,

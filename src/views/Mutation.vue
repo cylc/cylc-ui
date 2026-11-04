@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <MutationComponent
-    v-bind="{ mutation, cylcObject, types }"
+    v-bind="{ mutation, nodes, types }"
     v-model="data"
     @success="onSuccess()"
   />
@@ -49,7 +49,7 @@ const props = defineProps({
   },
 })
 
-const { mutation, cylcObject, types } = toRefs(props.initialOptions)
+const { mutation, nodes, types } = toRefs(props.initialOptions)
 
 const data = useInitialOptions('data', { props, emit })
 

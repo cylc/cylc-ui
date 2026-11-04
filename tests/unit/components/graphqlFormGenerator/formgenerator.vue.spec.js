@@ -183,7 +183,7 @@ describe('FormGenerator Component', () => {
     },
     ...merge(
       {
-        props: { cylcObject: {} },
+        props: { nodes: [] },
         shallow: true,
       },
       options

@@ -84,9 +84,9 @@ const props = defineProps({
     default: () => [],
   },
 
-  // the data store node we are operating on
-  cylcObject: {
-    type: Object,
+  /** The data store nodes we are operating on */
+  nodes: {
+    type: Array,
     required: true,
   },
 })
@@ -117,7 +117,7 @@ const inputs = computed(() => {
 
 /* Set this form to its initial conditions. */
 function reset () {
-  const newModel = getMutationArgsFromTokens(props.mutation, props.cylcObject.tokens)
+  const newModel = getMutationArgsFromTokens(props.mutation, ...props.nodes.map((n) => n.tokens))
 
   // then apply default values from the schema
   let defaultValue

@@ -59,10 +59,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-divider />
         <EditRuntimeForm
           v-if="mutation.name === 'editRuntime'"
-          v-bind="{
-            cylcObject,
-            types,
-          }"
+          :cylc-object="nodes[0]"
+          v-bind="{ types }"
           ref="form"
           v-model="isValid"
         />
@@ -70,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-else
           v-bind="{
             mutation,
-            cylcObject,
+            nodes,
             types,
           }"
           v-model:data="data"
@@ -164,9 +162,9 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  cylcObject: {
-    // data store node
-    type: Object,
+  /** Data store nodes */
+  nodes: {
+    type: Array,
     required: true,
   },
   types: {

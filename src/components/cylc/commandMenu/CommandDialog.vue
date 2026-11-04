@@ -61,7 +61,7 @@ const props = defineProps({
   },
 })
 
-/** @type {import('vue').ShallowReactive<{ cylcObject: any, mutation: any }>} */
+/** @type {import('vue').ShallowReactive<{ nodes: any[], mutation: any }>} */
 const item = shallowReactive({})
 
 /** User-inputted state of the form. */
@@ -79,7 +79,7 @@ const visible = ref(false)
  * Note this exposed function is how new data is passed in, rather than via props.
  * This avoids the need for a parent component to manage refs representing the mutation and form state.
  *
- * @param {{ cylcObject: any, mutation: any }} newItem
+ * @param {{ nodes: any[], mutation: any }} newItem
  */
 function open (newItem) {
   formState.value = undefined
@@ -104,7 +104,7 @@ async function openInTab () {
   await router.push({
     name: 'Workspace',
     params: {
-      workflowName: item.cylcObject.tokens.workflow,
+      workflowName: item.nodes[0].tokens.workflow,
     },
   })
   // open the command editor in a new tab
