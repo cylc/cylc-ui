@@ -182,10 +182,13 @@ defineExpose({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use '@/styles/settings';
+
 .log-truncation {
-  --banner-background: #eceff1;
-  --page-edge: #eceff1;
+  --banner-background: #{map.get(settings.$grey, 'lighten-3')};
+  --page-edge: #{map.get(settings.$grey, 'lighten-3')};
   --size: 16px;
   --angle: 90deg;
   /* Width of the zigzag gap between the banner's and the page's torn edges */
@@ -210,16 +213,15 @@ defineExpose({
   width: calc(100% + 0.5rem);
   padding: 0.5rem 1rem 1rem 1rem;
   border: 0;
-  /*background: linear-gradient(var(--fade-direction), var(--banner-background) 20%, #fff 95%); */
   background: var(--banner-background);
-  color: #263238;
+  color: map.get(settings.$grey, 'darken-4');
   font: inherit;
   text-align: center;
   cursor: pointer;
 }
 
 .log-truncation:hover {
-  --banner-background: #dce2e5;
+  --banner-background: #{map.get(settings.$grey, 'lighten-2')};
 }
 
 .log-truncation:focus-visible {
