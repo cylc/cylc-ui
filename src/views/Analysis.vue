@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="mb-2 mb-md-0"
         >
           <v-select
-            id="c-analysis-filter-task-timings"
+            data-cy="analysis-filter-task-timings"
             :items="$options.timingOptions"
             prefix="Displaying:"
             v-model="tasksFilter.timingOption"
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="pl-md-2 mb-2 mb-md-0"
         >
           <v-select
-            id="c-analysis-filter-task-platforms"
+            data-cy="analysis-filter-task-platforms"
             :items="platformOptions"
             prefix="Platform:"
             v-model="tasksFilter.platformOption"
