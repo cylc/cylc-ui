@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
       data-cy="log-text"
     ><span
-      v-for="(log, index) in computedLogs"
-      :key="index"
-    >{{ log }}</span></pre>
+        v-for="(log, index) in computedLogs"
+        :key="index"
+      ><span class="text-disabled">{{ (index + 1).toString().padStart(6) }} </span>{{ log }}</span></pre>
     <v-btn
       v-if="logs.length"
       position="fixed"
