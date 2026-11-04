@@ -161,8 +161,7 @@ describe('Log view', () => {
     const startCallback = new LogsCallback(startResults, () => null)
     startCallback.onAdded({ lines: ['line-1', 'line-2'] })
     startCallback.onAdded({ truncated: 'start' })
-    expect(startResults.truncatedStart).toBe(true)
-    expect(startResults.truncatedEnd).toBe(false)
+    expect(startResults.truncated).toBe(true)
     expect(startResults.lines).toEqual(['line-1', 'line-2'])
 
     // end-of-file truncation
@@ -170,8 +169,7 @@ describe('Log view', () => {
     const endCallback = new LogsCallback(endResults, () => null)
     endCallback.onAdded({ lines: ['line-1', 'line-2'] })
     endCallback.onAdded({ truncated: 'end' })
-    expect(endResults.truncatedEnd).toBe(true)
-    expect(endResults.truncatedStart).toBe(false)
+    expect(endResults.truncated).toBe(true)
     expect(endResults.lines).toEqual(['line-1', 'line-2'])
   })
 
