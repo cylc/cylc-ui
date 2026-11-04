@@ -18,36 +18,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     ref="scrollWrapper"
-    class="h-100 overflow-auto px-4 pb-2"
+    class="d-flex flex-column h-100 overflow-auto px-4 pb-2"
   >
-    <!-- Renders here for start truncation, moved below the log for end truncation -->
-    <Teleport
-      v-if="endTarget && (truncatedStart || truncatedEnd)"
-      :to="endTarget"
-      :disabled="!truncatedEnd"
+    <button
+      v-if="truncated"
+      type="button"
+      class="log-truncation"
+      :class="[
+        `log-truncation--${truncationPosition}`,
+        headMode ? 'order-1' : 'order-0',
+      ]"
+      data-cy="log-truncated-btn"
+      @click="() => { headMode = !headMode }"
     >
-      <button
-        type="button"
-        class="log-truncation"
-        :class="`log-truncation--${truncationPosition}`"
-        :data-cy="`log-truncation-${truncationPosition}`"
-        @click="$emit('update:headMode', !truncatedEnd)"
-      >
-        <v-icon :icon="icons.mdiReload" aria-hidden="true" />
-        <span>{{ truncationMessages[truncationPosition] }}</span>
-      </button>
-    </Teleport>
+      <v-icon :icon="mdiReload" aria-hidden="true" />
+      <span>{{ truncationMessage }}</span>
+    </button>
 
     <pre
       ref="logText"
       :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
       data-cy="log-text"
     ><span
-    v-for="(log, index) in computedLogs"
-    :key="index"
+      v-for="(log, index) in computedLogs"
+      :key="index"
     >{{ log }}</span></pre>
-
-    <div ref="endTarget"></div>
 
     <v-btn
       v-if="logs.length"
@@ -55,173 +50,136 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       location="bottom right"
       class="ma-5"
       @click="scrollToTop"
-      :icon="icons.mdiMouseMoveUp"
+      :icon="mdiMouseMoveUp"
+      style="z-index: 1;"
       data-cy="log-scroll-top"
     />
     <!-- a div to use for autoscrolling -->
-    <div ref="autoScrollEnd"></div>
+    <div ref="autoScrollEnd" class="order-2"></div>
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
-import { useScroll, useVModel, whenever } from '@vueuse/core'
+import { useScroll, whenever } from '@vueuse/core'
+import { stripTimestamp } from '@/utils/general'
 import { when } from '@/utils/reactivity'
 import {
   mdiMouseMoveUp,
   mdiReload,
 } from '@mdi/js'
 
-export function stripTimestamp (logLine) {
-  const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-  return logLine.match(regex)?.[1] ?? logLine
+const props = defineProps({
+  timestamps: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
+  logs: {
+    type: Array,
+    required: true,
+  },
+  wordWrap: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  /** Whether the file has been truncated (start or end). */
+  truncated: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  maxLines: {
+    type: Number,
+    required: false,
+    default: 5000,
+  },
+})
+
+const autoScroll = defineModel('autoScroll', {
+  type: Boolean,
+  required: false,
+  default: false,
+})
+
+/**
+ * Whether the log is in HEAD (start) mode. Part of the `headMode`
+ * two-way binding whose update is emitted by the truncation banner
+ * "Load start"/"Load end" buttons.
+ */
+const headMode = defineModel('headMode', {
+  type: Boolean,
+  required: false,
+  default: false,
+})
+
+const logText = useTemplateRef('logText')
+const scrollWrapper = useTemplateRef('scrollWrapper')
+const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+
+const { arrivedState, directions } = useScroll(scrollWrapper)
+
+// Turn on autoscroll when user scrolls to bottom:
+whenever(() => arrivedState.bottom && !arrivedState.top, () => {
+  // (when page first loads both top and bottom are true)
+  autoScroll.value = true
+})
+// Turn off autoscroll when user scrolls up:
+whenever(() => props.logs.length && directions.top, () => {
+  autoScroll.value = false
+})
+
+function scrollToEnd () {
+  autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
 }
 
-export default {
-  name: 'LogComponent',
+async function scrollToTop () {
+  autoScroll.value = false
+  // Wait for smooth scroll cancel to happen
+  await nextTick()
+  scrollWrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
+}
 
-  props: {
-    placeholder: {
-      type: String,
-      required: false,
-    },
-    timestamps: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    logs: {
-      type: Array,
-      required: true,
-    },
-    wordWrap: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    autoScroll: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    /** Whether the start of the file has been truncated (earlier lines omitted).
-     * It's is not completely reliable, it actually states we are in tail from end mode,
-     * and the file is over max_lines in length.  However, a viewer left open from
-     * before the file reached max_lines would get true here once the file reaches
-     * max_lines in length, even if the first lines are still displayed.
-    */
-    truncatedStart: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    /** Whether the end of the file has been truncated (later lines omitted). */
-    truncatedEnd: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    maxLines: {
-      type: Number,
-      required: false,
-      default: 5000,
-    },
-    /** Whether the log is in HEAD (start) mode. Part of the `headMode`
-     * two-way binding whose update is emitted by the truncation banner
-     * "Load start"/"Load end" buttons. */
-    headMode: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
+const ro = new ResizeObserver(scrollToEnd)
 
-  emits: [
-    'update:autoScroll',
-    'update:headMode',
-  ],
-
-  setup (props, { emit }) {
-    const logText = useTemplateRef('logText')
-    const scrollWrapper = useTemplateRef('scrollWrapper')
-    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
-    const endTarget = useTemplateRef('endTarget')
-
-    const autoScroll = useVModel(props, 'autoScroll', emit)
-    const { arrivedState, directions } = useScroll(scrollWrapper)
-
-    // Turn on autoscroll when user scrolls to bottom:
-    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
-      // (when page first loads both top and bottom are true)
-      autoScroll.value = true
-    })
-    // Turn off autoscroll when user scrolls up:
-    whenever(() => props.logs.length && directions.top, () => {
-      autoScroll.value = false
-    })
-
-    function scrollToEnd () {
-      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
-    }
-
-    async function scrollToTop () {
-      autoScroll.value = false
-      // Wait for smooth scroll cancel to happen
-      await nextTick()
-      scrollWrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
-    }
-
-    const ro = new ResizeObserver(scrollToEnd)
-
-    when(logText, () => {
-      watch(
-        autoScroll,
-        (val) => {
-          if (val) {
-            scrollToEnd()
-            ro.observe(logText.value)
-          } else {
-            // When autoscroll is turned off, cancel any smooth scroll in progress:
-            scrollWrapper.value.scrollBy(0, 0)
-            ro.disconnect()
-          }
-        },
-        { immediate: true }
-      )
-    })
-
-    onBeforeUnmount(() => {
-      ro.disconnect()
-    })
-
-    const computedLogs = computed(() => {
-      if (props.logs.length) {
-        return props.timestamps ? props.logs : props.logs.map(stripTimestamp)
+when(logText, () => {
+  watch(
+    autoScroll,
+    (val) => {
+      if (val) {
+        scrollToEnd()
+        ro.observe(logText.value)
+      } else {
+        // When autoscroll is turned off, cancel any smooth scroll in progress:
+        scrollWrapper.value.scrollBy(0, 0)
+        ro.disconnect()
       }
-      return props.placeholder ? [props.placeholder] : []
-    })
+    },
+    { immediate: true }
+  )
+})
 
-    const truncationPosition = computed(() => props.truncatedEnd ? 'end' : 'start')
+onBeforeUnmount(() => {
+  ro.disconnect()
+})
 
-    const truncationMessages = computed(() => ({
-      start: `The file is over ${props.maxLines} lines and may have been truncated. Click to view from the top`,
-      end: 'The end of the file has been truncated. Click to view from the bottom',
-    }))
+const computedLogs = computed(
+  () => props.timestamps ? props.logs : props.logs.map(stripTimestamp)
+)
 
-    return {
-      scrollToTop,
-      endTarget,
-      computedLogs,
-      truncationPosition,
-      truncationMessages,
-      icons: {
-        mdiMouseMoveUp,
-        mdiReload,
-      },
-    }
-  },
-}
+const truncationPosition = computed(() => props.headMode ? 'end' : 'start')
 
+const truncationMessage = computed(
+  () => props.headMode
+    ? 'The end of the file has been truncated. Click to view from the bottom'
+    : `The file is over ${props.maxLines} lines and may have been truncated. Click to view from the top`
+)
+
+defineExpose({
+  scrollToEnd,
+  scrollToTop,
+})
 </script>
 
 <style scoped>

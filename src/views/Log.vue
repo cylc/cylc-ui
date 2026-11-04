@@ -201,8 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :logs="results.lines"
       :timestamps="timestamps"
       :word-wrap="wordWrap"
-      :truncated-start="results.truncatedStart"
-      :truncated-end="results.truncatedEnd"
+      :truncated="results.truncated"
       :max-lines="maxLines"
       v-model:headMode="headMode"
       v-model:autoScroll="autoScroll"
@@ -325,17 +324,11 @@ export class Results {
     /** @type {?string} */
     this.error = null
     /**
-     * Whether the *start* of the file has been truncated (some earlier lines
-     * are not shown). Drives the truncation warning above the log.
+     * Whether the start or end of the file has been truncated.
+     * Drives the truncation warning above the log.
      * @type {boolean}
      */
-    this.truncatedStart = false
-    /**
-     * Whether the *end* of the file has been truncated (some later lines are
-     * not shown). Drives the truncation warning below the log.
-     * @type {boolean}
-     */
-    this.truncatedEnd = false
+    this.truncated = false
   }
 }
 
@@ -353,19 +346,14 @@ export class LogsCallback extends DeltasCallback {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
       this.results.lines = []
-      this.results.truncatedStart = false
-      this.results.truncatedEnd = false
+      this.results.truncated = false
     }
     if (added.lines) {
       this.results.lines.push(...added.lines)
     }
     if (added.truncated != null) {
       // record which end of the file has been truncated (drives the warning)
-      if (added.truncated === 'start') {
-        this.results.truncatedStart = true
-      } else {
-        this.results.truncatedEnd = true
-      }
+      this.results.truncated = true
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -484,8 +472,8 @@ export default {
 
     /**
      * Whether the log view is in HEAD mode:
-     * HEAD (cat-log "tail" mode) shows the start of the file and follows it;
-     * TAIL (cat-log "tail-end" mode) shows the end.
+     * true (cat-log "tail" mode) shows the start of the file and follows it;
+     * false (cat-log "tail-end" mode) shows the end.
      */
     const headMode = useInitialOptions('headMode', { props, emit }, false)
 
