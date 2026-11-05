@@ -21,8 +21,7 @@ describe('GScan component', () => {
   })
 
   it('shows mutations menu when clicking on workflow icon', () => {
-    cy.get('.c-gscan-workflows')
-      .find('.c-treeitem [data-c-interactive]:first')
+    cy.get('.c-gscan-workflows [data-node-name=one] [data-c-interactive]')
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')
@@ -39,7 +38,7 @@ describe('GScan component', () => {
     beforeEach(() => {
       // should show all workflows by default
       cy.get('.c-treeitem:visible')
-        .should('have.length', 5)
+        .should('have.length', 6)
     })
 
     it('filters by workflow name', () => {
@@ -76,12 +75,12 @@ describe('GScan component', () => {
         .contains('.v-list-item', 'running')
         .click({ force: true })
         .get('.c-treeitem [data-c-interactive]:visible')
-        .should('have.length', 2)
+        .should('have.length', 3)
       cy.get('.v-select__content')
         .contains('.v-list-item', 'stopped')
         .click({ force: true })
         .get('.c-treeitem [data-c-interactive]:visible')
-        .should('have.length', 4)
+        .should('have.length', 5)
     })
 
     it('filters by task state', () => {
