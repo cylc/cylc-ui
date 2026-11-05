@@ -81,6 +81,12 @@ module.exports = {
     'cypress/unsafe-to-chain-command': [
       'off',
     ],
+    'generator-star-spacing': [
+      'error', 'after',
+    ],
+    'yield-star-spacing': [
+      'error', 'after',
+    ],
   },
   globals: {
     __APP_VERSION__: 'readonly',

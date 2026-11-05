@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,15 +20,16 @@ const process = require('process')
 /**
  * Simulate a loading delay.
  *
- * NOTE: skips the delay if the CI env var is set so as not to slow down tests.
- *
  * @param {number} delay - in ms
+ * @param {object} options
+ * @param {number} options.cy - the delay to use if running Cypress tests
  * @returns {Promise}
  */
-function simulatedDelay (delay) {
-  return process.env.CI
-    ? Promise.resolve()
-    : new Promise((resolve) => setTimeout(resolve, delay))
+function simulatedDelay (delay, { cy = 0 } = {}) {
+  return new Promise((resolve) => setTimeout(
+    resolve,
+    (process.env.CYPRESS || process.env.CI) ? cy : delay,
+  ))
 }
 
 module.exports = {

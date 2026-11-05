@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TaskState from '@/model/TaskState.model'
-
 // Get cell text for a column by header name, as an array
 Cypress.Commands.add('getColumnValues', (header) => {
   return cy.get('.c-table th')
@@ -71,7 +69,7 @@ describe('Table view', () => {
         .click()
       cy
         .get('.v-list-item')
-        .contains(TaskState.RUNNING.name)
+        .contains('Running')
         .click({ force: true })
       cy
         .get('td [data-cy-task-name=checkpoint]')
@@ -91,7 +89,7 @@ describe('Table view', () => {
         .click()
       cy
         .get('.v-list-item')
-        .contains(TaskState.SUCCEEDED.name)
+        .contains('Succeeded')
         .click({ force: true })
       cy
         .get('.c-table table > tbody > tr')
@@ -146,33 +144,157 @@ describe('Table view', () => {
         '',
       ])
     })
+
+    it('sorts finish time including estimates', () => {
+      const nonzeroValues = [
+        '2020-11-08T22:57:16Z',
+        '2020-11-08T22:57:19Z',
+        '2020-11-08T22:57:33Z',
+        '2020-11-08T22:57:41Z',
+        '2020-11-08T23:00:36Z',
+      ]
+      // sort finish time ascending
+      cy.get('.c-table')
+        .contains('th', 'Finish').as('header')
+        .click()
+      cy.getColumnValues('Finish').should('deep.equal', [
+        ...nonzeroValues,
+        '', // no value sorted after numbers
+        '',
+      ])
+      // sort finish time descending
+      cy.get('@header')
+        .click()
+      cy.getColumnValues('Finish').should('deep.equal', [
+        ...nonzeroValues.slice().reverse(),
+        '', // no value still sorted after numbers
+        '',
+      ])
+    })
+  })
+})
+
+describe('Selection mode', () => {
+  it('allows selecting tasks', () => {
+    cy.visit('/#/table/one')
+      .get('.c-table tbody tr')
+      .should('have.length.greaterThan', 1)
+      .get('.c-table input[type=checkbox]')
+      .should('not.exist')
+    cy.get('[data-cy=enable-select]')
+      .click()
+    cy.get('[data-cy=enact]')
+      .should('be.visible')
+      .should('have.attr', 'disabled')
+      .get('[data-cy=selected-count]')
+      .should('not.exist')
+    // Select 1 task
+    cy.get('.c-table td input[type=checkbox]:eq(0)')
+      .click()
+      .get('[data-cy=selected-count]')
+      .should('have.text', '1')
+      .get('[data-cy=enact]')
+      .click()
+      // single task -> normal command menu
+      .get('.c-mutation-menu .v-card-title')
+      .invoke('text').should('match', /^one\/\/[\dTZ+-]+\/\w+/)
+      .get('.c-mutation-menu [role=listitem]').contains('Info')
+      .should('be.visible')
+      .get('.c-mutation-menu [role=listitem]').contains('Log')
+      .should('be.visible')
+    // Select a second task
+    cy.get('.c-table td input[type=checkbox]:eq(3)')
+      .click()
+      .get('[data-cy=selected-count]')
+      .should('have.text', '2')
+      .get('[data-cy=enact]')
+      .click()
+      // multiple tasks -> special menu
+      .get('.c-mutation-menu .v-card-title')
+      .should('contain.text', '2 items selected')
+      .get('.c-mutation-menu [role=listitem]').contains('Info')
+      .should('not.exist')
+      .get('.c-mutation-menu [role=listitem]').contains('Log')
+      .should('not.exist')
+      .get('.c-mutation-menu [role=listitem]').contains('Hold')
+      .click()
+      // Check there are 2 tasks pre-populated in the command editor
+      .get('.c-mutation .v-list-item-title').contains('Tasks').parent()
+      .find('[role=listitem] input')
+      .should('have.length', 2)
   })
 
-  it('sorts finish time including estimates', () => {
-    const nonzeroValues = [
-      '2020-11-08T22:57:16Z',
-      '2020-11-08T22:57:19Z',
-      '2020-11-08T22:57:33Z',
-      '2020-11-08T22:57:41Z',
-      '2020-11-08T23:00:36Z',
-    ]
-    // sort finish time ascending
-    cy.get('.c-table')
-      .contains('th', 'Finish').as('header')
+  it('clears selection when cancelling', () => {
+    cy.visit('/#/table/one')
+      .get('.c-table tbody tr')
+      .should('have.length.greaterThan', 1)
+      .get('[data-cy=enable-select]').click()
+      .get('.c-table td input[type=checkbox]:eq(3)').click()
+      .get('.c-table td input[type=checkbox][checked]')
+      .should('have.length', 1)
+    cy.get('[data-cy=cancel-select]').click()
+      .get('[data-cy=enable-select]').click()
+      .get('.c-table td input[type=checkbox][checked]')
+      .should('not.exist')
+  })
+
+  it('works with filtering', () => {
+    // Select a couple of tasks
+    cy.visit('/#/table/one')
+      .get('.c-table tbody tr')
+      .should('have.length.greaterThan', 1)
+    cy.get('[data-cy=enable-select]').click()
+      .get('.c-table td input[type=checkbox]:eq(0)').as('task1Checkbox')
       .click()
-    cy.getColumnValues('Finish').should('deep.equal', [
-      ...nonzeroValues,
-      '', // no value sorted after numbers
-      '',
-    ])
-    // sort finish time descending
-    cy.get('@header')
+      .get('.c-table td input[type=checkbox]:eq(1)').as('task2Checkbox')
       .click()
-    cy.getColumnValues('Finish').should('deep.equal', [
-      ...nonzeroValues.slice().reverse(),
-      '', // no value still sorted after numbers
-      '',
-    ])
+      .get('[data-cy=selected-count]')
+      .should('have.text', '2')
+    // Now filter
+    cy.get('[data-cy=control-taskIDFilter] input')
+      .type('nope')
+      // The tasks have been filtered out...
+      .get('@task1Checkbox').should('not.exist')
+      .get('@task2Checkbox').should('not.exist')
+      // ...but the selection remains
+      .get('[data-cy=selected-count]')
+      .should('have.text', '2')
+    // Clear the filter
+    cy.get('[data-cy=control-taskIDFilter] input')
+      .clear()
+      .get('@task1Checkbox').should('have.attr', 'checked')
+      .get('@task2Checkbox').should('have.attr', 'checked')
+  })
+
+  it('freezes the list of tasks', () => {
+    localStorage.cyclePointsOrderDesc = 'false'
+    cy.visit('/#/table/linear')
+      // wait for 3/foo to enter N=1
+      .get('.c-table tbody tr:eq(2)')
+      .should('be.visible')
+    cy.get('[data-cy=enable-select]').click()
+      .get('.c-table .v-alert').contains('Selection mode enabled')
+      .should('be.visible')
+      .getColumnValues('Cycle Point')
+      .should('deep.equal', ['1', '2', '3'])
+      // 3/foo shouldn't have a job immediately
+      .get('.c-table .c-job').should('have.length.lessThan', 3)
+      // but if we wait a moment the job should submit and run
+      .get('.c-table .c-job').should('have.length', 3)
+      // and we should end up with 3 succeeded jobs
+      .get('.c-table .c-job.succeeded').should('have.length', 3)
+      .getColumnValues('Finish').then((vals) => {
+        expect(vals.every((x) => x)).to.be.true
+      })
+    // Now test that the task list unfreezes when cancelling selection mode
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1e3)
+      .getColumnValues('Cycle Point')
+      .should('deep.equal', ['1', '2', '3'])
+      .get('[data-cy=cancel-select]').click()
+      .getColumnValues('Cycle Point')
+      .should('not.deep.equal', ['1', '2', '3'])
+      .get('.c-table .c-job').should('have.length.lessThan', 3)
   })
 })
 
@@ -200,7 +322,7 @@ describe('State saving', () => {
     cy
       .get('.v-list-item')
       .filter(':visible')
-      .contains('.v-list-item', 'succeeded')
+      .contains('.v-list-item', 'Succeeded')
       .click({ force: true })
     cy
       .get('.c-table table > tbody > tr')

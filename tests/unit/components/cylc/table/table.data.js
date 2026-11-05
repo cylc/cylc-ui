@@ -18,88 +18,107 @@ import TaskState from '@/model/TaskState.model'
 import JobState from '@/model/JobState.model'
 import { Tokens } from '@/utils/uid'
 
-const tk = {
-  taskA: new Tokens('~cylc/workflow//20000101T0000Z/taskA'),
-  taskB: new Tokens('~cylc/workflow//20000102T0000Z/taskB'),
-  taskC: new Tokens('~cylc/workflow//20000103T0000Z/taskC'),
-}
+const wflow = new Tokens('~cylc/workflow')
+const cycle1 = wflow.clone({ cycle: '20000101T0000Z' })
+const taskA = cycle1.clone({ task: 'taskA' })
+const cycle2 = wflow.clone({ cycle: '20000102T0000Z' })
+const taskB = cycle2.clone({ task: 'taskB' })
+const cycle3 = wflow.clone({ cycle: '20000103T0000Z' })
+const taskC = cycle3.clone({ task: 'taskC' })
 
-export const simpleTableTasks = [
+export const simpleTableWorkflows = [
   {
-    task: {
-      id: tk.taskA.id,
-      name: 'taskA',
-      tokens: tk.taskA,
-      node: {
-        id: tk.taskA.id,
-        state: TaskState.RUNNING.name,
-        task: {
-          meanElapsedTime: 2,
-        },
-      },
-      children: [
-        {
-          id: tk.taskA.clone({ job: '01' }).id,
-          name: '01',
-          tokens: tk.taskA.clone({ job: '01' }),
-          node: {
-            platform: 'localhost',
-            jobRunnerName: 'background',
-            jobId: '1',
-            submittedTime: new Date().toISOString(),
-            startedTime: new Date().toISOString(),
-            finishedTime: null,
-            state: JobState.RUNNING.name,
+    id: wflow.id,
+    tokens: wflow,
+    children: [
+      {
+        id: cycle1.id,
+        tokens: cycle1,
+        children: [
+          {
+            id: taskA.id,
+            name: taskA.task,
+            tokens: taskA,
+            node: {
+              id: taskA.id,
+              state: TaskState.RUNNING.name,
+              task: {
+                meanElapsedTime: 2,
+              },
+            },
+            children: [
+              {
+                id: taskA.clone({ job: '01' }).id,
+                name: '01',
+                tokens: taskA.clone({ job: '01' }),
+                node: {
+                  platform: 'localhost',
+                  jobRunnerName: 'background',
+                  jobId: '1',
+                  submittedTime: new Date().toISOString(),
+                  startedTime: new Date().toISOString(),
+                  finishedTime: null,
+                  state: JobState.RUNNING.name,
+                },
+                children: [],
+              },
+              {
+                id: taskA.clone({ job: '02' }).id,
+                name: '02',
+                tokens: taskA.clone({ job: '02' }),
+                node: {
+                  platform: 'localhost',
+                  jobRunnerName: 'background',
+                  jobId: '2',
+                  submittedTime: new Date().toISOString(),
+                  startedTime: new Date().toISOString(),
+                  finishedTime: new Date().toISOString(),
+                  state: JobState.FAILED.name,
+                },
+                children: [],
+              },
+            ],
           },
-          children: [],
-        },
-      ],
-    },
-    latestJob: {
-      id: tk.taskA.clone({ job: '01' }).id,
-      name: '01',
-      tokens: tk.taskA.clone({ job: '01' }),
-      node: {
-        platform: 'localhost',
-        jobRunnerName: 'background',
-        jobId: '1',
-        submittedTime: new Date().toISOString(),
-        startedTime: new Date().toISOString(),
-        finishedTime: null,
-        state: JobState.RUNNING.name,
+        ],
       },
-      children: [],
-    },
-    previousJob: null,
-  },
-  {
-    task: {
-      id: tk.taskB.id,
-      name: 'taskB',
-      tokens: tk.taskB,
-      node: {
-        id: tk.taskB.id,
-        state: TaskState.WAITING.name,
-        name: 'taskB',
+      {
+        id: cycle2.id,
+        tokens: cycle2,
+        children: [
+          {
+            id: taskB.id,
+            name: taskB.task,
+            tokens: taskB,
+            node: {
+              id: taskB.id,
+              state: TaskState.WAITING.name,
+            },
+            children: [],
+          },
+        ],
       },
-      children: [],
-    },
-    latestJob: null,
-    previousJob: null,
-  },
-  {
-    task: {
-      id: tk.taskC.id,
-      name: 'taskC',
-      tokens: tk.taskC,
-      node: {
-        id: tk.taskC.id,
-        state: TaskState.SUBMITTED.name,
-        name: 'taskC',
+      {
+        id: cycle3.id,
+        tokens: cycle3,
+        children: [
+          {
+            id: taskC.id,
+            name: taskC.task,
+            tokens: taskC,
+            node: {
+              id: taskC.id,
+              state: TaskState.SUBMITTED.name,
+            },
+            children: [],
+          },
+        ],
       },
-      children: [],
-    },
-    latestJob: null,
-    previousJob: null,
+    ],
   },
 ]
+
+export const simpleTableTasks = simpleTableWorkflows.flatMap(
+  (workflows) => workflows.children.flatMap(
+    (cycles) => cycles.children
+  )
+)
