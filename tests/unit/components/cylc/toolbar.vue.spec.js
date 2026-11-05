@@ -23,7 +23,7 @@ import Toolbar from '@/components/cylc/Toolbar.vue'
 import WorkflowState from '@/model/WorkflowState.model'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
-import WorkflowService from '@/services/workflow.service'
+import { WorkflowService } from '@/services/workflow.service'
 import { __drawer as drawerState } from '@/utils/toolbar'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { mdiMenuClose, mdiMenuOpen } from '@mdi/js'
@@ -103,6 +103,6 @@ describe('Toolbar component', () => {
       },
     })
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('.c-toolbar-title').text()).to.include(expected)
+    expect(wrapper.find('.c-toolbar-title').text()).toEqual(expected)
   })
 })

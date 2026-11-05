@@ -101,16 +101,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { mapGetters } from 'vuex'
 import { useJobTheme } from '@/composables/localStorage'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   useInitialOptions,
 } from '@/utils/initialOptions'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-// import CylcTreeCallback from '@/services/treeCallback'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import GraphSubgraph from '@/components/cylc/GraphSubgraph.vue'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
@@ -270,7 +268,7 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
-    const { workflowIDs, variables } = useGraphQL()
+    const { workflows, variables } = useWorkflowVariables()
 
     return {
       jobTheme: useJobTheme(),
@@ -278,7 +276,7 @@ export default {
       autoRefresh,
       spacing,
       groupCycle,
-      workflowIDs,
+      workflows,
       variables,
     }
   },
@@ -326,19 +324,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(
         QUERY,
         this.variables,
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
-    },
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
     },
     controlGroups () {
       return [
