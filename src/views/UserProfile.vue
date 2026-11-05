@@ -145,7 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         v-for="state in $options.jobStates"
                         :key="state"
                       >
-                        <td>{{state}}</td>
+                        <td>{{ state }}</td>
                         <td
                           v-for="theme in $options.jobThemes"
                           :key="theme"
@@ -184,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
                   <span>Warning icons (<WarningIcon
-                    :workflow="{node: {warningActive: true}}"
+                    :workflow="{ node: { warningActive: true } }"
                   />) in the workflows sidebar</span>
                 </v-col>
                 <v-checkbox

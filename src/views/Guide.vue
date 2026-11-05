@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <Task
                     :task="{
                       state: state.name,
-                      task: {meanElapsedTime: 30},
+                      task: { meanElapsedTime: 30 },
                     }"
                     :startTime="String(Date.now())"
                   />
@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <Task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
+                    :task="{ state: 'waiting', runtime: { runMode: 'Skip' } }"
                     class="mr-4"
                   />
                 </template>
@@ -199,7 +199,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting'}"
+                    :task="{ state: 'waiting' }"
                     class="mr-4"
                   />
                 </template>
@@ -216,7 +216,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isHeld: true}"
+                    :task="{ state: 'waiting', isHeld: true }"
                     class="mr-4"
                   />
                 </template>
@@ -233,7 +233,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isRunahead: true}"
+                    :task="{ state: 'waiting', isRunahead: true }"
                     class="mr-4"
                   />
                 </template>
@@ -249,7 +249,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isQueued: true}"
+                    :task="{ state: 'waiting', isQueued: true }"
                     class="mr-4"
                   />
                 </template>
@@ -265,7 +265,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isRetry: true}"
+                    :task="{ state: 'waiting', isRetry: true }"
                     class="mr-4"
                   />
                 </template>
@@ -282,7 +282,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isWallclock: true}"
+                    :task="{ state: 'waiting', isWallclock: true }"
                     class="mr-4"
                   />
                 </template>
@@ -297,7 +297,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isXtriggered: true}"
+                    :task="{ state: 'waiting', isXtriggered: true }"
                     class="mr-4"
                   />
                 </template>
