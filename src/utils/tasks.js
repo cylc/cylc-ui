@@ -158,17 +158,26 @@ export function compare (a, b, sortBy, sortDesc) {
   */
   let ret = ''
   // Median values are stored in quartile arrays, so need to access the 2nd element
-  if (sortBy === 'medianRunTime' || sortBy === 'medianQueueTime' || sortBy === 'medianTotalTime' || sortBy === 'medianPeakRss') {
-    sortBy = sortBy.replace('median', '').replace('Time', '')
-    sortBy = sortBy.charAt(0).toLowerCase() + sortBy.slice(1)
-    sortBy = sortBy + 'Quartiles'
-    ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
-  } else if (sortBy === 'medianCpuTime') {
-    sortBy = 'cpuTimeQuartiles'
-    ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
-  } else {
-  // All non median sorts
-    ret = a[sortBy] < b[sortBy] ? -1 : 1
+  switch (sortBy) {
+    case 'medianRunTime':
+      sortBy = 'runQuartiles'
+      break
+    case 'medianQueueTime':
+      sortBy = 'queueQuartiles'
+      break
+    case 'medianTotalTime':
+      sortBy = 'totalQuartiles'
+      break
+    case 'medianPeakRss':
+      sortBy = 'peakRssQuartiles'
+      break
+    case 'medianCpuTime':
+      sortBy = 'cpuTimeQuartiles'
+      break
+    default:
+      // All non median sorts
+      ret = a[sortBy] < b[sortBy] ? -1 : 1
+      return sortDesc ? -ret : ret
   }
   return sortDesc ? -ret : ret
 }
