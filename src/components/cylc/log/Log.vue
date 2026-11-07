@@ -18,8 +18,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     ref="scrollWrapper"
-    class="h-100 overflow-auto px-4 pb-2"
+    class="d-flex flex-column h-100 overflow-auto px-4 pb-2"
   >
+    <button
+      v-if="truncated"
+      type="button"
+      class="log-truncation"
+      :class="[
+        `log-truncation--${truncationPosition}`,
+        headMode ? 'order-1' : 'order-0',
+      ]"
+      data-cy="log-truncated-btn"
+      @click="() => { headMode = !headMode }"
+    >
+      <v-icon :icon="mdiReload" aria-hidden="true" />
+      <span>{{ truncationMessage }}</span>
+    </button>
+
     <pre
       ref="logText"
       :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
@@ -28,149 +43,210 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-for="(log, index) in computedLogs"
       :key="index"
     >{{ log }}</span></pre>
+
     <v-btn
       v-if="logs.length"
       position="fixed"
       location="bottom right"
       class="ma-5"
       @click="scrollToTop"
-      :icon="$options.icons.mdiMouseMoveUp"
+      :icon="mdiMouseMoveUp"
+      style="z-index: 1;"
       data-cy="log-scroll-top"
     />
     <!-- a div to use for autoscrolling -->
-    <div ref="autoScrollEnd"></div>
+    <div ref="autoScrollEnd" class="order-2"></div>
   </div>
 </template>
 
-<script>
-import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
-import { useScroll, useVModel, whenever } from '@vueuse/core'
+<script setup>
+import { computed, useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
+import { useScroll, whenever } from '@vueuse/core'
+import { stripTimestamp } from '@/utils/general'
 import { when } from '@/utils/reactivity'
 import {
   mdiMouseMoveUp,
+  mdiReload,
 } from '@mdi/js'
 
-export default {
-  name: 'LogComponent',
-
-  props: {
-    placeholder: {
-      type: String,
-      required: false,
-    },
-    timestamps: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    logs: {
-      type: Array,
-      required: true,
-    },
-    wordWrap: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    autoScroll: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
+const props = defineProps({
+  timestamps: {
+    type: Boolean,
+    required: false,
+    default: true,
   },
-
-  emits: [
-    'update:autoScroll',
-  ],
-
-  setup (props, { emit }) {
-    const logText = useTemplateRef('logText')
-    const scrollWrapper = useTemplateRef('scrollWrapper')
-    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
-
-    const autoScroll = useVModel(props, 'autoScroll', emit)
-    const { arrivedState, directions } = useScroll(scrollWrapper)
-
-    // Turn on autoscroll when user scrolls to bottom:
-    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
-      // (when page first loads both top and bottom are true)
-      autoScroll.value = true
-    })
-    // Turn off autoscroll when user scrolls up:
-    whenever(() => props.logs.length && directions.top, () => {
-      autoScroll.value = false
-    })
-
-    function scrollToEnd () {
-      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
-    }
-
-    async function scrollToTop () {
-      autoScroll.value = false
-      // Wait for smooth scroll cancel to happen
-      await nextTick()
-      scrollWrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
-    }
-
-    const ro = new ResizeObserver(scrollToEnd)
-
-    when(logText, () => {
-      watch(
-        autoScroll,
-        (val) => {
-          if (val) {
-            scrollToEnd()
-            ro.observe(logText.value)
-          } else {
-            // When autoscroll is turned off, cancel any smooth scroll in progress:
-            scrollWrapper.value.scrollBy(0, 0)
-            ro.disconnect()
-          }
-        },
-        { immediate: true }
-      )
-    })
-
-    onBeforeUnmount(() => {
-      ro.disconnect()
-    })
-
-    return {
-      scrollToTop,
-    }
+  logs: {
+    type: Array,
+    required: true,
   },
-
-  computed: {
-    computedLogs () {
-      if (this.logs.length > 0) {
-        if (!this.timestamps) {
-          return this.updateLogs()
-        } else return this.logs
-      } else if (this.placeholder) {
-        return [this.placeholder]
-      } else {
-        return []
-      }
-    },
+  wordWrap: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
-
-  methods: {
-    updateLogs () {
-      return this.logs.map((logLine) => {
-        return this.stripTimestamp(logLine)
-      })
-    },
-
-    stripTimestamp (logLine) {
-      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      return logLine.match(regex)?.[1] ?? logLine
-    },
+  /** Whether the file has been truncated (start or end). */
+  truncated: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
-
-  // Misc options
-  icons: {
-    mdiMouseMoveUp,
+  maxLines: {
+    type: Number,
+    required: false,
+    default: 5000,
   },
+})
+
+const autoScroll = defineModel('autoScroll', {
+  type: Boolean,
+  required: false,
+  default: false,
+})
+
+/**
+ * Whether the log is in HEAD (start) mode. Part of the `headMode`
+ * two-way binding whose update is emitted by the truncation banner
+ * "Load start"/"Load end" buttons.
+ */
+const headMode = defineModel('headMode', {
+  type: Boolean,
+  required: false,
+  default: false,
+})
+
+const logText = useTemplateRef('logText')
+const scrollWrapper = useTemplateRef('scrollWrapper')
+const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+
+const { arrivedState, directions } = useScroll(scrollWrapper)
+
+// Turn on autoscroll when user scrolls to bottom:
+whenever(() => arrivedState.bottom && !arrivedState.top, () => {
+  // (when page first loads both top and bottom are true)
+  autoScroll.value = true
+})
+// Turn off autoscroll when user scrolls up:
+whenever(() => props.logs.length && directions.top, () => {
+  autoScroll.value = false
+})
+
+function scrollToEnd () {
+  autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
 }
 
+async function scrollToTop () {
+  autoScroll.value = false
+  // Wait for smooth scroll cancel to happen
+  await nextTick()
+  scrollWrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
+}
+
+const ro = new ResizeObserver(scrollToEnd)
+
+when(logText, () => {
+  watch(
+    autoScroll,
+    (val) => {
+      if (val) {
+        scrollToEnd()
+        ro.observe(logText.value)
+      } else {
+        // When autoscroll is turned off, cancel any smooth scroll in progress:
+        scrollWrapper.value.scrollBy(0, 0)
+        ro.disconnect()
+      }
+    },
+    { immediate: true }
+  )
+})
+
+onBeforeUnmount(() => {
+  ro.disconnect()
+})
+
+const computedLogs = computed(
+  () => props.timestamps ? props.logs : props.logs.map(stripTimestamp)
+)
+
+const truncationPosition = computed(() => props.headMode ? 'end' : 'start')
+
+const truncationMessage = computed(
+  () => props.headMode
+    ? 'The end of the file has been truncated. Click to view from the bottom'
+    : `The file is over ${props.maxLines} lines and may have been truncated. Click to view from the top`
+)
+
+defineExpose({
+  scrollToEnd,
+  scrollToTop,
+})
 </script>
+
+<style scoped lang="scss">
+@use 'sass:map';
+@use '@/styles/settings';
+
+.log-truncation {
+  --banner-background: #{map.get(settings.$grey, 'lighten-3')};
+  --size: 16px;
+  --angle: 90deg;
+  --tear-space: calc(var(--size) / 2 + 0.5rem);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: calc(100% + 0.5rem);
+  padding: 0.5rem 1rem 1rem 1rem;
+  border: 0;
+  background: var(--banner-background);
+  color: map.get(settings.$grey, 'darken-4');
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.log-truncation:hover {
+  --banner-background: #{map.get(settings.$grey, 'lighten-2')};
+}
+
+.log-truncation:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Torn edge facing the log; teeth point down, rotate 180deg for up */
+.log-truncation::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  height: calc(var(--size) / 2);
+  background: var(--banner-background);
+  pointer-events: none;
+  mask:
+    conic-gradient(
+      from calc(var(--angle) / -2) at bottom,
+      #0000,
+      #000 1deg calc(var(--angle) - 1deg),
+      #0000 var(--angle)
+    ) 50% / var(--size) 100%;
+}
+
+.log-truncation--start {
+  margin: 0.5rem 0 var(--tear-space) -0.25rem;
+}
+
+.log-truncation--end {
+  margin: var(--tear-space) 0 0.5rem -0.25rem;
+}
+
+.log-truncation--start::after {
+  top: 100%;
+}
+
+.log-truncation--end::after {
+  bottom: 100%;
+  transform: rotate(180deg);
+}
+</style>

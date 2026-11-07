@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { nextTick } from 'vue'
 import { shallowMount } from '@vue/test-utils'
 import Log from '@/components/cylc/log/Log.vue'
 
 describe('Log component', () => {
-  const wrapper = shallowMount(Log, {
-    props: {
-      logs: [],
-    },
+  it('shows a warning alert when the end of the file is truncated', async () => {
+    const truncatedWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+        truncated: true,
+        headMode: true,
+      },
+    })
+    await nextTick()
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
+    ).toBe(true)
+    // the start-of-file warning should not be shown
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
+    ).toBe(false)
   })
 
-  describe.each([
-    { line: '' },
-    { line: '  ' },
-    { line: 'Hello, Mr. Thompson' },
-    { line: '1969-07-20T20:17:00 the eagle has landed', expected: 'the eagle has landed' },
-    { line: '2038-01-19T03:14:07Z INFO - oops!', expected: 'INFO - oops!' },
-    { line: '2038-01-19T03:14:07+02:15 ', expected: '' },
-    { line: '2038-01-19T03:14:07-12:03    meow', expected: '   meow' },
-    { line: 'INIT_TIME=2023-04-27T13:53:09+01:00' },
-
-  ])('stripTimestamp($line)', ({ line, expected }) => {
-    expected ??= line
-    it(`returns '${expected}'`, () => {
-      expect(wrapper.vm.stripTimestamp(line)).toEqual(expected)
+  it('shows a warning alert when the start of the file is truncated', async () => {
+    const truncatedWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+        truncated: true,
+        headMode: false,
+      },
     })
+    await nextTick()
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
+    ).toBe(true)
+    expect(
+      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
+    ).toBe(false)
+  })
+
+  it('shows no truncation warnings by default', async () => {
+    const plainWrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+      },
+    })
+    await nextTick()
+    expect(
+      plainWrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
+    ).toBe(false)
+    expect(
+      plainWrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
+    ).toBe(false)
   })
 })
