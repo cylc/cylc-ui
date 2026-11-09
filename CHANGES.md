@@ -12,6 +12,16 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.16.0 (Released 2026-11-09)
+
+### 🔧 Fixes
+
+[#2695](https://github.com/cylc/cylc-ui/pull/2695), [#2696](https://github.com/cylc/cylc-ui/pull/2696), [#2718](https://github.com/cylc/cylc-ui/pull/2718) - Improved performance of viewing large workflows in the UI.
+
+[#2697](https://github.com/cylc/cylc-ui/pull/2697) - Fixed an error that could occur when opening the tree view.
+
+[#2706](https://github.com/cylc/cylc-ui/pull/2706) - Fixed an error that could occur when the number of installed workflows changes rapidly.
+
 ## cylc-ui-2.15.0 (Released 2026-10-08)
 
 ### 🚀 Enhancements
