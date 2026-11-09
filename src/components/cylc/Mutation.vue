@@ -53,10 +53,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 },
               }"
             >
-              <Markdown :markdown="shortDescription"/>
+              <div v-markdown="shortDescription"></div>
             </v-expansion-panel-title>
             <v-expansion-panel-text v-if="extendedDescription">
-              <Markdown :markdown="extendedDescription"/>
+              <div v-markdown="extendedDescription"></div>
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -147,7 +147,7 @@ import { ref, computed, useTemplateRef, inject } from 'vue'
 import { useAsyncState } from '@vueuse/core'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
-import Markdown from '@/components/Markdown.vue'
+import { vMarkdown } from '@/directives/markdown'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc,

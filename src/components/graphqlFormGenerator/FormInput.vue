@@ -40,7 +40,7 @@ dynamically created inputs.
             :icon="mdiHelpCircleOutline"
           />
         </template>
-        <Markdown :markdown="help" />
+        <div v-markdown="help"></div>
       </v-tooltip>
     </template>
     <!-- pass the "append" slot onto the child component -->
@@ -56,7 +56,7 @@ dynamically created inputs.
 <script setup>
 import { mergeProps, useAttrs } from 'vue'
 import { mask } from 'vue-the-mask'
-import Markdown from '@/components/Markdown.vue'
+import { vMarkdown } from '@/directives/markdown'
 import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'

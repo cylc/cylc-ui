@@ -40,9 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{ mdiHelpCircleOutline }}
               </v-icon>
             </template>
-            <Markdown
-              :markdown="arg.description"
-            />
+            <div v-markdown="arg.description"></div>
           </v-tooltip>
         </v-list-item-title>
         <FormInput
@@ -58,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { inject } from 'vue'
 import { lowerCase, upperFirst } from 'lodash-es'
 import { mdiHelpCircleOutline } from '@mdi/js'
-import Markdown from '@/components/Markdown.vue'
+import { vMarkdown } from '@/directives/markdown'
 import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { getNullValue, mutate, getMutationArgsFromTokens } from '@/utils/aotf'
 
