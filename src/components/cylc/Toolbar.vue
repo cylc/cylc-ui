@@ -52,49 +52,101 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           style="font-size: 120%; padding-right: 0.3em;"
         />
 
-        <v-btn
-          id="workflow-mutate-button"
-          v-command-menu="currentWorkflow"
-          :icon="icons.mdiMicrosoftXboxControllerMenu"
-          size="small"
-          density="comfortable"
-        />
+        <v-defaults-provider
+          :defaults="{
+            VBtn: {
+              size: 'small',
+              density: 'comfortable',
+              rounded: 'lg',
+              class: 'mr-1',
+            },
+          }"
+        >
+          <v-btn
+            id="workflow-mutate-button"
+            v-command-menu="currentWorkflow"
+            :icon="icons.mdiMicrosoftXboxControllerMenu"
+          />
 
-        <v-btn
-          id="workflow-play-button"
-          :icon="icons.run"
-          :disabled="!enabled.playToggle"
-          v-if="!isRunning"
-          @click="onClickPlay"
-          size="small"
-          density="comfortable"
-        />
+          <v-btn
+            v-if="!isRunning"
+            id="workflow-play-button"
+            :icon="icons.run"
+            :disabled="!enabled.playToggle"
+            @click="onClickPlay()"
+          />
 
-        <v-btn
-          id="workflow-play-pause-button"
-          :icon="isPaused ? icons.run : icons.hold"
-          :disabled="!enabled.pauseToggle"
-          v-if="isRunning"
-          @click="onClickReleaseHold"
-          size="small"
-          density="comfortable"
-        />
+          <v-btn
+            v-else
+            id="workflow-play-pause-button"
+            :icon="isPaused ? icons.run : icons.hold"
+            :disabled="!enabled.pauseToggle"
+            @click="onClickReleaseHold()"
+          />
+        </v-defaults-provider>
 
-        <v-btn
-          id="workflow-stop-button"
-          :icon="icons.stop"
-          :disabled="!enabled.stopToggle"
-          @click="onClickStop"
+        <v-btn-group
           size="small"
-          density="comfortable"
-        />
+          variant="outlined"
+          divided
+          rounded="lg"
+        >
+          <v-btn
+            id="workflow-stop-button"
+            :icon="icons.stop"
+            :disabled="!enabled.stopToggle"
+            @click="stopWorkflow()"
+          />
+          <v-btn
+            id="workflow-stop-dropdown-button"
+            :icon="icons.mdiChevronDown"
+            :disabled="isStopped"
+          />
+          <v-menu
+            activator="#workflow-stop-dropdown-button"
+            target="#workflow-stop-button"
+          >
+            <v-card>
+              <v-list density="compact">
+                <v-list-subheader>Choose stop mode</v-list-subheader>
+                <v-skeleton-loader
+                  v-if="!stopModes"
+                  type="list-item-two-line@3"
+                />
+                <template v-else>
+                  <v-list-item
+                    v-for="mode in stopModes"
+                    :key="mode.name"
+                    :title="mode.name"
+                    @click="stopWorkflow(mode.name)"
+                  >
+                    <template #append>
+                      <v-tooltip
+                        :activator="null"
+                        location="end"
+                      >
+                        <template #activator="{ props }">
+                          <v-icon
+                            v-bind="props"
+                            :icon="icons.mdiHelpCircleOutline"
+                          />
+                        </template>
+                        <div v-markdown="mode.description"></div>
+                      </v-tooltip>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-list>
+            </v-card>
+          </v-menu>
+        </v-btn-group>
       </div>
 
       <!-- n-window selector -->
       <v-btn
         :disabled="isStopped"
         variant="tonal"
-        rounded
+        rounded="lg"
         size="small"
         data-cy="n-win-selector"
       >
@@ -254,7 +306,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
+import { computedAsync } from '@vueuse/core'
 import { useRoute } from 'vue-router'
 import { mapState } from 'vuex'
 import { useDisplay } from 'vuetify'
@@ -271,6 +324,8 @@ import {
   mdiInformationOutline,
   mdiMenuOpen,
   mdiMenuClose,
+  mdiHelpCircleOutline,
+  mdiPencil,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -278,6 +333,7 @@ import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import { useGraphQL } from '@/mixins/graphql'
 import {
+  findByName,
   mutationStatus,
 } from '@/utils/aotf'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -288,6 +344,7 @@ import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
 import { useUserService } from '@/services/user.service'
 import { workflowViews } from '@/views/views'
+import { vMarkdown } from '@/directives/markdown'
 
 const QUERY = gql(`
 subscription Workflow ($workflowID: ID) {
@@ -338,6 +395,8 @@ export default {
   setup (props) {
     const route = useRoute()
 
+    const workflowService = inject('workflowService')
+
     const { user, versionInfo } = useUserService()
 
     const { variables, workflowName, workflowID } = useGraphQL()
@@ -349,6 +408,11 @@ export default {
 
     const { mdAndDown } = useDisplay()
     const { drawer, drawerEnabled, toggleDrawer } = useDrawer()
+
+    const stopModes = computedAsync(async () => {
+      const { types } = await workflowService.getGraphQLSchema()
+      return findByName(types, 'WorkflowStopMode').enumValues
+    })
 
     return {
       user,
@@ -364,6 +428,7 @@ export default {
       workflowID,
       versionInfo,
       workflowViews,
+      stopModes,
       icons: {
         add: mdiPlusBoxMultiple,
         hold: mdiPause,
@@ -377,12 +442,18 @@ export default {
         mdiAccount,
         mdiChevronDown,
         mdiArrowULeftTop,
+        mdiHelpCircleOutline,
+        mdiPencil,
       },
     }
   },
 
   components: {
     WarningIcon,
+  },
+
+  directives: {
+    markdown: vMarkdown,
   },
 
   mixins: [
@@ -546,15 +617,11 @@ export default {
         }
       })
     },
-    onClickStop () {
-      this.$workflowService.mutate(
-        'stop',
-        this.currentWorkflow.id
-      ).then(response => {
-        if (response.status === mutationStatus.SUCCEEDED) {
-          this.expecting.stop = WorkflowState.STOPPING
-        }
-      })
+    async stopWorkflow (mode) {
+      const response = await this.$workflowService.mutate('stop', this.currentWorkflow.id, { mode })
+      if (response.status === mutationStatus.SUCCEEDED) {
+        this.expecting.stop = WorkflowState.STOPPING
+      }
     },
     async setGraphWindow (nWindow) {
       const { status } = await this.$workflowService.mutate(
