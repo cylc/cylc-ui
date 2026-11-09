@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,34 +15,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
-
 /** Height in px */
 export const toolbarHeight = 48
-
-/** Global state of navigation drawer visibility */
-const drawer = ref(false)
-
-function toggleDrawer () {
-  drawer.value = !drawer.value
-}
-
-/** Composable that provides the global state of the navigation drawer visibility. */
-export function useDrawer () {
-  const route = useRoute()
-
-  /** Should the drawer be enabled at all? (Set by the route - false for standalone views) */
-  const drawerEnabled = computed(() => route.meta?.showSidebar ?? true)
-
-  return {
-    drawer,
-    toggleDrawer,
-    drawerEnabled,
-  }
-}
-
-// For tests:
-export {
-  drawer as __drawer,
-}
