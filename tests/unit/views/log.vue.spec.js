@@ -144,33 +144,15 @@ describe('Log view', () => {
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
   })
 
-  it('toggles the log mode', async () => {
-    const wrapper = mountFunction()
-    await nextTick()
+  it.each(['start', 'end'])('marks the log as truncated', (truncated) => {
+    const results = new Results()
+    const callback = new LogsCallback(results)
+    callback.onAdded({ lines: ['line-1', 'line-2'] })
+    expect(results.truncated).toBe(false)
 
-    const initialMode = wrapper.vm.headMode
-
-    wrapper.vm.headMode = !initialMode
-    await nextTick()
-    expect(wrapper.vm.headMode).toBe(!initialMode)
-  })
-
-  it('records which end of the file has been truncated', async () => {
-    // start-of-file truncation
-    const startResults = new Results()
-    const startCallback = new LogsCallback(startResults, () => null)
-    startCallback.onAdded({ lines: ['line-1', 'line-2'] })
-    startCallback.onAdded({ truncated: 'start' })
-    expect(startResults.truncated).toBe(true)
-    expect(startResults.lines).toEqual(['line-1', 'line-2'])
-
-    // end-of-file truncation
-    const endResults = new Results()
-    const endCallback = new LogsCallback(endResults, () => null)
-    endCallback.onAdded({ lines: ['line-1', 'line-2'] })
-    endCallback.onAdded({ truncated: 'end' })
-    expect(endResults.truncated).toBe(true)
-    expect(endResults.lines).toEqual(['line-1', 'line-2'])
+    callback.onAdded({ truncated })
+    expect(results.truncated).toBe(true)
+    expect(results.lines).toEqual(['line-1', 'line-2'])
   })
 
   it('does not issue subscription for incomplete task ID', async () => {

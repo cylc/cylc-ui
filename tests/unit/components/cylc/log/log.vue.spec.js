@@ -20,53 +20,42 @@ import { shallowMount } from '@vue/test-utils'
 import Log from '@/components/cylc/log/Log.vue'
 
 describe('Log component', () => {
-  it('shows a warning alert when the end of the file is truncated', async () => {
-    const truncatedWrapper = shallowMount(Log, {
+  it.each([
+    {
+      scenario: 'when the end of the file is truncated',
+      props: { truncated: true, headMode: true },
+      startWarning: false,
+      endWarning: true,
+    },
+    {
+      scenario: 'when the start of the file is truncated',
+      props: { truncated: true, headMode: false },
+      startWarning: true,
+      endWarning: false,
+    },
+    {
+      scenario: 'by default',
+      props: {},
+      startWarning: false,
+      endWarning: false,
+    },
+  ])('shows the expected truncation warnings $scenario', async ({
+    props,
+    startWarning,
+    endWarning,
+  }) => {
+    const wrapper = shallowMount(Log, {
       props: {
         logs: ['line-1'],
-        truncated: true,
-        headMode: true,
+        ...props,
       },
     })
     await nextTick()
     expect(
-      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
-    ).toBe(true)
-    // the start-of-file warning should not be shown
+      wrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
+    ).toBe(startWarning)
     expect(
-      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
-    ).toBe(false)
-  })
-
-  it('shows a warning alert when the start of the file is truncated', async () => {
-    const truncatedWrapper = shallowMount(Log, {
-      props: {
-        logs: ['line-1'],
-        truncated: true,
-        headMode: false,
-      },
-    })
-    await nextTick()
-    expect(
-      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
-    ).toBe(true)
-    expect(
-      truncatedWrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
-    ).toBe(false)
-  })
-
-  it('shows no truncation warnings by default', async () => {
-    const plainWrapper = shallowMount(Log, {
-      props: {
-        logs: ['line-1'],
-      },
-    })
-    await nextTick()
-    expect(
-      plainWrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
-    ).toBe(false)
-    expect(
-      plainWrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
-    ).toBe(false)
+      wrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
+    ).toBe(endWarning)
   })
 })

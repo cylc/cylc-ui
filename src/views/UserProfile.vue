@@ -230,7 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-model.number="logMaxLines"
                     type="number"
                     :min="1"
-                    :max="LOG_MAX_LINES_LIMIT"
+                    :max="logMaxLinesLimit"
                     @blur="logMaxLines = normalizeLogMaxLines(logMaxLines)"
                     data-cy="input-log-max-lines"
                   />
@@ -255,7 +255,7 @@ import {
   useReducedAnimation,
   useWorkflowWarnings,
   normalizeLogMaxLines,
-  LOG_MAX_LINES_LIMIT,
+  logMaxLinesLimit,
 } from '@/composables/localStorage'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { workflowViews, useDefaultView } from '@/views/views.js'
@@ -284,7 +284,7 @@ export default {
       compactMode: useCompactMode(),
       logMaxLines: useLogMaxLines(),
       normalizeLogMaxLines,
-      LOG_MAX_LINES_LIMIT,
+      logMaxLinesLimit,
       upperFirst,
       workflowViews,
     }

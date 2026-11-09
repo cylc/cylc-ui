@@ -38,10 +38,10 @@ export const useLogWordWrapDefault = () => useLocalStorage('logWordWrap', false)
 export const useCompactMode = () => useLocalStorage('compactMode', false)
 
 /** Default and hard cap for the log view "maximum lines" setting. */
-export const LOG_MAX_LINES_DEFAULT = 5000
-export const LOG_MAX_LINES_LIMIT = 100000
+export const logMaxLinesDefault = 5000
+export const logMaxLinesLimit = 100000
 
-export const useLogMaxLines = () => useLocalStorage('logMaxLines', LOG_MAX_LINES_DEFAULT)
+export const useLogMaxLines = () => useLocalStorage('logMaxLines', logMaxLinesDefault)
 
 /**
  * Coerce a maxLines value into a valid integer within the allowed bounds.
@@ -54,7 +54,7 @@ export const useLogMaxLines = () => useLocalStorage('logMaxLines', LOG_MAX_LINES
 export function normalizeLogMaxLines (value) {
   const n = parseInt(value, 10)
   if (!Number.isFinite(n) || n < 1) {
-    return LOG_MAX_LINES_DEFAULT
+    return logMaxLinesDefault
   }
-  return Math.min(n, LOG_MAX_LINES_LIMIT)
+  return Math.min(n, logMaxLinesLimit)
 }

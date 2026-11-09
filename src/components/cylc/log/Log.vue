@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     ref="scrollWrapper"
-    class="d-flex flex-column h-100 overflow-auto px-4 pb-2"
+    class="d-flex flex-column h-100 overflow-auto px-4 pb-4"
   >
     <button
       v-if="truncated"
@@ -198,7 +198,7 @@ defineExpose({
   justify-content: center;
   gap: 0.75rem;
   width: calc(100% + 0.5rem);
-  padding: 0.5rem 1rem 1rem 1rem;
+  padding: 0.75rem;
   border: 0;
   background: var(--banner-background);
   color: map.get(settings.$grey, 'darken-4');
