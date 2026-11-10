@@ -17,7 +17,14 @@
 
 import { nextTick, ref, computed } from 'vue'
 import { vi } from 'vitest'
-import { once, when, until, watchWithControl } from '@/utils/reactivity'
+import {
+  once,
+  when,
+  until,
+  watchWithControl,
+  useAsyncAction,
+} from '@/utils/reactivity'
+import { Deferred } from '$tests/util'
 
 const truthySources = () => [
   ref(true),
@@ -147,6 +154,23 @@ describe('watchWithControl()', () => {
     source.value++
     expect(source.value).toEqual(4)
     await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('useAsyncAction', () => {
+  it('returns a state ref and an action function', async () => {
+    const deferred = new Deferred()
+    const callback = vi.fn(async () => {
+      await deferred.promise
+    })
+    const [state, action] = useAsyncAction(callback)
+    expect(state.value).toBe(false)
+    const actionPromise = action()
+    expect(state.value).toBe(true)
+    deferred.resolve()
+    await actionPromise
+    expect(state.value).toBe(false)
     expect(callback).toHaveBeenCalledTimes(1)
   })
 })

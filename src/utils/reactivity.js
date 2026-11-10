@@ -112,3 +112,20 @@ export function watchWithControl (source, callback, options = {}) {
     },
   }
 }
+
+/**
+ * Provides a convenient way to handle asynchronous actions with a loading state.
+ *
+ * @param {Function} callback - The asynchronous function to execute.
+ * @returns {[import('vue').Ref<boolean>, Function]} - A ref indicating the loading state and the action function.
+ */
+export function useAsyncAction (callback) {
+  const isLoading = ref(false)
+  const action = async () => {
+    isLoading.value = true
+    const result = await callback()
+    isLoading.value = false
+    return result
+  }
+  return [isLoading, action]
+}
