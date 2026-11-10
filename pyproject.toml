@@ -18,7 +18,7 @@ name = "🔧 Fixes"
 showcontent = true
 
 [tool.codespell]
-skip = "logData.cjs,./src/lang/pt-BR"
+skip = "./src/services/mock/json,./src/lang/pt-BR,./node_modules,./dist,./docs/jsdoc,./coverage,./yarn"
 ignore-words-list = [
     "afterAll",
     "onTop",
