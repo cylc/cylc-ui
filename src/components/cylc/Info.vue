@@ -186,7 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <li v-for="prereq in prerequisites" :key="prereq.expression">
                 <span
                   class="prerequisite-alias condition"
-                  :class="{satisfied: prereq.satisfied}"
+                  :class="{ satisfied: prereq.satisfied }"
                 >{{ prereq.expression.replace(/c/g, '') }}</span>
                 <ul>
                   <li
@@ -195,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   >
                     <span
                       class="prerequisite-alias condition"
-                      :class="{satisfied: condition.satisfied}"
+                      :class="{ satisfied: condition.satisfied }"
                     >
                       {{ condition.exprAlias.replace(/c/, '') }}
 
@@ -223,7 +223,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <li v-for="output in outputs" :key="output.label">
                 <span
                   class="condition"
-                  :class="{satisfied: output.satisfied}"
+                  :class="{ satisfied: output.satisfied }"
                 >{{ output.label }}</span>
               </li>
             </ul>
@@ -248,7 +248,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
                 <span
                   class="condition"
-                  :class="{satisfied: complete, blank: (complete === null)}"
+                  :class="{ satisfied: complete, blank: (complete === null) }"
                 >
                   <!-- Indent the line as required -->
                   <span :style="`margin-left: ${1 * indent}em;`"></span>

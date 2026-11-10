@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import concurrently from 'concurrently'
 
 const args = process.argv.slice(2)

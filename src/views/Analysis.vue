@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             placeholder="Filter by task name"
             v-model="tasksFilter.name"
             ref="filterNameInput"
-            :items="this.tasks.map(task => task.name)"
+            :items="tasks.map(task => task.name)"
             :disabled="chartType === 'timeSeries'"
           />
         </v-col>
