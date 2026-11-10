@@ -350,8 +350,7 @@ describe('Analysis view', () => {
 
     it('Should search for and add/remove tasks', () => {
       // Before searching, the options to add/remove all tasks should exist
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('succeeded')
@@ -362,15 +361,13 @@ describe('Analysis view', () => {
         .contains('Deselect all')
         .should('exist')
       // Select all tasks that contain succeeded
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .type('succeeded')
         .get('.v-card-actions')
         .contains('Select all')
         .click()
       // Check the correct tasks have been added
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .its('length')
         .should('eq', 2)
@@ -381,17 +378,15 @@ describe('Analysis view', () => {
         .find('.v-chip')
         .contains('eventually_succeeded')
       // Remove all tasks that contain eventually
-      cy
-        .get('[data-cy=time-series-task-select]')
-        .find('input')
+      cy.get('[data-cy=time-series-task-select]')
+        .find('input[role=combobox]')
         .clear()
         .type('eventually')
         .get('.v-card-actions')
         .contains('Deselect all')
         .click()
       // Check only succeeded task is selected
-      cy
-        .get('[data-cy=time-series-task-select]')
+      cy.get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .contains(/^succeeded$/)
         .get('[data-cy=time-series-task-select]')
@@ -496,9 +491,8 @@ describe('Filters and Options save state', () => {
         .should('not.have.class', sortedClass)
         .click()
         .should('have.class', sortedClass)
-      cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
-        .as('itemsPerPage')
-        .find('input')
+      cy.get('.c-table .v-data-table-footer__items-per-page .v-select').as('itemsPerPage')
+        .find('input[role=combobox]').as('itemsPerPageInput')
         .should('not.have.value', 'All')
         .get('@itemsPerPage')
         .click()
@@ -507,14 +501,14 @@ describe('Filters and Options save state', () => {
         .click()
         // Wait for menu to close
         .should('not.exist')
-        .get('@itemsPerPage').find('input')
+        .get('@itemsPerPageInput')
         .should('have.value', 'All')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(stateSaveDelay)
       cy.reload()
       cy.get('@platformCol')
         .should('have.class', sortedClass)
-      cy.get('@itemsPerPage').find('input')
+      cy.get('@itemsPerPageInput')
         .should('have.value', 'All')
     })
 
