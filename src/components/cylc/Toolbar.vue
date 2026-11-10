@@ -137,8 +137,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-list-item>
                 </template>
               </v-list>
+              <v-divider/>
+              <v-card-actions>
+                <v-btn
+                  :prepend-icon="icons.mdiPencil"
+                  text="More options"
+                  class="flex-grow-1"
+                  @click="openStopDialog()"
+                />
+              </v-card-actions>
             </v-card>
           </v-menu>
+          <CommandDialog ref="stopDialog"/>
         </v-btn-group>
       </div>
 
@@ -306,10 +316,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { computed, inject } from 'vue'
+import { computed, inject, useTemplateRef } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import { useRoute } from 'vue-router'
-import { mapState } from 'vuex'
+import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import {
   mdiCog,
@@ -342,6 +352,7 @@ import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
 import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
+import CommandDialog from '@/components/cylc/commandMenu/CommandDialog.vue'
 import { useUserService } from '@/services/user.service'
 import { workflowViews } from '@/views/views'
 import { vMarkdown } from '@/directives/markdown'
@@ -394,12 +405,17 @@ export default {
 
   setup (props) {
     const route = useRoute()
+    const store = useStore()
 
     const workflowService = inject('workflowService')
 
     const { user, versionInfo } = useUserService()
 
     const { variables, workflowName, workflowID } = useGraphQL()
+
+    const currentWorkflow = computed(
+      () => workflowID.value ? store.state.workflows.cylcTree.$index[workflowID.value] : undefined
+    )
 
     /** Show workflow name as title if we are navigated to one, otherwise the generic route title. */
     const title = computed(
@@ -414,6 +430,14 @@ export default {
       return findByName(types, 'WorkflowStopMode').enumValues
     })
 
+    const stopDialog = useTemplateRef('stopDialog')
+
+    async function openStopDialog () {
+      const { mutations } = await workflowService.getGraphQLSchema()
+      const mutation = findByName(mutations, 'stop')
+      stopDialog.value.open({ cylcObject: currentWorkflow.value, mutation })
+    }
+
     return {
       user,
       mdAndDown,
@@ -426,9 +450,11 @@ export default {
       title,
       workflowName,
       workflowID,
+      currentWorkflow,
       versionInfo,
       workflowViews,
       stopModes,
+      openStopDialog,
       icons: {
         add: mdiPlusBoxMultiple,
         hold: mdiPause,
@@ -449,6 +475,7 @@ export default {
   },
 
   components: {
+    CommandDialog,
     WarningIcon,
   },
 
@@ -471,7 +498,6 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
     query () {
       if (!this.workflowName) return null
       return new SubscriptionQuery(
@@ -483,10 +509,7 @@ export default {
         /* isGlobalCallback */ true
       )
     },
-    currentWorkflow () {
-      if (!this.workflowName) return null
-      return this.cylcTree.$index[this.workflowID]
-    },
+
     isRunning () {
       return (
         this.currentWorkflow &&
