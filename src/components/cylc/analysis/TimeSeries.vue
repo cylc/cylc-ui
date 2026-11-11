@@ -193,17 +193,7 @@ export default {
     /** Object containing all of the jobs added by the callback */
     const jobs = ref([])
 
-    /**
-     * Add jobs contained in data to this.jobs
-     */
-    function add (data) {
-      jobs.value.push(
-        ...data.jobs.map((job) => pick(job, jobFields))
-      )
-    }
-
     return {
-      add,
       jobs,
       reducedAnimation,
       displayedTasks,
@@ -450,15 +440,14 @@ export default {
       async function (queryTasks) {
         // Ensure query isn't run over all tasks
         if (queryTasks.length > 0) {
-          this.jobs = []
-          const retJob = await this.$workflowService.query2(
+          const { data } = await this.$workflowService.query2(
             JOB_QUERY,
             { workflows: this.workflowIDs, tasks: queryTasks }
           )
-          this.add(retJob.data)
+          this.jobs = data.jobs.map((job) => pick(job, jobFields))
         }
       },
-      200 // only re-run this once every 0.2 seconds
+      200 // only re-run this at most every 0.2 seconds
     ),
     taskNamesQuery: debounce(
       async function () {
@@ -468,7 +457,7 @@ export default {
         )
         this.taskNames = retJob.data.tasks.map(task => task.name)
       },
-      200 // only re-run this once every 0.2 seconds
+      200 // only re-run this at most every 0.2 seconds
     ),
     zoomMainChart: function (context, { xaxis }) {
       this.xRange = [Math.ceil(xaxis.min), Math.floor(xaxis.max)]

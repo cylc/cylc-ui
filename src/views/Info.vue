@@ -195,31 +195,28 @@ export default {
   },
 
   computed: {
-    // This registers the query with the WorkflowService, once registered, the
-    // WorkflowService promises to make the data defined by the query available
-    // in the store and to keep it up to date.
     query () {
       return new SubscriptionQuery(
         QUERY,
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
-        {
-          onDelta: ({ added, updated }) => {
-            if (added) {
+        // Custom next callback for standalone subscription; deltas are not automatically applied to the store
+        ({ data }) => {
+          const { added, updated } = data?.deltas ?? {}
+          if (added) {
             // store the task info
-              Object.assign(this.task, added.taskProxies[0])
+            Object.assign(this.task, added.taskProxies[0])
 
-              // construct a dummy "node" like to make it look like a node in the central data store
-              Object.assign(this.taskNode, taskObjToNode(this.task))
-              rebuildTaskChildren(this.taskNode, this.task)
+            // construct a dummy "node" like to make it look like a node in the central data store
+            Object.assign(this.taskNode, taskObjToNode(this.task))
+            rebuildTaskChildren(this.taskNode, this.task)
+          }
+          if (updated) {
+            if (updated?.taskProxies) {
+              Object.assign(this.task, updated.taskProxies[0])
             }
-            if (updated) {
-              if (updated?.taskProxies) {
-                Object.assign(this.task, updated.taskProxies[0])
-              }
-              rebuildTaskChildren(this.taskNode, this.task)
-            }
-          },
+            rebuildTaskChildren(this.taskNode, this.task)
+          }
         }
       )
     },

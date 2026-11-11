@@ -263,15 +263,7 @@ export default {
     /** Object containing all of the tasks added by the callback */
     const tasks = ref([])
 
-    /** Call when new objects are added */
-    function add (data) {
-      tasks.value.push(
-        ...data.tasks.map((task) => pick(task, taskFields))
-      )
-    }
-
     return {
-      add,
       tasks,
       tasksFilter,
       chartType,
@@ -304,14 +296,13 @@ export default {
      */
     tasksQuery: debounce(
       async function () {
-        this.tasks = []
-        const ret = await this.$workflowService.query2(
+        const { data } = await this.$workflowService.query2(
           TASK_QUERY,
           { workflows: this.workflowIDs }
         )
-        this.add(ret.data)
+        this.tasks = data.tasks.map((task) => pick(task, taskFields))
       },
-      200 // only re-run this once every 0.2 seconds
+      200 // only re-run this at most every 0.2 seconds
     ),
   },
 

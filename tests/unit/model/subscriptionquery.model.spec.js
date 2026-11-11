@@ -37,7 +37,6 @@ describe('SubscriptionQuery model', () => {
     const hooks = {
       onBeforeDelta () {},
       onDelta () {},
-      tearDown () {},
     }
     const subscriptionQuery = new SubscriptionQuery(query, variables, name, hooks)
     expect(subscriptionQuery.hooks).toBe(hooks)

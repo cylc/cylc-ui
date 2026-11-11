@@ -97,7 +97,6 @@ describe('WorkflowService', () => {
       _uid: 'view',
       query: subscriptionQuery,
       viewState: ViewState.NO_STATE,
-      setAlert: () => {},
     }
   })
 
@@ -268,19 +267,39 @@ describe('WorkflowService', () => {
 
     it('should throw an error if there are no subscribers', () => {
       subscription.subscribers.delete(view._uid)
-      expect(() => { workflowService.recompute(subscription) }).to.throw()
+      expect(() => {
+        workflowService.recompute(subscription)
+      }).toThrow('No Subscribers')
     })
 
     it('should throw an error if the subscribers have different variables', () => {
-      const anotherQuery = new SubscriptionQuery(
-        gql`query { workflow { id } }`,
-        {
-          differentVariable: true,
-        },
-        'test',
-      )
-      subscription.subscribers.set(anotherQuery.name, anotherQuery)
-      expect(() => { workflowService.recompute(subscription) }).to.throw()
+      const anotherView = {
+        _uid: 'anotherView',
+        query: new SubscriptionQuery(
+          gql`query { workflow { id } }`,
+          { differentVariable: true },
+          'test',
+        ),
+      }
+      subscription.subscribers.set(anotherView._uid, anotherView)
+      expect(() => {
+        workflowService.recompute(subscription)
+      }).toThrow('Query variables do not match')
+    })
+
+    it('does not throw when all subscribers have the same variables', () => {
+      const anotherView = {
+        _uid: 'anotherView',
+        query: new SubscriptionQuery(
+          gql`query { workflow { id } }`,
+          subscriptionQuery.variables,
+          'test',
+        ),
+      }
+      subscription.subscribers.set(anotherView._uid, anotherView)
+      expect(() => {
+        workflowService.recompute(subscription)
+      }).not.toThrow()
     })
   })
 
@@ -419,6 +438,25 @@ describe('WorkflowService', () => {
       })
       expect(onBeforeDelta).toHaveBeenCalledWith(deltas)
       expect(onDelta).toHaveBeenCalledWith(deltas)
+    })
+
+    it('runs a custom next callback instead of updating the store', () => {
+      const customNext = vi.fn()
+      view.query = new SubscriptionQuery(query, {}, 'root', customNext)
+      workflowService.subscribe(view)
+      workflowService.startSubscriptions()
+      const response = {
+        data: {
+          deltas: {
+            added: {
+              workflow: { id: '~user/foo' },
+            },
+          },
+        },
+      }
+      next(response)
+      expect(customNext).toHaveBeenCalledWith(response)
+      expect($index).toEqual({})
     })
   })
 })

@@ -386,9 +386,6 @@ export class WorkflowService {
       console.debug(`Stopping subscription ${subscription.query.name}`)
     }
     subscription.observable.unsubscribe()
-    for (const { query } of subscription.subscribers.values()) {
-      query?.hooks?.tearDown?.()
-    }
     if (!reload && subscription.query.name === 'workflow') {
       // Remove all children in the store for each workflow in the subscription.
       // This is how the store gets housekept when we change workflow.

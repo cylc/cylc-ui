@@ -20,7 +20,6 @@
  * @typedef {Object} DeltasHooks
  * @property {({ added: any, updated: any, pruned: any }) => void} [onBeforeDelta] - Run before a delta is processed in the data store.
  * @property {({ added: any, updated: any, pruned: any }) => void} [onDelta] - Run after a delta is processed in the data store.
- * @property {() => void} [tearDown] - Run when stopping the subscription.
  */
 
 /**

@@ -75,7 +75,6 @@ describe('Subscription model', () => {
       const subscription = new Subscription(subscriptionQuery)
       subscription.subscribers.set('1', {
         viewState: null,
-        setAlert: () => {},
       })
       subscription.handleViewState(viewState, context)
       for (const subscriber of subscription.subscribers.values()) {
