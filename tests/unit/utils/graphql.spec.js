@@ -32,9 +32,12 @@ describe('graphql', () => {
   })
 
   describe('SubscriptionClient', () => {
-    it('creates a subscription client', () => {
+    it('creates a subscription client', async () => {
       const subscriptionClient = createSubscriptionClient('ws://localhost:12345')
       expect(subscriptionClient.on).toBeTypeOf('function')
+      // client is created in non-lazy mode, so clean up:
+      subscriptionClient.terminate()
+      subscriptionClient.dispose()
     })
   })
 
