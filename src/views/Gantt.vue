@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-select
             id="c-gantt-tasks-per-page"
-            :items="$options.taskChoices"
+            :items="taskChoices"
             prefix="Tasks Per Page"
             v-model="tasksPerPage"/>
         </v-col>
@@ -90,22 +90,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </div>
 </template>
 
-<script>
-import {
-  debounce,
-} from 'lodash'
+<script setup>
+import { inject, onBeforeMount, ref, computed } from 'vue'
 import gql from 'graphql-tag'
 import { useWorkflowVariables } from '@/mixins/graphql'
 import {
-  initialOptions,
+  initialOptions as initialOptionsProp,
+  updateInitialOptionsEvent,
   useInitialOptions,
 } from '@/utils/initialOptions'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 import {
   matchTasks,
-  platformOptions,
+  getPlatformOptions,
 } from '@/components/cylc/gantt/filter'
-import { ref } from 'vue'
 
 /** List of fields to request for each job */
 const jobFields = [
@@ -126,106 +124,68 @@ query ganttQuery ($workflows: [ID]) {
 }
 `
 
-export default {
-  name: 'Gantt',
+const props = defineProps({
+  initialOptions: initialOptionsProp,
+})
 
-  components: {
-    GanttChart,
-  },
+const emit = defineEmits([updateInitialOptionsEvent])
 
-  props: {
-    initialOptions,
-  },
+/** @type {import('@/services/workflow.service').WorkflowService} */
+const workflowService = inject('workflowService')
 
-  setup (props, { emit }) {
-    /**
-     * The tasks per page filter state.
-     * @type {import('vue').Ref<number>}
-     */
-    const tasksPerPage = useInitialOptions('tasksPerPage', { props, emit }, 10)
+/**
+ * The tasks per page filter state.
+ * @type {import('vue').Ref<number>}
+ */
+const tasksPerPage = useInitialOptions('tasksPerPage', { props, emit }, 10)
 
-    /**
-     * The task name, timing option and platform filter state.
-     * @type {import('vue').Ref<object>}
-     */
-    const jobsFilter = useInitialOptions('jobsFilter', { props, emit }, {
-      name: [],
-      timingOption: 'totalTimes',
-      platformOption: -1,
-    })
+/**
+ * The task name, timing option and platform filter state.
+ * @type {import('vue').Ref<object>}
+ */
+const jobsFilter = useInitialOptions('jobsFilter', { props, emit }, {
+  name: [],
+  timingOption: 'totalTimes',
+  platformOption: -1,
+})
 
-    const { workflowIDs } = useWorkflowVariables()
+const { workflowIDs } = useWorkflowVariables()
 
-    const jobs = ref({})
-    const uniqueTasks = ref([])
+const jobs = ref({})
+const uniqueTasks = computed(() => Object.keys(jobs.value))
 
-    /** Add jobs from incoming data */
-    function add (data) {
-      uniqueTasks.value = Array.from(
-        new Set(data.jobs.map((job) => job.name))
-      )
-      const sortedData = Object.fromEntries(uniqueTasks.value.map(key => [key, []]))
-      for (let i = 0; i < data.jobs.length; i++) {
-        sortedData[data.jobs[i].name].push(data.jobs[i])
-      }
-      Object.assign(jobs.value, sortedData)
-    }
+onBeforeMount(() => {
+  jobsQuery()
+})
 
-    return {
-      add,
-      jobs,
-      uniqueTasks,
-      tasksPerPage,
-      jobsFilter,
-      workflowIDs,
-    }
-  },
+const timingOptions = ref([
+  { value: 'totalTimes', title: 'Total times' },
+  { value: 'runTimes', title: 'Run times' },
+  { value: 'queueTimes', title: 'Queue times' },
+])
 
-  beforeMount () {
-    this.jobsQuery()
-  },
+const filteredJobs = computed(
+  () => matchTasks(jobs.value, jobsFilter.value)
+)
+const platformOptions = computed(
+  () => getPlatformOptions(jobs.value)
+)
+const timingOption = computed(
+  () => jobsFilter.value.timingOption.replace(/Times/, '')
+)
 
-  data () {
-    return {
-      timingOptions: [
-        { value: 'totalTimes', title: 'Total times' },
-        { value: 'runTimes', title: 'Run times' },
-        { value: 'queueTimes', title: 'Queue times' },
-      ],
-    }
-  },
-
-  computed: {
-    filteredJobs () {
-      return matchTasks(this.jobs, this.jobsFilter)
-    },
-    platformOptions () {
-      return platformOptions(this.jobs)
-    },
-    timingOption () {
-      return this.jobsFilter.timingOption.replace(/Times/, '')
-    },
-  },
-
-  methods: {
-    /**
-     * Run the one-off query for historical job data and pass its results
-     * through the callback
-     */
-    jobsQuery: debounce(
-      async function () {
-        const ret = await this.$workflowService.query2(
-          QUERY,
-          { workflows: this.workflowIDs }
-        )
-        this.add(ret.data)
-      },
-      200 // only re-run this once every 0.2 seconds
-    ),
-  },
-
-  taskChoices: [
-    10, 25, 50, 100,
-  ],
+/**
+ * Run the one-off query for historical job data.
+ */
+async function jobsQuery () {
+  const { data } = await workflowService.query2(
+    QUERY,
+    { workflows: workflowIDs.value }
+  )
+  jobs.value = Object.groupBy(data.jobs, (job) => job.name)
 }
+
+const taskChoices = [
+  10, 25, 50, 100,
+]
 </script>

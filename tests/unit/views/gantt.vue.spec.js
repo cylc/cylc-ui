@@ -25,9 +25,10 @@ import storeOptions from '@/store/options'
 import sinon from 'sinon'
 import { WorkflowService } from '@/services/workflow.service'
 import { mockRoute } from '$tests/util'
+import { nextTick } from 'vue'
 
-const input = {
-  jobs: [{
+const input = [
+  {
     name: 'a',
     id: '~cbennett/analysis_view_test/run2//1/a/01',
     submittedTime: '2023-02-23T11:36:58Z',
@@ -53,8 +54,8 @@ const input = {
     finishedTime: '2023-02-23T11:38:13Z',
     platform: 'vld684',
     __typename: 'UISJob',
-  }],
-}
+  },
+]
 const expectedJobs = {
   a: [{
     __typename: 'UISJob',
@@ -97,26 +98,27 @@ const filteredJobs = {
   }],
 }
 
-const $workflowService = sinon.createStubInstance(WorkflowService)
-$workflowService.query2.resolves({
-  data: { jobs: [] },
-})
-
 describe('Gantt', () => {
   mockRoute()
 
-  const mountFunc = () => mount(Gantt, {
-    global: {
-      plugins: [createStore(storeOptions)],
-      mocks: { $workflowService },
-    },
-    props: { workflowName: 'test' },
-    shallow: true,
-  })
+  const mountFunc = (jobs = []) => {
+    const workflowService = sinon.createStubInstance(WorkflowService)
+    workflowService.query2.resolves({
+      data: { jobs },
+    })
+    return mount(Gantt, {
+      global: {
+        plugins: [createStore(storeOptions)],
+        provide: { workflowService },
+      },
+      props: { workflowName: 'test' },
+      shallow: true,
+    })
+  }
 
-  it('adds data', () => {
-    const wrapper = mountFunc()
-    wrapper.vm.add(input)
+  it('adds data', async () => {
+    const wrapper = mountFunc(input)
+    await nextTick()
     expect(wrapper.vm.jobs).toEqual(expectedJobs)
   })
   it('matches tasks', () => {

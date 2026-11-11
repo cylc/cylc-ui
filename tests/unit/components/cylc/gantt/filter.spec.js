@@ -17,7 +17,7 @@
 
 import {
   matchTasks,
-  platformOptions,
+  getPlatformOptions,
 } from '@/components/cylc/gantt/filter'
 
 describe('matchTasks', () => {
@@ -89,7 +89,7 @@ describe('matchTasks', () => {
   })
 })
 
-describe('platformOptions', () => {
+describe('getPlatformOptions', () => {
   it('should return all unique platforms and the "all" option', () => {
     const tasks = {
       test_entry_1: [{ name: 'test_entry_1', platform: 'platform_1' }],
@@ -101,7 +101,7 @@ describe('platformOptions', () => {
       { title: 'platform_1', value: 'platform_1' },
       { title: 'platform_2', value: 'platform_2' },
     ]
-    expect(platformOptions([])).to.deep.equal([{ title: 'All', value: -1 }])
-    expect(platformOptions(tasks)).to.deep.equal(expected)
+    expect(getPlatformOptions([])).to.deep.equal([{ title: 'All', value: -1 }])
+    expect(getPlatformOptions(tasks)).to.deep.equal(expected)
   })
 })
