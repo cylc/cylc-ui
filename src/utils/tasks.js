@@ -179,6 +179,7 @@ export function compare (a, b, sortBy, sortDesc) {
       ret = a[sortBy] < b[sortBy] ? -1 : 1
       return sortDesc ? -ret : ret
   }
+  ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
   return sortDesc ? -ret : ret
 }
 
