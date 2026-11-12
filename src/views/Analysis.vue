@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-analysis">
     <v-skeleton-loader
-      v-if="!Object.keys(callback.tasks).length"
+      v-if="isLoading"
       type="table"
       class="align-content-start"
     />
@@ -118,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
-          <v-chip location="right" v-if="timingOption === 'cpuTime'">
+          <v-chip location="right" v-if="timingOption === 'cpuTime' && tasks.length">
             Total CPU Time: {{
               formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
           </v-chip>
@@ -340,6 +340,8 @@ export default {
       callback: new AnalysisTaskCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
+      /** Whether the tasks query is currently in progress */
+      isLoading: true,
     }
   },
 
@@ -364,13 +366,18 @@ export default {
      */
     tasksQuery: debounce(
       async function () {
-        this.tasks = []
-        this.callback = new AnalysisTaskCallback(this.tasks)
-        const ret = await this.$workflowService.query2(
-          TASK_QUERY,
-          { workflows: this.workflowIDs }
-        )
-        this.callback.onAdded(ret.data)
+        this.isLoading = true
+        try {
+          this.tasks = []
+          this.callback = new AnalysisTaskCallback(this.tasks)
+          const ret = await this.$workflowService.query2(
+            TASK_QUERY,
+            { workflows: this.workflowIDs }
+          )
+          this.callback.onAdded(ret.data)
+        } finally {
+          this.isLoading = false
+        }
       },
       200 // only re-run this once every 0.2 seconds
     ),
