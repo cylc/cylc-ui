@@ -51,6 +51,8 @@ export function createGraphQLUrls () {
   }
 }
 
+export const maxSocketRetryAttempts = 5
+
 /**
  * Create a subscription client.
  *
@@ -59,19 +61,26 @@ export function createGraphQLUrls () {
  * @return {import('graphql-ws').Client} a subscription client
  */
 export function createSubscriptionClient (url) {
+  let retryAttempts = 0
   return createClient({
     url,
     lazy: false,
+    retryAttempts: maxSocketRetryAttempts,
     on: {
       connecting (isRetry) {
-        if (isRetry) console.warn('Retrying WS connection')
-        store.commit('SET_OFFLINE', true)
+        if (isRetry) retryAttempts++
+        else store.commit('SET_OFFLINE', -1)
       },
       connected (socket, payload, wasRetry) {
         store.commit('SET_OFFLINE', false)
+        retryAttempts = 0
       },
       closed (event) {
-        store.commit('SET_OFFLINE', true)
+        if (retryAttempts >= maxSocketRetryAttempts) {
+          store.commit('SET_OFFLINE', true)
+        } else if (!store.state.offline) {
+          store.commit('SET_OFFLINE', -1)
+        }
       },
       error (error) {
         console.error(error)
