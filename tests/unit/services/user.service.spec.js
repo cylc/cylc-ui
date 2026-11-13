@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { __ServicesPlugin } from '@/services/plugin'
 
 describe('getUserProfile', () => {
@@ -23,9 +23,7 @@ describe('getUserProfile', () => {
   beforeEach(() => {
     servicesPlugin = new __ServicesPlugin()
   })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-  })
+
   it('returns user profile object', async () => {
     const expected = {
       username: 'cylc-user-01',

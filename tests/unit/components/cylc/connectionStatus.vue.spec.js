@@ -19,6 +19,7 @@ import { nextTick } from 'vue'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
+import sinon from 'sinon'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { store } from '@/store/index'
 import storeOptions from '@/store/options'
@@ -37,7 +38,6 @@ describe('Connection Status component', () => {
   }
 
   beforeEach(() => {
-    vi.stubGlobal('console', { error: () => {} })
     store.replaceState(storeOptions.state())
     createSubscriptionClient('ws://test')
     hooks = vi.mocked(createClient).mock.lastCall[0].on
@@ -86,7 +86,9 @@ describe('Connection Status component', () => {
 
     // Reconnection attempt unsuccessful due to server being unavailable
     hooks.connecting(false)
+    sinon.stub(console, 'error')
     hooks.error()
+    sinon.restore()
     await nextTick()
     expect(getSnackbar()).toEqual('Connection lost')
   })
