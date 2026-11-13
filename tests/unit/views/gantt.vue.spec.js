@@ -15,13 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { GanttCallback } from '@/views/Gantt.vue'
+import { createStore } from 'vuex'
+import { mount } from '@vue/test-utils'
+import Gantt from '@/views/Gantt.vue'
 import {
   matchTasks,
 } from '@/components/cylc/gantt/filter'
+import storeOptions from '@/store/options'
+import sinon from 'sinon'
+import { WorkflowService } from '@/services/workflow.service'
+import { mockRoute } from '$tests/util'
+import { nextTick } from 'vue'
 
-const input = {
-  jobs: [{
+const input = [
+  {
     name: 'a',
     id: '~cbennett/analysis_view_test/run2//1/a/01',
     submittedTime: '2023-02-23T11:36:58Z',
@@ -47,8 +54,8 @@ const input = {
     finishedTime: '2023-02-23T11:38:13Z',
     platform: 'vld684',
     __typename: 'UISJob',
-  }],
-}
+  },
+]
 const expectedJobs = {
   a: [{
     __typename: 'UISJob',
@@ -91,25 +98,35 @@ const filteredJobs = {
   }],
 }
 
-describe('GanttCallback', () => {
-  it('adds data', () => {
-    const ganttCallback = new GanttCallback()
-    ganttCallback.onAdded(input)
-    expect(ganttCallback.jobs).toEqual(expectedJobs)
-  })
-  it('updates data', () => {
-    const ganttCallback = new GanttCallback()
-    ganttCallback.onUpdated(input)
-    expect(ganttCallback.jobs).toEqual(expectedJobs)
+describe('Gantt', () => {
+  mockRoute()
+
+  const mountFunc = (jobs = []) => {
+    const workflowService = sinon.createStubInstance(WorkflowService)
+    workflowService.query2.resolves({
+      data: { jobs },
+    })
+    return mount(Gantt, {
+      global: {
+        plugins: [createStore(storeOptions)],
+        provide: { workflowService },
+      },
+      props: { workflowName: 'test' },
+      shallow: true,
+    })
+  }
+
+  it('adds data', async () => {
+    const wrapper = mountFunc(input)
+    await nextTick()
+    expect(wrapper.vm.jobs).toEqual(expectedJobs)
   })
   it('matches tasks', () => {
-    const ganttCallback = new GanttCallback()
-    ganttCallback.onAdded(input)
     const jobsFilter = {
       name: ['a'],
       timingOption: 'totalTimes',
       platformOption: -1,
     }
-    expect(matchTasks(ganttCallback.jobs, jobsFilter)).toEqual(filteredJobs)
+    expect(matchTasks(expectedJobs, jobsFilter)).toEqual(filteredJobs)
   })
 })

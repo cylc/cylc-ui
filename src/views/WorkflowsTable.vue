@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState, mapGetters } from 'vuex'
 import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import gql from 'graphql-tag'
@@ -132,9 +132,6 @@ export default {
       QUERY,
       {},
       'root',
-      [],
-      true,
-      true
     ),
     now: null,
   }),

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,11 +41,10 @@ export function matchTasks (tasks, tasksFilter) {
 /**
  * Function to find the unique platforms in an object of tasks
  *
- * @export
  * @param {object} tasks - The tasks to search for unique platforms
  * @return {array} - An array of unique platform objects
  */
-export function platformOptions (tasks) {
+export function getPlatformOptions (tasks) {
   const platformOptions = [{ value: -1, title: 'All' }]
   const platforms = []
   for (const jobs of Object.values(tasks)) {
