@@ -197,7 +197,7 @@ defineExpose({
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  width: calc(100% + 0.5rem);
+  width: 100%;
   padding: 0.75rem;
   border: 0;
   background: var(--banner-background);
@@ -234,19 +234,17 @@ defineExpose({
 }
 
 .log-truncation--start {
-  margin: 0.5rem 0 var(--tear-space) -0.25rem;
+  margin-bottom: var(--tear-space);
+  &::after {
+    top: 100%;
+  }
 }
 
 .log-truncation--end {
-  margin: var(--tear-space) 0 0.5rem -0.25rem;
-}
-
-.log-truncation--start::after {
-  top: 100%;
-}
-
-.log-truncation--end::after {
-  bottom: 100%;
-  transform: rotate(180deg);
+  margin-top: var(--tear-space);
+  &::after {
+    bottom: 100%;
+    transform: rotate(180deg);
+  }
 }
 </style>
