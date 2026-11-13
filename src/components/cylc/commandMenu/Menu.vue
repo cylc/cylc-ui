@@ -284,7 +284,6 @@ async function showMutationsMenu (e) {
   await nextTick()
   showMenu.value = true
   // ensure graphql query to get mutations has completed
-  // const i = await workflowService.introspection
   const introspection = await workflowService.introspection
   // if mutations are slow to load then there will be a delay before they are reactively
   // displayed in the menu (this is what the skeleton-loader is for)

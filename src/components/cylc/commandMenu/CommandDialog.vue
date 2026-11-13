@@ -99,7 +99,7 @@ function closeAll () {
 async function openInTab () {
   const data = cloneDeep(formState.value)
   closeAll()
-  // Navigate to the corresponding workflow then open the log view
+  // Navigate to the corresponding workflow then open the command view
   // (no nav occurs if already on the correct workflow page)
   await router.push({
     name: 'Workspace',

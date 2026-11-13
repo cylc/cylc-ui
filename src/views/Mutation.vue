@@ -19,15 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <MutationComponent
-    v-bind="{ mutation, cylcObject, types }"
+    v-bind="{ ...$attrs, mutation, cylcObject, types }"
     v-model="data"
-    @success="onSuccess()"
+    @success="showSuccessSnack = true"
+  />
+  <v-snackbar
+    v-model="showSuccessSnack"
+    :text="`Command succeeded: ${mutation._title}`"
+    :prepend-icon="mdiCheck"
+    color="green"
+    location="top"
+    :timeout="2e3"
   />
 </template>
 
 <script setup>
-import { onMounted, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { onMounted, toRefs, ref } from 'vue'
 import { eventBus } from '@/services/eventBus'
 import MutationComponent from '@/components/cylc/Mutation.vue'
 import {
@@ -35,9 +42,7 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions,
 } from '@/utils/initialOptions'
-import Alert from '@/components/core/Alert.vue'
-
-const store = useStore()
+import { mdiCheck } from '@mdi/js'
 
 const emit = defineEmits([updateInitialOptionsEvent])
 
@@ -61,12 +66,5 @@ onMounted(() => {
   )
 })
 
-async function onSuccess () {
-  // form is open in a tab -> provide an alert to let the user know
-  // the command succeeded
-  await store.dispatch(
-    'setAlert',
-    new Alert('Command succeeded', 'green')
-  )
-}
+const showSuccessSnack = ref(false)
 </script>
