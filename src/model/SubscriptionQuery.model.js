@@ -41,16 +41,16 @@ export class SubscriptionQuery {
    * @param {import('graphql').DocumentNode} query
    * @param {Record<string, any>} variables
    * @param {string} name
-   * @param {?DeltasHooks | (data: any) => void} callback - Either an object containing hooks, or a custom next() function, to run when the subscription receives data.
+   * @param {?DeltasHooks | (data: any) => void} handler - Either an object containing hooks, or a custom next() function, to run when the subscription receives data.
    */
-  constructor (query, variables, name, callback) {
+  constructor (query, variables, name, handler) {
     this.query = query
     this.variables = variables ?? {}
     this.name = name
-    if (typeof callback === 'function') {
-      this.next = callback
+    if (typeof handler === 'function') {
+      this.next = handler
     } else {
-      this.hooks = callback
+      this.hooks = handler
     }
   }
 }

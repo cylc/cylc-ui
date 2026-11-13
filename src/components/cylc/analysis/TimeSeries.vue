@@ -190,7 +190,7 @@ export default {
      */
     const showOrigin = useInitialOptions('showOrigin', { props, emit }, false)
 
-    /** Object containing all of the jobs added by the callback */
+    /** Object containing all of the jobs received by the query */
     const jobs = ref([])
 
     return {

@@ -260,7 +260,7 @@ export default {
 
     const { workflowIDs } = useWorkflowVariables()
 
-    /** Object containing all of the tasks added by the callback */
+    /** Object containing all of the tasks received by the query */
     const tasks = ref([])
 
     return {
@@ -291,8 +291,7 @@ export default {
 
   methods: {
     /**
-     * Run the one-off query for historical task data and pass its results
-     * through the callback
+     * Run the one-off query for historical task data
      */
     tasksQuery: debounce(
       async function () {

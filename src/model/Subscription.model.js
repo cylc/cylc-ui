@@ -33,7 +33,8 @@ import { store } from '@/store/index'
  * that will be used to create a Subscription.
  *
  * A Subscription may contain one or more SubscriptionQuery's. It accumulates the subscribers (views
- * or components), as well as callbacks (an object containing methods to run upon receiving deltas, usually Vuex actions).
+ * or components), which can implement handlers for receiving deltas (or just rely on the workflow service
+ * updating the vuex data store).
  *
  * The WorkflowService service will use this Subscription to create a GraphQL Subscription using
  * WebSockets. So any Subscription object created from this class will have a .observable property
