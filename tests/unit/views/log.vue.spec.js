@@ -20,7 +20,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import sinon from 'sinon'
-import Log from '@/views/Log.vue'
+import Log, { Results, LogsCallback } from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import { User } from '@/model/User.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
@@ -139,6 +139,17 @@ describe('Log view', () => {
     expect(wrapper.vm.id).toBe(undefined)
     // should have unsubscribed
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
+  })
+
+  it.each(['start', 'end'])('marks the log as truncated', (truncated) => {
+    const results = new Results()
+    const callback = new LogsCallback(results)
+    callback.onAdded({ lines: ['line-1', 'line-2'] })
+    expect(results.truncated).toBe(false)
+
+    callback.onAdded({ truncated })
+    expect(results.truncated).toBe(true)
+    expect(results.lines).toEqual(['line-1', 'line-2'])
   })
 
   it('does not issue subscription for incomplete task ID', async () => {

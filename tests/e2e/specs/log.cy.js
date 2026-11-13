@@ -48,6 +48,25 @@ function getMaxLineWidth ($els) {
   return Math.max(...Array.from($els, (el) => el.offsetWidth))
 }
 
+/**
+ * Check whether the log truncation banner is above or below the log text.
+ *
+ * @param {'above'|'below'} position
+ */
+function expectTruncationBannerPosition (position) {
+  cy.get('[data-cy=log-truncated-btn]').then(([banner]) => {
+    cy.get('[data-cy=log-text]').then(([logText]) => {
+      const bannerRect = banner.getBoundingClientRect()
+      const logRect = logText.getBoundingClientRect()
+      if (position === 'above') {
+        expect(bannerRect.bottom).to.be.at.most(logRect.top)
+      } else {
+        expect(bannerRect.top).to.be.at.least(logRect.bottom)
+      }
+    })
+  })
+}
+
 describe('Log View', () => {
   const defaultFile = 'scheduler/01-start-01.log'
   beforeEach(() => {
@@ -174,6 +193,59 @@ describe('Log View', () => {
 
     cy.get('.c-log .v-alert')
       .should('be.visible')
+  })
+
+  it('truncates the log to the max lines setting', () => {
+    const maxLines = 20
+    const firstLine = workflowLogLines[0]
+    const lastLine = workflowLogLines.at(-1)
+    expect(workflowLogLines.length).to.be.greaterThan(maxLines)
+
+    // Whole file shown, no truncation
+    cy.get('[data-cy=log-text] span')
+      .should('have.length.greaterThan', maxLines)
+    cy.get('[data-cy=log-truncated-btn]')
+      .should('not.exist')
+
+    // Set max lines in the settings page
+    cy.get('#core-app-bar [data-cy=user-avatar-btn]')
+      .click()
+      .get('[href="#/user-profile"]')
+      .click()
+    cy.get('[data-cy=input-log-max-lines] input')
+      .clear()
+      .type(`${maxLines}`)
+      .blur()
+      .should('have.value', `${maxLines}`)
+    cy.go('back')
+
+    // Default (tail-end) mode: end of file shown, start truncated
+    cy.get('[data-cy=log-text] span:last')
+      .should('have.text', lastLine)
+    cy.get('[data-cy=log-text] span')
+      .should('have.length.lte', maxLines)
+    cy.get('[data-cy=log-text]')
+      .invoke('text')
+      .should('not.include', firstLine)
+    cy.get('[data-cy=log-truncated-btn]')
+      .should('contain', `over ${maxLines} lines`)
+      .and('contain', 'view from the top')
+    expectTruncationBannerPosition('above')
+
+    // Switch to head mode: start of file shown, end truncated
+    cy.get('[data-cy=log-truncated-btn]')
+      .click()
+    cy.get('[data-cy=log-text] span:first')
+      .should('have.text', firstLine)
+    cy.get('[data-cy=log-text] span')
+      .should('have.length.lte', maxLines)
+    cy.get('[data-cy=log-text]')
+      .invoke('text')
+      .should('not.include', lastLine)
+    cy.get('[data-cy=log-truncated-btn]')
+      .should('contain', 'end of the file has been truncated')
+      .and('contain', 'view from the bottom')
+    expectTruncationBannerPosition('below')
   })
 
   it('copies the log filepath to the clipboard', { browser: { family: 'chromium' } }, () => {

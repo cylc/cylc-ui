@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,30 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { nextTick } from 'vue'
 import { shallowMount } from '@vue/test-utils'
 import Log from '@/components/cylc/log/Log.vue'
 
 describe('Log component', () => {
-  const wrapper = shallowMount(Log, {
-    props: {
-      logs: [],
+  it.each([
+    {
+      scenario: 'when the end of the file is truncated',
+      props: { truncated: true, headMode: true },
+      startWarning: false,
+      endWarning: true,
     },
-  })
-
-  describe.each([
-    { line: '' },
-    { line: '  ' },
-    { line: 'Hello, Mr. Thompson' },
-    { line: '1969-07-20T20:17:00 the eagle has landed', expected: 'the eagle has landed' },
-    { line: '2038-01-19T03:14:07Z INFO - oops!', expected: 'INFO - oops!' },
-    { line: '2038-01-19T03:14:07+02:15 ', expected: '' },
-    { line: '2038-01-19T03:14:07-12:03    meow', expected: '   meow' },
-    { line: 'INIT_TIME=2023-04-27T13:53:09+01:00' },
-
-  ])('stripTimestamp($line)', ({ line, expected }) => {
-    expected ??= line
-    it(`returns '${expected}'`, () => {
-      expect(wrapper.vm.stripTimestamp(line)).toEqual(expected)
+    {
+      scenario: 'when the start of the file is truncated',
+      props: { truncated: true, headMode: false },
+      startWarning: true,
+      endWarning: false,
+    },
+    {
+      scenario: 'by default',
+      props: {},
+      startWarning: false,
+      endWarning: false,
+    },
+  ])('shows the expected truncation warnings $scenario', async ({
+    props,
+    startWarning,
+    endWarning,
+  }) => {
+    const wrapper = shallowMount(Log, {
+      props: {
+        logs: ['line-1'],
+        ...props,
+      },
     })
+    await nextTick()
+    expect(
+      wrapper.find('[data-cy="log-truncated-btn"].log-truncation--start').exists()
+    ).toBe(startWarning)
+    expect(
+      wrapper.find('[data-cy="log-truncated-btn"].log-truncation--end').exists()
+    ).toBe(endWarning)
   })
 })
