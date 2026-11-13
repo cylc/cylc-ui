@@ -26,6 +26,7 @@ const state = () => ({
   alert: null,
   /**
    * Whether the application is offline or not.
+   * @type {boolean|-1} (-1 means connecting)
    */
   offline: false,
   /**
