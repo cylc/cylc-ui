@@ -52,49 +52,114 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           style="font-size: 120%; padding-right: 0.3em;"
         />
 
-        <v-btn
-          id="workflow-mutate-button"
-          v-command-menu="currentWorkflow"
-          :icon="icons.mdiMicrosoftXboxControllerMenu"
-          size="small"
-          density="comfortable"
-        />
+        <v-defaults-provider
+          :defaults="{
+            VBtn: {
+              size: 'small',
+              density: 'comfortable',
+              rounded: 'lg',
+              class: 'mr-1',
+            },
+          }"
+        >
+          <v-btn
+            id="workflow-mutate-button"
+            v-command-menu="currentWorkflow"
+            :icon="icons.mdiMicrosoftXboxControllerMenu"
+          />
 
-        <v-btn
-          id="workflow-play-button"
-          :icon="icons.run"
-          :disabled="!enabled.playToggle"
-          v-if="!isRunning"
-          @click="onClickPlay"
-          size="small"
-          density="comfortable"
-        />
+          <v-btn
+            v-if="isStopped"
+            id="workflow-play-button"
+            :icon="icons.run"
+            :disabled="!permissions.play"
+            :loading="playRequested"
+            @click="playWorkflow()"
+          />
 
-        <v-btn
-          id="workflow-play-pause-button"
-          :icon="isPaused ? icons.run : icons.hold"
-          :disabled="!enabled.pauseToggle"
-          v-if="isRunning"
-          @click="onClickReleaseHold"
-          size="small"
-          density="comfortable"
-        />
+          <v-btn
+            v-else
+            id="workflow-play-pause-button"
+            :icon="isPaused ? icons.run : icons.pause"
+            :disabled="isPaused ? !permissions.resume : !permissions.pause"
+            :loading="pauseOrResumeRequested"
+            @click="pauseOrResumeWorkflow()"
+          />
+        </v-defaults-provider>
 
-        <v-btn
-          id="workflow-stop-button"
-          :icon="icons.stop"
-          :disabled="!enabled.stopToggle"
-          @click="onClickStop"
+        <v-btn-group
           size="small"
-          density="comfortable"
-        />
+          variant="outlined"
+          divided
+          rounded="lg"
+        >
+          <v-btn
+            id="workflow-stop-button"
+            :icon="icons.stop"
+            :disabled="!permissions.stop || isStopped || isStopping"
+            :loading="stopRequested"
+            @click="stopWorkflow()"
+          />
+          <v-btn
+            id="workflow-stop-dropdown-button"
+            :icon="icons.mdiChevronDown"
+            :disabled="!permissions.stop || isStopped"
+          />
+          <v-menu
+            activator="#workflow-stop-dropdown-button"
+            target="#workflow-stop-button"
+          >
+            <v-card>
+              <v-list density="compact">
+                <v-list-subheader>Choose stop mode</v-list-subheader>
+                <v-skeleton-loader
+                  v-if="!stopModes"
+                  type="list-item-two-line@3"
+                />
+                <template v-else>
+                  <v-list-item
+                    v-for="mode in stopModes"
+                    :key="mode.name"
+                    :title="mode.name"
+                    @click="stopWorkflow(mode.name)"
+                  >
+                    <template #append>
+                      <v-tooltip
+                        :activator="null"
+                        location="end"
+                      >
+                        <template #activator="{ props }">
+                          <v-icon
+                            v-bind="props"
+                            :icon="icons.mdiHelpCircleOutline"
+                          />
+                        </template>
+                        <div v-markdown="mode.description"></div>
+                      </v-tooltip>
+                    </template>
+                  </v-list-item>
+                </template>
+              </v-list>
+              <v-divider/>
+              <v-card-actions>
+                <v-btn
+                  :prepend-icon="icons.mdiPencil"
+                  text="More options"
+                  class="flex-grow-1"
+                  @click="openStopDialog()"
+                />
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+          <CommandDialog ref="stopDialog"/>
+        </v-btn-group>
       </div>
 
       <!-- n-window selector -->
       <v-btn
         :disabled="isStopped"
         variant="tonal"
-        rounded
+        rounded="lg"
         size="small"
         data-cy="n-win-selector"
       >
@@ -138,23 +203,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
 
       <!-- workflow info icon -->
-      <v-icon
-        v-if="isRunning"
-        :icon="icons.info"
-        id="info-icon"
-      />
-      <v-tooltip
-        v-if="isRunning"
-        activator="#info-icon"
-        :eager="false"
-      >
-        <dl>
-          <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
-          <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
-          <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
-          <dt><strong>Run mode:</strong> {{ currentWorkflow.node.runMode }}</dt>
-        </dl>
-      </v-tooltip>
+      <template v-if="!isStopped">
+        <v-icon
+          :icon="icons.info"
+          id="info-icon"
+        />
+        <v-tooltip
+          activator="#info-icon"
+          :eager="false"
+        >
+          <dl>
+            <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
+            <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
+            <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
+            <dt><strong>Run mode:</strong> {{ currentWorkflow.node.runMode }}</dt>
+          </dl>
+        </v-tooltip>
+      </template>
 
       <!-- workflow status message -->
       <span class="status-msg text-body-medium">
@@ -254,9 +319,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, inject, useTemplateRef } from 'vue'
+import { computedAsync } from '@vueuse/core'
 import { useRoute } from 'vue-router'
-import { mapState } from 'vuex'
+import { useStore } from 'vuex'
 import { useDisplay } from 'vuetify'
 import {
   mdiCog,
@@ -271,13 +337,16 @@ import {
   mdiInformationOutline,
   mdiMenuOpen,
   mdiMenuClose,
+  mdiHelpCircleOutline,
+  mdiPencil,
 } from '@mdi/js'
 import { startCase } from 'lodash'
-import { until } from '@/utils/reactivity'
+import { until, useAsyncAction } from '@/utils/reactivity'
 import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import { useGraphQL } from '@/mixins/graphql'
 import {
+  findByName,
   mutationStatus,
 } from '@/utils/aotf'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -286,8 +355,10 @@ import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
 import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
+import CommandDialog from '@/components/cylc/commandMenu/CommandDialog.vue'
 import { useUserService } from '@/services/user.service'
 import { workflowViews } from '@/views/views'
+import { vMarkdown } from '@/directives/markdown'
 
 const QUERY = gql(`
 subscription Workflow ($workflowID: ID) {
@@ -337,10 +408,22 @@ export default {
 
   setup (props) {
     const route = useRoute()
+    const store = useStore()
+
+    const workflowService = inject('workflowService')
 
     const { user, versionInfo } = useUserService()
 
+    /** Convenience object for checking user permissions */
+    const permissions = Object.freeze(
+      Object.fromEntries(user.permissions.map(p => [p, true]))
+    )
+
     const { variables, workflowName, workflowID } = useGraphQL()
+
+    const currentWorkflow = computed(
+      () => workflowID.value ? store.state.workflows.cylcTree.$index[workflowID.value] : undefined
+    )
 
     /** Show workflow name as title if we are navigated to one, otherwise the generic route title. */
     const title = computed(
@@ -350,8 +433,61 @@ export default {
     const { mdAndDown } = useDisplay()
     const { drawer, drawerEnabled, toggleDrawer } = useDrawer()
 
+    const isRunning = computed(
+      () => currentWorkflow.value?.node?.status === WorkflowState.RUNNING.name
+    )
+    const isPaused = computed(
+      () => currentWorkflow.value?.node?.status === WorkflowState.PAUSED.name
+    )
+    const isStopping = computed(
+      () => currentWorkflow.value?.node?.status === WorkflowState.STOPPING.name
+    )
+    const isStopped = computed(
+      () => !currentWorkflow.value || !(
+        isRunning.value || isPaused.value || isStopping.value
+      )
+    )
+
+    const [playRequested, playWorkflow] = useAsyncAction(async () => {
+      const response = await workflowService.mutate('play', currentWorkflow.value.id)
+      if (response[0] === mutationStatus.SUCCEEDED) {
+        await until(isRunning)
+      }
+    })
+
+    const [pauseOrResumeRequested, pauseOrResumeWorkflow] = useAsyncAction(async () => {
+      const initiallyPaused = isPaused.value
+      const { status } = await workflowService.mutate(
+        initiallyPaused ? 'resume' : 'pause', currentWorkflow.value.id
+      )
+      if (status === mutationStatus.SUCCEEDED) {
+        await until(() => initiallyPaused ? isRunning.value : isPaused.value)
+      }
+    })
+
+    const [stopRequested, stopWorkflow] = useAsyncAction(async (mode) => {
+      const { status } = await workflowService.mutate('stop', currentWorkflow.value.id, { mode })
+      if (status === mutationStatus.SUCCEEDED) {
+        await until(() => isStopping.value || isStopped.value)
+      }
+    })
+
+    const stopModes = computedAsync(async () => {
+      const { types } = await workflowService.getGraphQLSchema()
+      return findByName(types, 'WorkflowStopMode').enumValues
+    })
+
+    const stopDialog = useTemplateRef('stopDialog')
+
+    async function openStopDialog () {
+      const { mutations } = await workflowService.getGraphQLSchema()
+      const mutation = findByName(mutations, 'stop')
+      stopDialog.value.open({ cylcObject: currentWorkflow.value, mutation })
+    }
+
     return {
       user,
+      permissions,
       mdAndDown,
       eventBus,
       drawer,
@@ -362,11 +498,23 @@ export default {
       title,
       workflowName,
       workflowID,
+      currentWorkflow,
       versionInfo,
       workflowViews,
+      isPaused,
+      isStopping,
+      isStopped,
+      playRequested,
+      playWorkflow,
+      pauseOrResumeRequested,
+      pauseOrResumeWorkflow,
+      stopWorkflow,
+      stopRequested,
+      stopModes,
+      openStopDialog,
       icons: {
         add: mdiPlusBoxMultiple,
-        hold: mdiPause,
+        pause: mdiPause,
         info: mdiInformationOutline,
         mdiMenuOpen,
         mdiMenuClose,
@@ -377,12 +525,19 @@ export default {
         mdiAccount,
         mdiChevronDown,
         mdiArrowULeftTop,
+        mdiHelpCircleOutline,
+        mdiPencil,
       },
     }
   },
 
   components: {
+    CommandDialog,
     WarningIcon,
+  },
+
+  directives: {
+    markdown: vMarkdown,
   },
 
   mixins: [
@@ -390,17 +545,10 @@ export default {
   ],
 
   data: () => ({
-    expecting: {
-      // store state from mutations in order to compute the "enabled" attrs
-      play: null,
-      paused: null,
-      stop: null,
-    },
     changingNWindow: false,
   }),
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
     query () {
       if (!this.workflowName) return null
       return new SubscriptionQuery(
@@ -412,32 +560,7 @@ export default {
         /* isGlobalCallback */ true
       )
     },
-    currentWorkflow () {
-      if (!this.workflowName) return null
-      return this.cylcTree.$index[this.workflowID]
-    },
-    isRunning () {
-      return (
-        this.currentWorkflow &&
-        (
-          this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
-          this.currentWorkflow.node.status === WorkflowState.PAUSED.name ||
-          this.currentWorkflow.node.status === WorkflowState.STOPPING.name
-        )
-      )
-    },
-    isPaused () {
-      return (
-        this.currentWorkflow &&
-        this.currentWorkflow.node.status === WorkflowState.PAUSED.name
-      )
-    },
-    isStopped () {
-      return (
-        !this.currentWorkflow ||
-        this.currentWorkflow.node.status === WorkflowState.STOPPED.name
-      )
-    },
+
     statusMessage () {
       return upperFirst(this.currentWorkflow?.node?.statusMsg || '')
     },
@@ -448,45 +571,7 @@ export default {
       }
       return ret
     },
-    enabled () {
-      // object holding the states of controls that are supposed to be enabled
-      // NOTE: this is a temporary solution until we are able to subscribe to
-      // mutations to tell when they have completed
-      return {
-        playToggle: (
-          // the play button (for the play from stopped scenario)
-          this.user.permissions.includes('play') &&
-          this.isStopped &&
-          (
-            this.expecting.play === null ||
-            this.expecting.play === this.isRunning
-          )
-        ),
-        pauseToggle: (
-          // the play/pause button
-          (
-            (this.isPaused && this.user.permissions.includes('resume')) ||
-            (!this.isPaused && this.user.permissions.includes('pause'))
-          ) &&
-          !this.isStopped &&
-          !this.expecting.stop &&
-          this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
-          (
-            this.expecting.paused === null ||
-            this.expecting.paused === this.isPaused
-          )
-        ),
-        stopToggle: (
-          // the stop button
-          this.user.permissions.includes('stop') &&
-          !this.isStopped &&
-          (
-            this.expecting.stop === null ||
-            this.expecting.stop === this.isStopped
-          )
-        ),
-      }
-    },
+
     nWindow: {
       get () {
         // the graph window distance reported by the scheduler
@@ -504,58 +589,7 @@ export default {
     },
   },
 
-  watch: {
-    // reset the "expecting" state markers when the workflow state changes
-    isRunning () {
-      this.expecting.play = null
-    },
-    isPaused () {
-      this.expecting.paused = null
-    },
-    isStopped () {
-      this.expecting.stop = null
-    },
-    // reset the "expecting" state markers when we switch workflow
-    currentWorkflow () {
-      this.expecting = {
-        play: null,
-        paused: null,
-        stop: null,
-      }
-    },
-  },
-
   methods: {
-    onClickPlay () {
-      this.$workflowService.mutate(
-        'play',
-        this.currentWorkflow.id
-      ).then(ret => {
-        if (ret[0] === mutationStatus.SUCCEEDED) {
-          this.expecting.play = !this.isRunning
-        }
-      })
-    },
-    onClickReleaseHold () {
-      this.$workflowService.mutate(
-        this.isPaused ? 'resume' : 'pause',
-        this.currentWorkflow.id
-      ).then(response => {
-        if (response.status === mutationStatus.SUCCEEDED) {
-          this.expecting.paused = !this.isPaused
-        }
-      })
-    },
-    onClickStop () {
-      this.$workflowService.mutate(
-        'stop',
-        this.currentWorkflow.id
-      ).then(response => {
-        if (response.status === mutationStatus.SUCCEEDED) {
-          this.expecting.stop = WorkflowState.STOPPING
-        }
-      })
-    },
     async setGraphWindow (nWindow) {
       const { status } = await this.$workflowService.mutate(
         'setGraphWindowExtent',

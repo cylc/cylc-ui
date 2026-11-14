@@ -16,7 +16,8 @@
  */
 
 import { config } from '@vue/test-utils'
-import { routeLocationKey } from 'vue-router'
+import { omit, pick } from 'lodash-es'
+import { routeLocationKey, routerKey } from 'vue-router'
 
 /**
  * Create a promise that can be manually resolved.
@@ -55,6 +56,32 @@ export function getIDMap (filteredOutNodesCache) {
  */
 export function mockRoute (route = { params: { workflowName: 'test' } }) {
   config.global.provide[routeLocationKey] = route
+}
+
+/**
+ * Provide a mock router object for components that use useRouter().
+ *
+ * NOTE: this applies for the rest of the test suite/file, but can be overridden by subsequent calls.
+ */
+export function mockRouter (router) {
+  config.global.provide[routerKey] = router
+}
+
+/**
+ * Provide a mock workflow service to use in tests, with default empty schema.
+ */
+export function mockWorkflowService (overrides = {}) {
+  const mockSchema = {
+    mutations: [],
+    types: [],
+    queries: [],
+    ...pick(overrides, ['mutations', 'types', 'queries']),
+  }
+  config.global.provide.workflowService = {
+    getGraphQLSchema: async () => mockSchema,
+    loadedGraphQLSchema: mockSchema,
+    ...omit(overrides, ['mutations', 'types', 'queries']),
+  }
 }
 
 /**

@@ -21,6 +21,7 @@ import { IntrospectionQuery, taskProxy } from '@/services/mock/json/index.cjs'
 import { cloneDeep } from 'lodash'
 import { createVuetify } from 'vuetify'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { mockWorkflowService } from '$tests/util'
 
 /** NOTE: update this if updating src/services/mock/json/taskProxy.json */
 const INITIAL_DATA = {
@@ -67,23 +68,20 @@ const INITIAL_DATA = {
   runMode: 'Live',
 }
 
-const $workflowService = {
-  query () {
-    return Promise.resolve(taskProxy.data)
-  },
-}
-
 const vuetify = createVuetify(vuetifyOptions)
 
 describe('EditRuntimeForm Component', () => {
+  mockWorkflowService({
+    query: async () => taskProxy.data,
+    types: cloneDeep(IntrospectionQuery.data.__schema.types),
+  })
+
   const props = {
     cylcObject: {
       id: '~u/w//1/t',
       isFamily: false,
       tokens: { id: '~u/w//1/t' },
     },
-    value: false,
-    types: cloneDeep(IntrospectionQuery.data.__schema.types),
   }
 
   /**
@@ -93,17 +91,13 @@ describe('EditRuntimeForm Component', () => {
   const mountFunction = (options) => shallowMount(EditRuntimeForm, {
     global: {
       plugins: [vuetify],
-      mocks: { $workflowService },
     },
     ...options,
   })
 
   describe('reset()', () => {
     it("queries the task's runtime section & processes the response", async () => {
-      const wrapper = mountFunction({
-        props,
-        created () {},
-      })
+      const wrapper = mountFunction({ props })
       await wrapper.vm.reset()
       expect(INITIAL_DATA).not.to.have.key('__typename')
       expect(wrapper.vm.model).to.deep.equal(INITIAL_DATA)
@@ -145,14 +139,9 @@ describe('EditRuntimeForm Component', () => {
         { environment: { FACTION: 'Empire' } },
         { outputs: { planet: 'Trantor' } },
       ]
-      const wrapper = mountFunction({
-        props,
-        data: () => ({
-          initialData: INITIAL_DATA,
-          model,
-        }),
-        created () {},
-      })
+      const wrapper = mountFunction({ props })
+      wrapper.vm.initialData = INITIAL_DATA
+      wrapper.vm.model = model
       expect(wrapper.vm.getBroadcastData()).to.deep.equal(expected)
     })
 
@@ -168,14 +157,9 @@ describe('EditRuntimeForm Component', () => {
         ],
       }
       const expected = []
-      const wrapper = mountFunction({
-        props,
-        data: () => ({
-          initialData: INITIAL_DATA,
-          model,
-        }),
-        created () {},
-      })
+      const wrapper = mountFunction({ props })
+      wrapper.vm.initialData = INITIAL_DATA
+      wrapper.vm.model = model
       expect(wrapper.vm.getBroadcastData()).to.deep.equal(expected)
     })
   })

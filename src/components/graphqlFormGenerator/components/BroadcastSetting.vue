@@ -16,12 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script>
-import { h, ref } from 'vue'
+import { h, ref, withDirectives } from 'vue'
 import { VTextField } from 'vuetify/components/VTextField'
 import { VIcon } from 'vuetify/components/VIcon'
 import { VTooltip } from 'vuetify/components/VTooltip'
 import { mdiHelpCircleOutline } from '@mdi/js'
-import Markdown from '@/components/Markdown.vue'
+import { vMarkdown } from '@/directives/markdown'
 import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
 import { RULES } from '@/components/graphqlFormGenerator/components/vuetify'
 
@@ -91,7 +91,7 @@ const renderHelpIcon = (helpText) => h(
       },
       () => mdiHelpCircleOutline
     ),
-    default: () => h(Markdown, { markdown: helpText }),
+    default: () => withDirectives(h('div'), [[vMarkdown, helpText]]),
   }
 )
 

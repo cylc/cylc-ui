@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-bind:key="input.label"
         v-model="model[input.label]"
         :gqlType="input.gqlType"
-        :types="types"
       />
     </template>
     <template v-slot:append>
