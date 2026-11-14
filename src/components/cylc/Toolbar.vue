@@ -256,7 +256,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { useDisplay } from 'vuetify'
 import {
   mdiCog,
@@ -276,12 +276,12 @@ import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
 import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import {
   mutationStatus,
 } from '@/utils/aotf'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
 import { upperFirst } from 'lodash-es'
@@ -340,7 +340,7 @@ export default {
 
     const { user, versionInfo } = useUserService()
 
-    const { variables, workflowName, workflowID } = useGraphQL()
+    const { variables, workflowName, workflowID } = useWorkflowVariables()
 
     /** Show workflow name as title if we are navigated to one, otherwise the generic route title. */
     const title = computed(
@@ -400,21 +400,17 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getIndex']),
     query () {
       if (!this.workflowName) return null
       return new SubscriptionQuery(
         QUERY,
         this.variables,
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
     },
     currentWorkflow () {
-      if (!this.workflowName) return null
-      return this.cylcTree.$index[this.workflowID]
+      return this.workflowName ? this.getIndex(this.workflowID) : null
     },
     isRunning () {
       return (

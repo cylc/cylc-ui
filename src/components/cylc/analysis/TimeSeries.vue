@@ -88,6 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import {
   debounce,
@@ -104,7 +105,6 @@ import {
   mdiRefresh,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
-import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
@@ -140,37 +140,6 @@ query analysisTaskQuery ($workflows: [ID]) {
   }
 }
 `
-
-/** The callback which gets called when data comes in from the job query */
-class AnalysisJobCallback extends DeltasCallback {
-  /**
-   * @param {Object[]} jobs
-   */
-  constructor (jobs) {
-    super()
-    this.jobs = jobs
-  }
-
-  /**
-   * Add jobs contained in data to this.jobs
-   */
-  add (data) {
-    this.jobs.push(
-      ...data.jobs.map((job) => pick(job, jobFields))
-    )
-  }
-
-  // called when new objects are added
-  // NOTE: we manually call this to add items which come through on the query
-  onAdded (added, store, errors) {
-    this.add(added)
-  }
-
-  // called when existing objects are updated
-  onUpdated (updated, store, errors) {
-    this.add(updated)
-  }
-}
 
 export default {
   name: 'TimeSeries',
@@ -221,7 +190,21 @@ export default {
      */
     const showOrigin = useInitialOptions('showOrigin', { props, emit }, false)
 
+    /** Object containing all of the jobs added by the callback */
+    const jobs = ref([])
+
+    /**
+     * Add jobs contained in data to this.jobs
+     */
+    function add (data) {
+      jobs.value.push(
+        ...data.jobs.map((job) => pick(job, jobFields))
+      )
+    }
+
     return {
+      add,
+      jobs,
       reducedAnimation,
       displayedTasks,
       showOrigin,
@@ -237,11 +220,7 @@ export default {
   },
 
   data () {
-    const jobs = []
     return {
-      jobCallback: new AnalysisJobCallback(jobs),
-      /** Object containing all of the jobs added by the callback */
-      jobs,
       taskNames: [],
       xRange: [undefined, undefined],
     }
@@ -472,12 +451,11 @@ export default {
         // Ensure query isn't run over all tasks
         if (queryTasks.length > 0) {
           this.jobs = []
-          this.jobCallback = new AnalysisJobCallback(this.jobs)
           const retJob = await this.$workflowService.query2(
             JOB_QUERY,
             { workflows: this.workflowIDs, tasks: queryTasks }
           )
-          this.jobCallback.onAdded(retJob.data)
+          this.add(retJob.data)
         }
       },
       200 // only re-run this once every 0.2 seconds
