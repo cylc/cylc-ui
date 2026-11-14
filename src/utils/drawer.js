@@ -1,0 +1,51 @@
+/*
+ * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+/** Default drawer width. */
+export const initialWidth = 260
+
+/** Minimum drawer width, below which the drawer collapses. */
+export const minWidth = 150
+
+/** Global state of navigation drawer visibility */
+const drawer = ref(false)
+
+function toggleDrawer () {
+  drawer.value = !drawer.value
+}
+
+/** Composable that provides the global state of the navigation drawer visibility. */
+export function useDrawer () {
+  const route = useRoute()
+
+  /** Should the drawer be enabled at all? (Set by the route - false for standalone views) */
+  const drawerEnabled = computed(() => route.meta?.showSidebar ?? true)
+
+  return {
+    drawer,
+    toggleDrawer,
+    drawerEnabled,
+  }
+}
+
+// For tests:
+export {
+  drawer as __drawer,
+}
