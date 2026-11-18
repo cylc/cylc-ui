@@ -208,10 +208,7 @@ describe('Log View', () => {
       .should('not.exist')
 
     // Set max lines in the settings page
-    cy.get('#core-app-bar [data-cy=user-avatar-btn]')
-      .click()
-      .get('[href="#/user-profile"]')
-      .click()
+    cy.visit('/#/user-profile')
     cy.get('[data-cy=input-log-max-lines] input')
       .clear()
       .type(`${maxLines}`)
