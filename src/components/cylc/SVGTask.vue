@@ -45,6 +45,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         r="45"
         stroke-width="10"
       />
+      <!--
+        NOTE: The sub-shapes below are only visible in certain states (see
+        CSS). To reduce DOM size (which matters for large workflows in views
+        such as the tree) we only render them when they will be visible.
+        These shapes all lie within the outline circle so this does not
+        change the bounding box of the icon.
+      -->
       <!-- progress animation
 
         This circle provides the clockface progress indicator. It uses a CSS
@@ -56,7 +63,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         the "stroke-dashoffset" to find the new values for 0% and 100%.
         Then copy these values to the corresponding CSS animation keyframes.
       -->
-      <g transform="rotate(-90, 50, 50)">
+      <g
+        v-if="isRunning()"
+        transform="rotate(-90, 50, 50)"
+      >
         <circle
           class="progress"
           cx="50"
@@ -73,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         state.
       -->
       <circle
+        v-if="hasDot()"
         class="dot"
         cx="50"
         cy="50"
@@ -85,6 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         running task.
       -->
       <circle
+        v-if="isRunning()"
         class="hub"
         cx="50"
         cy="50"
@@ -94,7 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         The "x" in the centre of the outline used to represent failure.
       -->
-      <path class="cross"
+      <path
+        v-if="hasCross()"
+        class="cross"
         d="
           m30,30
           l40 40
@@ -108,6 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       A clock face, at about 5pm.
       -->
       <path
+        v-if="isExpired()"
         class="clockhands_big"
         d="
           m50,12
@@ -124,8 +139,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       It is positioned above and to the left of the ".status". When used in the
       "Task" component this overflows the 100x100 box (i.e. like superscript
       text).
+
+      NOTE: Only the shapes for the active modifier are visible (see CSS),
+      so we only render those to reduce DOM size, unless fixedBBox is set (as
+      the modifier shapes extend the bounding box of the icon).
     -->
     <g
+      v-if="modifier || fixedBBox"
       class="modifier"
       :transform="modifierTransform"
     >
@@ -138,6 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         in getModifierTransform must be updated to match.
       -->
       <circle
+        v-if="showModifier('held', 'runahead', 'wallclock')"
         class="outline"
         cx="50"
         cy="50"
@@ -150,6 +171,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         circle.
       -->
       <g
+        v-if="showModifier('held')"
         class="held"
       >
         <path
@@ -167,6 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Dot icon representing isRunahead.
       -->
       <g
+        v-if="showModifier('runahead')"
         class="runahead"
       >
         <circle
@@ -181,6 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Fast-forward icon representing skip-mode
       -->
       <g
+        v-if="showModifier('skip')"
         class="skip"
       >
         <path class="skip"
@@ -193,6 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Burger bar-like icon representing isQueued.
       -->
       <g
+        v-if="showModifier('queued')"
         class="queued"
       >
         <path
@@ -211,7 +236,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         Radio signal (similar to RSS logo) representing waiting on xtrigger(s).
       -->
-      <g class="xtriggered">
+      <g
+        v-if="showModifier('xtriggered')"
+        class="xtriggered"
+      >
         <path
           d="
             m10,70
@@ -230,7 +258,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         Circular arrow representing a retry.
       -->
-      <g class="retry">
+      <g
+        v-if="showModifier('retry')"
+        class="retry"
+      >
         <!-- An arc describing the arrow -->
         <path d="m25, 50 a30 30 1 1 1 25 30 "/>
         <!-- The arrowhead -->
@@ -244,7 +275,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         The path is just the hands of the clock. The icon is created in
         combination with the outline circle.
       -->
-      <g class="wallclock">
+      <g
+        v-if="showModifier('wallclock')"
+        class="wallclock"
+      >
         <path
           d="
             m50, 18
@@ -281,6 +315,16 @@ const props = defineProps({
     type: Number,
     default: 0.7,
   },
+  /**
+   * Render all modifier shapes (even though only the active one is visible)
+   * so that the icon's bounding box does not depend on its modifier.
+   *
+   * Set this when the bounding box is measured (e.g. graph layout).
+   */
+  fixedBBox: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 /**
@@ -300,6 +344,30 @@ const modifier = computed(() => {
   if (props.task.isXtriggered) return 'xtriggered'
   return ''
 })
+
+// Which state-specific shapes are visible (see CSS).
+// (Plain functions rather than computeds to avoid per-instance overhead.)
+const isRunning = () => props.task.state === TaskState.RUNNING.name
+const isExpired = () => props.task.state === TaskState.EXPIRED.name
+const hasDot = () => (
+  props.task.state === TaskState.PREPARING.name ||
+  props.task.state === TaskState.SUBMITTED.name ||
+  props.task.state === TaskState.EXPIRED.name
+)
+const hasCross = () => (
+  props.task.state === TaskState.FAILED.name ||
+  props.task.state === TaskState.SUBMIT_FAILED.name
+)
+
+/**
+ * Whether to render the shapes for (any of) the given modifier(s).
+ *
+ * @param {...string} names
+ * @returns {boolean}
+ */
+function showModifier (...names) {
+  return props.fixedBBox || names.includes(modifier.value)
+}
 
 const runningStyle = computed(() => {
   if (

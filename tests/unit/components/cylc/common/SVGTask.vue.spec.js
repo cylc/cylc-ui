@@ -60,3 +60,50 @@ describe('modifier', () => {
     expect(wrapper.get('.c8-task').classes()).toContain(expected)
   })
 })
+
+describe('rendered shapes', () => {
+  const STATUS_SHAPES = ['.progress', '.dot', '.hub', '.cross', '.clockhands_big']
+  const MODIFIER_SHAPES = ['held', 'runahead', 'skip', 'queued', 'xtriggered', 'retry', 'wallclock']
+
+  it.each([
+    ['waiting', []],
+    ['preparing', ['.dot']],
+    ['submitted', ['.dot']],
+    ['running', ['.progress', '.hub']],
+    ['succeeded', []],
+    ['failed', ['.cross']],
+    ['submit-failed', ['.cross']],
+    ['expired', ['.dot', '.clockhands_big']],
+  ])('only renders visible status shapes for %s', (state, expected) => {
+    const wrapper = mount(SVGTask, { props: { task: { state } } })
+    for (const selector of STATUS_SHAPES) {
+      expect(wrapper.find(`.status ${selector}`).exists()).toBe(expected.includes(selector))
+    }
+  })
+
+  it.each([
+    [{}, null, false],
+    [{ isHeld: true }, 'held', true],
+    [{ isRunahead: true }, 'runahead', true],
+    [{ isWallclock: true }, 'wallclock', true],
+    [{ isQueued: true }, 'queued', false],
+    [{ isRetry: true }, 'retry', false],
+    [{ isXtriggered: true }, 'xtriggered', false],
+    [{ runtime: { runMode: 'Skip' } }, 'skip', false],
+  ])('only renders the active modifier shapes for %o', (task, expected, outline) => {
+    const wrapper = mount(SVGTask, { props: { task } })
+    expect(wrapper.find('.modifier').exists()).toBe(Boolean(expected))
+    expect(wrapper.find('.modifier .outline').exists()).toBe(outline)
+    for (const name of MODIFIER_SHAPES) {
+      expect(wrapper.find(`.modifier .${name}`).exists()).toBe(name === expected)
+    }
+  })
+
+  it('renders all modifier shapes when fixedBBox is set', () => {
+    const wrapper = mount(SVGTask, { props: { task: {}, fixedBBox: true } })
+    expect(wrapper.find('.modifier .outline').exists()).toBe(true)
+    for (const name of MODIFIER_SHAPES) {
+      expect(wrapper.find(`.modifier .${name}`).exists()).toBe(true)
+    }
+  })
+})
