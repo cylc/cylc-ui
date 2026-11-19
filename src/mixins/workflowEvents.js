@@ -33,7 +33,7 @@ function logLevelSortIndex (level) {
 /** @type {import('vuetify').DataTableHeader[]} */
 export const headers = [
   {
-    title: 'Level',
+    title: 'Severity',
     key: 'level',
     sort: (a, b) => logLevelSortIndex(b) - logLevelSortIndex(a),
   },

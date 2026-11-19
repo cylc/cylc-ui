@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <EventChip :level="item.level"/>
     </template>
     <template #item.workflow="{ item }">
-      <div class="d-flex align-center">
+      <div class="d-flex align-center text-no-wrap">
         {{ item.workflow }}
         <v-btn
           :icon="mdiOpenInNew"
@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           size="small"
           density="comfortable"
           class="ml-1"
+          :aria-label="`Open workflow ${item.workflow}`"
         />
       </div>
     </template>

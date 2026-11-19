@@ -44,7 +44,6 @@ describe('Events table view', () => {
       .should('contain', 'WARNING')
       .should('contain', 'other/multi/run2')
       .should('contain', 'Reality may go on the blink at infinite improbability')
-      .contains('Reality may go on the blink at infinite improbability')
 
     // It should show the full messages (not truncated)
     cy.get('[data-cy=events-table] tbody')
@@ -55,18 +54,18 @@ describe('Events table view', () => {
   it('Sorts', () => {
     const sortedLevels = ['WARNING', 'WARNING', 'ERROR', 'CRITICAL']
     cy.get('[data-cy=events-table] th')
-      .contains('Level').as('levelHeader')
+      .contains('Severity').as('severityHeader')
       .click()
-      .getColumnValues('Level')
+      .getColumnValues('Severity')
       .should('deep.equal', sortedLevels)
-    cy.get('@levelHeader')
+    cy.get('@severityHeader')
       .click()
-      .getColumnValues('Level')
+      .getColumnValues('Severity')
       .should('deep.equal', sortedLevels.toReversed())
 
     // It should remember the sorting
     cy.reload()
-    cy.getColumnValues('Level')
+    cy.getColumnValues('Severity')
       .should('deep.equal', sortedLevels.toReversed())
   })
 

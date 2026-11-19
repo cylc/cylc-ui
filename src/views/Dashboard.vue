@@ -50,6 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col md="8" lg="9">
         <p class="text-title-large">Events</p>
         <v-data-table
+          id="events-table"
           :headers="eventsHeaders"
           :items="events"
           :items-per-page="5"
@@ -341,7 +342,13 @@ export default {
 <style lang="scss" scoped>
 @use "/src/styles/util";
 
-.truncated-message {
-  @include util.line-clamp(4);
+#events-table {
+  td:nth-child(2) {
+    // Don't wrap workflow name
+    text-wrap: nowrap;
+  }
+  .truncated-message {
+    @include util.line-clamp(4);
+  }
 }
 </style>
