@@ -120,9 +120,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <v-list-item
                     v-for="mode in stopModes"
                     :key="mode.name"
-                    :title="mode.name"
                     @click="stopWorkflow(mode.name)"
                   >
+                    <template #title>
+                      <div class="d-flex align-center">
+                        {{ mode.name }}
+                        <v-chip
+                          v-if="mode.name === defaultStopMode"
+                          text="Default"
+                          class="ml-2"
+                          size="small"
+                          color="grey-darken-2"
+                          density="comfortable"
+                        />
+                      </div>
+                    </template>
                     <template #append>
                       <v-tooltip
                         :activator="null"
@@ -477,6 +489,12 @@ export default {
       return findByName(types, 'WorkflowStopMode').enumValues
     })
 
+    const defaultStopMode = computedAsync(async () => {
+      const { mutations } = await workflowService.getGraphQLSchema()
+      const mutation = findByName(mutations, 'stop')
+      return findByName(mutation.args, 'mode').defaultValue
+    })
+
     const stopDialog = useTemplateRef('stopDialog')
 
     async function openStopDialog () {
@@ -511,6 +529,7 @@ export default {
       stopWorkflow,
       stopRequested,
       stopModes,
+      defaultStopMode,
       openStopDialog,
       icons: {
         add: mdiPlusBoxMultiple,
