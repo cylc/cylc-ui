@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { initialWidth, minWidth } from '@/components/cylc/Drawer.vue'
+import { initialWidth, minWidth } from '@/utils/drawer.js'
 
 /**
  * Helper to resize the drawer in the test
