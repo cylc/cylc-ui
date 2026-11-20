@@ -16,14 +16,11 @@
  */
 import ViewState from '@/model/ViewState.model'
 import { toRaw } from 'vue'
-import { mapActions } from 'vuex'
 
 /**
  * A mixin for data common to views and components with a view state. Useful
  * when you load data for the view, and have loading state such as NO_STATE,
  * LOADING, ERROR, COMPLETE, etc.
- *
- * Also maps the setAlert action, to notify the user about errors.
  *
  * @see ViewState
  * @see Alert
@@ -40,8 +37,5 @@ export default {
       // doesn't work without toRaw()
       return toRaw(this.viewState) === ViewState.LOADING
     },
-  },
-  methods: {
-    ...mapActions(['setAlert']),
   },
 }

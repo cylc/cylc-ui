@@ -124,7 +124,10 @@ export default defineConfig(({ command, mode }) => {
       // Allow vue devtools to work when running vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
-    // Unit test specific config:
+    /**
+     * Unit test specific config
+     * @type {import('vitest/config').TestUserConfig}
+     */
     test: {
       include: ['./tests/unit/**/*.spec.{js,ts}'],
       environment: 'happy-dom',
