@@ -15,7 +15,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { discardFromArray } from '@/utils/general'
+import { discardFromArray, nonCryptoHash } from '@/utils/general'
 
 const arrOfObjs = [{ id: 1 }, { id: 2 }, { id: 3 }]
 
@@ -33,5 +33,14 @@ describe('discardFromArray', () => {
     const array = [1, 2, 3]
     expect(discardFromArray(array, 4)).toBe(false)
     expect(array).toEqual([1, 2, 3])
+  })
+})
+
+describe('nonCryptoHash', () => {
+  it.each([
+    ['foo', 101574],
+    ['', 0],
+  ])('Converts a string to a stable hash: %o -> %i', (str, expected) => {
+    expect(nonCryptoHash(str)).toBe(expected)
   })
 })

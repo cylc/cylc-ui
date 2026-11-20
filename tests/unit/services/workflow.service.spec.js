@@ -74,7 +74,7 @@ describe('WorkflowService', () => {
     sandbox.stub(console, 'debug')
     subscriptionClient = null
     // TODO: really load some mutations
-    sandbox.stub(WorkflowService.prototype, 'loadTypes').returns(
+    sandbox.stub(WorkflowService.prototype, 'getGraphQLSchema').returns(
       Promise.resolve({
         mutations: [],
         types: [],

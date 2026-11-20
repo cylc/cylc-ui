@@ -19,6 +19,8 @@ import { mount } from '@vue/test-utils'
 import Mutation from '@/components/cylc/Mutation.vue'
 import { createVuetify } from 'vuetify'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { mockWorkflowService } from '$tests/util'
+import { nextTick } from 'vue'
 
 const cylcObject = { id: '~u/w//1/t', isFamily: false }
 
@@ -46,6 +48,7 @@ const BASIC_MUTATION = {
 }
 
 describe('Mutation Component', () => {
+  mockWorkflowService()
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
@@ -60,16 +63,14 @@ describe('Mutation Component', () => {
     })
   }
 
-  it('should display mutation name and description', () => {
+  it('should display mutation name and description', async () => {
     const wrapper = mountFunction({
       props: {
-        initialOptions: {
-          cylcObject,
-          mutation: BASIC_MUTATION,
-        },
-        cancel: () => {},
+        cylcObject,
+        mutation: BASIC_MUTATION,
       },
     })
+    await nextTick()
     const html = wrapper.html()
     expect(html).to.contain('My Mutation')
     expect(html).to.contain('Test example.')
@@ -78,16 +79,13 @@ describe('Mutation Component', () => {
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
       props: {
-        initialOptions: {
-          cylcObject,
-          mutation: {
-            name: 'Darmok',
-            description: desc,
-            args: [],
-            _title: 'Darmok',
-          },
+        cylcObject,
+        mutation: {
+          name: 'Darmok',
+          description: desc,
+          args: [],
+          _title: 'Darmok',
         },
-        cancel: () => {},
       },
     })
     describe('For a single line description', () => {

@@ -56,7 +56,7 @@ describe('Mutations component', () => {
     cy.window().its('app.$workflowService').then(service => {
       const mutations = cloneDeep(MUTATIONS)
       processMutations(mutations, [])
-      service.introspection = Promise.resolve({
+      service.getGraphQLSchema = async () => ({
         mutations,
         types: [],
         queries: [],
