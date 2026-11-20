@@ -53,6 +53,40 @@ describe('Table component', () => {
     expect(wrapper.find('div')).to.not.equal(null)
   })
 
+  it('computes run times per row', () => {
+    const wrapper = mountFunction({
+      props: { tasks: [] },
+      shallow: true,
+    })
+    const { getTaskRunTimes } = wrapper.vm
+    expect(getTaskRunTimes({
+      task: { node: { task: { meanElapsedTime: 2 } } },
+      latestJob: {
+        node: {
+          startedTime: '2000-01-01T00:00:00Z',
+          finishedTime: '2000-01-01T00:00:10Z',
+        },
+      },
+    })).toEqual({ actual: 10, estimate: 2 })
+    expect(getTaskRunTimes({
+      task: { node: {} },
+      latestJob: undefined,
+    })).toEqual({ actual: undefined, estimate: undefined })
+  })
+
+  it('displays job fields', () => {
+    const wrapper = mountFunction({
+      props: {
+        tasks: simpleTableTasks,
+      },
+    })
+    const firstRow = wrapper.find('table > tbody > tr:nth-child(1)')
+    // platform, job runner & job ID of taskA's latest job
+    expect(firstRow.text()).toContain('localhost')
+    expect(firstRow.text()).toContain('background')
+    expect(firstRow.findAll('td').map((td) => td.text())).toContain('1')
+  })
+
   describe('Sort', () => {
     it.each([
       { order: 'desc' },
@@ -74,6 +108,78 @@ describe('Table component', () => {
       await wrapper.vm.$nextTick()
       expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal(order === 'asc' ? min : max)
       expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.tasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal(order === 'asc' ? max : min)
+    })
+
+    it.each([
+      { order: 'asc', expected: ['taskY', 'taskZ', 'taskX'] },
+      { order: 'desc', expected: ['taskX', 'taskZ', 'taskY'] },
+    ])('sorts run time $order', async ({ order, expected }) => {
+      const makeRow = (name, runTimeSecs) => {
+        const job = {
+          id: `~u/w//1/${name}/01`,
+          node: {
+            state: 'succeeded',
+            startedTime: '2000-01-01T00:00:00Z',
+            finishedTime: new Date(Date.UTC(2000, 0, 1, 0, 0, runTimeSecs)).toISOString(),
+          },
+          children: [],
+        }
+        return {
+          task: {
+            id: `~u/w//1/${name}`,
+            name,
+            tokens: { cycle: '1' },
+            node: { state: 'succeeded' },
+            children: [job],
+          },
+          latestJob: job,
+          previousJob: null,
+        }
+      }
+      const wrapper = mountFunction({
+        props: {
+          tasks: [makeRow('taskX', 30), makeRow('taskY', 10), makeRow('taskZ', 20)],
+          sortBy: [{ key: 'task.node.task.meanElapsedTime', order }],
+        },
+      })
+      await wrapper.vm.$nextTick()
+      expect(
+        wrapper.findAll('[data-cy-task-name]').map((el) => el.attributes('data-cy-task-name'))
+      ).toEqual(expected)
+    })
+
+    it.each([
+      { order: 'asc', expected: ['taskB', 'taskC', 'taskA'] },
+      { order: 'desc', expected: ['taskC', 'taskB', 'taskA'] },
+    ])('sorts job columns $order (empty values last)', async ({ order, expected }) => {
+      const makeRow = (name, platform) => {
+        const job = platform && {
+          id: `~u/w//1/${name}/01`,
+          node: { state: 'running', platform },
+          children: [],
+        }
+        return {
+          task: {
+            id: `~u/w//1/${name}`,
+            name,
+            tokens: { cycle: '1' },
+            node: { state: 'running' },
+            children: job ? [job] : [],
+          },
+          latestJob: job || undefined,
+          previousJob: undefined,
+        }
+      }
+      const wrapper = mountFunction({
+        props: {
+          tasks: [makeRow('taskA', null), makeRow('taskB', 'alpha'), makeRow('taskC', 'beta')],
+          sortBy: [{ key: 'latestJob.node.platform', order }],
+        },
+      })
+      await wrapper.vm.$nextTick()
+      expect(
+        wrapper.findAll('[data-cy-task-name]').map((el) => el.attributes('data-cy-task-name'))
+      ).toEqual(expected)
     })
 
     describe('nullSorter', () => {
