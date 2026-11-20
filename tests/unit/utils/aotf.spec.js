@@ -191,8 +191,7 @@ describe('aotf (Api On The Fly)', () => {
       expect(
         aotf.filterAssociations(
           // filter by the "namespace" object
-          aotf.cylcObjects.Task,
-          tokens,
+          [{ type: aotf.cylcObjects.Task, tokens }],
           mutations,
           permissions
         )
@@ -202,8 +201,7 @@ describe('aotf (Api On The Fly)', () => {
       // filter by workflow
       const all = aotf.filterAssociations(
         // filter by the "workflow" object
-        aotf.cylcObjects.Workflow,
-        tokens,
+        [{ type: aotf.cylcObjects.Workflow, tokens }],
         mutations,
         permissions
       )
@@ -272,8 +270,7 @@ describe('aotf (Api On The Fly)', () => {
 
       // filter mutations from the context of the workflow
       const out1 = aotf.filterAssociations(
-        aotf.cylcObjects.Workflow,
-        aotf.tokenise('~a/b'),
+        [{ type: aotf.cylcObjects.Workflow, tokens: aotf.tokenise('~a/b') }],
         mutations,
         permissions
       )
@@ -287,8 +284,7 @@ describe('aotf (Api On The Fly)', () => {
 
       // filter mutations from the context of a cycle point
       const out2 = aotf.filterAssociations(
-        aotf.cylcObjects.Workflow,
-        aotf.tokenise('~a/b//c'),
+        [{ type: aotf.cylcObjects.Workflow, tokens: aotf.tokenise('~a/b//c') }],
         mutations,
         permissions
       )
@@ -316,8 +312,7 @@ describe('aotf (Api On The Fly)', () => {
 
       expect(
         aotf.filterAssociations(
-          aotf.cylcObjects.Workflow,
-          aotf.tokenise('~a/b'),
+          [{ type: aotf.cylcObjects.Workflow, tokens: aotf.tokenise('~a/b') }],
           mutations,
           permissions
         ).map(x => [x.mutation.name, x.authorised]).sort()

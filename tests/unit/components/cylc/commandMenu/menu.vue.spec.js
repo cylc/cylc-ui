@@ -15,46 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { createStore } from 'vuex'
 import { mount } from '@vue/test-utils'
-import Menu, { getLogFileForNode } from '@/components/cylc/commandMenu/Menu.vue'
+import Menu from '@/components/cylc/commandMenu/Menu.vue'
 import { Tokens } from '@/utils/uid'
-import {
-  simpleTaskNode,
-  simpleJobNode,
-  simpleWorkflowNode,
-} from '$tests/unit/components/cylc/tree/tree.data'
+import storeOptions from '@/store/options'
+import { mockRouter } from '$tests/util'
 
 describe('Command menu', () => {
   it('has a title with the node ID excluding the username', () => {
-    const wrapper = mount(Menu, { shallow: true })
+    mockRouter()
+    const wrapper = mount(Menu, {
+      shallow: true,
+      global: {
+        plugins: [createStore(storeOptions)],
+        provide: { workflowService: {} },
+      },
+    })
     wrapper.vm.target = { dataset: {} }
     const id = '~neil.armstrong/apollo//11/eagle'
-    wrapper.vm.node = {
+    wrapper.vm.nodes.push({
       id,
       tokens: new Tokens(id),
-    }
-    expect(wrapper.vm.title).toEqual('apollo//11/eagle')
-  })
-
-  describe('getLogFileForNode()', () => {
-    it.for([
-      {
-        testID: 'job node',
-        node: simpleJobNode,
-        expected: 'job.err',
-      },
-      {
-        testID: 'task node with multiple jobs (picks latest)',
-        node: simpleTaskNode,
-        expected: 'job-activity.log',
-      },
-      {
-        testID: 'workflow node',
-        node: simpleWorkflowNode,
-        expected: undefined,
-      },
-    ])('$testID', ({ node, expected }) => {
-      expect(getLogFileForNode(node)).toEqual(expected)
     })
+    expect(wrapper.vm.title).toBe('apollo//11/eagle')
   })
 })

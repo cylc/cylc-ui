@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { btnIconFontSize } from '@/utils/viewToolbar'
+import { btnIconFontSize } from '@/plugins/vuetify'
 
 describe('btnIconFontSize', () => {
   it.each([

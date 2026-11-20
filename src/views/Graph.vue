@@ -18,10 +18,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-graph w-100 h-100">
     <!-- the controls -->
-    <ViewToolbar
-      :groups="controlGroups"
-      @setOption="setOption"
-    />
+    <ViewToolbar class="rounded-lg pa-1">
+      <ViewToolbarBtn
+        @click="refresh()"
+        :icon="icons.mdiRefresh"
+        v-tooltip="'Refresh'"
+        :disabled="autoRefresh"
+      />
+      <ViewToolbarBtn
+        v-model:active.toggle="autoRefresh"
+        :icon="icons.mdiTimer"
+        v-tooltip="'Auto Refresh'"
+        data-cy="control-autoRefresh"
+      />
+      <ViewToolbarBtn
+        v-model:active.toggle="transpose"
+        :icon="icons.mdiFileRotateRight"
+        v-tooltip="'Transpose'"
+        data-cy="control-transpose"
+      />
+      <ViewToolbarBtn
+        @click="reset()"
+        :icon="icons.mdiImageFilterCenterFocus"
+        v-tooltip="'Centre'"
+      />
+      <ViewToolbarBtn
+        @click="increaseSpacing()"
+        :icon="icons.mdiArrowExpand"
+        v-tooltip="'Increase Spacing'"
+      />
+      <ViewToolbarBtn
+        @click="decreaseSpacing()"
+        :icon="icons.mdiArrowCollapse"
+        v-tooltip="'Decrease Spacing'"
+      />
+      <ViewToolbarBtn
+        v-model:active.toggle="groupCycle"
+        :icon="icons.mdiVectorSelection"
+        v-tooltip="'Group by cycle point'"
+        data-cy="control-groupCycle"
+      />
+    </ViewToolbar>
 
     <!-- the graph -->
     <svg
@@ -101,19 +138,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { mapGetters } from 'vuex'
 import { useJobTheme } from '@/composables/localStorage'
-import { useGraphQL } from '@/mixins/graphql'
+import { useWorkflowVariables } from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   useInitialOptions,
 } from '@/utils/initialOptions'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-// import CylcTreeCallback from '@/services/treeCallback'
+import { SubscriptionQuery } from '@/model/SubscriptionQuery.model'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import GraphSubgraph from '@/components/cylc/GraphSubgraph.vue'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import ViewToolbar from '@/components/cylc/viewToolbar/ViewToolbar.vue'
+import ViewToolbarBtn from '@/components/cylc/viewToolbar/ViewToolbarBtn.vue'
 import {
   posToPath,
   nonCryptoHash,
@@ -236,6 +272,7 @@ export default {
     GraphNode,
     GraphSubgraph,
     ViewToolbar,
+    ViewToolbarBtn,
   },
 
   props: {
@@ -270,7 +307,7 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
-    const { workflowIDs, variables } = useGraphQL()
+    const { workflows, variables } = useWorkflowVariables()
 
     return {
       jobTheme: useJobTheme(),
@@ -278,8 +315,17 @@ export default {
       autoRefresh,
       spacing,
       groupCycle,
-      workflowIDs,
+      workflows,
       variables,
+      icons: {
+        mdiTimer,
+        mdiImageFilterCenterFocus,
+        mdiArrowCollapse,
+        mdiArrowExpand,
+        mdiRefresh,
+        mdiFileRotateRight,
+        mdiVectorSelection,
+      },
     }
   },
 
@@ -326,74 +372,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(
         QUERY,
         this.variables,
         'workflow',
-        [],
-        /* isDelta */ true,
-        /* isGlobalCallback */ true
       )
-    },
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
-    },
-    controlGroups () {
-      return [
-        {
-          title: 'Graph',
-          controls: [
-            {
-              title: 'Refresh',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.refresh,
-              disableIf: ['autoRefresh'],
-            },
-            {
-              title: 'Auto Refresh',
-              icon: mdiTimer,
-              action: 'toggle',
-              value: this.autoRefresh,
-              key: 'autoRefresh',
-            },
-            {
-              title: 'Transpose',
-              icon: mdiFileRotateRight,
-              action: 'toggle',
-              value: this.transpose,
-              key: 'transpose',
-            },
-            {
-              title: 'Centre',
-              icon: mdiImageFilterCenterFocus,
-              action: 'callback',
-              callback: this.reset,
-            },
-            {
-              title: 'Increase Spacing',
-              icon: mdiArrowExpand,
-              action: 'callback',
-              callback: this.increaseSpacing,
-            },
-            {
-              title: 'Decrease Spacing',
-              icon: mdiArrowCollapse,
-              action: 'callback',
-              callback: this.decreaseSpacing,
-            },
-            {
-              title: 'Group by cycle point',
-              icon: mdiVectorSelection,
-              action: 'toggle',
-              value: this.groupCycle,
-              key: 'groupCycle',
-            },
-          ],
-        },
-      ]
     },
   },
 
@@ -446,9 +430,6 @@ export default {
 
       // Center the view after load:
       this.reset()
-    },
-    setOption (option, value) {
-      this[option] = value
     },
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
@@ -840,9 +821,7 @@ export default {
       // turn the view toolbar into a floating component
       position: fixed;
       background-color: rgba(240,240,240,0.9);
-      border-radius: 0.75em;
       margin: 0.5em;
-      padding: 0.4em;
     }
   }
 </style>
