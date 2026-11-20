@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createUrl } from '@/utils/urls'
 
 describe('urls', () => {
@@ -27,10 +27,6 @@ describe('urls', () => {
     host: HOST,
     pathname: PATHNAME,
   }
-
-  afterEach(() => {
-    vi.unstubAllGlobals()
-  })
 
   it.each([
     {

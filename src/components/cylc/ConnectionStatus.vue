@@ -17,41 +17,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-snackbar
-    :model-value="isOffline"
+    :model-value="offline"
     :timeout=-1
-    class="justify-center"
     color="red"
     location="top"
+    :prepend-icon="mdiLanDisconnect"
+    :text="message"
   >
-    <v-icon
-      size="large"
-      class="mr-2"
-      color="red-lighten-5"
-    >{{ $options.icons.mdiLanDisconnect }}</v-icon>
-    <span
-      class="text-red-lighten-5 font-weight-medium"
-    >Connection to server lost. You are offline.</span>
+    <template #header>
+      <v-progress-linear
+        v-if="connecting"
+        color="red-lighten-3"
+        indeterminate
+        class="mb-n1"
+      />
+    </template>
   </v-snackbar>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 import { mdiLanDisconnect } from '@mdi/js'
 
-export default {
-  name: 'ConnectionStatus',
+const store = useStore()
 
-  props: {
-    /**
-     * Controls whether the connection status alert is visible or not.
-     */
-    isOffline: {
-      type: Boolean,
-      required: true,
-    },
-  },
+const offline = computed(() => Boolean(store.state.offline))
 
-  icons: {
-    mdiLanDisconnect,
-  },
-}
+const connecting = computed(() => store.state.offline === -1)
+
+const message = computed((prev) => {
+  if (!store.state.offline) return prev
+  return connecting.value ? 'Connecting...' : 'Connection lost'
+})
 </script>

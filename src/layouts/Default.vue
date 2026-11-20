@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <ConnectionStatus :is-offline="offline" />
+    <ConnectionStatus />
     <Drawer v-if="drawerEnabled" />
     <CommandMenu/>
 
@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { computed, onErrorCaptured } from 'vue'
+import { onErrorCaptured } from 'vue'
 import { store } from '@/store/index'
 import { Alert as AlertModel } from '@/model/Alert.model'
 import Alert from '@/components/core/Alert.vue'
@@ -51,8 +51,6 @@ const { drawerEnabled } = useDrawer()
 const coreViewStyle = {
   height: `calc(100vh - ${toolbarHeight}px)`,
 }
-
-const offline = computed(() => store.state.offline)
 
 onErrorCaptured((error, vm, info) => {
   store.dispatch('setAlert', new AlertModel(error, 'error', 'An unexpected error has occurred. You may need to refresh the page.', error.message))

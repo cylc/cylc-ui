@@ -5,3 +5,6 @@ config.global.provide = {
   user: new User({ username: 'cylc', permissions: [], owner: 'owner' }),
   versionInfo: { },
 }
+
+// Stub APIs not provided by happy-dom:
+window.visualViewport ??= new EventTarget()

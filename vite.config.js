@@ -28,6 +28,21 @@ import pkg from './package.json'
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
 
+/**
+ * Tests that must be isolated due to `vi.stubGlobal` or `vi.mock` etc.
+ * See https://vitest.dev/guide/recipes/disable-isolation#when-isolation-matters
+ */
+const isolatedTests = {
+  name: 'isolated',
+  include: [
+    './tests/unit/services/user.service.spec.*',
+    './tests/unit/services/workflow.service.spec.js',
+    './tests/unit/utils/urls.spec.*',
+    './tests/unit/components/cylc/connectionStatus.vue.spec.*',
+  ],
+  isolate: true,
+}
+
 export default defineConfig(({ command, mode }) => {
   const plugins = [
     vue(),
@@ -124,22 +139,35 @@ export default defineConfig(({ command, mode }) => {
       // Allow vue devtools to work when running vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
-    // Unit test specific config:
+    /**
+     * Unit test specific config
+     * @type {import('vitest/config').TestUserConfig}
+     */
     test: {
-      include: ['./tests/unit/**/*.spec.{js,ts}'],
       environment: 'happy-dom',
-      // Disable isolation to speed up tests, however this means you should be careful to avoid pollution of globals:
-      isolate: false,
       pool: 'threads', // slightly faster than default forks
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       restoreMocks: true,
+      unstubGlobals: true,
       server: {
         deps: {
           // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
           inline: ['vuetify'],
         },
       },
+      projects: [
+        {
+          test: {
+            name: 'default',
+            include: ['./tests/unit/**/*.spec.{js,ts}'],
+            // Disable isolation to speed up tests (be careful to avoid pollution of shared state):
+            isolate: false,
+            exclude: isolatedTests.include,
+          },
+        },
+        { test: isolatedTests },
+      ],
       coverage: {
         provider: 'istanbul',
         include: [
