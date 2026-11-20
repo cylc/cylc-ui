@@ -29,3 +29,15 @@ export function discardFromArray (array, item) {
   }
   return false
 }
+
+const timestampRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
+
+/**
+ * Strip a timestamp (if present) from the start of a log line.
+ *
+ * @param {string} line
+ * @returns {string}
+ */
+export function stripTimestamp (line) {
+  return line.match(timestampRegex)?.[1] ?? line
+}
