@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <td style="padding-right: 0.5em; vertical-align: top;">
             <EventChip :level="event.level" />
           </td><td>
-            <span>{{ event.message }}</span>
+            <span class="truncated-message">{{ event.message }}</span>
           </td>
         </tr>
       </table>
@@ -133,3 +133,11 @@ export default {
   path: PATH,
 }
 </script>
+
+<style lang="scss" scoped>
+@use "/src/styles/util";
+
+.truncated-message {
+  @include util.line-clamp(2);
+}
+</style>
