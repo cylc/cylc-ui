@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <SVGTask
       :task="task.node"
       :modifierSize="0.5"
+      fixedBBox
       :startTime="startTime"
       viewBox="-40 -40 140 140"
       v-command-menu="task"
