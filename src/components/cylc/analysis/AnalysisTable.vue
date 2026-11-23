@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import {
-  formatDuration,
+  formatUnits,
   formatHeader,
   formatChartLabels,
   QUARTILE_INDEX,
@@ -135,9 +135,8 @@ export default {
       const label = formatChartLabels(timingOption)
       const quartiles = formatHeader('quartiles', timingOption)
       const common = {
-        formatter: formatDuration,
+        formatter: formatUnits,
         allowZeros: true,
-        timingOption,
       }
       const timingHeaders = []
       // Check if there are any stats to show
@@ -173,7 +172,7 @@ export default {
         value = value?.[index]
       }
       if (header.formatter) {
-        return header.formatter(value, header.allowZeros, this.timingOption)
+        return header.formatter(value, this.timingOption, { allowZeros: header.allowZeros })
       }
       return value
     },

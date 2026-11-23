@@ -100,38 +100,28 @@ export function jobMessageOutputs (jobNode) {
  * 00:00:00, rather than undefined
  * @return {string=} Formatted duration
  */
-export function formatDuration (value, allowZeros = false, timingOption = true) {
-  if (timingOption === 'maxRss') {
-    return formatRSS(value)
-  }
-  // Times are formatted as HH:MM:SS
-  if (timingOption === 'queue' || timingOption === 'total' || timingOption === 'run' || timingOption === 'cpuTime' || timingOption === true) {
-    if (value || (value === 0 && allowZeros === true)) {
-      // Convert CPU time (milliseconds) to seconds
-      if (timingOption === 'cpuTime') {
-        value = value / 1000
-      }
-      // Means/std devs may be non-integer
-      value = Math.round(value)
-      const seconds = value % 60
-      const minutes = ((value - seconds) / 60) % 60
-      const hours = ((value - minutes * 60 - seconds) / 3600) % 24
-      const days = (value - hours * 3600 - minutes * 60 - seconds) / 86400
+export function formatDuration (dur, { allowZeros = false } = {}) {
+  if (dur || (dur === 0 && allowZeros === true)) {
+    // Means/std devs may be non-integer
+    dur = Math.round(dur)
+    const seconds = dur % 60
+    const minutes = ((dur - seconds) / 60) % 60
+    const hours = ((dur - minutes * 60 - seconds) / 3600) % 24
+    const days = (dur - hours * 3600 - minutes * 60 - seconds) / 86400
 
-      let dayss = ''
-      if (days > 0) {
-        dayss = days.toString() + 'd '
-      }
-
-      return dayss +
-        hours.toString().padStart(2, '0') +
-        ':' + minutes.toString().padStart(2, '0') +
-        ':' + Math.round(seconds).toString().padStart(2, '0')
+    let dayss = ''
+    if (days > 0) {
+      dayss = days.toString() + 'd '
     }
-    // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
-    // return "undefined" rather than a number for these cases
-    return undefined
+
+    return dayss +
+      hours.toString().padStart(2, '0') +
+      ':' + minutes.toString().padStart(2, '0') +
+      ':' + seconds.toString().padStart(2, '0')
   }
+  // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
+  // return "undefined" rather than a number for these cases
+  return undefined
 }
 
 /**
@@ -154,6 +144,29 @@ export function formatRSS (value) {
     const gigabytes = value / 1073741824
     return gigabytes.toPrecision(3) + ' GiB'
   }
+}
+
+/**
+ * Format an analysis metric value in the appropriate units for the given
+ * timing option - memory for 'maxRss', otherwise a duration.
+ *
+ * @param {number=} value Bytes for 'maxRss', milliseconds for 'cpuTime',
+ * otherwise seconds
+ * @param {string} timingOption
+ * @param {Object} [options]
+ * @param {boolean} [options.allowZeros] Whether durations of 0 are formatted
+ * as 00:00:00, rather than undefined
+ * @return {string=} Formatted value
+ */
+export function formatUnits (value, timingOption, { allowZeros = false } = {}) {
+  if (timingOption === 'maxRss') {
+    return formatRSS(value)
+  }
+  if (timingOption === 'cpuTime' && typeof value === 'number') {
+    // Convert CPU time (milliseconds) to seconds
+    value = value / 1000
+  }
+  return formatDuration(value, { allowZeros })
 }
 
 /**

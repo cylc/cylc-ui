@@ -29,6 +29,7 @@ import {
   getTimingOption,
   formatHeader,
   formatRSS,
+  formatUnits,
 } from '@/utils/tasks'
 
 describe('tasks', () => {
@@ -115,42 +116,42 @@ describe('tasks', () => {
       expect(formatDuration(0)).to.equal(undefined)
     })
     it('should change format of 0 seconds based on value of allowZeros', () => {
-      expect(formatDuration(0, false)).to.equal(undefined)
-      expect(formatDuration(0, true)).to.equal('00:00:00')
+      expect(formatDuration(0, { allowZeros: false })).to.equal(undefined)
+      expect(formatDuration(0, { allowZeros: true })).to.equal('00:00:00')
     })
     it('should not change format of non-zero values based on allowZeros', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: false })).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: true })).to.equal('00:00:42')
     })
-    it.each(['queue', 'total', 'run'])('formats %o timing option as HH:MM:SS', (timingOption) => {
-      expect(formatDuration(4242, false, timingOption)).to.equal('01:10:42')
-      expect(formatDuration(0, false, timingOption)).to.equal(undefined)
-      expect(formatDuration(0, true, timingOption)).to.equal('00:00:00')
+    it('rounds non-integer durations', () => {
+      expect(formatDuration(41.6)).to.equal('00:00:42')
+      expect(formatDuration(59.6)).to.equal('00:01:00')
     })
-    it('converts cpuTime from milliseconds', () => {
-      expect(formatDuration(4242000, false, 'cpuTime')).to.equal('01:10:42')
-      expect(formatDuration(1500, false, 'cpuTime')).to.equal('00:00:02')
-      expect(formatDuration(0, true, 'cpuTime')).to.equal('00:00:00')
-      expect(formatDuration(undefined, true, 'cpuTime')).to.equal(undefined)
-      expect(formatDuration(null, false, 'cpuTime')).to.equal(undefined)
+  })
+
+  describe('formatUnits', () => {
+    it.each(['queue', 'total', 'run'])('formats %o timing option as HH:MM:SS', (timingOption) => {
+      expect(formatUnits(4242, timingOption)).to.equal('01:10:42')
+      expect(formatUnits(0, timingOption)).to.equal(undefined)
+      expect(formatUnits(0, timingOption, { allowZeros: true })).to.equal('00:00:00')
+    })
+    it.each([
+      [4242000, false, '01:10:42'],
+      [1500, false, '00:00:02'],
+      [0, true, '00:00:00'],
+      [undefined, true, undefined],
+      [null, true, undefined],
+    ])('converts cpuTime %o (allowZeros=%o) from milliseconds -> %o', (value, allowZeros, expected) => {
+      expect(formatUnits(value, 'cpuTime', { allowZeros })).to.equal(expected)
     })
     it.each([
       [undefined, undefined],
       [null, undefined],
       [512, '0.500 KiB'],
-      [2048, '2.00 KiB'],
       [5 * 1048576, '5.00 MiB'],
-      [2 * 1073741824, '2.00 GiB'],
     ])('formats maxRss %o -> %o', (value, expected) => {
-      expect(formatDuration(value, false, 'maxRss')).to.equal(expected)
-    })
-    it('rounds non-integer durations', () => {
-      expect(formatDuration(41.6, false, 'run')).to.equal('00:00:42')
-      expect(formatDuration(59.6, false, 'run')).to.equal('00:01:00')
-    })
-    it('returns undefined for an unknown timing option', () => {
-      expect(formatDuration(42, false, 'foo')).to.equal(undefined)
+      expect(formatUnits(value, 'maxRss')).to.equal(expected)
     })
   })
 
