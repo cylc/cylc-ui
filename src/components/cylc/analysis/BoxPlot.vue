@@ -137,16 +137,22 @@ export default {
 
     const reducedAnimation = useReducedAnimation()
 
+    /**
+     * The tasks on the current page, in sorted order.
+     *
+     * Shared by the box plot series and the memory allocated annotations so
+     * that the annotations are always drawn against the right tasks.
+     * @type {import('vue').ComputedRef<Object[]>}
+     */
+    const currentTasks = computed(() => {
+      const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b, sortBy.value, sortDesc.value))
+      const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
+      return sortedTasks.slice(startIndex, startIndex + props.itemsPerPage)
+    })
+
     const chartOptions = computed(() => {
-      const currentTasks = (() => {
-        if (props.timingOption === 'maxRss') {
-          const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b, sortBy.value, sortDesc.value))
-          const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
-          const endIndex = Math.min(sortedTasks.length, startIndex + props.itemsPerPage)
-          return sortedTasks.slice(startIndex, endIndex)
-        }
-        return []
-      })()
+      // Only show memory allocated annotations for max RSS
+      const annotatedTasks = props.timingOption === 'maxRss' ? currentTasks.value : []
 
       return {
         chart: {
@@ -217,7 +223,7 @@ export default {
         },
         annotations: {
           position: 'front',
-          points: currentTasks.map(point => ({
+          points: annotatedTasks.map(point => ({
             x: point.memAlloc,
             y: point.name,
             marker: {
@@ -244,8 +250,8 @@ export default {
           },
         },
         xaxis: {
-          min: currentTasks.length > 0 ? 0 : undefined,
-          max: currentTasks.length > 0 ? Math.ceil(Math.max(0, ...currentTasks.map(t => t.memAlloc)) * 1.05) : undefined,
+          min: annotatedTasks.length > 0 ? 0 : undefined,
+          max: annotatedTasks.length > 0 ? Math.ceil(Math.max(0, ...annotatedTasks.map(t => t.memAlloc)) * 1.05) : undefined,
           type: 'numeric',
           title: {
             text: `${formatChartLabels(props.timingOption)}`,
@@ -261,31 +267,28 @@ export default {
       sortBy,
       page,
       sortDesc,
+      currentTasks,
       chartOptions,
     }
   },
 
   computed: {
     series () {
-      const sortedTasks = [...this.tasks].sort((a, b) => compare(a, b, this.sortBy, this.sortDesc))
-      const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
-      const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
       const quartilesKey = formatHeader('quartiles', this.timingOption)
-      const boxData = []
-      for (let i = startIndex; i < endIndex; i++) {
-        const quartiles = sortedTasks[i][quartilesKey] ?? []
-        boxData.push({
-          x: sortedTasks[i].name,
+      const boxData = this.currentTasks.map((task) => {
+        const quartiles = task[quartilesKey] ?? []
+        return {
+          x: task.name,
           y: [
             quartiles[QUARTILE_INDEX.min],
             quartiles[QUARTILE_INDEX.q1],
             quartiles[QUARTILE_INDEX.median],
             quartiles[QUARTILE_INDEX.q3],
             quartiles[QUARTILE_INDEX.max],
-            sortedTasks[i].memAlloc > 0 ? sortedTasks[i].memAlloc : 1, // ApexCharts seems inconsistent if this extra data is 0
+            task.memAlloc > 0 ? task.memAlloc : 1, // ApexCharts seems inconsistent if this extra data is 0
           ],
-        })
-      }
+        }
+      })
       return [{ name: 'boxPlot', type: 'boxPlot', data: boxData }]
     },
 
