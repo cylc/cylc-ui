@@ -124,7 +124,7 @@ const jobFields = [
   'queueTime',
   'runTime',
   'startedTime',
-  'peakRss',
+  'maxRss',
   'cpuTime',
 ]
 

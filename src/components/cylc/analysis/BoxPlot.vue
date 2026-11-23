@@ -68,9 +68,11 @@ import {
 import { upperFirst } from 'lodash'
 import {
   formatDuration,
+  formatHeader,
   getTimingOption,
   formatChartLabels,
   compare,
+  QUARTILE_INDEX,
 } from '@/utils/tasks'
 import { useReducedAnimation } from '@/composables/localStorage'
 import {
@@ -136,7 +138,7 @@ export default {
 
     const chartOptions = computed(() => {
       const currentTasks = (() => {
-        if (props.timingOption === 'peakRss') {
+        if (props.timingOption === 'maxRss') {
           const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b, sortBy.value, sortDesc.value))
           const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
           const endIndex = Math.min(sortedTasks.length, startIndex + props.itemsPerPage)
@@ -187,7 +189,7 @@ export default {
             const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true, props.timingOption)
             const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true, props.timingOption)
             const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true, props.timingOption)
-            if (props.timingOption === 'peakRss') {
+            if (props.timingOption === 'maxRss') {
               const memAlloc = formatDuration(w.globals.series[seriesIndex][dataPointIndex], true, props.timingOption)
               return `
               <div class="pa-2">
@@ -267,16 +269,18 @@ export default {
       const sortedTasks = [...this.tasks].sort((a, b) => compare(a, b, this.sortBy, this.sortDesc))
       const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
       const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
+      const quartilesKey = formatHeader('quartiles', this.timingOption)
       const boxData = []
       for (let i = startIndex; i < endIndex; i++) {
+        const quartiles = sortedTasks[i][quartilesKey] ?? []
         boxData.push({
           x: sortedTasks[i].name,
           y: [
-            sortedTasks[i][`min${upperFirst(getTimingOption(this.timingOption))}`],
-            sortedTasks[i][`${this.timingOption}Quartiles`][0],
-            sortedTasks[i][`${this.timingOption}Quartiles`][1],
-            sortedTasks[i][`${this.timingOption}Quartiles`][2],
-            sortedTasks[i][`max${upperFirst(getTimingOption(this.timingOption))}`],
+            quartiles[QUARTILE_INDEX.min],
+            quartiles[QUARTILE_INDEX.q1],
+            quartiles[QUARTILE_INDEX.median],
+            quartiles[QUARTILE_INDEX.q3],
+            quartiles[QUARTILE_INDEX.max],
             sortedTasks[i].memAlloc > 0 ? sortedTasks[i].memAlloc : 1, // ApexCharts seems inconsistent if this extra data is 0
           ],
         })
@@ -289,14 +293,17 @@ export default {
     },
 
     sortChoices () {
+      const label = formatChartLabels(this.timingOption)
+      const metric = upperFirst(getTimingOption(this.timingOption))
       return [
         { title: 'Task name', value: 'name' },
         { title: 'Platform', value: 'platform' },
         { title: 'Count', value: 'count' },
-        { title: `Mean ${formatChartLabels(this.timingOption)}`, value: `mean${upperFirst(getTimingOption(this.timingOption))}` },
-        { title: `Median ${formatChartLabels(this.timingOption)}`, value: `median${upperFirst(getTimingOption(this.timingOption))}` },
-        { title: `Min ${formatChartLabels(this.timingOption)}`, value: `min${upperFirst(getTimingOption(this.timingOption))}` },
-        { title: `Max ${formatChartLabels(this.timingOption)}`, value: `max${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Mean ${label}`, value: `mean${metric}` },
+        { title: `Median ${label}`, value: `median${metric}` },
+        { title: `Min ${label}`, value: `min${metric}` },
+        { title: `Max ${label}`, value: `max${metric}` },
+        { title: `Std Dev ${label}`, value: `stdDev${metric}` },
       ]
     },
   },

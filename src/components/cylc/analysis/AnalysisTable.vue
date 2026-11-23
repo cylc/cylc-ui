@@ -55,11 +55,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { upperFirst } from 'lodash'
 import {
   formatDuration,
   formatHeader,
   formatChartLabels,
+  QUARTILE_INDEX,
 } from '@/utils/tasks'
 import {
   initialOptions,
@@ -131,76 +131,31 @@ export default {
 
   computed: {
     shownHeaders () {
-      const times = upperFirst(this.timingOption)
+      const timingOption = this.timingOption
+      const label = formatChartLabels(timingOption)
+      const quartiles = formatHeader('quartiles', timingOption)
+      const common = {
+        formatter: formatDuration,
+        allowZeros: true,
+        timingOption,
+      }
       const timingHeaders = []
       // Check if there are any stats to show
       const stats = this.tasks.some((task) => task.count > 1)
       if (stats) {
         timingHeaders.push(
-          {
-            title: `Mean ${formatChartLabels(times)}`,
-            key: `${formatHeader('mean', times)}`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          },
-          {
-            title: `Min ${formatChartLabels(times)}`,
-            key: `${formatHeader('min', times)}`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          },
-          {
-            title: `Q1 ${formatChartLabels(times)}`,
-            key: `${formatHeader('quartiles', times)}Quartiles.0`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          },
-          {
-            title: `Median ${formatChartLabels(times)}`,
-            key: `${formatHeader('quartiles', times)}Quartiles.1`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          },
-          {
-            title: `Q3 ${formatChartLabels(times)}`,
-            key: `${formatHeader('quartiles', times)}Quartiles.2`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          },
-          {
-            title: `Max ${formatChartLabels(times)}`,
-            key: `${formatHeader('max', times)}`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          }
+          { title: `Mean ${label}`, key: formatHeader('mean', timingOption), ...common },
+          { title: `Min ${label}`, key: `${quartiles}.${QUARTILE_INDEX.min}`, ...common },
+          { title: `Q1 ${label}`, key: `${quartiles}.${QUARTILE_INDEX.q1}`, ...common },
+          { title: `Median ${label}`, key: `${quartiles}.${QUARTILE_INDEX.median}`, ...common },
+          { title: `Q3 ${label}`, key: `${quartiles}.${QUARTILE_INDEX.q3}`, ...common },
+          { title: `Max ${label}`, key: `${quartiles}.${QUARTILE_INDEX.max}`, ...common },
+          { title: `Std Dev ${label}`, key: formatHeader('stdDev', timingOption), ...common },
         )
       } else {
         timingHeaders.push(
-          {
-            title: `${formatChartLabels(times)}`,
-            key: `${formatHeader('mean', times)}`,
-            formatter: formatDuration,
-            allowZeros: true,
-            timingOption: this.timingOption,
-          }
+          { title: label, key: formatHeader('mean', timingOption), ...common },
         )
-      }
-
-      // Don't show std dev for cpuTime or peakRss
-      if (this.timingOption !== 'cpuTime' && this.timingOption !== 'peakRss' && stats) {
-        timingHeaders.push({
-          title: `Std Dev ${times}`,
-          key: `${formatHeader('stdDev', times)}`,
-          formatter: formatDuration,
-          allowZeros: true,
-          timingOption: this.timingOption,
-        })
       }
       return this.headers.concat(timingHeaders)
     },
@@ -213,7 +168,7 @@ export default {
       let value = item[key]
       if (arrayMatch) {
         const index = arrayMatch[2]
-        value = value[index]
+        value = value?.[index]
       }
       if (header.formatter) {
         return header.formatter(value, header.allowZeros, this.timingOption)
