@@ -143,14 +143,16 @@ export default {
       // Check if there are any stats to show
       const stats = this.tasks.some((task) => task.count > 1)
       if (stats) {
+        // The metric is already shown in the timing option dropdown, so
+        // don't repeat it in the headers (avoids e.g. "Min Max RSS")
         timingHeaders.push(
-          { title: `Mean ${label}`, key: formatHeader('mean', timingOption), ...common },
-          { title: `Min ${label}`, key: `${quartiles}.${QUARTILE_INDEX.min}`, ...common },
-          { title: `Q1 ${label}`, key: `${quartiles}.${QUARTILE_INDEX.q1}`, ...common },
-          { title: `Median ${label}`, key: `${quartiles}.${QUARTILE_INDEX.median}`, ...common },
-          { title: `Q3 ${label}`, key: `${quartiles}.${QUARTILE_INDEX.q3}`, ...common },
-          { title: `Max ${label}`, key: `${quartiles}.${QUARTILE_INDEX.max}`, ...common },
-          { title: `Std Dev ${label}`, key: formatHeader('stdDev', timingOption), ...common },
+          { title: 'Mean', key: formatHeader('mean', timingOption), ...common },
+          { title: 'Min', key: `${quartiles}.${QUARTILE_INDEX.min}`, ...common },
+          { title: 'Q1', key: `${quartiles}.${QUARTILE_INDEX.q1}`, ...common },
+          { title: 'Median', key: `${quartiles}.${QUARTILE_INDEX.median}`, ...common },
+          { title: 'Q3', key: `${quartiles}.${QUARTILE_INDEX.q3}`, ...common },
+          { title: 'Max', key: `${quartiles}.${QUARTILE_INDEX.max}`, ...common },
+          { title: 'Std Dev', key: formatHeader('stdDev', timingOption), ...common },
         )
       } else {
         timingHeaders.push(

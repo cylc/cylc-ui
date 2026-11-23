@@ -134,9 +134,15 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
   }
 }
 
-function formatRSS (value) {
+/**
+ * Format a memory value (in bytes) in a human-readable format.
+ *
+ * @param {number=} value Memory in bytes
+ * @return {string=} Formatted memory, e.g. '5.00 MiB'
+ */
+export function formatRSS (value) {
   // Format the max RSS value in a human-readable format
-  if (value === undefined || value === null) {
+  if (value == null) {
     return undefined
   } else if (value / 1024 < 1000) {
     const kilobytes = value / 1024

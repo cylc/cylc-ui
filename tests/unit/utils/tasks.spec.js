@@ -28,6 +28,7 @@ import {
   formatChartLabels,
   getTimingOption,
   formatHeader,
+  formatRSS,
 } from '@/utils/tasks'
 
 describe('tasks', () => {
@@ -150,6 +151,24 @@ describe('tasks', () => {
     })
     it('returns undefined for an unknown timing option', () => {
       expect(formatDuration(42, false, 'foo')).to.equal(undefined)
+    })
+  })
+
+  describe('formatRSS', () => {
+    it.each([
+      [undefined, undefined],
+      [null, undefined],
+      [0, '0.00 KiB'],
+      [512, '0.500 KiB'],
+      [1024, '1.00 KiB'],
+      [999 * 1024, '999 KiB'],
+      [1000 * 1024, '0.977 MiB'],
+      [1.5 * 1048576, '1.50 MiB'],
+      [999 * 1048576, '999 MiB'],
+      [1000 * 1048576, '0.977 GiB'],
+      [2 * 1073741824, '2.00 GiB'],
+    ])('formatRSS(%o) -> %o', (value, expected) => {
+      expect(formatRSS(value)).to.equal(expected)
     })
   })
 

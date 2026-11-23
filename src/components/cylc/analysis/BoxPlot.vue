@@ -293,17 +293,18 @@ export default {
     },
 
     sortChoices () {
-      const label = formatChartLabels(this.timingOption)
+      // The metric is already shown in the timing option dropdown, so
+      // don't repeat it here (avoids e.g. "Min Max RSS")
       const metric = upperFirst(getTimingOption(this.timingOption))
       return [
         { title: 'Task name', value: 'name' },
         { title: 'Platform', value: 'platform' },
         { title: 'Count', value: 'count' },
-        { title: `Mean ${label}`, value: `mean${metric}` },
-        { title: `Median ${label}`, value: `median${metric}` },
-        { title: `Min ${label}`, value: `min${metric}` },
-        { title: `Max ${label}`, value: `max${metric}` },
-        { title: `Std Dev ${label}`, value: `stdDev${metric}` },
+        { title: 'Mean', value: `mean${metric}` },
+        { title: 'Median', value: `median${metric}` },
+        { title: 'Min', value: `min${metric}` },
+        { title: 'Max', value: `max${metric}` },
+        { title: 'Std Dev', value: `stdDev${metric}` },
       ]
     },
   },
