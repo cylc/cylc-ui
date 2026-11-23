@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-btn>
           <v-chip location="right" v-if="timingOption === 'cpuTime' && tasks.length">
             Total CPU Time: {{
-              formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
+              formatUnits(tasks[0].totalOfTotals, 'cpuTime') }}
           </v-chip>
           <v-btn>
             <v-icon :icon="$options.icons.mdiInformationOutline" />
@@ -164,7 +164,7 @@ import {
   pick,
 } from 'lodash'
 import gql from 'graphql-tag'
-import { formatDuration } from '@/utils/tasks'
+import { formatUnits } from '@/utils/tasks'
 import { useGraphQL } from '@/mixins/graphql'
 import {
   initialOptions,
@@ -372,7 +372,7 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     ),
-    formatDuration,
+    formatUnits,
   },
 
   icons: {

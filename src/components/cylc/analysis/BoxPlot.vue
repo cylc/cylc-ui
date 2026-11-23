@@ -67,7 +67,8 @@ import {
 } from '@mdi/js'
 import { upperFirst } from 'lodash'
 import {
-  formatDuration,
+  formatRSS,
+  formatUnits,
   formatHeader,
   getTimingOption,
   formatChartLabels,
@@ -184,13 +185,13 @@ export default {
         },
         tooltip: {
           custom ({ seriesIndex, dataPointIndex, w }) {
-            const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true, props.timingOption)
-            const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true, props.timingOption)
-            const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true, props.timingOption)
-            const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true, props.timingOption)
-            const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true, props.timingOption)
+            const max = formatUnits(w.globals.seriesCandleC[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const q3 = formatUnits(w.globals.seriesCandleL[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const med = formatUnits(w.globals.seriesCandleM[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const q1 = formatUnits(w.globals.seriesCandleH[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const min = formatUnits(w.globals.seriesCandleO[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
             if (props.timingOption === 'maxRss') {
-              const memAlloc = formatDuration(w.globals.series[seriesIndex][dataPointIndex], true, props.timingOption)
+              const memAlloc = formatRSS(w.globals.series[seriesIndex][dataPointIndex])
               return `
               <div class="pa-2">
               <div>Maximum: ${max}</div>
@@ -250,7 +251,7 @@ export default {
             text: `${formatChartLabels(props.timingOption)}`,
           },
           labels: {
-            formatter: (value) => formatDuration(value, true, props.timingOption),
+            formatter: (value) => formatUnits(value, props.timingOption, { allowZeros: true }),
           },
         },
       }

@@ -99,7 +99,7 @@ import {
 import gql from 'graphql-tag'
 import {
   getTimingOption,
-  formatDuration,
+  formatUnits,
   formatChartLabels,
 } from '@/utils/tasks'
 import {
@@ -372,7 +372,7 @@ export default {
               if (!value) {
                 return null
               }
-              const y = formatDuration(value, true, this.timingOption)
+              const y = formatUnits(value, this.timingOption, { allowZeros: true })
               const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
             },
@@ -393,7 +393,7 @@ export default {
             text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: (value) => formatDuration(value, true, this.timingOption),
+            formatter: (value) => formatUnits(value, this.timingOption, { allowZeros: true }),
           },
         },
       }
@@ -452,7 +452,7 @@ export default {
             text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: (value) => formatDuration(value, true, this.timingOption),
+            formatter: (value) => formatUnits(value, this.timingOption, { allowZeros: true }),
           },
           min: this.showOrigin ? 0 : undefined,
         },
