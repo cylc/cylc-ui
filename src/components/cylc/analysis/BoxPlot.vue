@@ -145,7 +145,7 @@ export default {
      * @type {import('vue').ComputedRef<Object[]>}
      */
     const currentTasks = computed(() => {
-      const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b, sortBy.value, sortDesc.value))
+      const sortedTasks = props.tasks.toSorted((a, b) => compare(a, b, sortBy.value, sortDesc.value))
       const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
       return sortedTasks.slice(startIndex, startIndex + props.itemsPerPage)
     })
@@ -196,29 +196,19 @@ export default {
             const med = formatUnits(w.globals.seriesCandleM[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
             const q1 = formatUnits(w.globals.seriesCandleH[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
             const min = formatUnits(w.globals.seriesCandleO[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
-            if (props.timingOption === 'maxRss') {
-              const memAlloc = formatRSS(w.globals.series[seriesIndex][dataPointIndex])
-              return `
+            const memAlloc = props.timingOption === 'maxRss'
+              ? formatRSS(w.globals.series[seriesIndex][dataPointIndex])
+              : null
+            return `
               <div class="pa-2">
-              <div>Maximum: ${max}</div>
-              <div>Q3: ${q3} </div>
-              <div>Median: ${med}</div>
-              <div>Q1: ${q1}</div>
-              <div>Minimum: ${min}</div>
-              <div>Memory Allocated: ${memAlloc}</div>
+                <div>Minimum: ${min}</div>
+                <div>Q1: ${q1}</div>
+                <div>Median: ${med}</div>
+                <div>Q3: ${q3} </div>
+                <div>Maximum: ${max}</div>
+                ${memAlloc ? `<div>Memory Allocated: ${memAlloc}</div>` : ''}
               </div>
             `
-            } else {
-              return `
-              <div class="pa-2">
-              <div>Maximum: ${max}</div>
-              <div>Q3: ${q3} </div>
-              <div>Median: ${med}</div>
-              <div>Q1: ${q1}</div>
-              <div>Minimum: ${min}</div>
-              </div>
-            `
-            }
           },
         },
         annotations: {

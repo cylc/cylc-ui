@@ -211,12 +211,10 @@ export function compare (a, b, sortBy, sortDesc) {
 
 export function formatChartLabels (timingOption) {
   // Create correct labels for the charts
-  if (timingOption === 'maxRss') {
-    return 'Max RSS'
-  } else if (timingOption === 'cpuTime') {
-    return 'CPU Time'
-  } else {
-    return upperFirst(timingOption) + ' Time'
+  switch (timingOption) {
+    case 'maxRss': return 'Max RSS'
+    case 'cpuTime': return 'CPU Time'
+    default: return upperFirst(timingOption) + ' Time'
   }
 }
 
@@ -228,10 +226,11 @@ export function formatChartLabels (timingOption) {
  * @returns {string}
  */
 export function getTimingOption (timingOption) {
-  if (timingOption === 'maxRss' || timingOption === 'cpuTime') {
-    return timingOption
+  switch (timingOption) {
+    case 'maxRss':
+    case 'cpuTime': return timingOption
+    default: return timingOption + 'Time'
   }
-  return timingOption + 'Time'
 }
 
 /**

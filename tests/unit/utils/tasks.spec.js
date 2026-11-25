@@ -149,7 +149,7 @@ describe('tasks', () => {
       [undefined, undefined],
       [null, undefined],
       [512, '0.500 KiB'],
-      [5 * 1048576, '5.00 MiB'],
+      [5 * Math.pow(1024, 2), '5.00 MiB'],
     ])('formats maxRss %o -> %o', (value, expected) => {
       expect(formatUnits(value, 'maxRss')).to.equal(expected)
     })
@@ -164,10 +164,10 @@ describe('tasks', () => {
       [1024, '1.00 KiB'],
       [999 * 1024, '999 KiB'],
       [1000 * 1024, '0.977 MiB'],
-      [1.5 * 1048576, '1.50 MiB'],
-      [999 * 1048576, '999 MiB'],
-      [1000 * 1048576, '0.977 GiB'],
-      [2 * 1073741824, '2.00 GiB'],
+      [1.5 * Math.pow(1024, 2), '1.50 MiB'],
+      [999 * Math.pow(1024, 2), '999 MiB'],
+      [1000 * Math.pow(1024, 2), '0.977 GiB'],
+      [2 * Math.pow(1024, 3), '2.00 GiB'],
     ])('formatRSS(%o) -> %o', (value, expected) => {
       expect(formatRSS(value)).to.equal(expected)
     })
