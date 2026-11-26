@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
@@ -23,19 +22,18 @@ import App from '@/App.vue'
 import Empty from '@/layouts/Empty.vue'
 import storeOptions from '@/store/options'
 import { vuetifyOptions } from '@/plugins/vuetify'
+import { mockRoute } from '$tests/util'
 
 const vuetify = createVuetify(vuetifyOptions)
 
-vi.mock('vue-router', () => ({
-  useRoute: () => ({
+describe('App', () => {
+  mockRoute({
     name: 'app',
     meta: {
       layout: 'empty',
     },
-  }),
-}))
+  })
 
-describe('App', () => {
   const mountFunction = () => {
     return mount(App, {
       global: {
