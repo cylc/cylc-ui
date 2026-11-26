@@ -3,13 +3,14 @@ name: Sync PR
 on:
   push:
     branches:
-      - '2.x'
+      - '[0-9]+.x'
+      - '!renovate/**'
   schedule:
     - cron: '53 03 * * 1-5'
   workflow_dispatch:
     inputs:
       head_branch:
-        description: Branch to merge into master
+        description: Branch to merge into the base branch
         required: true
 
 jobs:

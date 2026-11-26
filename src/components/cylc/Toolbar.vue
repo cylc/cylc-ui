@@ -274,7 +274,8 @@ import {
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
-import { useDrawer, toolbarHeight } from '@/utils/toolbar'
+import { toolbarHeight } from '@/utils/toolbar'
+import { useDrawer } from '@/utils/drawer.js'
 import WorkflowState from '@/model/WorkflowState.model'
 import { useGraphQL } from '@/mixins/graphql'
 import {

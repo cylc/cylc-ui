@@ -18,7 +18,7 @@
 import { unref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
-import { useDrawer, __drawer as drawerState } from '@/utils/toolbar'
+import { useDrawer, __drawer as drawerState } from '@/utils/drawer.js'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import { mockRoute } from '$tests/util'
 
