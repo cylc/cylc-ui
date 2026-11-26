@@ -154,6 +154,8 @@ export default {
         { id: this.tokens.id },
         [{ name: queryField }]
       )
+      // Lint failure will be fixed by https://github.com/cylc/cylc-ui/pull/2630:
+      // eslint-disable-next-line vue/no-mutating-props
       const model = Object.assign(this.data, cloneDeep(result[queryName][queryField]))
       this.type = findByName(this.types, 'Runtime')
       // Do not want GQL internal '__typename' field to show up in the form
