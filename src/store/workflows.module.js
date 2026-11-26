@@ -123,13 +123,17 @@ function addChild (parentNode, childNode) {
     ? (n) => `${n.type}-${n.name}` // (this makes families sort before tasks in the tree)
     : (n) => n.name
   const reverse = ['cycle', 'job'].includes(childNode.type)
+  // NOTE: to fix a performance bottleneck, splice the underlying raw array instead of the reactive proxy
+  // - see https://github.com/cylc/cylc-ui/pull/2718 for more info & caveats
+  const rawChildren = toRaw(parentNode)[key].slice() // native copy, no Vue reactivity overhead
   const index = sortedIndexBy(
-    parentNode[key],
+    rawChildren,
     childNode,
     iteratee,
     { reverse }
   )
-  parentNode[key].splice(index, 0, childNode)
+  rawChildren.splice(index, 0, childNode)
+  parentNode[key] = rawChildren // single update of reactive proxy
 }
 
 /** Remove a child node from a parent node. */
@@ -151,38 +155,32 @@ function removeChild (state, node, parentNode = null) {
  * parent lookup).
  */
 function removeTree (state, node, inclusive = true) {
-  const stack = [
-    ...node.children || [],
-  ]
-  if (node.rootFamily) stack.push(node.rootFamily)
-  const removeIndices = [
-    ...node.$namespaces || [],
-    ...node.$edges || [],
-  ]
-  const removeNodes = []
+  // First, remove all the descendant nodes from the index...
+  // Use toRaw() to avoid access overhead of Vue proxies, when all we are doing is getting the IDs of the
+  // descendant nodes
+  const rawNode = toRaw(node)
+  const stack = [rawNode]
   while (stack.length) {
-    // walk the tree under the provided node to list nodes and indices for
-    // deletion
     const pointer = stack.pop()
-    stack.push(
-      ...(pointer.children || []),
-    )
+    stack.push(...(pointer.children ?? []))
     if (pointer.rootFamily) stack.push(pointer.rootFamily)
-    removeIndices.push(
-      ...(pointer.$namespaces || []),
-      ...(pointer.$edges || []),
-    )
-    removeNodes.push(pointer)
+    for (const item of [...(pointer.$namespaces ?? []), ...(pointer.$edges ?? [])]) {
+      removeIndex(state, item.id)
+    }
+    if (pointer.id !== rawNode.id) {
+      removeIndex(state, pointer.id)
+    }
   }
-  for (const pointer of [...removeIndices, ...removeNodes.reverse()]) {
-    // remove index-only items first, then remove tree nodes from the bottom up
-    removeIndex(state, pointer.id)
-    removeChild(state, pointer)
-  }
+
   if (inclusive) {
-    // remove the provided node if requested
     removeIndex(state, node.id)
     removeChild(state, node)
+  } else {
+    // Keep the node, drop everything under it
+    node.children = []
+    if (node.rootFamily) delete node.rootFamily
+    if (node.$edges) node.$edges = []
+    if (node.$namespaces) node.$namespaces = []
   }
 }
 
