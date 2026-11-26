@@ -26,8 +26,8 @@ describe('utils', () => {
     describe('ApolloClient', () => {
       it('should create an apollo client', () => {
         const apolloClient = graphql.createApolloClient('http://localhost:12345', null)
-        expect(apolloClient.link !== null).to.equal(true)
-        expect(apolloClient.cache !== null).to.equal(true)
+        expect(apolloClient.link).toBeTruthy()
+        expect(apolloClient.cache).toBeTruthy()
       })
     })
 

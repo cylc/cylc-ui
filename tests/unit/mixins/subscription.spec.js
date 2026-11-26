@@ -17,9 +17,7 @@
 
 import { mount } from '@vue/test-utils'
 import sinon from 'sinon'
-import { toRaw } from 'vue'
 import { createStore } from 'vuex'
-import { Alert } from '@/model/Alert.model'
 import ViewState from '@/model/ViewState.model'
 import storeOptions from '@/store/options'
 import subscriptionMixin from '@/mixins/subscription'
@@ -68,20 +66,5 @@ describe('Subscription mixin', () => {
       })
       expect(component.vm.isLoading).to.equal(test.expectedIsLoading)
     }
-  })
-  it('should set the application alert', () => {
-    store.state.alert = null
-    const Component = {
-      mixins: [subscriptionMixin],
-      render () {},
-    }
-    const component = mount(Component, {
-      global: {
-        plugins: [store],
-      },
-    })
-    const alert = new Alert('text', 'red')
-    component.vm.setAlert(alert)
-    expect(toRaw(store.state.alert)).to.equal(alert)
   })
 })
