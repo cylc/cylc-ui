@@ -56,15 +56,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </div>
     </template>
-    <template #item.latestJob.node.finishedTime="{ item, value }">
+    <!--
+      Note: job column cells read the job fields here (per row) rather than
+      via the column values (see jobColumn())
+    -->
+    <template
+      v-for="field in jobTextFields"
+      :key="field"
+      #[`item.latestJob.node.${field}`]="{ item }"
+    >
+      {{ item.latestJob?.node?.[field] }}
+    </template>
+    <template #item.latestJob.node.finishedTime="{ item }">
       <EstimatedTime
-        :actual="value"
-        :estimate="item.latestJob?.node.estimatedFinishTime"
+        :actual="item.latestJob?.node?.finishedTime"
+        :estimate="item.latestJob?.node?.estimatedFinishTime"
       />
     </template>
     <template #item.task.node.task.meanElapsedTime="{ item }">
       <EstimatedTime
-        v-bind="taskRunTimes.get(item.task.id)"
+        v-bind="getTaskRunTimes(item)"
         :formatter="(x) => formatDuration(x, { allowZeros: true })"
         tooltip="Mean for this task"
       />
@@ -135,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
@@ -152,7 +163,7 @@ import {
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 import EstimatedTime from '@/components/cylc/common/EstimatedTime.vue'
 
-const props = defineProps({
+defineProps({
   tasks: {
     type: Array,
     required: true,
@@ -182,34 +193,15 @@ const headers = ref([
     key: 'task.tokens.cycle',
     sortFunc: DEFAULT_COMPARATOR,
   },
-  {
-    title: 'Platform',
-    key: 'latestJob.node.platform',
-    sortFunc: DEFAULT_COMPARATOR,
-  },
-  {
-    title: 'Job Runner',
-    key: 'latestJob.node.jobRunnerName',
-    sortFunc: DEFAULT_COMPARATOR,
-  },
-  {
-    title: 'Job ID',
-    key: 'latestJob.node.jobId',
-    sortFunc: DEFAULT_COMPARATOR,
-  },
-  {
-    title: 'Submit',
-    key: 'latestJob.node.submittedTime',
-    sortFunc: datetimeComparator,
-  },
-  {
-    title: 'Start',
-    key: 'latestJob.node.startedTime',
-    sortFunc: datetimeComparator,
-  },
+  jobColumn('Platform', 'platform', DEFAULT_COMPARATOR),
+  jobColumn('Job Runner', 'jobRunnerName', DEFAULT_COMPARATOR),
+  jobColumn('Job ID', 'jobId', DEFAULT_COMPARATOR),
+  jobColumn('Submit', 'submittedTime', datetimeComparator),
+  jobColumn('Start', 'startedTime', datetimeComparator),
   {
     title: 'Finish',
     key: 'latestJob.node.finishedTime',
+    value: NO_VALUE,
     sortRaw (node1, node2) {
       const a = node1.latestJob?.node
       const b = node2.latestJob?.node
@@ -224,9 +216,10 @@ const headers = ref([
   {
     title: 'Run Time',
     key: 'task.node.task.meanElapsedTime',
+    value: NO_VALUE,
     sortRaw (node1, node2) {
-      const a = taskRunTimes.value.get(node1.task.id)
-      const b = taskRunTimes.value.get(node2.task.id)
+      const a = getTaskRunTimes(node1)
+      const b = getTaskRunTimes(node2)
       return nullSorter(
         'task.node.task.meanElapsedTime',
         numberComparator,
@@ -236,6 +229,47 @@ const headers = ref([
     },
   },
 ])
+
+/**
+ * Column value function for columns whose cells are rendered via slots.
+ *
+ * Vuetify builds its internal list of items by reading the value of every
+ * column for every row. If those values come from jobs, then any change to
+ * any job (e.g. a job starting or finishing) makes Vuetify rebuild (and
+ * re-sort) every item and re-render every visible row, which is very slow for
+ * large workflows. So for job-related columns we don't provide a value;
+ * the cells are rendered by slots (which only re-render the affected row) and
+ * sorting is done via sortRaw (which only reads the job fields when sorting
+ * by that column).
+ */
+function NO_VALUE () {
+  return undefined
+}
+
+/**
+ * Return a header for a column displaying a field of the latest job.
+ *
+ * @param {string} title
+ * @param {string} field - the job field.
+ * @param {function} sortFunc - comparator for the field values.
+ */
+function jobColumn (title, field, sortFunc) {
+  const key = `latestJob.node.${field}`
+  return {
+    title,
+    key,
+    value: NO_VALUE,
+    sortRaw: (row1, row2) => nullSorter(
+      key,
+      sortFunc,
+      row1.latestJob?.node?.[field],
+      row2.latestJob?.node?.[field]
+    ),
+  }
+}
+
+/** Job fields displayed as plain text. */
+const jobTextFields = ['platform', 'jobRunnerName', 'jobId', 'submittedTime', 'startedTime']
 
 /**
  * A comparator that ensures empty/nullish values are always sorted last regardless of sort order.
@@ -262,16 +296,18 @@ for (const header of headers.value) {
   }
 }
 
-/** Data for the run time column, for each task's latest job. */
-const taskRunTimes = computed(() => new Map(
-  props.tasks.map(({ task, latestJob }) => [
-    task.id,
-    {
-      actual: getRunTime(latestJob?.node),
-      estimate: task.node?.task?.meanElapsedTime,
-    },
-  ])
-))
+/**
+ * Data for the run time column for a row (based on the task's latest job).
+ *
+ * Note: this is computed per row (rather than as a computed property for all
+ * rows) so that a change to one job's times only re-renders that row.
+ */
+function getTaskRunTimes ({ task, latestJob }) {
+  return {
+    actual: getRunTime(latestJob?.node),
+    estimate: task.node?.task?.meanElapsedTime,
+  }
+}
 
 const jobIconParentProps = {
   class: ['d-flex', 'align-center'],
