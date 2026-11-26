@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :auto-expand-types="nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     ref="treeItem"
-    :class="{compact: compactMode}"
+    :class="{ compact: compactMode }"
   >
     <WorkflowIcon
       v-if="node.type === 'workflow'"
@@ -185,7 +185,7 @@ const props = defineProps({
 
 const workflowLink = computed(
   () => props.node.type === 'workflow'
-    ? `/workspace/${ props.node.tokens.workflow }`
+    ? `/workspace/${props.node.tokens.workflow}`
     : ''
 )
 

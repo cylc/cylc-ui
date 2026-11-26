@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item-subtitle>
           </v-list-item>
           <div>
-            <v-list-item id="cylc-hub-button" :disabled=!hubURL :href="hubURL">
+            <v-list-item id="cylc-hub-button" :disabled="!hubURL" :href="hubURL">
               <template v-slot:prepend>
                 <v-icon size="1.6em">{{ $options.icons.hub }}</v-icon>
               </template>

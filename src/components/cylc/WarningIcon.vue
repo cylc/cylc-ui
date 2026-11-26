@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <span
     class="c-warn d-inline-flex"
-    :class="{'active': workflow.node.warningActive}"
+    :class="{ 'active': workflow.node.warningActive }"
   >
     <v-tooltip
       :activator="null"
@@ -46,12 +46,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           style="
             cursor: pointer;
           "
-          :style="[workflow.node.logRecords?.length ? {opacity: 1} : {opacity: 0.3}]"
+          :style="[workflow.node.logRecords?.length ? { opacity: 1 } : { opacity: 0.3 }]"
         >
           <path
             :d="$options.path"
             :stroke-width="$options.strokeWidth"
-            v-bind:class="{'active': workflow.node.warningActive}"
+            v-bind:class="{ 'active': workflow.node.warningActive }"
           />
         </svg>
       </template>

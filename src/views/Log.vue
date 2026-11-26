@@ -124,7 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :menu-props="{ 'data-cy': 'file-input-menu' }"
           />
           <v-btn
-            @click="() => this.updateLogFileList()"
+            @click="() => updateLogFileList()"
             v-bind="toolbarBtnProps"
             data-cy="refresh-files"
           >
