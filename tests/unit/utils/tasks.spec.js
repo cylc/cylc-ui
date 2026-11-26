@@ -24,6 +24,12 @@ import {
   formatFlowNums,
   getRunTime,
   isTruthyOrZero,
+  compare,
+  formatChartLabels,
+  getTimingOption,
+  formatHeader,
+  formatRSS,
+  formatUnits,
 } from '@/utils/tasks'
 
 describe('tasks', () => {
@@ -117,6 +123,127 @@ describe('tasks', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: false })).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: true })).to.equal('00:00:42')
+    })
+    it('rounds non-integer durations', () => {
+      expect(formatDuration(41.6)).to.equal('00:00:42')
+      expect(formatDuration(59.6)).to.equal('00:01:00')
+    })
+  })
+
+  describe('formatUnits', () => {
+    it.each(['queue', 'total', 'run'])('formats %o timing option as HH:MM:SS', (timingOption) => {
+      expect(formatUnits(4242, timingOption)).to.equal('01:10:42')
+      expect(formatUnits(0, timingOption)).to.equal(undefined)
+      expect(formatUnits(0, timingOption, { allowZeros: true })).to.equal('00:00:00')
+    })
+    it.each([
+      [4242000, false, '01:10:42'],
+      [1500, false, '00:00:02'],
+      [0, true, '00:00:00'],
+      [undefined, true, undefined],
+      [null, true, undefined],
+    ])('converts cpuTime %o (allowZeros=%o) from milliseconds -> %o', (value, allowZeros, expected) => {
+      expect(formatUnits(value, 'cpuTime', { allowZeros })).to.equal(expected)
+    })
+    it.each([
+      [undefined, undefined],
+      [null, undefined],
+      [512, '0.500 KiB'],
+      [5 * Math.pow(1024, 2), '5.00 MiB'],
+    ])('formats maxRss %o -> %o', (value, expected) => {
+      expect(formatUnits(value, 'maxRss')).to.equal(expected)
+    })
+  })
+
+  describe('formatRSS', () => {
+    it.each([
+      [undefined, undefined],
+      [null, undefined],
+      [0, '0.00 KiB'],
+      [512, '0.500 KiB'],
+      [1024, '1.00 KiB'],
+      [999 * 1024, '999 KiB'],
+      [1000 * 1024, '0.977 MiB'],
+      [1.5 * Math.pow(1024, 2), '1.50 MiB'],
+      [999 * Math.pow(1024, 2), '999 MiB'],
+      [1000 * Math.pow(1024, 2), '0.977 GiB'],
+      [2 * Math.pow(1024, 3), '2.00 GiB'],
+    ])('formatRSS(%o) -> %o', (value, expected) => {
+      expect(formatRSS(value)).to.equal(expected)
+    })
+  })
+
+  describe('compare', () => {
+    it('compares non-quartile fields directly', () => {
+      const a = { name: 'a', count: 1, meanMaxRss: 1 }
+      const b = { name: 'b', count: 2, meanMaxRss: 2 }
+      expect(compare(a, b, 'name', false)).to.equal(-1)
+      expect(compare(b, a, 'name', false)).to.equal(1)
+      expect(compare(a, b, 'name', true)).to.equal(1)
+      expect(compare(b, a, 'name', true)).to.equal(-1)
+      expect(compare(a, b, 'count', false)).to.equal(-1)
+      expect(compare(a, b, 'meanMaxRss', false)).to.equal(-1)
+    })
+    it.each([
+      ['RunTime', 'runTimeQuartiles'],
+      ['QueueTime', 'queueTimeQuartiles'],
+      ['TotalTime', 'totalTimeQuartiles'],
+      ['MaxRss', 'maxRssQuartiles'],
+      ['CpuTime', 'cpuTimeQuartiles'],
+    ])('compares min/median/max %o using %o', (metric, quartilesKey) => {
+      // Each statistic's ordering deliberately opposes its neighbours'
+      // to check the correct index is used
+      const a = { [quartilesKey]: [1, 9, 2, 9, 5] }
+      const b = { [quartilesKey]: [2, 1, 5, 1, 4] }
+      // min (index 0)
+      expect(compare(a, b, `min${metric}`, false)).to.equal(-1)
+      expect(compare(a, b, `min${metric}`, true)).to.equal(1)
+      // median (index 2)
+      expect(compare(a, b, `median${metric}`, false)).to.equal(-1)
+      expect(compare(b, a, `median${metric}`, false)).to.equal(1)
+      // max (index 4)
+      expect(compare(a, b, `max${metric}`, false)).to.equal(1)
+      expect(compare(a, b, `max${metric}`, true)).to.equal(-1)
+    })
+  })
+
+  describe('formatChartLabels', () => {
+    it.each([
+      ['maxRss', 'Max RSS'],
+      ['cpuTime', 'CPU Time'],
+      ['run', 'Run Time'],
+      ['queue', 'Queue Time'],
+      ['total', 'Total Time'],
+    ])('%o -> %o', (input, expected) => {
+      expect(formatChartLabels(input)).to.equal(expected)
+    })
+  })
+
+  describe('getTimingOption', () => {
+    it.each([
+      ['maxRss', 'maxRss'],
+      ['cpuTime', 'cpuTime'],
+      ['run', 'runTime'],
+      ['queue', 'queueTime'],
+      ['total', 'totalTime'],
+    ])('%o -> %o', (input, expected) => {
+      expect(getTimingOption(input)).to.equal(expected)
+    })
+  })
+
+  describe('formatHeader', () => {
+    it.each([
+      ['quartiles', 'maxRss', 'maxRssQuartiles'],
+      ['mean', 'maxRss', 'meanMaxRss'],
+      ['stdDev', 'maxRss', 'stdDevMaxRss'],
+      ['quartiles', 'cpuTime', 'cpuTimeQuartiles'],
+      ['stdDev', 'cpuTime', 'stdDevCpuTime'],
+      ['quartiles', 'run', 'runTimeQuartiles'],
+      ['mean', 'run', 'meanRunTime'],
+      ['stdDev', 'queue', 'stdDevQueueTime'],
+      ['quartiles', 'total', 'totalTimeQuartiles'],
+    ])('formatHeader(%o, %o) -> %o', (statistic, timingOption, expected) => {
+      expect(formatHeader(statistic, timingOption)).to.equal(expected)
     })
   })
 

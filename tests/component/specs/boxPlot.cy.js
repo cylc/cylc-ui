@@ -26,42 +26,30 @@ const task1 = {
   name: 'a_test_task',
   platform: 'localhost',
   count: 5,
+  totalTimeQuartiles: [68, 78, 97, 101, 110],
   meanTotalTime: 90,
   stdDevTotalTime: 15,
-  minTotalTime: 68,
-  totalQuartiles: [78, 97, 101],
-  maxTotalTime: 110,
+  runTimeQuartiles: [66, 77, 95, 99, 108],
   meanRunTime: 89,
   stdDevRunTime: 15,
-  minRunTime: 66,
-  runQuartiles: [77, 95, 99],
-  maxRunTime: 108,
+  queueTimeQuartiles: [1, 2, 2, 2, 2],
   meanQueueTime: 1,
   stdDevQueueTime: 0,
-  minQueueTime: 1,
-  queueQuartiles: [2, 2, 2],
-  maxQueueTime: 2,
 }
 
 const task2 = {
   name: 'another_test_task',
   platform: 'xcf',
   count: 1,
+  totalTimeQuartiles: [60, 80, 105, 135, 145],
   meanTotalTime: 135,
   stdDevTotalTime: 0.5,
-  minTotalTime: 60,
-  totalQuartiles: [80, 105, 135],
-  maxTotalTime: 145,
+  runTimeQuartiles: [60, 80, 105, 135, 145],
   meanRunTime: 105,
   stdDevRunTime: 0.5,
-  minRunTime: 60,
-  runQuartiles: [80, 105, 135],
-  maxRunTime: 145,
+  queueTimeQuartiles: [60, 80, 105, 135, 145],
   meanQueueTime: 30,
   stdDevQueueTime: 0.5,
-  minQueueTime: 60,
-  queueQuartiles: [80, 105, 135],
-  maxQueueTime: 145,
 }
 
 const mountOpts = {
@@ -112,5 +100,17 @@ describe('BoxPlot', () => {
       .click()
       .get('.apexcharts-yaxis title')
       .should('have.length', 3)
+  })
+  it('shows tooltip', () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(BoxPlot, merge(mountOpts, {
+      props: {
+        tasks: [task1, task2],
+      },
+    }))
+    cy.get('.vue-apexcharts')
+      .trigger('mousemove', { clientX: 100, clientY: 100 })
+      .get('.apexcharts-tooltip')
+      .should('be.visible')
   })
 })

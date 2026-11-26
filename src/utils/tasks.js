@@ -17,7 +17,10 @@
 
 import TaskState from '@/model/TaskState.model'
 import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
-
+import {
+  lowerFirst,
+  upperFirst,
+} from 'lodash'
 /**
  * States used when the parent is stopped.
  * @type {TaskState[]}
@@ -99,6 +102,8 @@ export function jobMessageOutputs (jobNode) {
  */
 export function formatDuration (dur, { allowZeros = false } = {}) {
   if (dur || (dur === 0 && allowZeros === true)) {
+    // Means/std devs may be non-integer
+    dur = Math.round(dur)
     const seconds = dur % 60
     const minutes = ((dur - seconds) / 60) % 60
     const hours = ((dur - minutes * 60 - seconds) / 3600) % 24
@@ -112,11 +117,139 @@ export function formatDuration (dur, { allowZeros = false } = {}) {
     return dayss +
       hours.toString().padStart(2, '0') +
       ':' + minutes.toString().padStart(2, '0') +
-      ':' + Math.round(seconds).toString().padStart(2, '0')
+      ':' + seconds.toString().padStart(2, '0')
   }
   // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
   // return "undefined" rather than a number for these cases
   return undefined
+}
+
+/**
+ * Format a memory value (in bytes) in a human-readable format.
+ *
+ * @param {number=} value Memory in bytes
+ * @return {string=} Formatted memory, e.g. '5.00 MiB'
+ */
+export function formatRSS (value) {
+  // Format the max RSS value in a human-readable format
+  if (value == null) {
+    return undefined
+  } else if (value / 1024 < 1000) {
+    const kilobytes = value / 1024
+    return kilobytes.toPrecision(3) + ' KiB'
+  } else if (value / 1048576 < 1000) {
+    const megabytes = value / 1048576
+    return megabytes.toPrecision(3) + ' MiB'
+  } else {
+    const gigabytes = value / 1073741824
+    return gigabytes.toPrecision(3) + ' GiB'
+  }
+}
+
+/**
+ * Format an analysis metric value in the appropriate units for the given
+ * timing option - memory for 'maxRss', otherwise a duration.
+ *
+ * @param {number=} value Bytes for 'maxRss', milliseconds for 'cpuTime',
+ * otherwise seconds
+ * @param {string} timingOption
+ * @param {Object} [options]
+ * @param {boolean} [options.allowZeros] Whether durations of 0 are formatted
+ * as 00:00:00, rather than undefined
+ * @return {string=} Formatted value
+ */
+export function formatUnits (value, timingOption, { allowZeros = false } = {}) {
+  if (timingOption === 'maxRss') {
+    return formatRSS(value)
+  }
+  if (timingOption === 'cpuTime' && typeof value === 'number') {
+    // Convert CPU time (milliseconds) to seconds
+    value = value / 1000
+  }
+  return formatDuration(value, { allowZeros })
+}
+
+/**
+ * Index of each statistic within a `<metric>Quartiles` array,
+ * which has the form [Q0 (min), Q1, Q2 (median), Q3, Q4 (max)].
+ */
+export const QUARTILE_INDEX = Object.freeze({
+  min: 0,
+  q1: 1,
+  median: 2,
+  q3: 3,
+  max: 4,
+})
+
+/**
+ * Compare two analysis tasks for sorting.
+ *
+ * Min, median and max values (e.g. `medianRunTime`) are looked up from the
+ * corresponding quartiles array (e.g. `runTimeQuartiles`).
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @param {string} sortBy
+ * @param {boolean} sortDesc
+ * @returns {number}
+ */
+export function compare (a, b, sortBy, sortDesc) {
+  let aVal = a[sortBy]
+  let bVal = b[sortBy]
+  const match = sortBy.match(/^(min|median|max)([A-Z].*)$/)
+  if (match) {
+    const quartilesKey = `${lowerFirst(match[2])}Quartiles`
+    if (quartilesKey in a || quartilesKey in b) {
+      const index = QUARTILE_INDEX[match[1]]
+      aVal = a[quartilesKey]?.[index]
+      bVal = b[quartilesKey]?.[index]
+    }
+  }
+  const ret = aVal < bVal ? -1 : 1
+  return sortDesc ? -ret : ret
+}
+
+export function formatChartLabels (timingOption) {
+  // Create correct labels for the charts
+  switch (timingOption) {
+    case 'maxRss': return 'Max RSS'
+    case 'cpuTime': return 'CPU Time'
+    default: return upperFirst(timingOption) + ' Time'
+  }
+}
+
+/**
+ * Get the name of the metric (as used in the GraphQL schema) for the given
+ * timing option, e.g. 'run' -> 'runTime', 'maxRss' -> 'maxRss'.
+ *
+ * @param {string} timingOption
+ * @returns {string}
+ */
+export function getTimingOption (timingOption) {
+  switch (timingOption) {
+    case 'maxRss':
+    case 'cpuTime': return timingOption
+    default: return timingOption + 'Time'
+  }
+}
+
+/**
+ * Get the name of the field (as used in the GraphQL schema) for a statistic
+ * of the given timing option.
+ *
+ * E.g. ('mean', 'run') -> 'meanRunTime',
+ * ('quartiles', 'maxRss') -> 'maxRssQuartiles'
+ *
+ * @param {'mean'|'stdDev'|'quartiles'} statistic
+ * @param {string} timingOption
+ * @returns {string}
+ */
+export function formatHeader (statistic, timingOption) {
+  const metric = getTimingOption(timingOption)
+  if (statistic === 'quartiles') {
+    return `${metric}Quartiles`
+  }
+  return statistic + upperFirst(metric)
 }
 
 /**

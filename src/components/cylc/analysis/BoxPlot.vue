@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
   </Teleport>
   <VueApexCharts
+    data-cy="box-plot-chart"
     type="boxPlot"
     :options="chartOptions"
     :series="series"
@@ -65,7 +66,15 @@ import {
   mdiSortVariant,
 } from '@mdi/js'
 import { upperFirst } from 'lodash'
-import { formatDuration } from '@/utils/tasks'
+import {
+  formatRSS,
+  formatUnits,
+  formatHeader,
+  getTimingOption,
+  formatChartLabels,
+  compare,
+  QUARTILE_INDEX,
+} from '@/utils/tasks'
 import { useReducedAnimation } from '@/composables/localStorage'
 import {
   initialOptions,
@@ -121,115 +130,156 @@ export default {
     const page = useInitialOptions('page', { props, emit }, 1)
 
     /**
-     * The sort descending/sscending state.
+     * The sort descending/ascending state.
      * @type {import('vue').Ref<boolean>}
      */
     const sortDesc = useInitialOptions('sortDesc', { props, emit }, false)
 
     const reducedAnimation = useReducedAnimation()
 
-    const chartOptions = computed(() => ({
-      chart: {
-        defaultLocale: 'en',
-        locales: [
-          {
-            name: 'en',
-            options: {
-              toolbar: {
-                exportToSVG: 'Download SVG',
-                exportToPNG: 'Download PNG',
-                menu: 'Download',
+    /**
+     * The tasks on the current page, in sorted order.
+     *
+     * Shared by the box plot series and the memory allocated annotations so
+     * that the annotations are always drawn against the right tasks.
+     * @type {import('vue').ComputedRef<Object[]>}
+     */
+    const currentTasks = computed(() => {
+      const sortedTasks = props.tasks.toSorted((a, b) => compare(a, b, sortBy.value, sortDesc.value))
+      const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
+      return sortedTasks.slice(startIndex, startIndex + props.itemsPerPage)
+    })
+
+    const chartOptions = computed(() => {
+      // Only show memory allocated annotations for max RSS
+      const annotatedTasks = props.timingOption === 'maxRss' ? currentTasks.value : []
+
+      return {
+        chart: {
+          defaultLocale: 'en',
+          locales: [
+            {
+              name: 'en',
+              options: {
+                toolbar: {
+                  exportToSVG: 'Download SVG',
+                  exportToPNG: 'Download PNG',
+                  menu: 'Download',
+                },
               },
             },
+          ],
+          animations: {
+            enabled: reducedAnimation.value ? false : props.animate,
+            easing: 'easeinout',
+            speed: 300,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
           },
-        ],
-        animations: {
-          enabled: reducedAnimation.value ? false : props.animate,
-          easing: 'easeinout',
-          speed: 300,
-          animateGradually: {
-            enabled: true,
-            delay: 150,
-          },
-          dynamicAnimation: {
-            enabled: true,
-            speed: 350,
-          },
-        },
-        fontFamily: 'inherit',
-        toolbar: {
-          tools: {
-            download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-          },
-        },
-      },
-      tooltip: {
-        custom ({ seriesIndex, dataPointIndex, w }) {
-          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], { allowZeros: true })
-          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], { allowZeros: true })
-          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], { allowZeros: true })
-          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], { allowZeros: true })
-          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], { allowZeros: true })
-          return `
-            <div class="pa-2">
-              <div>Maximum: ${max}</div>
-              <div>Q3: ${q3} </div>
-              <div>Median: ${med}</div>
-              <div>Q1: ${q1}</div>
-              <div>Minimum: ${min}</div>
-            </div>
-          `
-        },
-      },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-        },
-        boxPlot: {
-          colors: {
-            upper: '#6DD5C2',
-            lower: '#6AA4F1',
+          fontFamily: 'inherit',
+          toolbar: {
+            tools: {
+              download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
+            },
           },
         },
-      },
-      xaxis: {
-        title: {
-          text: `${upperFirst(props.timingOption)} time`,
+        tooltip: {
+          custom ({ seriesIndex, dataPointIndex, w }) {
+            const max = formatUnits(w.globals.seriesCandleC[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const q3 = formatUnits(w.globals.seriesCandleL[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const med = formatUnits(w.globals.seriesCandleM[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const q1 = formatUnits(w.globals.seriesCandleH[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const min = formatUnits(w.globals.seriesCandleO[seriesIndex][dataPointIndex], props.timingOption, { allowZeros: true })
+            const memAlloc = props.timingOption === 'maxRss'
+              ? formatRSS(w.globals.series[seriesIndex][dataPointIndex])
+              : null
+            return `
+              <div class="pa-2">
+                <div>Minimum: ${min}</div>
+                <div>Q1: ${q1}</div>
+                <div>Median: ${med}</div>
+                <div>Q3: ${q3} </div>
+                <div>Maximum: ${max}</div>
+                ${memAlloc ? `<div>Memory Allocated: ${memAlloc}</div>` : ''}
+              </div>
+            `
+          },
         },
-        labels: {
-          formatter: (value) => formatDuration(value, { allowZeros: true }),
+        annotations: {
+          position: 'front',
+          points: annotatedTasks.map(point => ({
+            x: point.memAlloc,
+            y: point.name,
+            marker: {
+              size: 0, // Hides the default marker
+            },
+            image: {
+              path: 'img/redline.jpg',
+              width: 40,
+              height: 60,
+              offsetX: 0,
+              offsetY: -3,
+            },
+          })),
         },
-      },
-    }))
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+          boxPlot: {
+            colors: {
+              upper: '#6DD5C2',
+              lower: '#6AA4F1',
+            },
+          },
+        },
+        xaxis: {
+          min: annotatedTasks.length > 0 ? 0 : undefined,
+          max: annotatedTasks.length > 0 ? Math.ceil(Math.max(0, ...annotatedTasks.map(t => t.memAlloc)) * 1.05) : undefined,
+          type: 'numeric',
+          title: {
+            text: `${formatChartLabels(props.timingOption)}`,
+          },
+          labels: {
+            formatter: (value) => formatUnits(value, props.timingOption, { allowZeros: true }),
+          },
+        },
+      }
+    })
 
     return {
       sortBy,
       page,
       sortDesc,
+      currentTasks,
       chartOptions,
     }
   },
 
   computed: {
     series () {
-      const sortedTasks = [...this.tasks].sort(this.compare)
-      const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
-      const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
-
-      const data = []
-      for (let i = startIndex; i < endIndex; i++) {
-        data.push({
-          x: sortedTasks[i].name,
+      const quartilesKey = formatHeader('quartiles', this.timingOption)
+      const boxData = this.currentTasks.map((task) => {
+        const quartiles = task[quartilesKey] ?? []
+        return {
+          x: task.name,
           y: [
-            sortedTasks[i][`min${upperFirst(this.timingOption)}Time`],
-            sortedTasks[i][`${this.timingOption}Quartiles`][0],
-            sortedTasks[i][`${this.timingOption}Quartiles`][1],
-            sortedTasks[i][`${this.timingOption}Quartiles`][2],
-            sortedTasks[i][`max${upperFirst(this.timingOption)}Time`],
+            quartiles[QUARTILE_INDEX.min],
+            quartiles[QUARTILE_INDEX.q1],
+            quartiles[QUARTILE_INDEX.median],
+            quartiles[QUARTILE_INDEX.q3],
+            quartiles[QUARTILE_INDEX.max],
+            task.memAlloc > 0 ? task.memAlloc : 1, // ApexCharts seems inconsistent if this extra data is 0
           ],
-        })
-      }
-      return [{ data }]
+        }
+      })
+      return [{ name: 'boxPlot', type: 'boxPlot', data: boxData }]
     },
 
     numPages () {
@@ -237,14 +287,18 @@ export default {
     },
 
     sortChoices () {
+      // The metric is already shown in the timing option dropdown, so
+      // don't repeat it here (avoids e.g. "Min Max RSS")
+      const metric = upperFirst(getTimingOption(this.timingOption))
       return [
         { title: 'Task name', value: 'name' },
         { title: 'Platform', value: 'platform' },
         { title: 'Count', value: 'count' },
-        { title: `Mean ${this.timingOption} time`, value: `mean${upperFirst(this.timingOption)}Time` },
-        { title: `Median ${this.timingOption} time`, value: `median${upperFirst(this.timingOption)}Time` },
-        { title: `Min ${this.timingOption} time`, value: `min${upperFirst(this.timingOption)}Time` },
-        { title: `Max ${this.timingOption} time`, value: `max${upperFirst(this.timingOption)}Time` },
+        { title: 'Mean', value: `mean${metric}` },
+        { title: 'Median', value: `median${metric}` },
+        { title: 'Min', value: `min${metric}` },
+        { title: 'Max', value: `max${metric}` },
+        { title: 'Std Dev', value: `stdDev${metric}` },
       ]
     },
   },
@@ -253,18 +307,6 @@ export default {
     numPages () {
       // Clamp page number
       this.page = Math.min(this.numPages, this.page)
-    },
-  },
-
-  methods: {
-    /**
-     * @param {string|number} a
-     * @param {string|number} b
-     * @returns {number}
-     */
-    compare (a, b) {
-      const ret = a[this.sortBy] < b[this.sortBy] ? -1 : 1
-      return this.sortDesc ? -ret : ret
     },
   },
 

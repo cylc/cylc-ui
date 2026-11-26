@@ -55,8 +55,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { upperFirst } from 'lodash'
-import { formatDuration } from '@/utils/tasks'
+import {
+  formatUnits,
+  formatHeader,
+  formatChartLabels,
+  QUARTILE_INDEX,
+} from '@/utils/tasks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
@@ -127,51 +131,33 @@ export default {
 
   computed: {
     shownHeaders () {
-      const times = upperFirst(this.timingOption)
-      const timingHeaders = [
-        {
-          title: `Mean T-${times}`,
-          key: `mean${times}Time`,
-          formatter: formatDuration,
-          allowZeros: false,
-        },
-        {
-          title: `Std Dev T-${times}`,
-          key: `stdDev${times}Time`,
-          formatter: formatDuration,
-          allowZeros: true,
-        },
-        {
-          title: `Min T-${times}`,
-          key: `min${times}Time`,
-          formatter: formatDuration,
-          allowZeros: false,
-        },
-        {
-          title: `Q1 T-${times}`,
-          key: `${times.toLowerCase()}Quartiles.0`,
-          formatter: formatDuration,
-          allowZeros: false,
-        },
-        {
-          title: `Median T-${times}`,
-          key: `${times.toLowerCase()}Quartiles.1`,
-          formatter: formatDuration,
-          allowZeros: false,
-        },
-        {
-          title: `Q3 T-${times}`,
-          key: `${times.toLowerCase()}Quartiles.2`,
-          formatter: formatDuration,
-          allowZeros: false,
-        },
-        {
-          title: `Max T-${times}`,
-          key: `max${times}Time`,
-          formatter: formatDuration,
-          allowZeros: false,
-        },
-      ]
+      const timingOption = this.timingOption
+      const label = formatChartLabels(timingOption)
+      const quartiles = formatHeader('quartiles', timingOption)
+      const common = {
+        formatter: formatUnits,
+        allowZeros: true,
+      }
+      const timingHeaders = []
+      // Check if there are any stats to show
+      const stats = this.tasks.some((task) => task.count > 1)
+      if (stats) {
+        // The metric is already shown in the timing option dropdown, so
+        // don't repeat it in the headers (avoids e.g. "Min Max RSS")
+        timingHeaders.push(
+          { title: 'Mean', key: formatHeader('mean', timingOption), ...common },
+          { title: 'Min', key: `${quartiles}.${QUARTILE_INDEX.min}`, ...common },
+          { title: 'Q1', key: `${quartiles}.${QUARTILE_INDEX.q1}`, ...common },
+          { title: 'Median', key: `${quartiles}.${QUARTILE_INDEX.median}`, ...common },
+          { title: 'Q3', key: `${quartiles}.${QUARTILE_INDEX.q3}`, ...common },
+          { title: 'Max', key: `${quartiles}.${QUARTILE_INDEX.max}`, ...common },
+          { title: 'Std Dev', key: formatHeader('stdDev', timingOption), ...common },
+        )
+      } else {
+        timingHeaders.push(
+          { title: label, key: formatHeader('mean', timingOption), ...common },
+        )
+      }
       return this.headers.concat(timingHeaders)
     },
   },
@@ -183,10 +169,10 @@ export default {
       let value = item[key]
       if (arrayMatch) {
         const index = arrayMatch[2]
-        value = value[index]
+        value = value?.[index]
       }
       if (header.formatter) {
-        return header.formatter(value, header)
+        return header.formatter(value, this.timingOption, { allowZeros: header.allowZeros })
       }
       return value
     },
