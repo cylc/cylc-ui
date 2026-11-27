@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <Workflows />
     </div>
-    <div class="resize-bar" ref="resizeBar"></div>
+    <div class="resize-bar" @mousedown="onResizeBarMousedown"></div>
     <template v-slot:append>
       <div class="pa-2 d-flex justify-center">
         <v-chip
@@ -86,7 +86,6 @@ import { useDisplay } from 'vuetify'
 import CylcHeader from '@/components/cylc/Header.vue'
 import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiInformationOutline } from '@mdi/js'
-import { when } from '@/utils/reactivity'
 import { initialWidth, minWidth, useDrawer } from '@/utils/drawer.js'
 
 const { mobile } = useDisplay()
@@ -102,36 +101,33 @@ function resize (e) {
   drawerWidth.value = e.clientX > minWidth ? e.clientX : 4
 }
 
-/** @type {import('vue').Ref<HTMLElement>} template ref */
-const resizeBar = ref(null)
+/**
+ * Handle clicking on the nav drawer border to resize it.
+ *
+ * @param {MouseEvent} mdEvent
+ */
+function onResizeBarMousedown (mdEvent) {
+  document.body.classList.add('resizing-drawer')
+  document.addEventListener('mousemove', resize, { passive: true })
+  mdEvent.stopPropagation?.()
+  mdEvent.preventDefault?.()
 
-when(resizeBar, () => {
-  resizeBar.value.addEventListener(
-    'mousedown',
-    (mdEvent) => {
-      document.body.classList.add('resizing-drawer')
-      document.addEventListener('mousemove', resize, { passive: true })
-      mdEvent.stopPropagation?.()
-      mdEvent.preventDefault?.()
-
-      document.addEventListener(
-        'mouseup',
-        (muEvent) => {
-          if (muEvent.clientX < minWidth) {
-            drawer.value = false
-            // Reset to width at time of mousedown
-            nextTick(() => {
-              drawerWidth.value = mdEvent.clientX
-            })
-          }
-          document.body.classList.remove('resizing-drawer')
-          document.removeEventListener('mousemove', resize)
-        },
-        { once: true }
-      )
-    }
+  document.addEventListener(
+    'mouseup',
+    (muEvent) => {
+      if (muEvent.clientX < minWidth) {
+        drawer.value = false
+        // Reset to width at time of mousedown
+        nextTick(() => {
+          drawerWidth.value = mdEvent.clientX
+        })
+      }
+      document.body.classList.remove('resizing-drawer')
+      document.removeEventListener('mousemove', resize)
+    },
+    { once: true }
   )
-})
+}
 
 const UIVersion = __APP_VERSION__
 

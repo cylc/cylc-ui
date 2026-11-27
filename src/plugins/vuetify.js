@@ -65,7 +65,7 @@ export const vuetifyOptions = {
     },
   },
   display: {
-    mobileBreakpoint: 991,
+    mobileBreakpoint: 725,
   },
   icons: {
     defaultSet: 'mdi',

@@ -60,7 +60,7 @@ const Jobs = async ({ id, workflowID }) => {
   if (!workflowID.startsWith('~')) {
     workflowID = `~user/${workflowID}`
   }
-  const { deltas } = Workflow({ workflowID })
+  const { deltas } = (await Workflow({ workflowID }).next()).value
   const searchID = id.replace(
     /\/NN$/, ''
   ).replace(
